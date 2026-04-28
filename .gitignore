@@ -40,6 +40,9 @@ playwright/.cache/
 # Claude Code: skills are plugin-managed, not project-owned
 .claude/skills/
 
+# Claude Code: per-user settings overrides (team settings live in .claude/settings.json)
+.claude/settings.local.json
+
 # Supabase local
 supabase/.branches/
 supabase/.temp/

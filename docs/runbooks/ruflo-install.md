@@ -6,15 +6,24 @@
 
 ## Install steps
 
-Run these slash commands in **your** Claude Code session (they configure your local Claude Code, not the repo):
+The `ruflo` marketplace is **already registered** in this repo's `.claude/settings.json` under `extraKnownMarketplaces` — so anyone who clones the project gets the marketplace auto-discovered. You only need to install the two plugins.
+
+Type these as **top-level slash commands** at the Claude Code prompt (not inside the `/plugin` interactive UI — that's the *installed-plugin manager*, a different surface):
 
 ```
-/plugin marketplace add ruvnet/ruflo
 /plugin install ruflo-core@ruflo
 /plugin install ruflo-swarm@ruflo
 ```
 
+If for some reason the marketplace isn't auto-registered (different Claude Code version, settings stripped, etc.), run this first:
+
+```
+/plugin marketplace add ruvnet/ruflo
+```
+
 **Do NOT install** other ruflo plugins (`ruflo-autopilot`, `ruflo-intelligence`, `ruflo-agentdb`, `ruflo-aidefence`, `ruflo-browser`, `ruflo-jujutsu`, `ruflo-wasm`, `ruflo-workflows`, etc.) without surfacing as a project decision (ADR). Each adds capabilities + assumptions; we deliberately scoped to the two we have a use case for.
+
+After install, run `/reload-plugins` if Claude Code prompts you to.
 
 ## Verify the install
 
