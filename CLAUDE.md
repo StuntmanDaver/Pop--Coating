@@ -55,13 +55,43 @@ Source of truth: [`docs/EXECUTION.md` §1](docs/EXECUTION.md). Summary:
 - Agent type catalog: [`docs/EXECUTION.md` §2](docs/EXECUTION.md). Each named type has a definition file in [`.claude/agents/`](.claude/agents/).
 - An agent definition is a **floor**, not a ceiling. Per-dispatch briefs may add task-specific constraints; they may not weaken stack constraints.
 
+## Planning convention (`phase-planner` + briefs)
+
+Before dispatching the first batch of any week's work:
+
+1. Dispatch `phase-planner` to expand `docs/EXECUTION.md` week N into per-dispatch briefs.
+2. Briefs land in `docs/briefs/WEEK-NN-BRIEFS.md` (one file per week, committed).
+3. Orchestrator reviews briefs; dispatches builders by copy-pasting briefs into `Agent` tool calls.
+4. Briefs are point-in-time records; not amended after dispatch.
+
+Wave contracts (template at `docs/superpowers/templates/wave-contract.md`, filled instances at `docs/contracts/WAVE-N-CONTRACT.md`) are signed off by the user before any wave begins. Ship gate dispatches all three audit agents and requires PASS on each.
+
+## Quality gates convention (verdict-driven)
+
+Three audit agents act as merge/advance gates:
+
+- `security-auditor` — blocks on **Critical** or **High** findings.
+- `code-reviewer` — blocks on **Blocker** or **Major** findings.
+- `performance-auditor` — blocks on any **Blocker** finding.
+
+Each returns a verdict on the first line of output:
+
+```
+VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
+```
+
+`FAIL-WITH-FOLLOW-UP` requires explicit user sign-off in the dispatch brief (issue + owner + deadline). Agents do not self-grant. PR/wave-advance is gated on PASS or signed-off `FAIL-WITH-FOLLOW-UP`.
+
 ## Repo state
 
 - **No application code yet.** Wave 1 Week 0 pre-flight is next.
 - Git repo initialized; remote `origin` → `https://github.com/StuntmanDaver/Pop--Coating.git`. Default branch `main`.
 - `.claude/skills/` — 93 design/UX/process skills (pre-loaded via Claude Code skill plugins; gitignored as plugin-managed).
-- `.claude/agents/` — 22 project sub-agent definitions (committed; see `docs/EXECUTION.md` §2).
+- `.claude/agents/` — 23 project sub-agent definitions (committed; see `docs/EXECUTION.md` §2 + `phase-planner`).
 - `docs/superpowers/specs/` — design specs for cross-cutting decisions.
+- `docs/superpowers/templates/` — reusable templates (wave contracts, etc.).
+- `docs/briefs/` — per-week dispatch briefs produced by `phase-planner`.
+- `docs/contracts/` — per-wave contracts (filled from template; user-signed before wave starts).
 
 ## What NOT to do
 
