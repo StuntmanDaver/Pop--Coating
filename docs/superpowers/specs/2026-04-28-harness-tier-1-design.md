@@ -123,6 +123,26 @@ Add two short sections:
 - Autonomous loops or context resets.
 - Adding metrics dashboards or telemetry.
 
+## 8.1 Round-7 hardening — verdict parser
+
+The Round-6 verdict scheme was a soft contract: if an evaluator forgot the `VERDICT:` line, the orchestrator might miss it. Round-7 adds a parser to enforce the contract.
+
+**Added:**
+
+- `scripts/check-verdict.sh` — bash parser. Reads stdin or file; verifies first non-empty line matches `VERDICT: PASS | FAIL | FAIL-WITH-FOLLOW-UP`. Exit codes: 0 PASS, 1 FAIL, 2 format error, 64 usage error. Strips `\r` for CRLF tolerance. Disambiguates `FAIL-WITH-FOLLOW-UP` from `FAIL` via pattern ordering. Never auto-grants `FAIL-WITH-FOLLOW-UP` — requires `--accept-followup` (caller opt-in, gated by user sign-off in dispatch brief).
+- `scripts/test-check-verdict.sh` — 22-case test suite covering all valid verdicts, malformed inputs (empty, lowercase, unknown word, missing space, PASSED variant), Windows line endings, file mode, stdin mode, multi-arg/usage errors. All 22 pass.
+- `scripts/README.md` — usage, exit codes, integration points.
+
+**Updated:**
+
+- All 5 evaluator agents — explicit "your output is parsed by `scripts/check-verdict.sh`" reminder added so the contract isn't silently broken.
+- `CLAUDE.md` — Quality-gates section now references the parser as the enforcement layer.
+- `docs/superpowers/templates/wave-contract.md` — Quality-gate dispatch plan now states orchestrator pipes outputs through the parser.
+
+**Why bash and not TypeScript:** no `package.json` exists yet (no code as of Wave-1 Week-0). Bash works without setup. Future port to a `pnpm`-runnable script is fine but not required.
+
+**Test discipline:** any change to `check-verdict.sh` must keep `bash scripts/test-check-verdict.sh` green. The test file is the regression suite.
+
 ## 9. Files changed
 
 ```
@@ -137,6 +157,9 @@ docs/superpowers/specs/2026-04-28-harness-tier-1-design.md                 [new 
 CLAUDE.md                                                                  [edit: planner + verdict sections]
 docs/briefs/.gitkeep                                                       [new]
 docs/contracts/.gitkeep                                                    [new]
+scripts/check-verdict.sh                                                   [new — Round 7]
+scripts/test-check-verdict.sh                                              [new — Round 7]
+scripts/README.md                                                          [new — Round 7]
 ```
 
 ## 10. Round-6 audit findings (resolved)

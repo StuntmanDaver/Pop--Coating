@@ -27,6 +27,8 @@ VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
 
 Followed by a one-sentence summary, then the findings list.
 
+**Your output is parsed by `scripts/check-verdict.sh`.** Format is exact: `VERDICT: ` (uppercase, single space after colon), then the verdict word, optionally followed by whitespace + summary on the same line. Forgetting the verdict line = format error = orchestrator gates as FAIL.
+
 ## What to look for (priority order)
 
 ### 1. Multi-tenant boundary (Critical)

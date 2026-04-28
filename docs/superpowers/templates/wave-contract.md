@@ -63,7 +63,7 @@ Risks from `docs/DESIGN.md` §8 that apply during this wave; mitigations the orc
 
 ## Quality-gate dispatch plan
 
-All five evaluator agents return `VERDICT: PASS | FAIL | FAIL-WITH-FOLLOW-UP` on the first line of their output. PR/wave-advance is gated on PASS or signed-off FAIL-WITH-FOLLOW-UP.
+All five evaluator agents return `VERDICT: PASS | FAIL | FAIL-WITH-FOLLOW-UP` on the first line of their output. The orchestrator pipes each output through [`scripts/check-verdict.sh`](../../scripts/check-verdict.sh) to enforce the format. PR/wave-advance is gated on exit 0 (PASS, or FAIL-WITH-FOLLOW-UP with explicit user sign-off in the dispatch brief invoking `--accept-followup`).
 
 | When | Auditor(s) | Required verdict |
 |---|---|---|

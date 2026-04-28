@@ -84,6 +84,8 @@ VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
 
 `FAIL-WITH-FOLLOW-UP` requires explicit user sign-off in the dispatch brief (issue + owner + deadline). Agents do not self-grant. PR/wave-advance is gated on PASS or signed-off `FAIL-WITH-FOLLOW-UP`. The wave contract (`docs/contracts/WAVE-N-CONTRACT.md`) specifies which auditors run when.
 
+**Enforcement:** pipe evaluator output through [`scripts/check-verdict.sh`](scripts/check-verdict.sh) to verify the verdict line is well-formed before deciding to advance. Exit 0 = PASS, exit 1 = FAIL, exit 2 = format error (agent forgot the verdict line). See [`scripts/README.md`](scripts/README.md).
+
 ## Repo state
 
 - **No application code yet.** Wave 1 Week 0 pre-flight is next.

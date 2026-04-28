@@ -36,6 +36,8 @@ VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
 
 Followed by a one-sentence summary, then findings.
 
+**Your output is parsed by `scripts/check-verdict.sh`.** Format is exact: `VERDICT: ` (uppercase, single space after colon), then the verdict word. Forgetting the verdict line = format error = orchestrator gates as FAIL.
+
 ## What you check
 
 - `pnpm audit` — report findings by severity.
