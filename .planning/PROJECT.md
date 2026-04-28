@@ -1,12 +1,12 @@
-# Industrial Finishing Operations Platform
+# Pops Industrial Coatings — Operations Platform (Wave 1)
 
 ## What This Is
 
-A multi-tenant whitelabel SaaS replacing paper-traveler job tracking in industrial finishing shops (powder coating, sandblasting, plating, galvanizing). Every job gets a QR-coded packet that shop floor employees scan at each workstation — every scan is timestamped, employee-attributed, and instantly visible to managers via live kanban and to customers via a magic-link portal. **Pops Industrial Coatings** is the launch tenant (Tenant 1); the platform is architected multi-tenant from day 1.
+A multi-tenant whitelabel SaaS for industrial finishing shops (powder coating, sandblasting, plating, galvanizing). Every job gets a printed QR-code packet; shop floor staff scan it at each workstation to advance the job through production stages, creating a timestamped, employee-attributed record. Customers see real-time status via a magic-link portal branded as the shop's own. **Pops Industrial Coatings** is the launch tenant (Tenant 1); the platform is architected for Tenant 2+ from day 1. Built by Cultr Ventures.
 
 ## Core Value
 
-Every job scan creates a timestamped, employee-attributed record that customers can see in real time — eliminating the "where is my job?" phone call.
+Replace paper-based job tracking with a QR scan loop that gives shop owners live production visibility and eliminates "where is my job?" calls — both for office staff and customers.
 
 ## Requirements
 
@@ -16,106 +16,98 @@ Every job scan creates a timestamped, employee-attributed record that customers 
 
 ### Active
 
-**Foundation**
-- [ ] Next.js 16 app scaffold: App Router, TypeScript strict, Tailwind v4, shadcn/ui, ESLint flat-config with service-role lint rule, Prettier, Husky pre-commit
-- [ ] Shared infra: `src/shared/db/` (server/client/admin Supabase clients), `src/shared/auth-helpers/`, `src/shared/audit/` (withAudit HOF), `src/shared/rate-limit/`, `src/shared/storage/` skeleton
-- [ ] `src/proxy.ts` host-based routing (app.* → office, track.* → portal)
-- [ ] Supabase project: tenants, shop_settings, tenant_domains, audit_log schema + `app` helper functions
-- [ ] CI: GitHub Actions (lint, typecheck, pgTAP, Vitest on every push)
-- [ ] Resend SMTP + SPF/DKIM/DMARC for transactional email
-- [ ] Sentry error tracking (cross-tenant, tagged by tenant_id)
-- [ ] next-intl setup (English-only Wave 1)
+**Infrastructure & scaffolding**
+- [ ] Next.js 16 App Router repo initialized with TypeScript strict, Tailwind v4, shadcn/ui, pnpm
+- [ ] Supabase project wired (Postgres + Auth + Realtime + Storage)
+- [ ] Vercel project configured with `app.popscoating.com` + `track.popscoating.com` domains
+- [ ] Multi-tenant schema foundation: `tenants` table, `tenant_id` on every business table, RLS policies using `app.tenant_id()` helper
+- [ ] Auth: Supabase Auth with `@supabase/ssr` cookie storage; JWT `app_metadata.tenant_id` claim; three audiences (office, shop/workstation, customer)
+- [ ] Sentry + Resend + Upstash Redis wired and verified
 
-**Auth**
-- [ ] Auth Hook (JWT app_metadata injection with tenant_id, role, audience)
-- [ ] Staff sign-in/sign-out/forgot-password/set-password flows
-- [ ] Customer magic-link request + expiry screens
-- [ ] Workstation PIN authentication (shop floor employees)
-- [ ] Cross-tenant isolation tests (pgTAP suite)
+**CRM module**
+- [ ] Companies: name, addresses, phone, email, tax ID, payment terms, archive
+- [ ] Contacts: company association, name, email, phone, role, primary-contact flag, archive
+- [ ] Activities: polymorphic (company/contact/job), type (call/email/meeting/note), body, staff attribution
+- [ ] Tags: tenant-scoped, color, polymorphic (jobs/companies/contacts)
 
-**CRM + Settings**
-- [ ] Companies CRUD with activity logging
-- [ ] Contacts linked to companies
-- [ ] Tags (polymorphic, multi-entity)
-- [ ] Settings: shop info, staff management, invite staff, audit log viewer
+**Jobs & QR packets**
+- [ ] Job record with `intake_status` (draft → scheduled → in_production → archived) and `production_status` (Received → Prep → Coating → Curing → QC → Completed → Picked Up)
+- [ ] Flexible (any-to-any) production transitions; backward transitions flagged `is_rework=true`
+- [ ] `on_hold` flag orthogonal to status, with required reason
+- [ ] Multi-color jobs via parent/child (`parent_job_id`)
+- [ ] Auto-generated job numbers: `JOB-YYYY-NNNNN`, year-reset, atomic
+- [ ] PDF job packet: logo, job info, QR code (SVG, ECC level H), manual-entry fallback, stage checklist; `packet_dirty` reprint detection
+- [ ] `production_status` direct UPDATE forbidden at DB level; all transitions via `app.record_scan_event()`
 
-**Jobs**
-- [ ] Jobs CRUD: create, update, archive, schedule, clone
-- [ ] Multi-color splitting (one job → per-color child jobs)
-- [ ] Hold / release-from-hold workflow
-- [ ] Part count tracking (parts_in / parts_out / parts_scrapped)
-- [ ] `jobs.production_status` state machine enforced via `app.record_scan_event()` only (direct UPDATE forbidden at column-grant level)
+**Scanner interface**
+- [ ] Camera-based QR scanning via `@zxing/browser`, manual entry fallback
+- [ ] PIN tap to identify shop floor employee at workstation
+- [ ] Workstation enrollment ceremony (admin QR → tablet scans → synthetic Supabase user)
+- [ ] Offline mode: IndexedDB queue, sync on reconnect
+- [ ] Snap-photo-at-scan; canvas → JPEG 0.7 quality, max 1024px
 
-**Packets + Storage**
-- [ ] PDF job packet generation (`@react-pdf/renderer` + `qrcode`)
-- [ ] QR code embedded in PDF, unique per job
-- [ ] File upload (photos) at canvas → JPEG 0.7 quality, max 1024px
-- [ ] Packet storage in Supabase Storage
+**Office dashboard**
+- [ ] Kanban board by production stage, real-time updates via Supabase Realtime
+- [ ] Filters (stage, company, date range, on-hold)
+- [ ] Stat cards (jobs in flight, throughput, overdue)
 
-**Scanner**
-- [ ] Workstation enrollment (claim/release/heartbeat via SECURITY DEFINER functions)
-- [ ] Employee PIN picker UI (wall-mounted iPad, kiosk-style)
-- [ ] Camera-based QR scan (`@zxing/browser`) — works on iPad Safari with shop dust/glare
-- [ ] Scan event recording (stage advance, photo attach, conflict handling)
-- [ ] Offline mode: service worker + IndexedDB queue + replay on reconnect
+**Customer portal**
+- [ ] Magic-link auth scoped to customer's company only
+- [ ] Job list with filter/search
+- [ ] Job detail: visual progress tracker + scan timeline
+- [ ] Account settings (name, email)
 
-**Timeline + Dashboard**
-- [ ] Live kanban board (production_status columns, realtime updates)
-- [ ] Job timeline (all scan events for a job, employee-attributed)
-- [ ] Stage duration analytics (basic — bottleneck visibility)
+**Observability & ops**
+- [ ] Audit log: sensitive operations (invites, deactivations, role changes)
+- [ ] Comprehensive RLS test suite (cross-tenant, audience-isolation, function authorization)
+- [ ] Supabase PITR + weekly offsite backup to Backblaze B2
 
-**Customer Portal**
-- [ ] Magic-link entry (tokenized, TTL-controlled)
-- [ ] Job list + job detail with current stage
-- [ ] Real-time status updates
-- [ ] Per-tenant branding (CSS variables, tenant logo)
+### Out of Scope (Wave 1)
 
-**Production Deploy**
-- [ ] Vercel Pro deploy with custom domain placeholder (app.popscoating.com + track.popscoating.com)
-- [ ] Pops onboarding: staff training, observation day, owner sign-off
-- [ ] Wave 1 ship gate at Week 13
-
-### Out of Scope
-
-- **Wave 2 features** — inventory tracking, QC inspections, alerts, email notifications, multi-role customer portal (admin/viewer/accounting) — deferred to Weeks 15-20
-- **Wave 3 features** — quotes, invoices, Stripe payments, analytics dashboards, public tokenized tracking links, per-job messaging threads — deferred to Weeks 21-28
-- **Wave 4 features** — custom domain provisioning UI, per-tenant theming config UI, vertical workflow templates, agency super-admin console, Tenant 2 onboarding — deferred to Weeks 29-36
-- **Spanish language** — Wave 2+ only; Wave 1 is English-only
-- **Per-tenant billing (Stripe)** — Wave 4 only
-- **Multiple Supabase instances** — single instance, multi-tenant via RLS
-- **Pages Router** — App Router only
+- Inventory / color library — Wave 2
+- QC inspections / alerts / email notifications — Wave 2
+- Quotes / invoices / analytics — Wave 3
+- Custom domains / per-tenant theming / whitelabel layer — Wave 4
+- Stripe billing — Wave 4
+- MFA for admin role — Wave 2
+- SMS / push notifications — Wave 3+
+- Spanish i18n — Wave 2 (infrastructure in place from Day 1 via `next-intl`)
+- Native mobile app — indefinite
+- Employee badge scanning (RFID/NFC) — v1.1+
 
 ## Context
 
-- **Status:** Planning complete; no code written. Week 0 pre-flight (DNS, hardware, accounts, WiFi survey) is the current human-only gate before agent dispatches begin.
-- **Five audit passes** done before any code: PRD review, schema audit, module breakdown audit, auth flow audit, independent deep audit. All critical findings resolved and logged in `docs/DESIGN.md §12`.
-- **Build approach:** ~880 agent dispatches over 36 weeks using concurrent sub-agents. Wave 1 (Weeks 1-13) is the focus — scaffolding → auth → CRM → jobs → packets → scanner → timeline → portal → polish → deploy.
-- **Two-domain architecture:** `app.<tenant>.com` for internal operations (CRM + production tracking), `track.<tenant>.com` for customer-facing portal. Both served by one Next.js app via `src/proxy.ts` host detection.
-- **Hardware at Pops:** 6 wall-mounted iPads at workstations, one per stage. iPad camera used for QR scanning. Employees tap PIN on iPad, scan packet, tap button to advance job.
-- **Canonical docs:** `PRD.md` (what), `docs/DESIGN.md` (how — architecture, data model, auth flows), `docs/EXECUTION.md` (when — ~880 agent dispatches, weekly batches).
+- Pops Industrial Coatings is a powder coating shop currently running on paper travelers, phone calls, and spreadsheets. Lost jobs on the floor, no customer visibility, no timing data.
+- The strategic wedge: once customers expect live QR tracking, switching vendors means losing it. The portal is a retention moat.
+- Three audiences in Wave 1: **office staff** (CRM + job intake), **shop staff** (scanner only, PIN-based, glove-friendly UI), **customers** (magic-link portal, read-only).
+- Two domains: `app.popscoating.com` (internal) + `track.popscoating.com` (customer portal).
+- Hardware target: iPad Safari on workstation tablets — glove-friendly, high-contrast, WiFi-degradation resilient.
+- EXECUTION.md estimates Wave 1 at ~9-11 weeks with parallel agent dispatch (vs 12-13 solo).
+- GSD scope: **Wave 1 only** (Weeks 1-13). Re-plan Wave 2 after Wave 1 ships.
 
 ## Constraints
 
-- **Tech stack:** Next.js 16 (App Router, Server Actions), TypeScript strict, Tailwind v4 (CSS-first config), shadcn/ui, Supabase (Postgres + Auth + Realtime + Storage, Pro), Vercel Pro — no deviations without explicit decision
-- **Multi-tenant isolation:** Every business table has `tenant_id uuid not null references public.tenants(id)` + RLS policy using `app.tenant_id()` SECURITY DEFINER helper — bypassing RLS is never acceptable
-- **Auth library:** `@supabase/ssr` for cookie-based sessions; always use `supabase.auth.getUser()` (never `getSession()`) for auth decisions
-- **Package manager:** `pnpm` — never npm or yarn
-- **Module boundaries:** `src/modules/<name>/index.ts` is the only public surface; cross-module imports enforced via ESLint
-- **Wave 1 ship gate:** Week 13 — Pops live on platform, owner sign-off required
-- **Device target:** iPad Safari (shop floor); must work with dirty gloves, industrial lighting
+- **Stack (hard)**: Next.js 16 App Router, TypeScript strict, Tailwind v4, shadcn/ui, Supabase, Vercel Pro, Resend, Upstash Redis, Sentry — no deviations without an explicit decision
+- **Package manager**: pnpm only — no npm or yarn
+- **Auth**: always `supabase.auth.getUser()` for auth decisions; never `getSession()`; `cookies()` from `next/headers` is async
+- **RLS**: non-negotiable — every business table gets `tenant_id` + RLS policy; service-role usage gated to allowed modules only
+- **Production status**: direct UPDATE forbidden; transitions only via `app.record_scan_event()` SECURITY DEFINER function
+- **i18n**: English-only Wave 1; `next-intl` infrastructure in place from Day 1
+- **Multi-tenant**: `tenant_id` on every business table; `app.tenant_id()` SECURITY DEFINER helper reads JWT `app_metadata`
+- **Workstation session**: 1-hour TTL (stolen-tablet mitigation); office + customer = 30 days
+- **Photo upload**: canvas → JPEG 0.7, max 1024px longest edge
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Single Supabase instance, multi-tenant via `tenant_id` + RLS | Simpler ops at current scale vs separate schemas or DBs; RLS enforces isolation at query level | — Pending |
-| `jobs.production_status` REVOKE UPDATE; must go through `app.record_scan_event()` | Prevents accidental direct updates bypassing audit trail and state machine | — Pending |
-| Auth Hook injects `tenant_id` into JWT `app_metadata` | Claim available to RLS policies without per-request lookup; eliminates N+1 auth queries | — Pending |
-| `src/proxy.ts` (not `middleware.ts`) for host-based routing | Next.js 16 renamed the file; proxy.ts routes app.* vs track.* audiences | — Pending |
-| `cookies()` from `next/headers` is async in Next.js 16 | API changed in Next.js 16; `await cookies()` required everywhere | — Pending |
-| Workstation session TTL = 1 hour (vs 30 days for office/customer) | Stolen-tablet mitigation; tablet re-authenticates silently on expiry | — Pending |
-| `app.custom_access_token_hook` must not write to tables | Supabase Issue #29073 deadlock; user-row linking goes in a separate AFTER INSERT trigger | — Pending |
-| `supabase_auth_admin` must keep BYPASSRLS | Auth Hook depends on it; removing it breaks token injection | — Pending |
+| Multi-tenant via `tenant_id` + RLS (not separate schemas/DBs) | Simpler ops, single Supabase instance, Supabase Auth compatible | — Pending |
+| `production_status` column-level REVOKE | Prevents direct status bypasses; all transitions auditable via scan events | — Pending |
+| Workstation = synthetic Supabase user | Enables per-workstation JWT; avoids shared credentials | — Pending |
+| Magic-link portal auth (not OAuth) | Customers don't create accounts; zero friction | — Pending |
+| Any-to-any production transitions | Supports rework, multi-color back-passes, corrections without blocking flow | — Pending |
+| `src/proxy.ts` (not `middleware.ts`) | Next.js 16 renamed multi-domain/tenant routing middleware | — Pending |
+| GSD roadmap: Wave 1 only, coarse granularity | Ship something real at Week 13; re-plan Wave 2 based on learnings | — Pending |
 
 ## Evolution
 
