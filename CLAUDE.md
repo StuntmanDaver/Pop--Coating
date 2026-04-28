@@ -86,6 +86,26 @@ VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
 
 **Enforcement:** pipe evaluator output through [`scripts/check-verdict.sh`](scripts/check-verdict.sh) to verify the verdict line is well-formed before deciding to advance. Exit 0 = PASS, exit 1 = FAIL, exit 2 = format error (agent forgot the verdict line). See [`scripts/README.md`](scripts/README.md).
 
+## Optional runtime: ruflo (memory + swarm)
+
+The project optionally uses two [ruflo](https://github.com/ruvnet/ruflo) plugins for orchestration features. Installation is **user-side** (Claude Code plugin marketplace), not in the repo. See [`docs/runbooks/ruflo-install.md`](docs/runbooks/ruflo-install.md) for setup.
+
+**Installed plugins (when used):**
+
+- `ruflo-core` — provides `mcp__claude-flow__memory_usage` for persistent memory across dispatches.
+- `ruflo-swarm` — provides `mcp__claude-flow__swarm_init` / `agent_spawn` / `task_orchestrate` / `swarm_status` for parallel batch coordination.
+
+**Other ruflo plugins are deliberately not installed** (autopilot, intelligence, agentdb, aidefence, browser, jujutsu, wasm, workflows). Adding any of them requires a project decision (ADR).
+
+**ruflo is optional.** All 23 agents in `.claude/agents/` work without ruflo. Use the MCP tools when one of these patterns applies (full guide in the runbook):
+
+- **Memory:** caching expensive lookups across dispatches in a wave; carrying decisions from earlier dispatches forward; wave-to-wave continuity for things not captured in canonical docs.
+- **Swarm:** parallel batches that need shared state (independent parallel batches use the standard `Agent` tool batching, not swarm).
+
+**Don't put in ruflo memory** what belongs in canonical docs (PRD/DESIGN/EXECUTION), wave contracts, or weekly briefs. Memory is for ephemeral cross-dispatch hints, not source-of-truth content.
+
+**Memory key namespace convention:** `<wave>/<week>/<agent>/<topic>` (e.g., `wave1/week4/schema-writer/jobs-table-decisions`). Wave-end retrospectives prune stale entries.
+
 ## Repo state
 
 - **No application code yet.** Wave 1 Week 0 pre-flight is next.
@@ -96,6 +116,8 @@ VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
 - `docs/superpowers/templates/` — reusable templates (wave contracts, etc.).
 - `docs/briefs/` — per-week dispatch briefs produced by `phase-planner`.
 - `docs/contracts/` — per-wave contracts (filled from template; user-signed before wave starts).
+- `docs/runbooks/` — operational runbooks (ruflo install, future DR/incident-response).
+- `scripts/` — bash utilities (verdict parser + tests).
 
 ## What NOT to do
 
