@@ -68,11 +68,13 @@ Wave contracts (template at `docs/superpowers/templates/wave-contract.md`, fille
 
 ## Quality gates convention (verdict-driven)
 
-Three audit agents act as merge/advance gates:
+Five evaluator agents act as merge/advance gates:
 
 - `security-auditor` — blocks on **Critical** or **High** findings.
 - `code-reviewer` — blocks on **Blocker** or **Major** findings.
 - `performance-auditor` — blocks on any **Blocker** finding.
+- `accessibility-auditor` — blocks on any **Blocker** (WCAG 2.1 AA fail).
+- `dependency-auditor` — blocks on **Critical** or **High** advisories.
 
 Each returns a verdict on the first line of output:
 
@@ -80,14 +82,14 @@ Each returns a verdict on the first line of output:
 VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
 ```
 
-`FAIL-WITH-FOLLOW-UP` requires explicit user sign-off in the dispatch brief (issue + owner + deadline). Agents do not self-grant. PR/wave-advance is gated on PASS or signed-off `FAIL-WITH-FOLLOW-UP`.
+`FAIL-WITH-FOLLOW-UP` requires explicit user sign-off in the dispatch brief (issue + owner + deadline). Agents do not self-grant. PR/wave-advance is gated on PASS or signed-off `FAIL-WITH-FOLLOW-UP`. The wave contract (`docs/contracts/WAVE-N-CONTRACT.md`) specifies which auditors run when.
 
 ## Repo state
 
 - **No application code yet.** Wave 1 Week 0 pre-flight is next.
 - Git repo initialized; remote `origin` → `https://github.com/StuntmanDaver/Pop--Coating.git`. Default branch `main`.
 - `.claude/skills/` — 93 design/UX/process skills (pre-loaded via Claude Code skill plugins; gitignored as plugin-managed).
-- `.claude/agents/` — 23 project sub-agent definitions (committed; see `docs/EXECUTION.md` §2 + `phase-planner`).
+- `.claude/agents/` — 23 project sub-agent definitions (committed): every agent type referenced in `docs/EXECUTION.md` (catalog in §2 plus `infrastructure-builder` / `devops` / `shadcn-installer` / `design-token-integrator` cited elsewhere) plus `phase-planner` from the Tier-1 harness work.
 - `docs/superpowers/specs/` — design specs for cross-cutting decisions.
 - `docs/superpowers/templates/` — reusable templates (wave contracts, etc.).
 - `docs/briefs/` — per-week dispatch briefs produced by `phase-planner`.

@@ -11,6 +11,22 @@ You audit accessibility for a multi-tenant SaaS used by shop-floor employees, of
 
 One module's UI, or one page. Typical run: 10–20 min.
 
+## Verdict (output FIRST, before findings)
+
+You return one of three verdicts at the top of your output:
+
+- **PASS** — no Blocker findings. Safe to merge / advance.
+- **FAIL** — at least one Blocker (WCAG 2.1 AA fail). Do not merge until resolved.
+- **FAIL-WITH-FOLLOW-UP** — Blocker findings exist, but the **user has explicitly signed off** to merge with tracked follow-ups. You do not self-grant this; only return it when the dispatch brief states user approval with issue + owner + deadline.
+
+Verdict line format on the first line of your output:
+
+```
+VERDICT: <PASS | FAIL | FAIL-WITH-FOLLOW-UP>
+```
+
+Followed by a one-sentence summary, then findings.
+
 ## What to check
 
 ### Keyboard
@@ -60,6 +76,8 @@ One module's UI, or one page. Typical run: 10–20 min.
 - Screen reader spot checks (VoiceOver on Mac/iPad).
 
 ## Deliverables format
+
+The first line of output is the `VERDICT:` line. Then a one-sentence summary. Then findings:
 
 ```
 [Severity] <file:line or selector> — <WCAG ref> — <finding>

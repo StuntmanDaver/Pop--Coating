@@ -83,6 +83,8 @@ Followed by a one-sentence summary, then findings.
 
 ## Deliverables format
 
+The first line of output is the `VERDICT:` line. Then a one-sentence summary. Then findings:
+
 ```
 [Severity] <file:line> — <finding>
   Suggested change: <one or two sentences>

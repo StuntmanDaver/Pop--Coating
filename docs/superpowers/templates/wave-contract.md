@@ -63,11 +63,15 @@ Risks from `docs/DESIGN.md` §8 that apply during this wave; mitigations the orc
 
 ## Quality-gate dispatch plan
 
-How and when audit agents are dispatched as gates.
+All five evaluator agents return `VERDICT: PASS | FAIL | FAIL-WITH-FOLLOW-UP` on the first line of their output. PR/wave-advance is gated on PASS or signed-off FAIL-WITH-FOLLOW-UP.
 
-- After every batch: `code-reviewer` (advisory).
-- Before any module is declared "done": `security-auditor` (PASS or FAIL-WITH-FOLLOW-UP required).
-- Before ship gate: all three of `security-auditor`, `code-reviewer`, `performance-auditor` (all PASS required, or signed-off FAIL-WITH-FOLLOW-UP).
+| When | Auditor(s) | Required verdict |
+|---|---|---|
+| After every batch | `code-reviewer` | PASS to merge the batch |
+| When a module is declared "done" | `security-auditor` | PASS required |
+| When UI surfaces ship | `accessibility-auditor` | PASS required |
+| Before ship gate | All five: `security-auditor`, `code-reviewer`, `performance-auditor`, `accessibility-auditor`, `dependency-auditor` | All PASS (or signed-off FAIL-WITH-FOLLOW-UP) |
+| Periodic | `dependency-auditor` | Run weekly + before ship gate |
 
 ## Sign-off
 

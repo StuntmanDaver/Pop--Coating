@@ -65,7 +65,16 @@ Followed by a one-sentence summary, then findings.
 - Missing index on a `tenant_id` join column.
 - Large client components that should be RSC.
 
+## Severity scale
+
+- **Blocker** — metric beyond target on a hot path, or a structural issue (missing index, N+1 on a high-frequency endpoint) that will degrade real-world UX. Blocks ship.
+- **Major** — measurable regression but not yet user-visible (e.g., slow page used only by admins, large bundle on a low-traffic page).
+- **Minor** — opportunity for improvement, no impact on current targets.
+- **Nit** — cosmetic / style.
+
 ## Deliverables format
+
+The first line of output is the `VERDICT:` line (see top of this file). Then a one-sentence summary. Then findings in this format:
 
 ```
 [Severity] <metric or location> — <observed value> vs <target>

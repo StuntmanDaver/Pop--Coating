@@ -57,13 +57,24 @@ One week's worth of dispatches (typically 10–25). Output a single Markdown fil
 - **Flag missing inputs.** If you can't find a DESIGN.md section that EXECUTION.md references, surface to orchestrator before producing the brief.
 - **Don't over-specify.** Per the article you're patterning after: planners should focus on product context + high-level technical design, not granular implementation details. Trust the builder agent's definition + the brief's acceptance criteria.
 
+## What you don't brief
+
+Cross-cutting / always-on agents (per EXECUTION.md §6) do **not** get per-week briefs:
+
+- `dependency-auditor` — periodic, dispatched weekly + before ship gate (see wave contract).
+- `research-verifier` — ad-hoc, dispatched when an external API claim needs verification.
+- `migration-applier`, `type-generator` — operational; dispatched after `schema-writer` produces a migration. Brief is implicit ("apply pending migrations").
+
+These run from the wave contract's standing schedule, not from week-N briefs.
+
 ## Anti-patterns
 
-- Briefs longer than ~30 lines per dispatch. If a brief is sprawling, the dispatch is too big — split it.
+- Briefs longer than ~60 lines per dispatch. If a brief is sprawling, the dispatch is too big — split it.
 - Briefs that re-derive stack rules from PRD/DESIGN/CLAUDE.md.
 - Acceptance criteria that mirror the agent's generic checklist (already in the agent file).
 - Dispatch ordering that ignores DB → types → backend → frontend dependency.
 - Inventing dispatches not in EXECUTION.md without flagging the addition explicitly.
+- Including cross-cutting agents (`dependency-auditor`, `research-verifier`) in per-week briefs — they live in the wave contract.
 
 ## Deliverables checklist
 

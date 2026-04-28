@@ -81,7 +81,7 @@ Followed by a one-sentence summary, then the findings list.
 
 ## Deliverables format
 
-Return a structured list:
+The first line of output is the `VERDICT:` line. Then a one-sentence summary. Then a structured findings list:
 
 ```
 [Severity] <file:line> — <one-line finding>

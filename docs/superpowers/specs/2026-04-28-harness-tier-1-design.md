@@ -76,7 +76,9 @@ Filled instances: `docs/contracts/WAVE-N-CONTRACT.md` (per wave; written before 
 
 ### 4.3 Audit agents → gates (verdict output)
 
-Edit `code-reviewer.md`, `security-auditor.md`, `performance-auditor.md`. Add a new top-of-output **Verdict** section before findings:
+All **five** evaluator agents updated: `code-reviewer.md`, `security-auditor.md`, `performance-auditor.md`, `accessibility-auditor.md`, `dependency-auditor.md`. (Initially specced as three; extended to five during Round-6 audit — the article's evaluator pattern applies to every grading agent, and partial coverage was a consistency bug.)
+
+Each gets a top-of-output **Verdict** section before findings:
 
 - **PASS** — no findings at the agent's blocking severity. Safe to merge / advance.
 - **FAIL** — at least one finding at blocking severity. Do not merge / advance until resolved.
@@ -86,9 +88,11 @@ Edit `code-reviewer.md`, `security-auditor.md`, `performance-auditor.md`. Add a 
 
 - `security-auditor`: any **Critical** or **High**.
 - `code-reviewer`: any **Blocker** or **Major**.
-- `performance-auditor`: any metric beyond stated target (LCP, CLS, INP, query timing) that the agent flagged at Blocker.
+- `performance-auditor`: any **Blocker** (added explicit severity scale during Round-6 — wasn't defined before).
+- `accessibility-auditor`: any **Blocker** (WCAG 2.1 AA fail).
+- `dependency-auditor`: any **Critical** or **High** advisory (added explicit severity scale during Round-6).
 
-**Convention:** before any wave ship gate, dispatch all three; require PASS (or FAIL-WITH-FOLLOW-UP signed off by user).
+**Convention:** before any wave ship gate, dispatch all five; require PASS (or FAIL-WITH-FOLLOW-UP signed off by user). Per-batch / per-module gates use a subset (see wave contract template's "Quality-gate dispatch plan").
 
 ## 5. CLAUDE.md updates
 
@@ -125,8 +129,28 @@ Add two short sections:
 .claude/agents/phase-planner.md                                            [new]
 .claude/agents/code-reviewer.md                                            [edit: add Verdict]
 .claude/agents/security-auditor.md                                         [edit: add Verdict]
-.claude/agents/performance-auditor.md                                      [edit: add Verdict]
+.claude/agents/performance-auditor.md                                      [edit: add Verdict + severity scale (Round 6)]
+.claude/agents/accessibility-auditor.md                                    [edit: add Verdict (Round 6)]
+.claude/agents/dependency-auditor.md                                       [edit: add Verdict + severity scale (Round 6)]
 docs/superpowers/templates/wave-contract.md                                [new]
 docs/superpowers/specs/2026-04-28-harness-tier-1-design.md                 [new — this file]
 CLAUDE.md                                                                  [edit: planner + verdict sections]
+docs/briefs/.gitkeep                                                       [new]
+docs/contracts/.gitkeep                                                    [new]
 ```
+
+## 10. Round-6 audit findings (resolved)
+
+After initial commit, deeper audit found 9 issues:
+
+| # | Severity | Issue | Resolution |
+|---|---|---|---|
+| 1 | Critical | `performance-auditor` verdict referenced "Blocker" but no severity scale defined | Added explicit Blocker/Major/Minor/Nit scale |
+| 2 | Major | `accessibility-auditor` is an evaluator but had no verdict | Added verdict block (PASS/FAIL/FAIL-WITH-FOLLOW-UP) |
+| 3 | Major | `dependency-auditor` is an evaluator but had no formal severity scale or verdict | Added Critical/High/Medium/Low scale + verdict block |
+| 4 | Major | Wave-contract template only mentioned 3 of 5 evaluators | Updated "Quality-gate dispatch plan" table to cover all 5 with timing |
+| 5 | Major | Spec §4.3 listed only 3 audit agents updated | Updated to 5; documented as Round-6 extension |
+| 6 | Major | All 5 audit agents' "Deliverables format" sections didn't reference verdict-first ordering | Each section now opens with "first line is the VERDICT: line" |
+| 7 | Minor | `phase-planner` brief-length cap of 30 lines too tight for realistic dispatches | Adjusted to 60 lines |
+| 8 | Minor | `phase-planner` didn't address always-on agents | Added "What you don't brief" section listing `dependency-auditor`, `research-verifier`, `migration-applier`, `type-generator` |
+| 9 | Minor | CLAUDE.md repo-state phrasing "EXECUTION.md §2 + phase-planner" was inaccurate (§2 lists only 18) | Rewrote: "every agent type referenced in EXECUTION.md (catalog in §2 plus 4 cited elsewhere) plus phase-planner" |
