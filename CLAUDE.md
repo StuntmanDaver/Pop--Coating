@@ -57,14 +57,14 @@ Source of truth: [`docs/EXECUTION.md` §1](docs/EXECUTION.md). Summary:
 
 ## Repo state
 
-- **No code yet.** Wave 1 Week 0 pre-flight is next. Not a git repo yet (init happens in Week 0).
-- `.claude/skills/` — 93 design/UX/process skills (pre-loaded via Claude Code skill plugins).
-- `.claude/agents/` — project sub-agent definitions (this file's catalog).
+- **No application code yet.** Wave 1 Week 0 pre-flight is next.
+- Git repo initialized; remote `origin` → `https://github.com/StuntmanDaver/Pop--Coating.git`. Default branch `main`.
+- `.claude/skills/` — 93 design/UX/process skills (pre-loaded via Claude Code skill plugins; gitignored as plugin-managed).
+- `.claude/agents/` — 22 project sub-agent definitions (committed; see `docs/EXECUTION.md` §2).
 - `docs/superpowers/specs/` — design specs for cross-cutting decisions.
 
 ## What NOT to do
 
-- Don't `git init` or commit yet — Week 0 pre-flight handles repo bootstrap deliberately.
 - Don't introduce dependencies outside the stack listed above without surfacing it as a decision.
 - Don't write code yet. The current phase is planning + tooling.
 - Don't bypass RLS. Ever. If you think you need to, you don't — you need an audited admin path.
