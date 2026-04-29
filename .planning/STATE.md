@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: Not started
+last_updated: "2026-04-29T18:34:12.371Z"
+progress:
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+---
+
 # Project State: Pops Industrial Coatings — Operations Platform (Wave 1)
 
 ## Project Reference
@@ -17,6 +30,7 @@
 **Status:** Not started
 
 **Progress:**
+
 ```
 Phase 1 [----------] 0%  Foundation
 Phase 2 [----------] 0%  Core Data
@@ -74,6 +88,7 @@ Phase 4 [----------] 0%  Portal & Ops
 **Next action:** Run `/gsd-plan-phase 1` to decompose Phase 1 (Foundation) into executable plans
 
 **Context for next session:**
+
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Phase 1 is a pure infrastructure/auth phase — no UI components, no business logic
 - The `app.tenant_id()` SECURITY DEFINER helper and the custom access token hook are the most architecturally critical items in Phase 1
