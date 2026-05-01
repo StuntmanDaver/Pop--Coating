@@ -28,7 +28,13 @@
   3. A workstation tablet can be enrolled via admin QR ceremony and then authenticates with a 1-hour session; attempting to authenticate on the office domain with workstation credentials is rejected
   4. A customer can receive a magic link and reach `track.popscoating.com` scoped only to their company's data; office credentials do not work on the portal domain
   5. Any SQL query from the `authenticated` role that omits `tenant_id` returns zero rows from any business table — cross-tenant data cannot leak even without application-level filtering
-**Plans**: TBD
+**Plans**: 6 plans
+  - [ ] 01-01-PLAN.md — Repo scaffold: Next.js 16 + Tailwind v4 + shadcn/ui + ESLint module-boundary + service-role gating + i18n + folder structure (INFRA-01, INFRA-07 partial)
+  - [ ] 01-02-PLAN.md — DB migrations 0001–0006: app schema helpers + tenants/auth/CRM/jobs tables + RLS policies (INFRA-03, INFRA-06)
+  - [ ] 01-03-PLAN.md — DB migrations 0007–0010: custom_access_token_hook (STABLE/no-write) + production_status REVOKE + workstation lifecycle SECURITY DEFINER + link_auth_user_to_actor trigger (AUTH-04, INFRA-06)
+  - [ ] 01-04-PLAN.md — Supabase clients + auth-helper guards + src/proxy.ts multi-domain routing + Upstash rate limiters + Sentry (INFRA-04, INFRA-05, AUTH-05)
+  - [ ] 01-05-PLAN.md — auth module (sign-in, sign-out, magic-link) + createWorkstation server action + sign-in UI + portal callback + module stubs (AUTH-01, AUTH-02, AUTH-03, AUTH-05)
+  - [ ] 01-06-PLAN.md — pgTAP RLS suite + GitHub Actions CI + scripts/seed-tenant.ts + supabase/seed.sql + [BLOCKING] supabase db push + live Tenant 1 bootstrap + Resend/Vercel/Sentry config + [A1] TTL verification + Phase 1 success-criteria sign-off (INFRA-02, INFRA-04, INFRA-07, AUTH-01–04)
 
 ### Phase 2: Core Data
 **Goal**: Office staff can manage the full customer record (company, contacts, activities, tags) and create and track jobs through intake stages with QR-ready printed packets
@@ -75,7 +81,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/0 | Not started | - |
+| 1. Foundation | 0/6 | Not started | - |
 | 2. Core Data | 0/0 | Not started | - |
 | 3. Shop Floor | 0/0 | Not started | - |
 | 4. Portal & Ops | 0/0 | Not started | - |
