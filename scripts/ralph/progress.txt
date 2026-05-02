@@ -2,6 +2,15 @@
 Started: 2026-05-01
 ---
 
+## Context Checkpoint (US-016 in progress — pgTAP failures found)
+- US-001 through US-015 are all marked passing and committed.
+- US-016 pgTAP tests FAIL — two root causes found:
+  1. jwt_helpers functions must be called BEFORE `SET ROLE authenticated` (not after — comment says this but tests do it wrong)
+  2. `authenticated` has table-level UPDATE on jobs (Supabase auto-grants). REVOKE UPDATE (production_status) FROM authenticated is a no-op because table-level grant overrides. Fix: REVOKE UPDATE ON jobs FROM authenticated + GRANT UPDATE (specific_cols) back.
+  3. supabase_auth_admin has rolbypassrls=false in local dev (may need to SET ROLE to check from postgres user, not inside pgTAP transaction).
+- US-017 (CI), US-018 (seed scripts) — not yet verified.
+- Next Ralph iteration should: fix test ordering (SET ROLE after set_jwt_*), fix migration 0008 to use full table REVOKE + column GRANTs.
+
 ## Codebase Patterns
 - Migrations are numbered 0001–NNNN in supabase/migrations/; run `pnpm supabase db reset` to verify all apply cleanly.
 - `pnpm type-check` calls `tsc --noEmit`; `pnpm lint` calls `eslint src && pnpm madge:check`.
