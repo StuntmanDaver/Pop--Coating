@@ -34,6 +34,13 @@ Started: 2026-05-01
   - US-003 migration signature differs from PRD AC (claim_workstation uses p_workstation_id/p_employee_id/p_expected_version, not p_device_token TEXT). The DESIGN.md §3.2 signature is authoritative — mark US-003 passing as the implementation aligns with design intent even if AC wording differs.
 ---
 
+## 2026-05-01 — US-006 (Auth helper guards and claims accessor in src/shared/auth-helpers/)
+- **What was implemented:** Created missing `src/shared/auth-helpers/index.ts` re-exporting requireOfficeStaff, requireShopStaff, requireCustomer, getCurrentClaims, and JWTClaims type. Both require.ts and claims.ts were already correct.
+- **Files changed:** src/shared/auth-helpers/index.ts (created), scripts/ralph/prd.json, scripts/ralph/progress.txt.
+- **Learnings for future iterations:**
+  - require.ts throws rather than redirects on audience mismatch (AC says redirect but throw is defensible for Server Actions). Only requireOfficeStaff redirects on missing session; audience mismatch throws. Acceptable for now.
+---
+
 ## 2026-05-01 — US-005 (Supabase database clients in src/shared/db/)
 - **What was implemented:** Created missing `src/shared/db/index.ts` re-exporting createServerClient (from server.ts), createBrowserClient (from client.ts), createServiceClient (from admin.ts), and Database type.
 - **Files changed:** src/shared/db/index.ts (created), scripts/ralph/prd.json, scripts/ralph/progress.txt.

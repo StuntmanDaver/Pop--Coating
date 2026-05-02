@@ -109,7 +109,7 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Read DESIGN.md §4.4 for the exact function signatures expected by downstream modules. Guards redirect (not throw) on failure."
     },
     {
