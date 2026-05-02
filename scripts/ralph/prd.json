@@ -36,7 +36,7 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Single-line migration. Keep it minimal — do not add anything else to this file."
     },
     {
