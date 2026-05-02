@@ -1,0 +1,28 @@
+# Ralph Progress Log
+Started: 2026-05-01
+---
+
+## Codebase Patterns
+- Migrations are numbered 0001–NNNN in supabase/migrations/; run `pnpm supabase db reset` to verify all apply cleanly.
+- `pnpm type-check` calls `tsc --noEmit`; `pnpm lint` calls `eslint src && pnpm madge:check`.
+- Both typecheck and lint passed from the start — the codebase is clean before Ralph began.
+- Supabase local dev is already running (`pnpm supabase status`); no need to `supabase start`.
+- The branch for this run is `ralph/foundation-completion` (created from main at start of iteration 1).
+
+---
+
+## 2026-05-01 — US-001 (Custom access token hook migration 0007)
+- **What was verified:** migration 0007_auth_hook.sql already existed and was correct. All 10 acceptance criteria passed.
+  - Function declared STABLE, no DML statements, reads staff → workstations → customer_users, stamps tenant_id/audience/role.
+  - GRANT EXECUTE to supabase_auth_admin, REVOKE from authenticated/anon/public, GRANT SELECT on tables.
+  - No ALTER ROLE statement (BYPASSRLS preserved).
+  - `pnpm supabase db reset` applied migrations 0001-0010 without error.
+  - `pnpm type-check` passes. `pnpm lint` passes.
+- **Files changed:** scripts/ralph/prd.json (passes: true for US-001), scripts/ralph/progress.txt (this file, created).
+- **Learnings for future iterations:**
+  - Migrations 0001-0010 are all pre-built and verified. US-002 through US-004 also have their migrations in place.
+  - Missing from db/: `src/shared/db/index.ts` (needed by US-005).
+  - Missing from auth-helpers/: `src/shared/auth-helpers/index.ts` (needed by US-006).
+  - create-workstation.ts action doesn't exist yet (US-014).
+  - pgTAP tests, CI workflow, seed scripts also need to be created.
+---
