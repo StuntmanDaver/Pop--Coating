@@ -91,7 +91,7 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "NEVER use getSession() anywhere in these files — always getUser(). cookies() from next/headers is async; always await it. Read CLAUDE.md stack constraints before writing."
     },
     {
