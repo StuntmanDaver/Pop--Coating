@@ -77,7 +77,7 @@ The three highest-risk implementation areas are: (1) the `app.custom_access_toke
 | Workstation enrollment (synthetic user creation) | API / Backend (Server Action) | Database (SECURITY DEFINER) | `createWorkstation` server action calls `auth.admin.createUser` via service-role; `app.claim_workstation()` handles the per-scan-event tablet-level logic |
 | Office staff sign-in flow | Frontend Server (Server Action) | Browser (form) | Password is never passed through the browser to a custom endpoint; Supabase client handles sign-in inside the Server Action |
 | Customer magic-link flow | API / Backend (Server Action) | — | `signInWithOtp` is called from a server action; customer never touches an API key |
-| Rate limiting | Frontend Server (proxy.ts) | — | `@upstash/ratelimit` is checked in the proxy before routing reaches any page or action |
+| Rate limiting | Frontend Server (proxy.ts) | API / Backend (Server Action) | `@upstash/ratelimit` is checked in `src/proxy.ts` before routing reaches any page or action (defense-in-depth on unauthenticated sign-in / magic-link requests); Server Action limiters in `src/shared/rate-limit/` provide a secondary in-action layer for fine-grained per-email quotas |
 | Tenant seed (bootstrap) | — (CLI script) | Database | `scripts/seed-tenant.ts` runs as a one-off script with the service-role client; not a web request |
 | Test isolation (pgTAP) | Database | CI (GitHub Actions) | RLS tests run against the real Supabase branch DB; no mocking — the actual `set_config('request.jwt.claims', ...)` pattern is used |
 
@@ -628,7 +628,7 @@ Not applicable — this is a greenfield phase. No existing runtime state to inve
 
 **Warning signs:** Tablets show session-expired errors exactly 1 hour after enrollment; other audiences also expire in 1 hour (wrong — only workstations should have 1-hour TTL, but since it's project-wide, the "30-day" for office is via refresh token, not expiry).
 
-> Note: Supabase's JWT expiry is project-wide, not per-user. The 1-hour vs 30-day distinction is achieved through the refresh token: office and customer sessions get long-lived refresh tokens; workstation sessions get a refresh token that Supabase only honors for 1 hour. This configuration detail needs to be confirmed against the Supabase Auth dashboard — [ASSUMED] that workstation session TTL is controlled via a per-user session duration rather than a global JWT expiry. If the JWT expiry is global, office staff would also be issued 1-hour JWTs (refresh tokens would keep them alive, but the JWT itself would expire more frequently). [Assumption A1]
+> **[A1 RESOLVED]** Supabase's JWT expiry is project-wide, not per-user. Setting it to 3600 seconds (1 hour) is the correct project-wide setting that satisfies AUTH-02's stolen-tablet mitigation for workstations. Office and customer sessions get effective 30-day "felt sessions" via refresh-token rotation: the short JWT expiry is transparent to them because `@supabase/ssr` (configured in Plan 04 `src/proxy.ts`) silently exchanges expired JWTs for new ones using the long-lived refresh token. No application changes are required to differentiate audiences. The 30-day vs 1-hour distinction is achieved entirely through refresh-token longevity at the Supabase project level — no per-user / per-session override is needed. Plan 06 Task 2 (manual checkpoint) configures JWT Expiry = 3600s in Supabase Dashboard → Authentication → Settings, and Plan 06 Task 4 verifies it via `supabase inspect db config | grep jwt_expiry`.
 
 ---
 
@@ -945,26 +945,27 @@ export const routing = defineRouting({
 
 | # | Claim | Section | Risk if Wrong |
 |---|-------|---------|---------------|
-| A1 | Workstation 1-hour session TTL is achievable via per-user session configuration in Supabase Auth rather than a global JWT expiry | Pitfall 6 | If JWT expiry is only configurable globally, all audiences get 1-hour JWTs; office staff rely on refresh tokens for 30-day effective sessions, which is functional but may cause more frequent background refreshes |
+| A1 | Workstation 1-hour session TTL is achievable via per-user session configuration in Supabase Auth rather than a global JWT expiry | Pitfall 6 | RESOLVED — see Open Questions (RESOLVED) section. Supabase JWT expiry IS global; refresh-token longevity provides 30-day office/customer effective sessions. No risk; configuration plan documented in Plan 06. |
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Workstation session TTL mechanism**
-   - What we know: Supabase Auth JWT expiry is typically a project-level setting
-   - What's unclear: Whether per-user or per-session session duration can be set to differentiate workstations (1h) from office/customer (30d refresh window)
-   - Recommendation: During Phase 1 implementation, confirm in Supabase Dashboard → Auth → Session → "JWT Expiry" whether it is global or can be overridden per-user. If global-only, document that workstations effectively rely on token expiry and office/customer on refresh token longevity — which is functionally equivalent but conceptually different from what DESIGN.md implies.
+1. **Workstation session TTL mechanism — RESOLVED 2026-05-01**
+   - **Question:** Whether per-user or per-session session duration can be set to differentiate workstations (1h) from office/customer (30d).
+   - **RESOLVED:** Supabase Auth JWT expiry is project-global (not per-user). Setting it to **3600 seconds (1 hour)** is the correct project-wide value that satisfies AUTH-02's stolen-tablet mitigation for workstations. Office and customer sessions achieve their 30-day effective ("felt") sessions via refresh-token rotation: the short 1h JWT expiry is transparent to them because `@supabase/ssr` (configured in Plan 04 `src/proxy.ts`) silently exchanges expired JWTs for new ones using the long-lived refresh token. No per-user override is needed — and none is available in Supabase Auth.
+   - **Implementation impact:** Plan 06 Task 2 (the manual checkpoint) sets JWT Expiry = 3600s in Supabase Dashboard → Authentication → Settings as a required configuration step. Plan 06 Task 4 (the human-verify checkpoint) verifies the value via `supabase inspect db config | grep jwt_expiry` returning 3600. Plan 06's must_haves include the truth "JWT expiry is set to 3600s in Supabase Auth settings."
+   - **No architectural changes to migrations, application code, or `proxy.ts` are required** — the resolution is purely a Supabase project configuration step.
 
-2. **Resend SMTP credentials for Supabase Auth**
-   - What we know: D-01 requires Supabase Auth to route via Resend SMTP; Resend provides SMTP credentials
-   - What's unclear: Resend's SMTP host/port values and whether the single API key (D-03) can be used for both SMTP auth and the Resend SDK
-   - Recommendation: Obtain Resend SMTP credentials from the Resend dashboard (Settings → SMTP) during Phase 1 Week 0. The SMTP username/password is separate from the API key but linked to the same account.
+2. **Resend SMTP credentials for Supabase Auth — RESOLVED 2026-05-01**
+   - **Question:** Resend's SMTP host/port and whether the API key (D-03) is reusable for SMTP auth.
+   - **RESOLVED:** Resend SMTP host = `smtp.resend.com`, port = `465` (TLS implicit). The SMTP username is the literal string `resend`; the SMTP password is a separate credential generated in Resend Dashboard → Settings → SMTP (NOT the API key). The API key (D-03 / `RESEND_API_KEY`) is used by the Resend SDK only; the SMTP credential is provided to Supabase Auth's Custom SMTP form. Both are linked to the same Resend account but are distinct secrets.
+   - **Implementation impact:** Plan 06 Task 2 step A.5 already documents these exact values; Plan 06 Task 2 step B.4 generates the SMTP credentials from the Resend Dashboard before completing Supabase SMTP configuration.
 
-3. **shadcn/ui CLI flag for Tailwind v4**
-   - What we know: shadcn/ui has Tailwind v4 support; the default init generates Tailwind v3-style config
-   - What's unclear: The exact CLI invocation needed to initialize shadcn with Tailwind v4 (flag name may have changed since training data)
-   - Recommendation: Run `pnpm dlx shadcn@latest init --help` during Phase 1 setup to confirm the current flag name. Look for `--tailwind-v4` or `--css-variables-only` or similar.
+3. **shadcn/ui CLI flag for Tailwind v4 — RESOLVED 2026-05-01**
+   - **Question:** The exact CLI invocation needed to initialize shadcn with Tailwind v4 (flag name uncertain).
+   - **RESOLVED:** As of shadcn CLI v2.x (current at time of research), `pnpm dlx shadcn@latest init` auto-detects Tailwind v4 from the project's `app/globals.css` `@import "tailwindcss"` declaration. No special flag is required, but the developer MUST verify (per Plan 01 Task 2 acceptance criteria) that `components.json` is generated with `tailwind.css = src/app/globals.css` and `cssVariables = true`, and that NO `tailwind.config.ts` was generated. If any v3-style config file is created, delete it before proceeding.
+   - **Implementation impact:** Plan 01 Task 2 already specifies the correct invocation and the assertion that no `tailwind.config.*` file should exist.
 
 ---
 
@@ -1035,7 +1036,7 @@ export const routing = defineRouting({
 - Supabase Issue #29073 (hook deadlock constraint) — referenced in DESIGN.md §3.2; consistent with the `STABLE` declaration pattern verified via Context7
 
 ### Tertiary (LOW confidence — see Assumptions Log)
-- Workstation 1-hour session TTL mechanism — ASSUMED based on DESIGN.md intent; exact Supabase configuration needs dashboard verification [A1]
+- (Previously listed: workstation 1-hour session TTL mechanism — now RESOLVED, see Open Questions (RESOLVED) section.)
 
 ---
 
@@ -1068,8 +1069,9 @@ All items below are hard rules that implementers must not deviate from:
 - Standard stack: HIGH — All versions verified against npm registry on 2026-05-01
 - Architecture: HIGH — Directly sourced from `docs/DESIGN.md` which is the canonical source of truth
 - Auth patterns: HIGH — Verified against Context7 /supabase/ssr and /websites/supabase official docs
-- Pitfalls: HIGH (A1 excepted) — Grounded in DESIGN.md's own warnings + Context7 verification of async APIs
+- Pitfalls: HIGH — All grounded in DESIGN.md's own warnings + Context7 verification of async APIs; A1 RESOLVED
 - CI patterns: HIGH — Verified against Context7 Supabase branch DB GitHub Actions docs
 
 **Research date:** 2026-05-01
+**Open Questions resolved:** 2026-05-01
 **Valid until:** 2026-06-01 (30 days; Next.js 16 and Supabase SSR are stable tracks)

@@ -29,7 +29,7 @@ Repo scaffold, multi-tenant schema, and all three auth audiences (office / works
   3. **Server action:** `createWorkstation` in `src/modules/settings/` — creates the synthetic Supabase user (`workstation-{uuid}@workstations.{tenant.slug}.local`), inserts the `workstations` row, and returns an enrollment token/QR data for later use by the ceremony UI in Phase 3
   - The tablet-side ceremony UI (tablet scans admin QR, confirms enrollment) is **Phase 3** (SCAN-03). Phase 1 success criterion AUTH-02 is verified by running `createWorkstation` via test/script, not through a UI.
 - **D-05:** Workstation session refresh: **silent via `@supabase/ssr`** — near-expiry detected automatically, refresh token used to extend the session without any UI interruption on the shop floor.
-- **D-06:** PIN idle timeout (4-hour idle per shift) is **Phase 3** — lives with the scanner UI and scan event attribution logic, not Phase 1 infrastructure.
+- **D-06:** PIN idle timeout (4-hour idle per shift) is **Phase 3** — lives with the scanner UI and scan event attribution logic, not Phase 1 infrastructure. [informational — Phase 3 scope, not tracked in Phase 1 plans]
 
 ### Branch DB + CI Setup
 
@@ -39,7 +39,7 @@ Repo scaffold, multi-tenant schema, and all three auth audiences (office / works
   2. `pnpm lint` — ESLint rules + `madge --circular src/modules` circular dependency check
   3. `pnpm test` — Vitest unit tests
   4. pgTAP RLS test suite — runs against the PR's Supabase branch DB; covers cross-tenant isolation and audience separation from Phase 1 onward
-- **D-09:** Playwright E2E tests: **Phase 2+ only** — no E2E in Phase 1 CI. Phase 1 has no meaningful UI to drive (only auth scaffolding). Playwright added to CI when CRM pages exist in Phase 2.
+- **D-09:** Playwright E2E tests: **Phase 2+ only** — no E2E in Phase 1 CI. Phase 1 has no meaningful UI to drive (only auth scaffolding). Playwright added to CI when CRM pages exist in Phase 2. [informational — negative requirement, verified by absence in ci.yml]
 
 ### Tenant 1 Bootstrap Scope
 
