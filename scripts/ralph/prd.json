@@ -54,7 +54,7 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Read DESIGN.md §3.2 for the exact function signatures. These functions must not expose raw workstation credentials."
     },
     {
