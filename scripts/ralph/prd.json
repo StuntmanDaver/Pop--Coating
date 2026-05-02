@@ -304,7 +304,7 @@
         "Typecheck passes"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "Read 01-RESEARCH.md for pgTAP patterns. Each test file should set_config role and JWT claims before running assertions. Use set_config('request.jwt.claims', ...) to mock the JWT."
     },
     {

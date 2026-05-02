@@ -9,6 +9,11 @@
 -- correct claims. Without SECURITY DEFINER, calling these after SET ROLE authenticated
 -- (while no JWT is set yet) would fail because RLS filters out all rows.
 --
+-- pgTAP wrapper: plan(1) + pass() make this a valid TAP file.
+-- Functions are created without a surrounding ROLLBACK so they persist for the RLS test files.
+
+SELECT plan(1);
+--
 -- Usage: Safe to call either before or after SET ROLE authenticated.
 -- The app.tenant_id(), app.audience(), etc. SECURITY DEFINER helpers
 -- read from 'request.jwt.claims', so these helpers fully simulate what
@@ -114,3 +119,6 @@ CREATE OR REPLACE FUNCTION set_jwt_anon() RETURNS void
 LANGUAGE sql AS $$
   SELECT set_config('request.jwt.claims', '{}', true);
 $$;
+
+SELECT pass('jwt helper functions installed');
+SELECT * FROM finish();

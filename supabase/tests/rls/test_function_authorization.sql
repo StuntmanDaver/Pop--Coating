@@ -6,16 +6,17 @@
 -- record_workstation_heartbeat, release_workstation) and next_job_number.
 -- app.record_scan_event and app.validate_employee_pin are Phase 3 tests.
 --
--- Tests (6 total):
+-- Tests (7 total):
 --   1. claim_workstation: enforces caller workstation_id match (raises if mismatch)
---   2. claim_workstation: enforces optimistic concurrency (rejects stale version)
+--   2. claim_workstation: stale version does NOT raise (lives_ok)
+--   2b. claim_workstation: stale version returns ok=false (is() on return value)
 --   3. next_job_number: raises 'access_denied' for customer JWT audience
 --   4. next_job_number: raises 'tenant_id_missing' if JWT has no tenant_id
 --   5. record_workstation_heartbeat: raises 'access_denied' if not staff_shop audience
 --   6. release_workstation: raises 'access_denied' if no workstation_id in JWT
 
 BEGIN;
-SELECT plan(6);
+SELECT plan(7);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -91,27 +92,17 @@ SELECT throws_ok(
 );
 
 -- ============================================================
--- Test 2: claim_workstation enforces optimistic concurrency (stale version)
--- Call claim_workstation with the CORRECT workstation ID but WRONG version
+-- Test 2: claim_workstation stale version does NOT raise (lives_ok)
+-- Version starts at 0; passing expected_version=99 simulates stale.
+-- claim_workstation returns ok:false on version mismatch — it does NOT throw.
 -- ============================================================
-SELECT throws_ok(
-  $$
-    -- First, actually claim it so version becomes 1
-    DO $$
-    BEGIN
-      -- We can only really test stale version by trying twice; easier to just test that
-      -- a non-zero expected_version fails when actual version is 0.
-      -- Version starts at 0; passing expected_version=99 simulates stale.
-      PERFORM app.claim_workstation(
-        'f0000002-0000-0000-0000-000000000001'::uuid,  -- own workstation
-        'f0000003-0000-0000-0000-000000000001'::uuid,
-        99  -- stale version — actual is 0
-      );
-    END$$
-  $$,
-  NULL,  -- no exception raised — claim_workstation returns ok:false on stale (no throw)
-  NULL,
-  'claim_workstation: returns ok:false on stale version (no exception for version mismatch)'
+SELECT lives_ok(
+  $$SELECT app.claim_workstation(
+      'f0000002-0000-0000-0000-000000000001'::uuid,
+      'f0000003-0000-0000-0000-000000000001'::uuid,
+      99
+    )$$,
+  'claim_workstation: does not throw on stale version'
 );
 
 -- Verify the stale-version call returned ok:false (not an exception, just a false result)
