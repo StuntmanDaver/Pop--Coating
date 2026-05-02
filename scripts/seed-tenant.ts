@@ -69,6 +69,18 @@ async function main() {
     auth: { autoRefreshToken: false, persistSession: false },
   })
 
+  // ─── Idempotency guard: check if tenant already bootstrapped ─────────────
+  const { data: existing } = await supabase
+    .from('tenants')
+    .select('id, name')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (existing != null) {
+    console.log(`Tenant '${slug}' already exists (id=${existing.id}) — nothing to do.`)
+    process.exit(0)
+  }
+
   console.log(`Bootstrapping tenant: ${tenantName} (slug: ${slug})`)
 
   // ─── Step 1: Create tenants row ───────────────────────────────────────────

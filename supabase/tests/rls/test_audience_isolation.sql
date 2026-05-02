@@ -5,7 +5,7 @@
 -- Verifies that each audience (customer, staff_shop, staff_office) can only access
 -- what their RLS policies allow, and are blocked from tables/operations outside their scope.
 --
--- Tests (9 total):
+-- Tests (13 total):
 --   1. Customer JWT cannot SELECT from the staff table (0 rows)
 --   2. Customer JWT can SELECT their own company (1 row)
 --   3. Customer JWT cannot SELECT another company in the same tenant (0 rows)
@@ -16,9 +16,13 @@
 --   7. Staff_shop JWT cannot INSERT into companies (office-only INSERT policy)
 --   8. Staff_shop JWT can SELECT jobs (shop has read on jobs)
 --   9. Customer JWT cannot SELECT jobs from another company in the same tenant
+--  10. Customer JWT cannot INSERT into companies (no INSERT policy for customer audience)
+--  11. Customer JWT cannot SELECT archived jobs (archived_at IS NOT NULL filtered by RLS)
+--  12. authenticated role: DELETE on jobs runs without error but deletes 0 rows
+--  13. authenticated role: row still exists after DELETE attempt (proves RLS blocked it)
 
 BEGIN;
-SELECT plan(9);
+SELECT plan(13);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -77,6 +81,23 @@ INSERT INTO workstations (id, tenant_id, name, device_token) VALUES
   ('a1000005-0000-0000-0000-000000000001'::uuid,
    'a1000000-0000-0000-0000-000000000001'::uuid,
    'Test Workstation', 'aud-test-ws-device-token-001-secure')
+ON CONFLICT (id) DO NOTHING;
+
+-- A live job (for DELETE test) and an archived job (for archived_at filter test)
+-- Both belong to Alpha company so the customer JWT is eligible by company_id
+INSERT INTO jobs (id, tenant_id, company_id, job_name, job_number, packet_token) VALUES
+  ('a1000006-0000-0000-0000-000000000001'::uuid,
+   'a1000000-0000-0000-0000-000000000001'::uuid,
+   'a1000002-0000-0000-0000-000000000001'::uuid,
+   'Live Test Job', 'AUDTEST-2026-00001', 'aud-test-live-packet-tok-001')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO jobs (id, tenant_id, company_id, job_name, job_number, packet_token, archived_at) VALUES
+  ('a1000006-0000-0000-0000-000000000002'::uuid,
+   'a1000000-0000-0000-0000-000000000001'::uuid,
+   'a1000002-0000-0000-0000-000000000001'::uuid,
+   'Archived Test Job', 'AUDTEST-2026-00002', 'aud-test-archived-packet-tk-001',
+   now())
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
@@ -153,11 +174,11 @@ SELECT throws_ok(
 
 -- Test 8: Staff_shop JWT CAN SELECT jobs in their tenant
 -- (jobs_staff_select policy allows both staff_office and staff_shop)
--- No jobs in fixture, so count = 0 is correct AND demonstrates no RLS error
+-- 2 jobs seeded (live + archived); shop sees both (staff has no archived_at filter)
 SELECT is(
   (SELECT count(*)::int FROM jobs WHERE tenant_id = 'a1000000-0000-0000-0000-000000000001'::uuid),
-  0,  -- no jobs seeded, but no RLS error either (shop has SELECT)
-  'Staff_shop JWT can SELECT from jobs table (0 rows, no RLS error)'
+  2,
+  'Staff_shop JWT can SELECT from jobs table (2 rows — shop sees all jobs including archived)'
 );
 
 -- Test 9: Staff_shop JWT cannot INSERT into staff table
@@ -170,6 +191,50 @@ SELECT throws_ok(
   NULL,
   NULL,
   'Staff_shop JWT cannot INSERT into staff table (office-only policy)'
+);
+
+-- ============================================================
+-- Test 10: Customer JWT cannot INSERT into companies
+-- No INSERT policy exists for customer audience — RLS raises an error
+-- ============================================================
+SELECT set_jwt_for_customer('a1000004-0000-0000-0000-000000000001'::uuid);
+
+SELECT throws_ok(
+  $$INSERT INTO companies (tenant_id, name)
+    VALUES ('a1000000-0000-0000-0000-000000000001'::uuid, 'Customer Injection Attempt')$$,
+  NULL,
+  NULL,
+  'Customer JWT cannot INSERT into companies (no INSERT policy for customer audience)'
+);
+
+-- ============================================================
+-- Test 11: Customer JWT cannot SELECT archived jobs
+-- jobs_customer_select policy: archived_at IS NULL — archived jobs are hidden from customers
+-- ============================================================
+SELECT is(
+  (SELECT count(*)::int FROM jobs WHERE id = 'a1000006-0000-0000-0000-000000000002'::uuid),
+  0,
+  'Customer JWT cannot SELECT jobs with archived_at set (filtered by RLS policy)'
+);
+
+-- ============================================================
+-- Tests 12+13: authenticated role cannot DELETE jobs
+-- No DELETE policy exists for any audience — hard deletes are forbidden (DESIGN.md §5.7)
+-- Data-modifying CTEs must be top-level; use lives_ok + row-existence check instead.
+-- ============================================================
+SELECT set_jwt_for_staff('a1000001-0000-0000-0000-000000000001'::uuid);
+
+-- Test 12: DELETE runs without error (RLS silently blocks it — no exception, just 0 rows)
+SELECT lives_ok(
+  $$DELETE FROM jobs WHERE id = 'a1000006-0000-0000-0000-000000000001'::uuid$$,
+  'authenticated role: DELETE on jobs runs without error (RLS silently blocks it)'
+);
+
+-- Test 13: Row still exists, proving RLS blocked the DELETE
+SELECT is(
+  (SELECT count(*)::int FROM jobs WHERE id = 'a1000006-0000-0000-0000-000000000001'::uuid),
+  1,
+  'authenticated role: job row still exists after DELETE attempt (RLS enforced — hard deletes forbidden)'
 );
 
 SELECT * FROM finish();
