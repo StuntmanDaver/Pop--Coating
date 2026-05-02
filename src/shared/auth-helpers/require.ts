@@ -8,9 +8,7 @@ export async function requireOfficeStaff() {
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error || !user) redirect('/sign-in')
   const audience = user.app_metadata?.audience
-  if (audience !== 'staff_office') {
-    throw new Error('Access denied: office staff only')
-  }
+  if (audience !== 'staff_office') redirect('/sign-in')
   Sentry.setTag('tenant_id', String(user.app_metadata?.tenant_id ?? 'unknown'))
   return user
 }
@@ -19,9 +17,7 @@ export async function requireShopStaff() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error || !user) redirect('/scan')
-  if (user.app_metadata?.audience !== 'staff_shop') {
-    throw new Error('Access denied: shop staff only')
-  }
+  if (user.app_metadata?.audience !== 'staff_shop') redirect('/scan')
   Sentry.setTag('tenant_id', String(user.app_metadata?.tenant_id ?? 'unknown'))
   return user
 }
@@ -30,9 +26,7 @@ export async function requireCustomer() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error || !user) redirect('/sign-in')
-  if (user.app_metadata?.audience !== 'customer') {
-    throw new Error('Access denied: customer only')
-  }
+  if (user.app_metadata?.audience !== 'customer') redirect('/sign-in')
   Sentry.setTag('tenant_id', String(user.app_metadata?.tenant_id ?? 'unknown'))
   return user
 }

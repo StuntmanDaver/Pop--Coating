@@ -9,6 +9,7 @@
 //      Redirect targets read from env vars NEXT_PUBLIC_APP_HOST and NEXT_PUBLIC_PORTAL_HOST
 //      (default to localhost in dev — NEVER hardcode prod literals).
 //   5. NEVER set cookie domain attribute — let @supabase/ssr use host-scoped defaults (RESEARCH.md Pitfall 2)
+import * as Sentry from '@sentry/nextjs'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import type { Database } from '@/shared/db/types'
@@ -66,6 +67,11 @@ export async function proxy(request: NextRequest) {
 
   // 3. CRITICAL: always getUser() — never getSession() for auth decisions (CLAUDE.md)
   const { data: { user } } = await supabase.auth.getUser()
+
+  // Tag Sentry with tenant_id when user is authenticated (DESIGN.md §4.5)
+  if (user?.app_metadata?.tenant_id) {
+    Sentry.setTag('tenant_id', String(user.app_metadata.tenant_id))
+  }
 
   // 4. AUDIENCE-DOMAIN ENFORCEMENT (env-var-driven targets — never hardcoded)
   if (user) {
