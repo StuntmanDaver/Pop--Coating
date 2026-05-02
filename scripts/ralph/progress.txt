@@ -34,6 +34,15 @@ Started: 2026-05-01
   - US-003 migration signature differs from PRD AC (claim_workstation uses p_workstation_id/p_employee_id/p_expected_version, not p_device_token TEXT). The DESIGN.md §3.2 signature is authoritative — mark US-003 passing as the implementation aligns with design intent even if AC wording differs.
 ---
 
+## 2026-05-01 — US-015 (Wave 1 module stubs)
+- **What was verified:** All 10 Wave 1 module index.ts files exist (auth, crm, jobs, packets, scanning, timeline, dashboard, settings, portal, tags). auth exports real actions; others export {} or specific actions. madge reports no circular imports.
+- **Files changed:** scripts/ralph/prd.json.
+
+## 2026-05-01 — US-014 (createWorkstation Server Action)
+- **What was verified:** createWorkstation in src/modules/settings/actions/workstation.ts — requireOfficeStaff(), createServiceClient for auth.admin.createUser(), device_token via crypto.randomBytes(48).base64url, workstations row insert, auth_user_id link-back. Returns enrollment_url with token. Per DESIGN.md, this belongs in settings not auth module.
+- **Files changed:** scripts/ralph/prd.json.
+---
+
 ## 2026-05-01 — US-013 (Portal magic-link Server Action, callback route, and portal sign-in UI)
 - **What was implemented/fixed:** magic-link.ts (requestCustomerMagicLink), portal sign-in page all existed. Callback at (portal)/auth/callback/route.ts (not /api/auth/callback as AC says — portal route group is correct). Fixed callback redirect from '/' to '/jobs'. Fixed (portal)/page.tsx to check auth. Created (portal)/jobs/page.tsx stub with requireCustomer guard. Anti-enumeration via swallowed errors and always-success return.
 - **Files changed:** src/app/(portal)/page.tsx, src/app/(portal)/jobs/page.tsx (created), src/app/(portal)/auth/callback/route.ts, scripts/ralph/prd.json, scripts/ralph/progress.txt.

@@ -260,7 +260,7 @@
         "Typecheck passes"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "The device_token is a 48-char URL-safe random string. Generate with crypto.randomBytes(36).toString('base64url'). This is the workstation's password — shown once, never stored plaintext."
     },
     {
@@ -282,7 +282,7 @@
         "Typecheck passes"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Stubs only — each index.ts can export a single comment or a placeholder type. The point is to satisfy ESLint no-restricted-imports rules that require cross-module imports to go through index.ts."
     },
     {
