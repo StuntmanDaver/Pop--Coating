@@ -17,9 +17,9 @@
 
 ### Auth
 
-- [ ] **AUTH-01**: Office staff can sign in with email and password; session uses `@supabase/ssr` httpOnly cookie scoped to `app.popscoating.com`; session TTL is 30 days; auth decisions always use `supabase.auth.getUser()` (never `getSession()`)
-- [ ] **AUTH-02**: Workstation tablet is enrolled as a synthetic Supabase user via admin-generated QR code ceremony; workstation session TTL is 1 hour (stolen-tablet mitigation); tablet re-authenticates silently
-- [ ] **AUTH-03**: Customer portal uses magic-link auth scoped to `track.popscoating.com`; customer session is read-only and scoped to their company's jobs; session TTL is 30 days
+- [x] **AUTH-01**: Office staff can sign in with email and password; session uses `@supabase/ssr` httpOnly cookie scoped to `app.popscoating.com`; session TTL is 30 days; auth decisions always use `supabase.auth.getUser()` (never `getSession()`)
+- [x] **AUTH-02**: Workstation tablet is enrolled as a synthetic Supabase user via admin-generated QR code ceremony; workstation session TTL is 1 hour (stolen-tablet mitigation); tablet re-authenticates silently
+- [x] **AUTH-03**: Customer portal uses magic-link auth scoped to `track.popscoating.com`; customer session is read-only and scoped to their company's jobs; session TTL is 30 days
 - [ ] **AUTH-04**: JWT `app_metadata` carries `tenant_id`, `audience` (office/shop/customer), and `role`; `custom_access_token_hook` populates claims; hook must not write to any tables (Supabase deadlock constraint)
 - [x] **AUTH-05**: `requireOfficeStaff()`, `requireShopStaff()`, `requireCustomer()` helpers in `src/shared/auth-helpers/require.ts` enforce audience at the Server Action / route level; `getCurrentClaims()` in `claims.ts` reads JWT claims
 
@@ -108,9 +108,9 @@
 | INFRA-05 | Phase 1 | Complete |
 | INFRA-06 | Phase 1 | Complete |
 | INFRA-07 | Phase 1 | Complete |
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
 | AUTH-04 | Phase 1 | Pending |
 | AUTH-05 | Phase 1 | Complete |
 | CRM-01 | Phase 2 | Pending |

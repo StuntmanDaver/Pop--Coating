@@ -33,7 +33,7 @@
   - [x] 01-02-PLAN.md — DB migrations 0001–0006: app schema helpers + tenants/auth/CRM/jobs tables + RLS policies (INFRA-03, INFRA-06)
   - [x] 01-03-PLAN.md — DB migrations 0007–0010: custom_access_token_hook (STABLE/no-write) + production_status REVOKE + workstation lifecycle SECURITY DEFINER + link_auth_user_to_actor trigger (AUTH-04, INFRA-06)
   - [x] 01-04-PLAN.md — Supabase clients + auth-helper guards + src/proxy.ts multi-domain routing + Upstash rate limiters + Sentry (INFRA-04, INFRA-05, AUTH-05)
-  - [ ] 01-05-PLAN.md — auth module (sign-in, sign-out, magic-link) + createWorkstation server action + sign-in UI + portal callback + module stubs (AUTH-01, AUTH-02, AUTH-03, AUTH-05)
+  - [x] 01-05-PLAN.md — auth module (sign-in, sign-out, magic-link) + createWorkstation server action + sign-in UI + portal callback + module stubs (AUTH-01, AUTH-02, AUTH-03, AUTH-05)
   - [ ] 01-06-PLAN.md — pgTAP RLS suite + GitHub Actions CI + scripts/seed-tenant.ts + supabase/seed.sql + [BLOCKING] supabase db push + live Tenant 1 bootstrap + Resend/Vercel/Sentry config + [A1] TTL verification + Phase 1 success-criteria sign-off (INFRA-02, INFRA-04, INFRA-07, AUTH-01–04)
 
 ### Phase 2: Core Data
@@ -81,7 +81,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 4/6 | In Progress|  |
+| 1. Foundation | 5/6 | In Progress|  |
 | 2. Core Data | 0/0 | Not started | - |
 | 3. Shop Floor | 0/0 | Not started | - |
 | 4. Portal & Ops | 0/0 | Not started | - |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-02T01:17:03.805Z"
+last_updated: "2026-05-02T01:33:21.415Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 4
-  percent: 67
+  completed_plans: 5
+  percent: 83
 ---
 
 # Project State: Pops Industrial Coatings — Operations Platform (Wave 1)
@@ -27,14 +27,14 @@ progress:
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 5 of 6
+Plan: 6 of 6
 **Active Phase:** 1 — Foundation
-**Active Plan:** None (plan 04 complete)
+**Active Plan:** None (plan 05 complete)
 **Status:** Ready to execute
 
 **Progress:**
 
-[███████░░░] 67%
+[████████░░] 83%
 Phase 1 [████------] 50%  Foundation
 Phase 2 [----------] 0%  Core Data
 Phase 3 [----------] 0%  Shop Floor
@@ -58,6 +58,7 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ---
 | Phase 01-foundation P04 | 20 | 2 tasks | 17 files |
+| Phase 01-foundation P05 | 20 | 2 tasks | 23 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,10 @@ Phase 4 [----------] 0%  Portal & Ops
 - **Env-var-driven redirect targets in proxy.ts** — NEXT_PUBLIC_APP_HOST / NEXT_PUBLIC_PORTAL_HOST (defaults to localhost in dev); no hardcoded production domain literals in proxy logic
 - **Defense-in-depth rate limiting** — primary tier in proxy.ts (Upstash per-IP at edge); secondary tier in Server Actions (Plan 05, per-email + compound key)
 - **src/shared/db/types.ts is a placeholder** — replaced by `supabase gen types typescript --local` in Plan 06
+- **vitest.config.ts Step 0 pattern** — vitest.config.ts must be created before any test file in TDD plans (W2 revision); established in Plan 05
+- **Placeholder DB types require any cast in workstation.ts** — removed when Plan 06 generates real types; documented with ESLint comment
+- **Anti-enumeration for magic-link rate limits** — both email and IP limiter errors are swallowed via .catch(() => undefined); always returns { success: true }
+- **Server Action searchParams redirect pattern** — sign-in page uses searchParams redirect (not useFormState) because it is a Server Component; avoids unnecessary client component for Phase 1 auth
 
 ### Phase Notes
 
@@ -100,15 +105,14 @@ Phase 4 [----------] 0%  Portal & Ops
 ## Session Continuity
 
 **Last updated:** 2026-05-02
-**Last action:** Completed 01-04-PLAN.md — Supabase clients, auth helpers, src/proxy.ts multi-domain routing + Upstash rate limiting + Sentry init
-**Next action:** Execute 01-05-PLAN.md (auth Server Actions: signIn, signOut, magic-link, inviteStaff, createWorkstation)
+**Last action:** Completed 01-05-PLAN.md — auth Server Actions (signInStaff, signOutStaff, requestCustomerMagicLink), createWorkstation, office/portal sign-in pages, portal auth callback, 8 Wave-1 module stubs, vitest.config.ts
+**Next action:** Execute 01-06-PLAN.md (Supabase Cloud + Vercel setup checkpoint, seed-tenant.ts, pgTAP RLS tests, hook registration)
 
 **Context for next session:**
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
-- Phase 1 is a pure infrastructure/auth phase — no UI components, no business logic
-- Plans 01, 02, 03, 04 complete: Next.js scaffold + config.toml, 10 SQL migrations (0001-0010), auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry
-- Plan 05 targets: auth Server Actions (signInStaff, signOutStaff, requestCustomerMagicLink, inviteStaff, createWorkstation) in src/modules/auth/ and src/modules/settings/
-- Plan 06: checkpoint — Supabase Cloud + Vercel setup, seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration
+- Plans 01-05 complete: Next.js scaffold, 10 SQL migrations, auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry, auth Server Actions + sign-in UI + module stubs
+- Plan 06: checkpoint — Supabase Cloud + Vercel setup, seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration, supabase gen types (replaces placeholder types.ts)
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
-- The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action only
+- The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
+- vitest.config.ts is in place; 21 unit tests for auth + settings pass
