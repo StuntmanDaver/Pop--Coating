@@ -73,7 +73,7 @@
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Read 01-RESEARCH.md Pitfall 5. This trigger fires on auth.users INSERT (e.g. inviteUserByEmail), NOT inside the hook. The hook is read-only; this trigger is the write path."
     },
     {
