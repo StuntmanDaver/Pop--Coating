@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-02T01:01:50.277Z"
+last_updated: "2026-05-02T01:07:14Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State: Pops Industrial Coatings — Operations Platform (Wave 1)
@@ -27,15 +27,15 @@ progress:
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 **Active Phase:** 1 — Foundation
-**Active Plan:** None (not yet started)
+**Active Plan:** None (plan 03 complete)
 **Status:** Ready to execute
 
 **Progress:**
 
-[███░░░░░░░] 33%
-Phase 1 [----------] 0%  Foundation
+[█████░░░░░] 50%
+Phase 1 [████------] 50%  Foundation
 Phase 2 [----------] 0%  Core Data
 Phase 3 [----------] 0%  Shop Floor
 Phase 4 [----------] 0%  Portal & Ops
@@ -74,6 +74,10 @@ Phase 4 [----------] 0%  Portal & Ops
 - **app.next_job_number reads tenant_id from JWT only** — no parameter accepted; prevents privilege escalation
 - **Deferred FK pattern for forward references** — declare UUID column in early migration; add FOREIGN KEY constraint via ALTER TABLE in later migration after referenced table exists
 - **Cross-table trigger ordering invariant** — create ALL referenced tables before function + triggers in same migration (prevents runtime "relation does not exist" at first INSERT)
+- **Hook STABLE invariant** — app.custom_access_token_hook MUST be STABLE; any write inside causes deadlock on auth.users (Supabase Issue #29073); all user-row linking goes in the separate AFTER INSERT trigger
+- **supabase_auth_admin BYPASSRLS** — only additive GRANTs; never ALTER ROLE on this role in any migration
+- **production_status REVOKE** — column-level REVOKE UPDATE (production_status) ON jobs FROM authenticated; all transitions via app.record_scan_event() (Phase 3)
+- **link_auth_user_to_actor tenant scope** — always filter by tenant_id from raw_app_meta_data; raises if absent (except audience=staff_shop workstation bypass)
 
 ### Phase Notes
 
@@ -91,15 +95,17 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ## Session Continuity
 
-**Last updated:** 2026-05-01
-**Last action:** Completed 01-02-PLAN.md — Supabase config.toml + 6 SQL migrations (0001-0006) committed
-**Next action:** Execute 01-03-PLAN.md (auth hook + production_status REVOKE + SECURITY DEFINER scan functions)
+**Last updated:** 2026-05-02
+**Last action:** Completed 01-03-PLAN.md — 4 auth SQL migrations (0007-0010): auth hook, production_status REVOKE, workstation lifecycle SECURITY DEFINER functions, link_auth_user_to_actor trigger
+**Next action:** Execute 01-04-PLAN.md (src/proxy.ts multi-domain routing + Supabase SSR client helpers)
 
 **Context for next session:**
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Phase 1 is a pure infrastructure/auth phase — no UI components, no business logic
-- Plan 02 (INFRA-03, INFRA-06) complete: schema + RLS migrations applied; test tenant UUID 00000000-0000-0000-0000-000000000001 seeded
-- Plan 03 targets: app.custom_access_token_hook (MUST NOT write to tables — Supabase deadlock), production_status REVOKE, SECURITY DEFINER scan functions
-- The hook must NOT write to any tables (Supabase Issue #29073 deadlock — see CLAUDE.md hidden invariants)
-- Workstation synthetic user enrollment is in Phase 1 (AUTH-02) but the full ceremony UI is in Phase 3 (SCAN-03)
+- Plans 01, 02, 03 complete: Next.js scaffold + config.toml, 10 SQL migrations (0001-0010), auth hook + SECURITY DEFINER functions
+- Plan 04 targets: src/proxy.ts multi-domain routing (app.* → office, track.* → portal), Supabase SSR client helpers (createClient, createServiceClient)
+- Plan 05 targets: auth server actions (signIn, inviteStaff, sendMagicLink, createWorkstation), shared auth-helpers (requireOfficeStaff, requireShopStaff, requireCustomer, getCurrentClaims)
+- Plan 06: checkpoint — Supabase Cloud + Vercel setup, seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration
+- Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
+- The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action only
