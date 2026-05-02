@@ -169,7 +169,7 @@
         "Typecheck passes"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Use @sentry/nextjs. Read the installed version from package.json (10.51.0). Tag tenant_id at the scope level so it propagates to all events in the request."
     },
     {

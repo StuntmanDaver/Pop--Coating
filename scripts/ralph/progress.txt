@@ -34,6 +34,14 @@ Started: 2026-05-01
   - US-003 migration signature differs from PRD AC (claim_workstation uses p_workstation_id/p_employee_id/p_expected_version, not p_device_token TEXT). The DESIGN.md §3.2 signature is authoritative — mark US-003 passing as the implementation aligns with design intent even if AC wording differs.
 ---
 
+## 2026-05-01 — US-009 (Sentry initialization with tenant_id tagging)
+- **What was implemented:** Wrapped next.config.ts with withSentryConfig(). instrumentation.ts, sentry.client.config.ts, sentry.server.config.ts, sentry.edge.config.ts all existed. tenant_id tagging happens per-request in Server Actions (not at init time).
+- **Files changed:** next.config.ts (withSentryConfig wrapper added), scripts/ralph/prd.json, scripts/ralph/progress.txt.
+- **Learnings for future iterations:**
+  - @sentry/nextjs SentryBuildOptions does not have `hideSourceMaps` — use `sourcemaps` instead if needed.
+  - withSentryConfig options: silent, disableLogger, tunnelRoute are valid v10.x options.
+---
+
 ## 2026-05-01 — US-008 (Upstash rate limiters in src/shared/rate-limit/)
 - **What was implemented:** Added `getIdentifier(req: NextRequest, suffix?: string)` to adapter.ts — extracts x-forwarded-for IP for rate-limit key composition. Also fixed pre-existing type error in scripts/seed-tenant.ts (parseArgs values cast to `string | undefined`). signInLimiter and magicLinkPerEmailLimiter/magicLinkPerIpLimiter already existed with correct sliding-window config.
 - **Files changed:** src/shared/rate-limit/adapter.ts, scripts/seed-tenant.ts, scripts/ralph/prd.json, scripts/ralph/progress.txt.
