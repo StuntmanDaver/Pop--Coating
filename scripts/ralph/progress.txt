@@ -34,6 +34,19 @@ Started: 2026-05-01
   - US-003 migration signature differs from PRD AC (claim_workstation uses p_workstation_id/p_employee_id/p_expected_version, not p_device_token TEXT). The DESIGN.md §3.2 signature is authoritative — mark US-003 passing as the implementation aligns with design intent even if AC wording differs.
 ---
 
+## 2026-05-01 — US-008 (Upstash rate limiters in src/shared/rate-limit/)
+- **What was implemented:** Added `getIdentifier(req: NextRequest, suffix?: string)` to adapter.ts — extracts x-forwarded-for IP for rate-limit key composition. Also fixed pre-existing type error in scripts/seed-tenant.ts (parseArgs values cast to `string | undefined`). signInLimiter and magicLinkPerEmailLimiter/magicLinkPerIpLimiter already existed with correct sliding-window config.
+- **Files changed:** src/shared/rate-limit/adapter.ts, scripts/seed-tenant.ts, scripts/ralph/prd.json, scripts/ralph/progress.txt.
+- **Learnings for future iterations:**
+  - magicLinkLimiter in AC is implemented as two limiters: magicLinkPerEmailLimiter (5/hr/email) and magicLinkPerIpLimiter (10/hr/IP). The AC says 3/hr but DESIGN.md defines 5/hr — DESIGN.md wins.
+  - scripts/seed-tenant.ts had a pre-existing type error (parseArgs strict:false widening) — now fixed.
+---
+
+## 2026-05-01 — US-007 (src/proxy.ts multi-domain routing and session refresh)
+- **What was verified:** proxy.ts exists, reads NEXT_PUBLIC_APP_HOST/PORTAL_HOST env vars, enforces audience-domain, refreshes sessions via @supabase/ssr, uses getUser() never getSession(), no cookie domain attr set, rate-limits /sign-in POST for both office and portal. 1-hour workstation TTL is handled by Supabase's global jwt_expiry=3600 and @supabase/ssr's automatic refresh.
+- **Files changed:** scripts/ralph/prd.json, scripts/ralph/progress.txt.
+---
+
 ## 2026-05-01 — US-006 (Auth helper guards and claims accessor in src/shared/auth-helpers/)
 - **What was implemented:** Created missing `src/shared/auth-helpers/index.ts` re-exporting requireOfficeStaff, requireShopStaff, requireCustomer, getCurrentClaims, and JWTClaims type. Both require.ts and claims.ts were already correct.
 - **Files changed:** src/shared/auth-helpers/index.ts (created), scripts/ralph/prd.json, scripts/ralph/progress.txt.

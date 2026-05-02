@@ -130,7 +130,7 @@
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Read DESIGN.md §102 and 01-RESEARCH.md for proxy.ts requirements. The file must be named proxy.ts not middleware.ts. Read CLAUDE.md stack constraints."
     },
     {
@@ -149,7 +149,7 @@
         "Typecheck passes"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Rate limiters are consumed by BOTH proxy.ts (proxy layer) and Server Actions (defense-in-depth). Do not implement only in one place."
     },
     {
