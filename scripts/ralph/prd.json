@@ -186,7 +186,7 @@
         "Typecheck passes"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Stubs only — no real implementation. Mark each export with a TODO comment indicating which phase fills them in."
     },
     {
