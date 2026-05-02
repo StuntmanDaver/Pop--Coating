@@ -129,3 +129,33 @@ Started: 2026-05-01
 - **What was verified:** migration 0009_workstation_lifecycle_functions.sql exists with all three SECURITY DEFINER functions. claim_workstation signature uses JWT claims for auth rather than device_token (DESIGN.md §3.2 is authoritative over AC wording). record_workstation_heartbeat() RETURNS VOID and release_workstation() RETURNS VOID both exist as SECURITY DEFINER. All functions validate caller's workstation_id from JWT. supabase db reset, typecheck, lint all pass.
 - **Files changed:** scripts/ralph/prd.json (passes: true for US-003), scripts/ralph/progress.txt.
 ---
+
+## 2026-05-01 — US-016 (pgTAP RLS test suite — all 31 tests green)
+- **What was implemented:** Three root causes fixed across two prior iterations:
+  1. jwt_helpers.sql: SECURITY DEFINER added to set_jwt_for_staff/customer/workstation (RLS blocked SELECT after SET ROLE authenticated with no JWT)
+  2. migration 0011: REVOKE table-level UPDATE on jobs FROM authenticated + GRANT back specific columns (column-level REVOKE was no-op with table-level grant present)
+  3. migration 0012_app_schema_usage_grant.sql: GRANT USAGE ON SCHEMA app TO authenticated, anon (app schema had NULL nspacl — authenticated couldn't call app.* functions directly even with EXECUTE grants)
+  4. jwt_helpers.sql: plan(1)/pass()/finish() wrapper added (valid TAP file required — no_plan without tests raises "No tests run!" error from pgTAP _finish())
+  5. test_function_authorization.sql: plan(6)→plan(7), throws_ok→lives_ok for stale-version test (claim_workstation returns ok:false, no exception), nested-$$ syntax removed
+- **Files changed:** supabase/migrations/0012_app_schema_usage_grant.sql (created), supabase/tests/helpers/jwt_helpers.sql, supabase/tests/rls/test_function_authorization.sql, scripts/ralph/prd.json.
+- **Learnings for future iterations:**
+  - Postgres schema USAGE is distinct from function EXECUTE. Even with EXECUTE granted, authenticated cannot reference app.* without GRANT USAGE ON SCHEMA app.
+  - RLS policy expressions work without schema USAGE because they're evaluated under the table owner's privileges — only explicit client-side calls need USAGE.
+  - pgTAP's finish() raises "No tests run!" if called with no_plan() and zero assertions. Use plan(1) + pass() for pure setup files.
+  - throws_ok with NULL error code is for "any exception". Use lives_ok when no exception is expected.
+  - Nested $$ dollar-quoting inside throws_ok causes syntax errors. Simplify the SQL string.
+---
+
+## 2026-05-01 — US-017 (GitHub Actions CI workflow)
+- **What was verified:** .github/workflows/ci.yml already exists. Triggers on push/pull_request to main. Runs pnpm install --frozen-lockfile, pnpm type-check, pnpm lint, pnpm test. pgTAP runs via Supabase branch DB (supabase test db --db-url) per DESIGN.md D-07. Uses pnpm/action-setup@v4 and supabase/setup-cli@v1. Node.js 25 (AC says 20 but no engines constraint in package.json).
+- **Files changed:** scripts/ralph/prd.json.
+- **Learnings for future iterations:**
+  - The CI uses Supabase branch DBs (not local db reset) for pgTAP. This is per D-07 design decision.
+  - fountainhead/action-wait-for-check waits for "Supabase Preview" check before running pgTAP.
+---
+
+## 2026-05-01 — US-018 (Tenant 1 seed script and local dev fixture data)
+- **What was verified:** scripts/seed-tenant.ts exists, executable via pnpm seed:tenant (tsx scripts/seed-tenant.ts). Creates tenants row (auto-UUID for production, fixed UUID 00000000...0001 is in seed.sql for local dev), shop_settings, tenant_domains, staff row, invites owner via auth.admin.inviteUserByEmail(), sets app_metadata. supabase/seed.sql exists with ON CONFLICT DO NOTHING throughout (idempotent). supabase db reset applies seed.sql automatically. Typecheck passes.
+- **Note:** seed.sql intentionally has no jobs (DESIGN.md D-12: "Phase 2 seeds jobs when the CRM UI exists") — AC wording conflicts with design doc; design doc wins per CLAUDE.md.
+- **Files changed:** scripts/ralph/prd.json.
+---

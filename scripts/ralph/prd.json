@@ -322,7 +322,7 @@
         "Typecheck passes"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "Use the official pnpm/action-setup and supabase/setup-cli GitHub Actions. Cache pnpm store between runs."
     },
     {
@@ -340,7 +340,7 @@
         "Typecheck passes"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "The seed-tenant.ts script uses the service-role client. Read DESIGN.md §3.2 for the Tenant 1 UUID. The seed.sql fixture data is for local development only — never committed with real credentials."
     }
   ]
