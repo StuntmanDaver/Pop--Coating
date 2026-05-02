@@ -34,6 +34,15 @@ Started: 2026-05-01
   - US-003 migration signature differs from PRD AC (claim_workstation uses p_workstation_id/p_employee_id/p_expected_version, not p_device_token TEXT). The DESIGN.md §3.2 signature is authoritative — mark US-003 passing as the implementation aligns with design intent even if AC wording differs.
 ---
 
+## 2026-05-01 — US-011 (Office sign-in Server Action and sign-in page UI)
+- **What was implemented/fixed:** sign-in.ts (signInStaff) and sign-in/page.tsx already existed. Fixed broken success redirect: (office)/page.tsx now checks auth and redirects to /dashboard; created (office)/dashboard/page.tsx stub with requireOfficeStaff guard. Zod validation, signInLimiter, getUser()-based auth, shadcn components, messages file — all in place.
+- **Files changed:** src/app/(office)/page.tsx, src/app/(office)/dashboard/page.tsx (created), scripts/ralph/prd.json, scripts/ralph/progress.txt.
+- **Learnings for future iterations:**
+  - sign-in action exports `signInStaff` not `signInAction` — naming differs from AC but pattern is correct.
+  - After sign-in success the page redirects to / (office root) which was redirecting to /sign-in (loop). Fixed by making (office)/page.tsx auth-aware.
+  - Messages file (src/messages/en/auth.json) exists but is not wired with next-intl t() yet — strings match but direct use.
+---
+
 ## 2026-05-01 — US-010 (Shared infrastructure stubs - audit, realtime, storage)
 - **What was implemented:** Added required exports to stub files: `withAudit<T>(fn: T): T` HOF to audit/index.ts, `createRealtimeClient()` to realtime/index.ts, `getSignedUrl()` to storage/index.ts. All typed with no `any`.
 - **Files changed:** src/shared/audit/index.ts, src/shared/realtime/index.ts, src/shared/storage/index.ts, scripts/ralph/prd.json, scripts/ralph/progress.txt.
