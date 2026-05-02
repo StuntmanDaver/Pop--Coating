@@ -17,6 +17,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/sign-in?error=invalid_link', request.url))
   }
 
-  // Redirect to portal home (Phase 4 builds the real /jobs page)
-  return NextResponse.redirect(new URL('/', request.url))
+  return NextResponse.redirect(new URL('/jobs', request.url))
 }

@@ -1,5 +1,9 @@
 import { redirect } from 'next/navigation'
+import { createClient } from '@/shared/db/server'
 
-export default function PortalHome() {
-  redirect('/sign-in')
+export default async function PortalHome() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/sign-in')
+  redirect('/jobs')
 }

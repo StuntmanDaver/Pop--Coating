@@ -222,7 +222,7 @@
         "Typecheck passes"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Keep this minimal. The redirect target should use the proxy.ts domain logic."
     },
     {
@@ -242,7 +242,7 @@
         "Typecheck passes"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Silent success on unknown email is security-critical (anti-enumeration per §7.2). The callback route must handle both the code exchange and session cookie setting."
     },
     {

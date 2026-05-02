@@ -34,6 +34,15 @@ Started: 2026-05-01
   - US-003 migration signature differs from PRD AC (claim_workstation uses p_workstation_id/p_employee_id/p_expected_version, not p_device_token TEXT). The DESIGN.md §3.2 signature is authoritative — mark US-003 passing as the implementation aligns with design intent even if AC wording differs.
 ---
 
+## 2026-05-01 — US-013 (Portal magic-link Server Action, callback route, and portal sign-in UI)
+- **What was implemented/fixed:** magic-link.ts (requestCustomerMagicLink), portal sign-in page all existed. Callback at (portal)/auth/callback/route.ts (not /api/auth/callback as AC says — portal route group is correct). Fixed callback redirect from '/' to '/jobs'. Fixed (portal)/page.tsx to check auth. Created (portal)/jobs/page.tsx stub with requireCustomer guard. Anti-enumeration via swallowed errors and always-success return.
+- **Files changed:** src/app/(portal)/page.tsx, src/app/(portal)/jobs/page.tsx (created), src/app/(portal)/auth/callback/route.ts, scripts/ralph/prd.json, scripts/ralph/progress.txt.
+
+## 2026-05-01 — US-012 (Sign-out Server Action)
+- **What was verified:** sign-out.ts (signOutStaff) calls signOut() and redirects to /sign-in. Minimal and correct.
+- **Files changed:** scripts/ralph/prd.json.
+---
+
 ## 2026-05-01 — US-011 (Office sign-in Server Action and sign-in page UI)
 - **What was implemented/fixed:** sign-in.ts (signInStaff) and sign-in/page.tsx already existed. Fixed broken success redirect: (office)/page.tsx now checks auth and redirects to /dashboard; created (office)/dashboard/page.tsx stub with requireOfficeStaff guard. Zod validation, signInLimiter, getUser()-based auth, shadcn components, messages file — all in place.
 - **Files changed:** src/app/(office)/page.tsx, src/app/(office)/dashboard/page.tsx (created), scripts/ralph/prd.json, scripts/ralph/progress.txt.
