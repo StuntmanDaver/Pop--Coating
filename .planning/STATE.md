@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-02T01:07:14Z"
+last_updated: "2026-05-02T01:17:03.805Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 3
-  percent: 50
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State: Pops Industrial Coatings — Operations Platform (Wave 1)
@@ -27,14 +27,14 @@ progress:
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 **Active Phase:** 1 — Foundation
-**Active Plan:** None (plan 03 complete)
+**Active Plan:** None (plan 04 complete)
 **Status:** Ready to execute
 
 **Progress:**
 
-[█████░░░░░] 50%
+[███████░░░] 67%
 Phase 1 [████------] 50%  Foundation
 Phase 2 [----------] 0%  Core Data
 Phase 3 [----------] 0%  Shop Floor
@@ -57,6 +57,7 @@ Phase 4 [----------] 0%  Portal & Ops
 | Phases complete | 0 |
 
 ---
+| Phase 01-foundation P04 | 20 | 2 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Phase 4 [----------] 0%  Portal & Ops
 - **supabase_auth_admin BYPASSRLS** — only additive GRANTs; never ALTER ROLE on this role in any migration
 - **production_status REVOKE** — column-level REVOKE UPDATE (production_status) ON jobs FROM authenticated; all transitions via app.record_scan_event() (Phase 3)
 - **link_auth_user_to_actor tenant scope** — always filter by tenant_id from raw_app_meta_data; raises if absent (except audience=staff_shop workstation bypass)
+- **Env-var-driven redirect targets in proxy.ts** — NEXT_PUBLIC_APP_HOST / NEXT_PUBLIC_PORTAL_HOST (defaults to localhost in dev); no hardcoded production domain literals in proxy logic
+- **Defense-in-depth rate limiting** — primary tier in proxy.ts (Upstash per-IP at edge); secondary tier in Server Actions (Plan 05, per-email + compound key)
+- **src/shared/db/types.ts is a placeholder** — replaced by `supabase gen types typescript --local` in Plan 06
 
 ### Phase Notes
 
@@ -96,16 +100,15 @@ Phase 4 [----------] 0%  Portal & Ops
 ## Session Continuity
 
 **Last updated:** 2026-05-02
-**Last action:** Completed 01-03-PLAN.md — 4 auth SQL migrations (0007-0010): auth hook, production_status REVOKE, workstation lifecycle SECURITY DEFINER functions, link_auth_user_to_actor trigger
-**Next action:** Execute 01-04-PLAN.md (src/proxy.ts multi-domain routing + Supabase SSR client helpers)
+**Last action:** Completed 01-04-PLAN.md — Supabase clients, auth helpers, src/proxy.ts multi-domain routing + Upstash rate limiting + Sentry init
+**Next action:** Execute 01-05-PLAN.md (auth Server Actions: signIn, signOut, magic-link, inviteStaff, createWorkstation)
 
 **Context for next session:**
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Phase 1 is a pure infrastructure/auth phase — no UI components, no business logic
-- Plans 01, 02, 03 complete: Next.js scaffold + config.toml, 10 SQL migrations (0001-0010), auth hook + SECURITY DEFINER functions
-- Plan 04 targets: src/proxy.ts multi-domain routing (app.* → office, track.* → portal), Supabase SSR client helpers (createClient, createServiceClient)
-- Plan 05 targets: auth server actions (signIn, inviteStaff, sendMagicLink, createWorkstation), shared auth-helpers (requireOfficeStaff, requireShopStaff, requireCustomer, getCurrentClaims)
+- Plans 01, 02, 03, 04 complete: Next.js scaffold + config.toml, 10 SQL migrations (0001-0010), auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry
+- Plan 05 targets: auth Server Actions (signInStaff, signOutStaff, requestCustomerMagicLink, inviteStaff, createWorkstation) in src/modules/auth/ and src/modules/settings/
 - Plan 06: checkpoint — Supabase Cloud + Vercel setup, seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action only
