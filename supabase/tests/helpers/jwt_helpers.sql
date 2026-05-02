@@ -5,20 +5,23 @@
 -- All helpers use set_config('request.jwt.claims', ..., true) — the third param
 -- `is_local = true` means the setting is transaction-scoped (auto-reset on ROLLBACK).
 --
--- Usage: Call before SET ROLE authenticated to set the simulated JWT.
+-- SECURITY DEFINER: helpers need to bypass RLS to look up the row and build the
+-- correct claims. Without SECURITY DEFINER, calling these after SET ROLE authenticated
+-- (while no JWT is set yet) would fail because RLS filters out all rows.
+--
+-- Usage: Safe to call either before or after SET ROLE authenticated.
 -- The app.tenant_id(), app.audience(), etc. SECURITY DEFINER helpers
 -- read from 'request.jwt.claims', so these helpers fully simulate what
 -- the custom_access_token_hook stamps into real JWTs.
 --
 -- Functions provided:
---   set_jwt_for_staff(p_staff_id UUID)      — staff_office audience (admin/manager/office roles)
---                                             staff_shop audience (shop role)
+--   set_jwt_for_staff(p_staff_id UUID)           — staff_office or staff_shop audience
 --   set_jwt_for_customer(p_customer_user_id UUID) — customer audience
 --   set_jwt_for_workstation(p_workstation_id UUID) — staff_shop audience (workstation)
---   set_jwt_anon()                           — empty claims (anonymous / no JWT)
+--   set_jwt_anon()                                — empty claims (anonymous / no JWT)
 
 CREATE OR REPLACE FUNCTION set_jwt_for_staff(p_staff_id UUID) RETURNS void
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
   v_staff record;
 BEGIN
@@ -48,7 +51,7 @@ END;
 $$;
 
 CREATE OR REPLACE FUNCTION set_jwt_for_customer(p_customer_user_id UUID) RETURNS void
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
   v_cu record;
 BEGIN
@@ -78,7 +81,7 @@ END;
 $$;
 
 CREATE OR REPLACE FUNCTION set_jwt_for_workstation(p_workstation_id UUID) RETURNS void
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
   v_ws record;
 BEGIN
