@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-02T01:33:21.415Z"
+last_updated: "2026-05-02T01:44:16Z"
 progress:
   total_phases: 4
   completed_phases: 0
@@ -105,8 +105,8 @@ Phase 4 [----------] 0%  Portal & Ops
 ## Session Continuity
 
 **Last updated:** 2026-05-02
-**Last action:** Completed 01-05-PLAN.md — auth Server Actions (signInStaff, signOutStaff, requestCustomerMagicLink), createWorkstation, office/portal sign-in pages, portal auth callback, 8 Wave-1 module stubs, vitest.config.ts
-**Next action:** Execute 01-06-PLAN.md (Supabase Cloud + Vercel setup checkpoint, seed-tenant.ts, pgTAP RLS tests, hook registration)
+**Last action:** 01-06-PLAN.md Tasks 1a+1b complete — pgTAP RLS test suite (4 files + jwt_helpers), seed.sql expanded, seed-tenant.ts written, GitHub Actions CI pipeline written. PAUSED at Task 2 human-action checkpoint.
+**Next action:** Complete Task 2 manual setup (Supabase Dashboard JWT Expiry=3600s + Auth Hook + SMTP + Vercel domains + GitHub secrets), then Tasks 3-5 (db push, type-regen, seed run, verification)
 
 **Context for next session:**
 
