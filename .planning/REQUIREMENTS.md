@@ -9,10 +9,10 @@
 
 - [x] **INFRA-01**: Next.js 16 App Router repo initialized with TypeScript strict, Tailwind v4, shadcn/ui, and pnpm as package manager
 - [ ] **INFRA-02**: Supabase project created and connected; Vercel project configured with `app.popscoating.com` (office) and `track.popscoating.com` (portal) domains
-- [ ] **INFRA-03**: `tenants` table exists; every business table has `tenant_id uuid not null references public.tenants(id)`; `app.tenant_id()` SECURITY DEFINER helper reads JWT `app_metadata.tenant_id`; RLS policies use `tenant_id = app.tenant_id()`
+- [x] **INFRA-03**: `tenants` table exists; every business table has `tenant_id uuid not null references public.tenants(id)`; `app.tenant_id()` SECURITY DEFINER helper reads JWT `app_metadata.tenant_id`; RLS policies use `tenant_id = app.tenant_id()`
 - [ ] **INFRA-04**: Resend configured with SPF/DKIM/DMARC for `popscoating.com`; Upstash Redis wired for rate limiting (`@upstash/ratelimit` sliding-window); Sentry initialized and tagging every event with `tenant_id`
 - [ ] **INFRA-05**: `src/proxy.ts` (renamed from middleware.ts in Next.js 16) handles multi-domain routing: `app.*` routes to `(office)`, `track.*` routes to `(portal)`
-- [ ] **INFRA-06**: All required SQL SECURITY DEFINER helpers created: `app.tenant_id()`, `app.audience()`, `app.role()`, `app.staff_id()`, `app.workstation_id()`, `app.company_id()`, `app.set_updated_at()`
+- [x] **INFRA-06**: All required SQL SECURITY DEFINER helpers created: `app.tenant_id()`, `app.audience()`, `app.role()`, `app.staff_id()`, `app.workstation_id()`, `app.company_id()`, `app.set_updated_at()`
 - [x] **INFRA-07**: ESLint rules enforce module boundaries (`no-restricted-imports`, `madge --circular`) and service-role gating; CI pipeline runs type check, lint, and test on every PR
 
 ### Auth
@@ -103,10 +103,10 @@
 |-------------|-------|--------|
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Pending |
 | INFRA-05 | Phase 1 | Pending |
-| INFRA-06 | Phase 1 | Pending |
+| INFRA-06 | Phase 1 | Complete |
 | INFRA-07 | Phase 1 | Complete |
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |

@@ -30,7 +30,7 @@
   5. Any SQL query from the `authenticated` role that omits `tenant_id` returns zero rows from any business table — cross-tenant data cannot leak even without application-level filtering
 **Plans**: 6 plans
   - [x] 01-01-PLAN.md — Repo scaffold: Next.js 16 + Tailwind v4 + shadcn/ui + ESLint module-boundary + service-role gating + i18n + folder structure (INFRA-01, INFRA-07 partial)
-  - [ ] 01-02-PLAN.md — DB migrations 0001–0006: app schema helpers + tenants/auth/CRM/jobs tables + RLS policies (INFRA-03, INFRA-06)
+  - [x] 01-02-PLAN.md — DB migrations 0001–0006: app schema helpers + tenants/auth/CRM/jobs tables + RLS policies (INFRA-03, INFRA-06)
   - [ ] 01-03-PLAN.md — DB migrations 0007–0010: custom_access_token_hook (STABLE/no-write) + production_status REVOKE + workstation lifecycle SECURITY DEFINER + link_auth_user_to_actor trigger (AUTH-04, INFRA-06)
   - [ ] 01-04-PLAN.md — Supabase clients + auth-helper guards + src/proxy.ts multi-domain routing + Upstash rate limiters + Sentry (INFRA-04, INFRA-05, AUTH-05)
   - [ ] 01-05-PLAN.md — auth module (sign-in, sign-out, magic-link) + createWorkstation server action + sign-in UI + portal callback + module stubs (AUTH-01, AUTH-02, AUTH-03, AUTH-05)
@@ -81,7 +81,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/6 | In Progress|  |
+| 1. Foundation | 2/6 | In Progress|  |
 | 2. Core Data | 0/0 | Not started | - |
 | 3. Shop Floor | 0/0 | Not started | - |
 | 4. Portal & Ops | 0/0 | Not started | - |
