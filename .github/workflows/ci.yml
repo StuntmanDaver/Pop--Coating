@@ -1,0 +1,112 @@
+# .github/workflows/ci.yml
+# Source: CONTEXT.md D-07/D-08; docs/DESIGN.md §9.1; 01-RESEARCH.md Pattern 6 (lines 481–524)
+#
+# CI pipeline: runs on every PR to main AND on pushes to main.
+# Four merge gates (per D-08):
+#   1. pnpm type-check  — TypeScript strict compilation
+#   2. pnpm lint        — ESLint rules + madge --circular src/modules circular check
+#   3. pnpm test        — Vitest unit tests
+#   4. supabase test db — pgTAP RLS suite against the PR's Supabase branch DB (per D-07)
+#
+# D-09: No Playwright E2E tests in Phase 1 CI.
+# D-07: pgTAP job waits for Supabase Preview branch DB before running.
+#
+# Required GitHub secrets (set in repo Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN — Supabase CLI token (Account → Access Tokens)
+# Required GitHub variables:
+#   SUPABASE_PROJECT_REF  — Supabase project reference ID (Project Settings → General)
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 1: type-check + lint (+ madge circular check) + vitest
+  # Runs on every PR and push to main.
+  # ────────────────────────────────────────────────────────────────────────────
+  type-check-lint-test:
+    name: Type Check, Lint & Vitest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 25
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript strict compilation
+        run: pnpm type-check
+
+      - name: ESLint + madge circular dependency check
+        # pnpm lint runs: eslint src && pnpm madge:check
+        # madge:check runs: madge --circular src/modules (skips if src/modules not yet created)
+        run: pnpm lint
+
+      - name: Vitest unit tests
+        run: pnpm test
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 2: pgTAP RLS suite against the PR's Supabase branch DB
+  # Runs only on pull_requests (D-07: branch DBs require a PR context).
+  # Waits for Supabase Preview check (branch DB provisioning) before running.
+  # ────────────────────────────────────────────────────────────────────────────
+  pgtap:
+    name: pgTAP RLS Suite (Branch DB)
+    runs-on: ubuntu-latest
+    needs: type-check-lint-test
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Wait for Supabase Preview branch DB
+        # D-07: Each PR gets an isolated Supabase branch DB.
+        # The Supabase GitHub App (installed on the repo) provisions the branch DB
+        # and reports a "Supabase Preview" check. We wait up to 10 minutes for it.
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        id: wait-for-supabase
+        with:
+          checkName: Supabase Preview
+          token: ${{ secrets.GITHUB_TOKEN }}
+          timeoutSeconds: 600
+          intervalSeconds: 15
+
+      - name: Run pgTAP RLS suite against branch DB
+        # supabase branches get returns JSON with db_url for the PR's branch DB.
+        # supabase test db --db-url runs all SQL files in supabase/tests/ via pgTAP.
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          SUPABASE_DB_URL=$(supabase branches get \
+            --project-ref "${{ vars.SUPABASE_PROJECT_REF }}" \
+            --format json | jq -r '.db_url')
+
+          if [ -z "$SUPABASE_DB_URL" ] || [ "$SUPABASE_DB_URL" = "null" ]; then
+            echo "Error: Could not retrieve branch DB URL from supabase branches get"
+            exit 1
+          fi
+
+          supabase test db --db-url "$SUPABASE_DB_URL"

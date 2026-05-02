@@ -10,7 +10,8 @@
     "lint": "eslint src && pnpm madge:check",
     "madge:check": "[ -d src/modules ] && madge --circular src/modules || echo 'src/modules not yet created — skipping circular check'",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed:tenant": "tsx scripts/seed-tenant.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -47,6 +48,7 @@
     "jsdom": "^29.1.1",
     "madge": "8.0.0",
     "tailwindcss": "4.2.4",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "vitest": "4.1.5"
   }
