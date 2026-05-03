@@ -33,19 +33,22 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Focus ring convention: `focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800` + `outline-none`. Tailwind v4 implements `ring-*` via `box-shadow`, so the ring color (`pops-yellow-300` = `#FFE067`) appears as a 2px outer halo with a 2px ink-800 offset between it and the element — matches `--shadow-focus` from design principles §10. Use `focus-visible` (not `focus`) to avoid showing the ring on mouse click.
 - Loading-state width preservation: render the original children invisibly (`aria-hidden + invisible`) so the layout box keeps its measured width, then absolutely-position the spinner in `absolute inset-0`. This avoids a "snap" when toggling `isLoading` mid-submit. Use `aria-busy={isLoading || undefined}` on the button.
 - Internal preview pages live at `apps/pops-website/app/dev/<feature>/page.tsx` (NOT `_dev/` — Next.js App Router treats `_folder` as a private folder that is opted out of routing). The `dev/*` namespace must be excluded from the sitemap (US-042) and `robots.ts`. These are working previews for browser verification of components — keep them around as a reference panel for the design system.
+- Tailwind v4 wraps the `hover:*` utility under `@media (hover: hover)`, so hover styles only fire on devices with a fine pointer. In headless Chromium under Playwright that media query evaluates true — so `hover:shadow-3` works in browser-verification — but mobile tablets and touch devices won't see hover states (this is the correct behavior for design principles §6.3 service-tile lift; touch users get the same affordance via tap → navigate, not via persistent hover).
+- Card sub-component composition: Card itself owns `bg + border + radius + p-6` so consumers don't double-pad; CardHeader/CardContent/CardFooter are organizational only (margin/flex, never padding). CardTitle defaults to `<h3>` for semantics — wrap in your own heading element via `asChild`-style cloneElement OR just render the right tag inside the card if you need an h2/h4 instead.
+- CardDescription uses `opacity-80` (not a separate muted color token) so it adapts to whatever tone the parent Card is on (dark→ink-100 muted, light→ink-800 muted) without a context provider. Override with an explicit `text-*` class via `className` if a darker description is needed.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 3/11 complete
+Phase B — Design primitives (US-006 to US-016): 4/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 8/49 stories passing
+OVERALL: 9/49 stories passing
 
 ---
 
@@ -208,4 +211,35 @@ OVERALL: 8/49 stories passing
   - Loading-state UX: the `invisible inline-flex items-center gap-2` + absolute spinner trick preserves measured width (browser-verified: 177px) so `<Button isLoading>Submitting request</Button>` doesn't jump as the parent toggles state during a Server Action. This is the pattern to reuse in form submit handlers (US-021, US-031, US-032, US-033 → wire-up in US-036+).
   - The `asChild` Slot pattern intentionally skips the loading UI because consumers using `<Button asChild><Link></Link></Button>` are wrapping a navigation element where there's no async submit. If a future story needs an asChild + loading combination (e.g. signed-out CTA that triggers an async redirect), revisit.
   - Internal preview pages MUST live at `app/dev/<feature>/page.tsx` and NOT `app/_dev/<feature>/page.tsx` — App Router treats `_folder` as a private folder opted out of routing (the page just won't be reachable). When US-042 lands, exclude `/dev/*` from the sitemap and `robots.ts`.
+---
+
+## 2026-05-03 — US-009 Build Card component
+- Created apps/pops-website/components/ui/card.tsx — exports `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` (all forwardRef + className passthrough via `cn()`)
+- `Card` uses cva recipe with two variant axes: `tone` ("dark" default | "light") and `interactive` (false default | true)
+  - Base: `rounded-sm border p-6 transition-shadow duration-200 ease-out` (per design principles §5.3, p-6 default per AC, transition matches §8 motion tokens)
+  - Dark: `bg-ink-700 text-ink-100 border-ink-600` (1px ink-600 border per §5.3 — shadow alone fails on dark surfaces)
+  - Light: `bg-paper text-ink-800 border-ink-200` per AC
+  - Interactive: adds `hover:shadow-3` (lift on hover, matches `--shadow-3` from §10)
+- `CardHeader` = `flex flex-col space-y-1.5 mb-4` (groups title+description above content)
+- `CardTitle` = `<h3>` with `font-text text-lg font-bold leading-snug tracking-tight` (matches design principles §4.3 `--text-h4`: 18px Inter 700, no uppercase per §6.3 service cards)
+- `CardDescription` = `<p>` with `text-sm leading-relaxed opacity-80` — opacity-80 adapts to whatever tone Card is on without a context provider
+- `CardContent` = pass-through `<div>` (no own padding because Card already pads)
+- `CardFooter` = `flex items-center gap-3 mt-6` (works with the Button gap convention from US-008)
+- Created apps/pops-website/app/dev/cards/page.tsx — 3 sections: dark default (with Button compositions), interactive (Link-wrapped + role='link'), light tone on paper surface
+- Files changed: apps/pops-website/components/ui/card.tsx (new), apps/pops-website/app/dev/cards/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.1s; TS in 1211ms; 5/5 static pages incl /dev/cards) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/cards):
+  - Dark Card: bg rgb(42,48,59) (= #2A303B = ink-700), color rgb(236,238,242) (= #ECEEF2 = ink-100), border rgb(63,70,84) (= #3F4654 = ink-600) at 1px, radius 2px (= --radius-sm), padding 24px (= p-6 = --space-6) ✓
+  - CardTitle: <h3>, Inter, 18px (= --text-h4), weight 700, line-height 24.75px, text-transform none ✓
+  - CardDescription: <p>, 14px (= --text-sm), opacity 0.8 ✓
+  - Light tone: bg rgb(255,255,255) (= --paper), color rgb(27,31,39) (= --ink-800), border rgb(215,219,226) (= --ink-200) ✓
+  - Interactive hover (Link-wrapped Wet Paint card): box-shadow `rgba(0,0,0,0.2) 0px 8px 16px, rgba(0,0,0,0.18) 0px 2px 4px` — exactly matches `--shadow-3` from §10 ✓
+  - Tailwind v4 emits `.shadow-3` and `@media (hover: hover) { .hover\:shadow-3:hover { ... } }` — confirmed both in stylesheet via document.styleSheets traversal
+  - Screenshot: progress/screenshots/US-009.png (full page, all 3 variant sections visible)
+- **Learnings for future iterations:**
+  - The cva double-axis pattern (`tone × interactive`) is the right shape for primitives that need the lift only on linkable cards — the same shape will scale to ServiceTile (US-016) where tile = `<Card interactive>` wrapped in `<Link>` and to leadership cards (US-020) which are typically not interactive.
+  - The opacity-80 trick for CardDescription means consumers shouldn't add `text-ink-300` etc. on top of CardDescription — let the opacity do the muting and the parent's color cascade. If you need a stronger contrast for legal text or warnings, override className on CardDescription explicitly.
+  - Tailwind v4 ships a default `--spacing` scale at 4px increments AND wraps `hover:*` under `@media (hover: hover)` — both are auto-derived from the v4 defaults; nothing in `@theme` needed to enable them. Mobile tap users will not see the hover lift; that's the right design (touch → navigate is the affordance, not hover).
+  - When wrapping a Card in a `<Link>`, put the focus-visible ring on the Link (the actual focusable element), not on the Card. The dev preview wires `rounded-sm focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800` on `<Link>` — this is the pattern ServiceTile and any future card-as-link should follow.
+  - `<h3>` is the right default heading level for CardTitle because cards live inside sections with `<h2>` headings (per design principles §6 patterns and the home page wireframe in PRD §6.2). If a future story needs a different level (e.g. card with `<h4>` deep inside a sub-section), pass an `as="h4"` prop OR replace the heading manually inside the card — don't change the default for one consumer.
 ---

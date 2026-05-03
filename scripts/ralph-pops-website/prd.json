@@ -163,7 +163,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Install shadcn card primitive then customize. Cards are used in service tiles (US-016), leadership grid (US-020), and certifications (US-023)."
     },
     {
