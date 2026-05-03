@@ -51,19 +51,24 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Use `inline-block` (not the default inline) on a link that needs `min-h-*` to take effect — height/min-height are ignored on inline elements. The footer nav links use `inline-block min-h-11 py-2` for this reason.
 - JSON imports (`import data from "../../content/site-globals.json"`) work in both Server and Client Components because tsconfig has `resolveJsonModule: true`. The import is fully typed by TS literal inference; cast to a richer interface (e.g. `Record<string, ColumnEntry[]>`) when you need a discriminated-union shape. The build inlines the JSON — don't ship `content/*.json` to `public/` or it'll be served twice.
 - For mixed-shape lists where some entries are `{label, href}` and others are `{label, value}` (the Visiting Us footer column has hour `value` rows, not links), use a discriminated union with a type-narrowing predicate (`isLinkEntry`). Render each shape as a different element — never render `<a href="">{value}</a>` as a fallback because it would create a useless empty link.
+- `useId()` from React works in Server Components — use it for ANY id that is referenced by an aria-* attribute in the same component (e.g. `aria-labelledby`, `aria-describedby`, `htmlFor`/`id` pairs that are NOT already wired by FormField). This makes the component safe to render multiple times on a single page without id collisions. Do NOT add `"use client"` just to use `useId()`.
+- `<Button asChild variant="..."><Link href="...">label</Link></Button>` is the canonical Button-styled router link pattern. Used by Hero (US-015) and any future marketing surface that needs a CTA pointing to an internal route. Preserves Button's variant colors, focus ring, hover state, and tap target while next/link delivers prefetch + RSC navigation. Don't reach for `<Link className="<button-classes>">` — that diverges whenever Button styles change.
+- `next/image` with `fill` (used for hero background photos) requires the parent to have `position: relative` (or absolute/fixed). Pair `relative isolate` on the parent so the overlay div + content div live in the same stacking context — the overlay is `absolute inset-0` (no z-index), and content sits on top via `relative z-10`.
+- Decorative background images on hero/marketing surfaces use `alt=""` (empty string, NOT null). Screen readers skip empty-alt images entirely; the heading + lede already convey meaning. Reserve descriptive alt text for images that ARE the message (leadership headshots, before/after job photos, certifications).
+- Display heading sizes are not yet declared as Tailwind tokens (the @theme block in app/globals.css does not include `--text-display-*`). Until a future story adds them, marketing components hit the §3.3 spec via arbitrary values: `text-[36px] md:text-[56px]` for display-lg with `leading-[1.05]`. Same approach applies for display-xl (72px), display-md (44px), display-sm (30px) when other components need them.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 8/11 complete
+Phase B — Design primitives (US-006 to US-016): 10/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 13/49 stories passing
+OVERALL: 15/49 stories passing
 
 ---
 
@@ -385,4 +390,22 @@ OVERALL: 13/49 stories passing
   - When a link has an `aria-label` AND contains an icon/logo plus visible text, set the icon's `alt=""` so screen readers don't announce the visual twice — the `aria-label` on the link is canonical, and the visible wordmark is already part of the link's accessible name fallback.
   - Header `bg-ink-900/95 backdrop-blur` requires the page underneath to actually have content scrolling under it for the blur to be visible. Verify sticky behavior via a dev preview page with scroll filler — the homepage hero (US-015/017) will sit directly under the header so backdrop-blur kicks in over the hero photo.
   - `min-h-11` on a flex/inline-flex link with `items-center` gives a 44px tap target without affecting the visible text size. Pair with horizontal `px-3 py-2` for a comfortable touch zone that stays compact on desktop.
+---
+
+## 2026-05-03 — US-015 Build Hero component (rebuilt per design principles §6.2)
+- Created components/marketing/hero.tsx exporting <Hero /> per the §6.2 spec: eyebrow → display heading (h1) → optional lede → primary + optional secondary CTA, full-width section with `min-h-[480px] md:min-h-[560px]`, `<Image fill priority sizes="100vw" className="object-cover">` background + `bg-ink-900/60` overlay, content vertically centered inside a 1280px max-width column with `px-6` and `py-16 md:py-24`.
+- Heading uses arbitrary text sizes `text-[36px] md:text-[56px]` with `leading-[1.05]` (matches design principles §3.3 display-lg = 56/3.5 and the AC mobile target of 36px) — no `text-display-lg` Tailwind utility exists yet because the @theme block in app/globals.css does not declare `--text-display-*` tokens. Treat arbitrary values as the convention until/unless display tokens are added (none of the prior US-006..014 stories needed them either).
+- CTAs are rendered with `<Button asChild variant="primary|secondary">{<Link>...}</Link></Button>` — same pattern Button supports via its `asChild` prop, ensuring next/link prefetch + client-side nav while keeping Button styling/focus-ring/hover.
+- CTA row uses `flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4` so the buttons stack on mobile (per AC) and sit side-by-side from `sm` upward.
+- `useId()` powers `id={headingId}` + `aria-labelledby={headingId}` on the wrapping `<section>`, so multiple Hero instances on one page (e.g. dev preview) don't collide on a hardcoded `"hero-heading"` id. Caught this when the dev preview rendered two Heros and both regions advertised the same accessible name.
+- Background `Image` uses `alt=""` by default (decorative); a `backgroundAlt` prop lets a story override that for the rare case the photo carries content meaning. The `bg-ink-900` on the parent section is a fallback color while the image streams in.
+- Created app/dev/hero/page.tsx as the working preview — a primary Hero (eyebrow + heading + lede + dual CTA) plus a secondary minimal Hero (no lede, no secondary CTA) to exercise both code paths.
+- Files changed: components/marketing/hero.tsx (new), app/dev/hero/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (Playwright at http://localhost:3001/dev/hero — desktop 1280×800: heading reads at 56px on two lines, primary yellow CTA + secondary outlined CTA aligned, photo darkened to ~60%; mobile 375×812: heading at 36px on five lines, CTAs stacked full-width inside the column. Tab order: skip-link → logo link → HOME → Request a Quote → See our work, exactly per AC.)
+- **Learnings for future iterations:**
+  - `useId()` works in Server Components in React 19 — no `"use client"` needed just to get a stable unique id for `aria-labelledby`. Use it in any component that might render multiple times on a single page where ids would otherwise collide (Hero, Card with footer-id helper text, Tabs, Disclosure, etc.).
+  - The `<Button asChild><Link href>label</Link></Button>` pattern is the canonical way to make a Button-styled router link — preserves Button's focus ring, variant colors, and tap target while next/link gets prefetch + RSC nav. Use this instead of `<Link className="<button-classes>">` (which would diverge whenever Button styles change) or a separate ButtonLink component.
+  - `next/image` with `fill` requires the parent to have `position: relative` (or `absolute`/`fixed`); `relative isolate` on the Hero `<section>` covers it AND creates a stacking context so the absolutely-positioned overlay stays below the relatively-positioned content `z-10` div.
+  - For decorative background photos, set `alt=""` (NOT a description). Screen readers skip empty-alt images entirely; the heading + lede already convey the page meaning. Only set a meaningful alt when the photo is the message (e.g. a leadership headshot on /about-us/leadership).
+  - Display token gap: the design principles §3.3 lists `--text-display-xl/lg/md/sm` as 72/56/44/30 px tokens, but the @theme block in globals.css only ships color/font/radius/shadow tokens. Until a future story adds these as `--text-*` Tailwind v4 tokens, marketing components use arbitrary `text-[Npx]` values to hit the spec exactly.
 ---

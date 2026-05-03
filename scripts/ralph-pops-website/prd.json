@@ -273,7 +273,7 @@
         "Verify in browser using dev-browser skill: hero renders on a placeholder home page; tab order: skip-link \u2192 primary CTA \u2192 secondary CTA"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles \u00a76.2 \u2014 this REPLACES the live site's 3-slide tagline-only rotator. The 3 slides become supporting visuals (rotating background photo) but the headline is now content-rich and stable."
     },
     {
