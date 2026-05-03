@@ -43,3 +43,27 @@ next-env.d.ts
 
 # sentry
 .sentryclirc
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Playwright MCP cache
+.playwright-mcp/
+
+# Plugin-managed skills cache (skills-lock.json is the manifest)
+.claude/skills/
+.agents/
+
+# ECC rule set is mirrored from ~/.claude/rules/ via the install script;
+# tracking the project-local copy creates drift.
+.claude/rules/
+
+# Ralph harness runtime state (per-loop directory)
+scripts/ralph-*/ralph.pid
+scripts/ralph-*/ralph.log
+scripts/ralph-*/.last-branch
+
+# Stale Firecrawl scrape attempts at .firecrawl/ root —
+# the canonical scrape lives at .firecrawl/popsindustrial/
+/.firecrawl/*
+!/.firecrawl/popsindustrial/
