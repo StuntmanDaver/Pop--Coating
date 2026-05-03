@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: "Wet Paint Coatings - Pop's Industrial Lakeland FL",
   description:
     "Our skilled team employs top-quality paints and application techniques to enhance both aesthetics & protection for your industrial wet paint project.",
+  openGraph: {
+    images: [{ url: "/images/industrial-painting-lakeland-fl-1024x683-1.jpg", width: 1024, height: 683 }],
+  },
 };
 
 const OTHER_SERVICES = [

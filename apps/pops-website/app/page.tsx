@@ -12,7 +12,9 @@ import { ServiceTile } from "../components/marketing/service-tile";
 import { Button } from "../components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Pop's Industrial Coatings: Industrial Paint & Powder Coating",
+  title: {
+    absolute: "Pop's Industrial Coatings: Industrial Paint & Powder Coating",
+  },
   description:
     "Serving the greater Lakeland & Polk County FL area for Industrial Painting, Sandblasting, & Powder Coating for over 50 years - We know Industrial Painting!",
 };

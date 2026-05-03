@@ -16,9 +16,21 @@ const text = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Pop's Industrial Coatings",
+  metadataBase: new URL("https://popsindustrial.com"),
+  title: {
+    default: "Pop's Industrial Coatings: Industrial Paint & Powder Coating",
+    template: "%s | Pop's Industrial Coatings",
+  },
   description:
-    "Four generations of industrial finishing — powder coating, wet paint, abrasive media blasting, and more. Serving Lakeland, FL since 1972.",
+    "Serving the greater Lakeland & Polk County FL area for Industrial Painting, Powder Coating, and Sandblasting since 1972.",
+  openGraph: {
+    type: "website",
+    siteName: "Pop's Industrial Coatings",
+    images: [{ url: "/images/Pops-no-border.png", width: 800, height: 600, alt: "Pop's Industrial Coatings" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
