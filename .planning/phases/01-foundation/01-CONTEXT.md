@@ -18,7 +18,7 @@ Repo scaffold, multi-tenant schema, and all three auth audiences (office / works
 ### Resend + Auth Email Routing
 
 - **D-01:** Supabase Auth routes ALL its own emails (magic links, staff invites, password resets) through Resend SMTP — not Supabase's built-in email service. Configure Supabase Auth SMTP settings to point to Resend in Phase 1.
-- **D-02:** From address for all auth emails: `noreply@popscoating.com`. SPF/DKIM/DMARC verified via Resend for this address.
+- **D-02:** From address for all auth emails: `noreply@popsindustrial.com`. SPF/DKIM/DMARC verified via Resend for this address.
 - **D-03:** Single Resend API key for all environments (local dev, preview, production). No test-mode/live-mode split. RESEND_API_KEY in `.env.local` and Vercel environment variables.
 
 ### Phase 1 Workstation Auth Scope
@@ -44,7 +44,7 @@ Repo scaffold, multi-tenant schema, and all three auth audiences (office / works
 ### Tenant 1 Bootstrap Scope
 
 - **D-10:** `scripts/seed-tenant.ts` is **written AND run** as part of Phase 1 deliverables. Running it against the Supabase Cloud project creates Tenant 1 (Pops Industrial Coatings) with: a `tenants` row, a `shop_settings` row, and a `staff` row `{role='admin', is_active=true, auth_user_id=NULL}`. This makes Phase 1 success criteria verifiable against live data.
-- **D-11:** First admin credentials: `seed-tenant.ts` calls `auth.admin.inviteUserByEmail(owner_email)` after creating the staff row. Admin receives an invite email via Resend (from `noreply@popscoating.com`) and sets their password on first sign-in. This requires Resend and Supabase Auth SMTP to be configured first.
+- **D-11:** First admin credentials: `seed-tenant.ts` calls `auth.admin.inviteUserByEmail(owner_email)` after creating the staff row. Admin receives an invite email via Resend (from `noreply@popsindustrial.com`) and sets their password on first sign-in. This requires Resend and Supabase Auth SMTP to be configured first.
 - **D-12:** `supabase/seed.sql` (local dev — runs with `supabase db reset`) includes:
   - 1 test tenant with a **fixed known UUID** (so tests can reference it as a constant)
   - 1 test office staff user: `auth.users` row + `staff` row, `audience=office`, `role='admin'`

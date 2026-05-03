@@ -100,7 +100,7 @@ Application auth infrastructure: Supabase SSR clients with async cookies, three 
 - Responsibility 1: Edge-layer Upstash sliding-window rate limiting on unauthenticated `/sign-in` POSTs (primary tier per RESEARCH.md Architectural Responsibility Map). Portal host uses `magicLinkPerIpLimiter`; office host uses `signInLimiter`. Returns HTTP 429 with JSON error when limit exceeded.
 - Responsibility 2: Session refresh on every request via `createServerClient` + `setAll` cookie propagation.
 - Responsibility 3: `supabase.auth.getUser()` exclusively — no `getSession()` anywhere.
-- Responsibility 4: Audience-domain enforcement — office/shop JWT on `track.*` redirects to `APP_HOST`; customer JWT on `app.*` redirects to `PORTAL_HOST`. Both targets read from `process.env.NEXT_PUBLIC_APP_HOST` / `process.env.NEXT_PUBLIC_PORTAL_HOST` (default to `http://app.localhost:3000` / `http://track.localhost:3000` in dev). No hardcoded `app.popscoating.com` / `track.popscoating.com` literals in redirect logic.
+- Responsibility 4: Audience-domain enforcement — office/shop JWT on `track.*` redirects to `APP_HOST`; customer JWT on `app.*` redirects to `PORTAL_HOST`. Both targets read from `process.env.NEXT_PUBLIC_APP_HOST` / `process.env.NEXT_PUBLIC_PORTAL_HOST` (default to `http://app.localhost:3000` / `http://track.localhost:3000` in dev). No hardcoded `app.popsindustrial.com` / `track.popsindustrial.com` literals in redirect logic.
 - Responsibility 5: No `domain` attribute set on cookies — `@supabase/ssr` host-scoped defaults prevent cross-domain cookie leakage.
 
 **Rate limiters (`src/shared/rate-limit/`):**
@@ -121,8 +121,8 @@ Per-request `tenant_id` tagging happens via `Sentry.setTag('tenant_id', claims.t
 
 - **src/proxy.ts (NOT middleware.ts):** Confirmed — file is at `src/proxy.ts`. `test -f src/middleware.ts` returns false. `test -f middleware.ts` returns false.
 - **No getSession() anywhere:** Confirmed — `grep -c "getSession" src/proxy.ts` = 0; `grep -c "getSession" src/shared/auth-helpers/require.ts` = 0; `grep -c "getSession" src/shared/db/server.ts` = 0.
-- **No domain: '.popscoating.com' cookie option:** Confirmed — `grep -cE "domain:.*popscoating" src/proxy.ts` = 0.
-- **Env-var-driven redirect targets:** Confirmed — proxy.ts reads `NEXT_PUBLIC_APP_HOST` and `NEXT_PUBLIC_PORTAL_HOST`; no hardcoded `'app.popscoating.com'` or `'track.popscoating.com'` literals in redirect logic.
+- **No domain: '.popsindustrial.com' cookie option:** Confirmed — `grep -cE "domain:.*popscoating" src/proxy.ts` = 0.
+- **Env-var-driven redirect targets:** Confirmed — proxy.ts reads `NEXT_PUBLIC_APP_HOST` and `NEXT_PUBLIC_PORTAL_HOST`; no hardcoded `'app.popsindustrial.com'` or `'track.popsindustrial.com'` literals in redirect logic.
 - **Edge-layer Upstash rate limiting:** Confirmed — `signInLimiter` and `magicLinkPerIpLimiter` called in proxy.ts before routing; HTTP 429 returned on limit exceeded.
 - **Every ! assertion has ESLint suppression comment:** Confirmed — `pnpm lint` exits 0; server.ts (2), client.ts (2), admin.ts (2), proxy.ts (2), adapter.ts (2) suppression comments.
 - **Sentry DSN env vars:** `SENTRY_DSN` (server/edge), `NEXT_PUBLIC_SENTRY_DSN` (client) — to be configured in Plan 06 when Supabase Cloud + Vercel are wired.

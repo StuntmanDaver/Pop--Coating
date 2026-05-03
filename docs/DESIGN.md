@@ -49,7 +49,7 @@ The following decisions were made during the design process. Each is load-bearin
 | 8 | **PIN-based scan attribution on tablets** | Workstation tablet logs in once (per-workstation Supabase auth). Employee PIN-tap identifies who scanned. PIN session is per-shift (default 4-hour idle timeout). |
 | 9 | **Customer auth: magic link only** | Passwordless, no reset flow to build. Single role per company in v1; admin/viewer/accounting roles deferred to Wave 2. |
 | 10 | **Public tracking links: deferred to Wave 3** | Magic-link-to-job covers the same UX in v1 with zero extra code. |
-| 11 | **Multi-domain, one Next.js app** | Wave 1: `app.popscoating.com` (internal) + `track.popscoating.com` (customer portal) for Tenant 1, with `tenant_domains` table seeded for routing. Wave 4: per-tenant custom domains tracked via Wave 4 columns on `tenant_domains` (verification_status, ssl_status); SSL auto-issued via Vercel. Routed via host-based proxy (Next.js 16 `proxy.ts`). Agency console at `admin.<platform>.com` is platform-wide (not in `tenant_domains`). |
+| 11 | **Multi-domain, one Next.js app** | Wave 1: `app.popsindustrial.com` (internal) + `track.popsindustrial.com` (customer portal) for Tenant 1, with `tenant_domains` table seeded for routing. Wave 4: per-tenant custom domains tracked via Wave 4 columns on `tenant_domains` (verification_status, ssl_status); SSL auto-issued via Vercel. Routed via host-based proxy (Next.js 16 `proxy.ts`). Agency console at `admin.<platform>.com` is platform-wide (not in `tenant_domains`). |
 | 12 | **Per-workstation Supabase auth (not service-role for scanner)** | Each workstation tablet gets a synthetic Supabase user at enrollment. RLS applies to all scanner queries. Defense in depth vs the original "service-role for scanner" pattern. |
 | 13 | **Wave 1 honest timeline: 12 weeks + buffer** | Original 7-8 week estimate was optimistic by ~30%. The 12-week plan reflects realistic time for offline mode, workstation enrollment ceremony, audit infrastructure, RLS test suite, and Pops onboarding. |
 | 14 | **Whitelabel + per-vertical workflow templates added in Wave 4** | One platform, one codebase, configured per tenant. Tenant config holds branding (logo, colors, custom domain, email-from), module toggles, working hours, currency/tax. Workflow templates are per-vertical (powder coating, sandblasting, media blasting, galvanizing, plating, custom) with versioning so existing jobs lock to their original template version. |
@@ -82,7 +82,7 @@ The following decisions were made during the design process. Each is load-bearin
    track.<tenant>.com → proxy → (portal) routes only
    admin.<platform>.com → proxy → (agency) routes (Wave 4)
 
-   Wave 1: hardcoded to popscoating.com (Tenant 1).
+   Wave 1: hardcoded to popsindustrial.com (Tenant 1).
    Wave 4: per-tenant custom domains via `tenant_domains` (Wave 4 column additions); agency audience added (admin.<platform>.com is platform-wide, not in tenant_domains).
 ```
 
@@ -342,8 +342,8 @@ CREATE TABLE tenant_domains (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 -- Seed for v1:
---  ('app.popscoating.com', pops_id, 'staff'),
---  ('track.popscoating.com', pops_id, 'customer')
+--  ('app.popsindustrial.com', pops_id, 'staff'),
+--  ('track.popsindustrial.com', pops_id, 'customer')
 
 CREATE TABLE audit_log (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1168,7 +1168,7 @@ ALTER TABLE tenant_domains
   ADD COLUMN ssl_expires_at      TIMESTAMPTZ,
   ADD COLUMN verified_at         TIMESTAMPTZ;
 
--- Wave 4 backfill: existing rows (Pops's app.popscoating.com, track.popscoating.com)
+-- Wave 4 backfill: existing rows (Pops's app.popsindustrial.com, track.popsindustrial.com)
 -- get verification_status='verified' and ssl_status='valid' as part of the migration.
 -- Agency console (admin.<platform>.com) is NOT in tenant_domains — it's a platform-wide
 -- domain, not per-tenant. Routed by proxy.ts via a hardcoded host check.
@@ -1686,7 +1686,7 @@ async function createWorkstation({name, default_stage, location}) {
     .eq('id', ws.id);
 
   await audit({entity_type: 'workstation', entity_id: ws.id, action: 'create'});
-  return {workstation: ws, enrollment_url: `https://app.popscoating.com/scan/enroll?token=${device_token}`};
+  return {workstation: ws, enrollment_url: `https://app.popsindustrial.com/scan/enroll?token=${device_token}`};
 }
 ```
 
@@ -1704,7 +1704,7 @@ async function createWorkstation({name, default_stage, location}) {
 
 **Realtime:** subscribes to status changes on customer's company's jobs for live updates.
 
-**Owned routes:** `/(portal)/*` (rendered when host = `track.popscoating.com`):
+**Owned routes:** `/(portal)/*` (rendered when host = `track.popsindustrial.com`):
 - `/` — sign-in if not signed in, else dashboard
 - `/jobs` — job list with filter/search (PRD §31: search by job_number, filter by status, filter by date)
 - `/jobs/[id]` — job detail with timeline + visual progress bar (PRD §27 example: `Status: Coating | Progress: [██████░░░░] | Due: April 25`)
@@ -1994,7 +1994,7 @@ await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
 **Workstation enrollment** (one-time per tablet):
 1. Admin: settings → "Add workstation" → returns `enrollment_url` containing `device_token`
 2. Settings UI shows large QR
-3. Admin walks tablet to workstation, opens app.popscoating.com → `/(scan)/enroll?token=...`
+3. Admin walks tablet to workstation, opens app.popsindustrial.com → `/(scan)/enroll?token=...`
 4. Tablet calls `enrollWorkstation(device_token)` → server signs in as the synthetic Supabase user with `password=device_token`
 5. Tablet stores Supabase session via `@supabase/ssr` cookies
 6. Subsequent boots: tablet has valid Supabase JWT scoped to staff_shop + workstation_id
@@ -2031,10 +2031,10 @@ await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
 
 **Provisioning** (office-initiated):
 - Office: `inviteCustomer({company_id, email, name, contact_id?})` creates customer_users row
-- Office triggers first email: `sendInitialMagicLink(customer_user_id)` calls `supabase.auth.admin.generateLink({type: 'magiclink', email, redirectTo: 'https://track.popscoating.com/auth/callback'})`
+- Office triggers first email: `sendInitialMagicLink(customer_user_id)` calls `supabase.auth.admin.generateLink({type: 'magiclink', email, redirectTo: 'https://track.popsindustrial.com/auth/callback'})`
 
 **Magic link request** (returning customer):
-- `/sign-in` on track.popscoating.com → enter email
+- `/sign-in` on track.popsindustrial.com → enter email
 - Rate limit 5/hr per email, 10/hr per IP
 - Look up customer_users:
   - Not found OR inactive: silent success (anti-enumeration)
@@ -2055,7 +2055,7 @@ await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
 
 ### 5.6 Cross-cutting
 
-**Session cookies:** `@supabase/ssr` defaults to host-scoped cookies. `app.popscoating.com` and `track.popscoating.com` have separate cookies = separate auth pools. No `domain` override needed.
+**Session cookies:** `@supabase/ssr` defaults to host-scoped cookies. `app.popsindustrial.com` and `track.popsindustrial.com` have separate cookies = separate auth pools. No `domain` override needed.
 
 **MFA for admin:** deferred to Wave 2.
 
@@ -2224,7 +2224,7 @@ Tenant 2 (sandblasting) onboards in Wave 4 — first whitelabel install.
 
 ### 6.2 Week 0: Pre-flight (~2-3 days)
 
-- Verify `popscoating.com` is available; register or transfer
+- Verify `popsindustrial.com` is available; register or transfer
 - Vercel account + Pro plan upfront ($20/mo for serverless function timeouts)
 - Supabase account + Pro plan upfront ($25/mo for backups + branch DBs + PITR)
 - Resend account + verify sending domain
@@ -2234,7 +2234,7 @@ Tenant 2 (sandblasting) onboards in Wave 4 — first whitelabel install.
 - Initial brand (logo, colors) — outsource to designer if needed; placeholder OK
 - WiFi survey at Pops's shop floor — measure signal at every workstation
 - Identify Pops's IT contact; confirm hardware order placement
-- DNS records: configure `popscoating.com`, `app.popscoating.com`, `track.popscoating.com` (CNAMEs to Vercel; placeholder allowed)
+- DNS records: configure `popsindustrial.com`, `app.popsindustrial.com`, `track.popsindustrial.com` (CNAMEs to Vercel; placeholder allowed)
 - Commercial agreement (MSA) with Pops's owner — terms, IP, scope, payment
 - Stakeholder check-in cadence agreed: Weeks 5, 8, 10 demos
 
@@ -2275,7 +2275,7 @@ Tenant 2 (sandblasting) onboards in Wave 4 — first whitelabel install.
 - Days 3-5: Dashboard module. KanbanByStage, StatCards, filters, RecentActivityFeed. Single shared Realtime subscription per tab via Context.
 
 **Week 9: Customer portal**
-- Days 1-2: Multi-domain confirmed in proxy.ts (was scaffolded Week 1). DNS for `track.popscoating.com` confirmed live. Vercel domain attached. portal.requestCustomerMagicLink with rate limit + anti-enumeration. portal.inviteCustomer + sendInitialMagicLink.
+- Days 1-2: Multi-domain confirmed in proxy.ts (was scaffolded Week 1). DNS for `track.popsindustrial.com` confirmed live. Vercel domain attached. portal.requestCustomerMagicLink with rate limit + anti-enumeration. portal.inviteCustomer + sendInitialMagicLink.
 - Days 3-5: Portal UI. CustomerLayout with brand. CustomerJobList. CustomerJobDetail with progress tracker + customer-visible timeline. Magic link sent/expired/revoked screens. Realtime subscription per tab.
 
 **Week 10: Offline mode**
@@ -2465,7 +2465,7 @@ These are not coding tasks, but they will block the launch if missed. Treat them
 Pops likely has no dedicated IT staff. The owner is probably the de facto IT contact, possibly with an external consultant on retainer. Identify this person in **Week 0**, get them in writing as the point of contact for:
 
 - WiFi credentials and router admin access
-- DNS records (for `popscoating.com`)
+- DNS records (for `popsindustrial.com`)
 - Apple ID / Apple Business Manager organizational account
 - Email infrastructure decisions
 - Future MDM enrollment
@@ -2492,7 +2492,7 @@ Production tablets must be locked down to a single PWA — they cannot be allowe
   - **Jamf School** (free for under 100 devices) — overkill for a powder shop but offers proper Single App Mode (kiosk mode), guided access, restricted Safari
   - **Mosyle Manager** — free tier available, well-suited for small deployments
 - Configure each iPad:
-  - Single App Mode pinned to Safari with an allow-list for `app.popscoating.com` and `track.popscoating.com`
+  - Single App Mode pinned to Safari with an allow-list for `app.popsindustrial.com` and `track.popsindustrial.com`
   - Auto-rejoin on WiFi disconnect
   - Disable AirDrop, AirPlay, screenshot sharing
   - Disable App Store, Settings access, Control Center
@@ -2501,9 +2501,9 @@ Production tablets must be locked down to a single PWA — they cannot be allowe
 
 **Email infrastructure**
 
-Pops's owner likely uses a personal email (Comcast, Yahoo, Gmail). A `noreply@popscoating.com` sender will be flagged as phishing if the domain has no SPF/DKIM/DMARC records.
+Pops's owner likely uses a personal email (Comcast, Yahoo, Gmail). A `noreply@popsindustrial.com` sender will be flagged as phishing if the domain has no SPF/DKIM/DMARC records.
 
-- Recommend **Google Workspace** ($6/user/mo, Business Starter) for Pops's owner and any office staff who need authoritative `@popscoating.com` addresses
+- Recommend **Google Workspace** ($6/user/mo, Business Starter) for Pops's owner and any office staff who need authoritative `@popsindustrial.com` addresses
 - Configure SPF, DKIM, DMARC records when DNS is set up
 - Resend will use the same domain for transactional sends (see 10.1 for cost)
 
@@ -2519,12 +2519,12 @@ Charging: leaving an iPad plugged in 24/7 is fine; iOS manages charge cycles int
 
 **Domain ownership**
 
-In **Week 0**, verify `popscoating.com` is available or already owned by Pops. If owned by a third party (parked, cybersquatter), negotiate or pivot to an alternative (`popscoatings.com`, `popsindustrialcoatings.com`).
+In **Week 0**, verify `popsindustrial.com` is available or already owned by Pops. If owned by a third party (parked, cybersquatter), negotiate or pivot to an alternative (`popscoatings.com`, `popsindustrialcoatings.com`).
 
 Subdomains:
-- `app.popscoating.com` — internal staff
-- `track.popscoating.com` — customer portal
-- `www.popscoating.com` — marketing (out of scope)
+- `app.popsindustrial.com` — internal staff
+- `track.popsindustrial.com` — customer portal
+- `www.popsindustrial.com` — marketing (out of scope)
 
 Registrar recommendation: **Cloudflare Registrar** (at-cost pricing, ~$10/yr for `.com`, free WHOIS privacy, integrated DNS). Avoid GoDaddy.
 
@@ -2634,7 +2634,7 @@ Document this in the MSA. Reset expectations: "I am one person. If you need 24/7
 
 **Status page**
 
-Not needed for Wave 1 (one shop). For Wave 2+, set up `status.popscoating.com` via a free service (BetterStack, Uptime Robot's status page). Display Supabase, Vercel, and Resend status alongside the app's own uptime.
+Not needed for Wave 1 (one shop). For Wave 2+, set up `status.popsindustrial.com` via a free service (BetterStack, Uptime Robot's status page). Display Supabase, Vercel, and Resend status alongside the app's own uptime.
 
 ### 7.6 Backup Strategy (Operational)
 
@@ -3290,7 +3290,7 @@ Technical assumptions in this spec were independently verified by parallel resea
 
 **Verified:**
 - Use `supabase.auth.getUser()` (not `getSession()`) on the server — validates with auth server.
-- Cookies scope to exact host by default — `app.popscoating.com` cookies are NOT readable from `track.popscoating.com`. No domain override needed for our multi-domain isolation.
+- Cookies scope to exact host by default — `app.popsindustrial.com` cookies are NOT readable from `track.popsindustrial.com`. No domain override needed for our multi-domain isolation.
 - Local dev: `*.localhost` reserved TLD resolves automatically (no `/etc/hosts` edits). Use `app.localhost:3000` and `track.localhost:3000`.
 - Realtime subscriptions live ONLY in Client Components (Server Components can't hold long-lived sockets). Pass JWT via `supabase.realtime.setAuth(accessToken)` for RLS-aware channels.
 - Service-role client for back-office only, with explicit caller authorization check before invoking.
@@ -3366,7 +3366,7 @@ This spec is the contract for what gets built. Before code is written:
 - [ ] **Pops's owner** (Tenant 1 admin) has read sections 0, 1, 6 (roadmap), 7 (operational), 9 (testing), 10 (cost) and confirmed scope
 - [ ] **Pops's IT contact** has read section 7 (operational) and confirmed hardware/network plan
 - [ ] **WiFi survey** completed at the shop floor (Week 0 task)
-- [ ] **Domain `popscoating.com`** verified available or owned (Wave 1 launch domain)
+- [ ] **Domain `popsindustrial.com`** verified available or owned (Wave 1 launch domain)
 - [ ] **Vercel Pro + Supabase Pro** subscriptions activated
 - [ ] **Hardware orders** placed (or scheduled to be placed in Week 4)
 - [ ] **Service agreement** with Tenant 1 (Pops) signed (standard SaaS terms — no design-partner / MSA carve-outs needed)

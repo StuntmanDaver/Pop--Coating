@@ -192,7 +192,7 @@
     {
       "id": "US-011",
       "title": "Office sign-in Server Action and sign-in page UI",
-      "description": "As an office staff member, I want to sign in with my email and password at app.popscoating.com/sign-in so that I can access the CRM, jobs, and dashboard.",
+      "description": "As an office staff member, I want to sign in with my email and password at app.popsindustrial.com/sign-in so that I can access the CRM, jobs, and dashboard.",
       "acceptanceCriteria": [
         "src/modules/auth/actions/sign-in.ts exports signInAction(formData: FormData) Server Action",
         "Action calls supabase.auth.signInWithPassword() then redirects to /(office)/dashboard on success",
@@ -228,7 +228,7 @@
     {
       "id": "US-013",
       "title": "Portal magic-link Server Action, callback route, and portal sign-in UI",
-      "description": "As a customer, I want to enter my email at track.popscoating.com/sign-in to receive a magic link so that I can access my job tracking portal without a password.",
+      "description": "As a customer, I want to enter my email at track.popsindustrial.com/sign-in to receive a magic link so that I can access my job tracking portal without a password.",
       "acceptanceCriteria": [
         "src/modules/auth/actions/request-magic-link.ts exports requestMagicLinkAction(formData: FormData) Server Action",
         "Action applies magicLinkLimiter rate check before calling Supabase",

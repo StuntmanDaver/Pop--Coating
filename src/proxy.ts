@@ -25,7 +25,7 @@ function clientIp(request: NextRequest): string {
 
 export async function proxy(request: NextRequest) {
   const host = request.headers.get('host') ?? ''
-  const isOffice = host.startsWith('app.')   // matches app.popscoating.com AND app.localhost:3000
+  const isOffice = host.startsWith('app.')   // matches app.popsindustrial.com AND app.localhost:3000
   const isPortal = host.startsWith('track.')
   const url = new URL(request.url)
   const isSignInPost = request.method === 'POST' && url.pathname === '/sign-in'

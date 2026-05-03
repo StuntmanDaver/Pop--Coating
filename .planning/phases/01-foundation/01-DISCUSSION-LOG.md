@@ -15,7 +15,7 @@
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Resend SMTP from day 1 | Supabase Auth routes magic links/invites through Resend; from noreply@popscoating.com; SPF/DKIM/DMARC from day 1 | ✓ |
+| Resend SMTP from day 1 | Supabase Auth routes magic links/invites through Resend; from noreply@popsindustrial.com; SPF/DKIM/DMARC from day 1 | ✓ |
 | Supabase built-in for auth only | Two email systems temporarily; auth uses Supabase native, Resend for custom transactionals | |
 | You decide | Claude picks most production-appropriate option | |
 
@@ -25,11 +25,11 @@
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| noreply@popscoating.com | Standard no-reply; simple SPF/DKIM; customers see shop domain | ✓ |
-| hello@popscoating.com | Friendlier sender; requires mailbox/catch-all for replies | |
+| noreply@popsindustrial.com | Standard no-reply; simple SPF/DKIM; customers see shop domain | ✓ |
+| hello@popsindustrial.com | Friendlier sender; requires mailbox/catch-all for replies | |
 | You decide | Claude picks conventional B2B option | |
 
-**User's choice:** noreply@popscoating.com
+**User's choice:** noreply@popsindustrial.com
 
 ### Resend API key environment strategy?
 

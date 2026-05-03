@@ -12,7 +12,7 @@
 ### Locked Decisions
 
 - **D-01:** Supabase Auth routes ALL its own emails (magic links, staff invites, password resets) through Resend SMTP — not Supabase's built-in email service. Configure Supabase Auth SMTP settings to point to Resend in Phase 1.
-- **D-02:** From address for all auth emails: `noreply@popscoating.com`. SPF/DKIM/DMARC verified via Resend for this address.
+- **D-02:** From address for all auth emails: `noreply@popsindustrial.com`. SPF/DKIM/DMARC verified via Resend for this address.
 - **D-03:** Single Resend API key for all environments (local dev, preview, production). No test-mode/live-mode split. RESEND_API_KEY in `.env.local` and Vercel environment variables.
 - **D-04:** Phase 1 delivers three layers for workstation auth: (1) DB schema for `workstations` table, (2) SECURITY DEFINER functions `app.claim_workstation()`, `app.record_workstation_heartbeat()`, `app.release_workstation()`, (3) `createWorkstation` server action in `src/modules/settings/`. The tablet-side ceremony UI is Phase 3.
 - **D-05:** Workstation session refresh: silent via `@supabase/ssr`.
@@ -41,7 +41,7 @@ None declared.
 | ID | Description | Research Support |
 |----|-------------|------------------|
 | INFRA-01 | Next.js 16 App Router repo with TypeScript strict, Tailwind v4, shadcn/ui, pnpm | §Standard Stack covers versions, CSS-first config, CLI init commands |
-| INFRA-02 | Supabase project + Vercel project with `app.popscoating.com` and `track.popscoating.com` domains | §Architecture Patterns covers project linking, domain config |
+| INFRA-02 | Supabase project + Vercel project with `app.popsindustrial.com` and `track.popsindustrial.com` domains | §Architecture Patterns covers project linking, domain config |
 | INFRA-03 | `tenants` table + `tenant_id` on every business table + `app.tenant_id()` SECURITY DEFINER helper + RLS | §Architecture Patterns covers full SQL from DESIGN.md §3.2–3.3 |
 | INFRA-04 | Resend SMTP + Upstash Redis rate limiting + Sentry | §Standard Stack covers all three libraries and init patterns |
 | INFRA-05 | `src/proxy.ts` multi-domain routing (`app.*` → office, `track.*` → portal) | §Architecture Patterns covers the file rename and routing pattern |
@@ -139,7 +139,7 @@ pnpm add -D madge @typescript-eslint/eslint-plugin @typescript-eslint/parser
 ```
 Browser / iPad
      │
-     │ HTTPS request (Host: app.popscoating.com or track.popscoating.com)
+     │ HTTPS request (Host: app.popsindustrial.com or track.popsindustrial.com)
      ▼
 ┌──────────────────────────────────────────────────────────┐
 │  Vercel Edge — src/proxy.ts                              │
@@ -187,14 +187,14 @@ Browser / iPad
 ```
 src/
 ├── app/
-│   ├── (office)/            # Staff-facing (app.popscoating.com)
+│   ├── (office)/            # Staff-facing (app.popsindustrial.com)
 │   │   ├── layout.tsx
 │   │   ├── page.tsx         # Dashboard stub (Phase 1: redirect to /sign-in)
 │   │   └── sign-in/
 │   │       └── page.tsx
 │   ├── scan/                # Shop floor (NOT a route group — explicit /scan URL)
 │   │   └── page.tsx         # Stub (Phase 3)
-│   ├── (portal)/            # Customer-facing (track.popscoating.com)
+│   ├── (portal)/            # Customer-facing (track.popsindustrial.com)
 │   │   ├── layout.tsx
 │   │   ├── page.tsx         # Stub (Phase 4)
 │   │   └── auth/
@@ -336,10 +336,10 @@ export async function proxy(request: NextRequest) {
   if (user) {
     const audience = user.app_metadata?.audience
     if (isPortal && audience !== 'customer') {
-      return NextResponse.redirect(new URL('https://app.popscoating.com', request.url))
+      return NextResponse.redirect(new URL('https://app.popsindustrial.com', request.url))
     }
     if (isOffice && audience === 'customer') {
-      return NextResponse.redirect(new URL('https://track.popscoating.com', request.url))
+      return NextResponse.redirect(new URL('https://track.popsindustrial.com', request.url))
     }
   }
 
@@ -572,11 +572,11 @@ Not applicable — this is a greenfield phase. No existing runtime state to inve
 
 ### Pitfall 2: Cross-Domain Cookie Leakage
 
-**What goes wrong:** A customer who signs in on `track.popscoating.com` can also authenticate on `app.popscoating.com` because the cookie's `Domain` attribute is set to `.popscoating.com` instead of the exact host.
+**What goes wrong:** A customer who signs in on `track.popsindustrial.com` can also authenticate on `app.popsindustrial.com` because the cookie's `Domain` attribute is set to `.popsindustrial.com` instead of the exact host.
 
 **Why it happens:** `@supabase/ssr` defaults to host-scoped cookies (no `Domain` attribute), but developers sometimes override cookie options thinking they need to "share" the session. The two subdomains use separate Supabase clients — their cookies should never cross.
 
-**How to avoid:** Never set `domain: '.popscoating.com'` in cookie options. Let `@supabase/ssr` use its default host-scoped behavior. `proxy.ts` enforces audience-domain separation for any JWT that slips through (office JWT on `track.*` → redirect).
+**How to avoid:** Never set `domain: '.popsindustrial.com'` in cookie options. Let `@supabase/ssr` use its default host-scoped behavior. `proxy.ts` enforces audience-domain separation for any JWT that slips through (office JWT on `track.*` → redirect).
 
 **Warning signs:** `getUser()` in a portal page returns a `staff_office` user; tests that simulate customer auth pass on office routes.
 
@@ -877,7 +877,7 @@ export async function createWorkstation({
 
   return {
     workstation: ws,
-    enrollment_url: `https://app.popscoating.com/scan/enroll?token=${device_token}`,
+    enrollment_url: `https://app.popsindustrial.com/scan/enroll?token=${device_token}`,
   }
 }
 ```

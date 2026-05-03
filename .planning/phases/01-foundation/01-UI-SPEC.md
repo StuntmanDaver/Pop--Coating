@@ -114,7 +114,7 @@ Accent reserved for: **primary CTA button fill only** (`Sign In` button backgrou
 
 Phase 1 has exactly two rendered surfaces:
 
-### Surface 1: Sign-in Page (`/` on `app.popscoating.com`)
+### Surface 1: Sign-in Page (`/` on `app.popsindustrial.com`)
 
 Layout:
 - Full-viewport background: `--background` (#F8FAFC)
