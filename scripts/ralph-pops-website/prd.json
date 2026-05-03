@@ -295,7 +295,7 @@
         "Verify in browser using dev-browser skill: tile renders, hover state works, keyboard focus shows ring"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles \u00a76.3 \u2014 no tan/sepia tint on images (that's a current-site bug). Use real shop photography. The 5 services and their images are listed in PRD \u00a77."
     },
     {

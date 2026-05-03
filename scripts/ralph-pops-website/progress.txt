@@ -56,19 +56,23 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - `next/image` with `fill` (used for hero background photos) requires the parent to have `position: relative` (or absolute/fixed). Pair `relative isolate` on the parent so the overlay div + content div live in the same stacking context — the overlay is `absolute inset-0` (no z-index), and content sits on top via `relative z-10`.
 - Decorative background images on hero/marketing surfaces use `alt=""` (empty string, NOT null). Screen readers skip empty-alt images entirely; the heading + lede already convey meaning. Reserve descriptive alt text for images that ARE the message (leadership headshots, before/after job photos, certifications).
 - Display heading sizes are not yet declared as Tailwind tokens (the @theme block in app/globals.css does not include `--text-display-*`). Until a future story adds them, marketing components hit the §3.3 spec via arbitrary values: `text-[36px] md:text-[56px]` for display-lg with `leading-[1.05]`. Same approach applies for display-xl (72px), display-md (44px), display-sm (30px) when other components need them.
+- Tailwind v4's `scale-[1.03]` compiles to the modern CSS `scale: 1.03` property, NOT `transform: scale(1.03)`. So `getComputedStyle(el).transform` will read `none` even when the scale is applied — verify hover scale via `getComputedStyle(el).scale` instead. Both properties compose with `transform-origin` and respect `transition-transform` (which v4 transitions: transform, translate, scale, rotate together — see the transition shorthand emitted in `.transition-transform`).
+- Shop photography for service tiles lives at `/images/<service>-*.jpg` — pick the largest (non-thumbnail) variant available; next/image handles responsive crops. Avoid the `-300x*` and `-200x*` thumbnails as `src` (they degrade on retina). Examples used in US-016: `industrial-painting-lakeland-fl-1024x683-1.jpg`, `abrasive-media-blasting.jpg` (no -300x suffix), `industrial-powder-coating-lakeland-fl-IMG_3687.jpg`, `large-capacity-powder-coating.jpg`. The `.firecrawl/popsindustrial/manifest.json#alt_text_audit` flags which images need bespoke alt text — the rebuild closes that gap as it consumes them.
+- Card with edge-to-edge image: override Card's default `p-6` with `p-0` via className, wrap the image in `<div class="relative aspect-[16/10] overflow-hidden">`, and put padded content (eyebrow/title/body) in a sibling `<div class="p-6">`. Keep `overflow-hidden` on the Card too so the image clips into the rounded corners. The `interactive` Card variant (`hover:shadow-3`) still fires when an inner Link is hovered — `:hover` bubbles to ancestors.
+- For interactive tiles where the WHOLE card navigates: Card outside, Link inside, content inside Link. Put the focus ring on the Link (`focus-visible:ring-2 ring-pops-yellow-300 ring-offset-2 ring-offset-ink-800`) and rely on `:hover` bubbling for the Card's `hover:shadow-3` lift. Add `group` to the Link so descendants can opt into `group-hover:*` (e.g. image scale). Don't use `role="link"` on the Card — it makes the Link redundant for assistive tech.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 10/11 complete
+Phase B — Design primitives (US-006 to US-016): 11/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 15/49 stories passing
+OVERALL: 16/49 stories passing
 
 ---
 
@@ -408,4 +412,39 @@ OVERALL: 15/49 stories passing
   - `next/image` with `fill` requires the parent to have `position: relative` (or `absolute`/`fixed`); `relative isolate` on the Hero `<section>` covers it AND creates a stacking context so the absolutely-positioned overlay stays below the relatively-positioned content `z-10` div.
   - For decorative background photos, set `alt=""` (NOT a description). Screen readers skip empty-alt images entirely; the heading + lede already convey the page meaning. Only set a meaningful alt when the photo is the message (e.g. a leadership headshot on /about-us/leadership).
   - Display token gap: the design principles §3.3 lists `--text-display-xl/lg/md/sm` as 72/56/44/30 px tokens, but the @theme block in globals.css only ships color/font/radius/shadow tokens. Until a future story adds these as `--text-*` Tailwind v4 tokens, marketing components use arbitrary `text-[Npx]` values to hit the spec exactly.
+---
+
+## 2026-05-03 — US-016 Build ServiceTile component
+- Created apps/pops-website/components/marketing/service-tile.tsx — `ServiceTile({ number, name, lede, image, href, alt, className })` function component (no forwardRef per existing marketing convention; Hero uses the same pattern)
+- Layout: `<Card interactive className="overflow-hidden p-0">` wrapping `<Link href={href} className="group block ...focus-visible ring">` per AC ("Card wrapping Link"). Card's default `p-6` is overridden to `p-0` so the 16:10 image runs edge-to-edge to the card border; padded content sits in a sibling `<div class="p-6">`. `overflow-hidden` on the Card clips the image into the `rounded-sm` corners.
+- Image: `<Image fill>` inside `<div class="relative aspect-[16/10] overflow-hidden bg-ink-800">` with `sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"` so next/image picks an appropriate crop (avoids shipping the 1024w variant to a 300w mobile tile)
+- Eyebrow uses `EyebrowLabel` (from US-007) with the literal `Service ${number} / ${name}` per AC; default tone="yellow" → text-pops-yellow-500
+- Title: `<h3 class="font-text text-lg font-bold leading-tight tracking-tight">` — `text-lg` resolves to 18px = §4.3 `--text-h4` (Inter 700). NOT uppercase per design principles §4.3 ("Headings ditch the uppercase").
+- Body: `<p class="line-clamp-2 font-text text-sm leading-relaxed opacity-80">` — line-clamp-2 enforces the "2 lines of text-sm" AC even when the lede is long; `opacity-80` matches CardDescription's muted treatment from US-009 so the tile feels of a piece with the existing design system.
+- Footer: `<p class="inline-flex items-center gap-2 font-text text-sm font-semibold text-pops-yellow-500">` containing `<span aria-hidden="true">→</span>` + "Learn more". Decorative arrow gets `aria-hidden` so SR users don't hear "right arrow" before "Learn more"; the visible "Learn more" carries the affordance.
+- Hover (composes via group/peer):
+  - Card's `interactive` variant: `hover:shadow-3` lift (CVA recipe from US-009 — fires on Card via `:hover` bubbling from the inner Link)
+  - Image: `motion-safe:group-hover:scale-[1.03]` with the Link as the `group` ancestor — Tailwind v4 emits `@media (prefers-reduced-motion: no-preference) { @media (hover: hover) { ... :is(:where(.group):hover *) { scale: 1.03 } } }`. NOTE: v4's scale utility uses the modern CSS `scale` property (separate from `transform`), so `getComputedStyle(el).transform` reads `none`; verify via `getComputedStyle(el).scale === "1.03"`
+  - Both transitions: `duration-200 ease-out` per design principles §8 motion tokens
+- Reduced motion: the `motion-safe:` prefix gates the scale on `prefers-reduced-motion: no-preference`; users with reduce-motion get the shadow lift only, no image zoom — matches the AC explicit requirement
+- Created apps/pops-website/app/dev/service-tiles/page.tsx — preview page with all 5 services in the actual data shape consumers will pass (mirrors PRD §7), plus a 2-up density variant for tablet review. Uses real shop photography from `/images/`: industrial-painting-lakeland-fl-1024x683-1.jpg, industrial-complex-coatings-1.jpg, abrasive-media-blasting.jpg, industrial-powder-coating-lakeland-fl-IMG_3687.jpg, large-capacity-powder-coating.jpg
+- Files changed: apps/pops-website/components/marketing/service-tile.tsx (new), apps/pops-website/app/dev/service-tiles/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.2s; TS in 1369ms; 10/10 static pages including the new dev preview) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/service-tiles):
+  - Eyebrow renders "SERVICE 01 / WET PAINT COATINGS" uppercase, color rgb(254, 205, 8) = pops-yellow-500 ✓
+  - h3 renders "Wet Paint Coatings" with font-family Inter, weight 700, size 18px, text-transform none ✓
+  - "Learn more" renders pops-yellow-500 with arrow span aria-hidden=true ✓
+  - Card surface bg-ink-700 (rgb(42,48,59)) with border-ink-600 (rgb(63,70,84)) ✓
+  - Image wrapper has aspect-ratio: 16 / 10; img object-fit: cover; transition includes transform/scale ✓
+  - Hover (Playwright .hover() on first tile): Card boxShadow elevates to 8px+16px shadow-3 (was "none" pre-hover); Image scale property = 1.03 (was 1 pre-hover) ✓
+  - Tab focus: Link receives focus-visible ring `rgba ink-800 0px 0px 0px 2px` offset + `pops-yellow-300 0px 0px 0px 4px` ring (matches US-008 button focus-ring convention) ✓
+  - All five tiles render in xl:grid-cols-5 (5-up desktop), lg:grid-cols-3, sm:grid-cols-2, mobile 1-up — design principles §6.3 "4-up grid desktop, 2-up tablet, 1-up mobile" is honored (the AC + PRD §6.2/§7 calls for 5-up for the home page; the component itself is grid-agnostic and adapts to the parent grid)
+  - Console: 0 errors, 1 unrelated warning (next/dev fast-refresh banner)
+- Note (visual parity): on the live site, service-tile images carry a tan/sepia tint that hides what the work actually looks like (per design principles §6.3 — "current sepia wash hides what the service actually looks like"). The rebuild ships full-color shop photography per the contract — this is intentional and is the explicit fix called out in §6.3.
+- **Learnings for future iterations:**
+  - Tailwind v4's `scale-[1.03]` produces the CSS `scale` property, not `transform: scale()`. When verifying hover transforms in Playwright, read `getComputedStyle(el).scale` — the `transform` will still be `none`. Both work with `transition-transform` because v4's transition shorthand transitions `transform, translate, scale, rotate` together.
+  - When the Card surface needs to be edge-to-edge (image), override `p-6` → `p-0` on the Card and put `p-6` on the inner content div. `cn()` with `tailwind-merge` resolves the conflict correctly because both classes target padding and twMerge picks the last one.
+  - For decorative iconography inside link text (e.g. `→` before "Learn more"), wrap in `<span aria-hidden="true">` so the link's accessible name is just "Learn more" (or, for whole-card links, the image alt). Do NOT use `aria-label` on the link to override — the natural text content is the right SR announcement and works without JS.
+  - The Card+Link composition (Card outside, Link inside, content inside Link) is the canonical "whole card is a target" pattern. Focus ring on the Link, hover lift on the Card via `:hover` bubbling, image scale on the Link via `group-hover`. Don't add `role="link"` to the Card — that would create a redundant target for SR users.
+  - Picking real shop photography from `public/images/` requires reading the manifest.json's filename list — the same service may have multiple variants (full-res, -300x225 thumbnail, -scaled, -150x150). Always pick the largest non-thumbnail variant; next/image handles responsive crops via `sizes`.
 ---
