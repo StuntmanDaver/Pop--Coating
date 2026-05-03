@@ -369,3 +369,20 @@ OVERALL: 13/49 stories passing
   - The dev preview page (`app/dev/footer/page.tsx`) uses a custom `<main>` wrapper rather than the ServiceSection/Container primitives so the Footer is the visual focus. Keep dev pages minimal and component-focused — they're a design-system reference, not full-page mockups.
   - Footer has NO outer padding from Container itself; padding lives on the inner grid and bottom rail. This way Container's `max-w-[1280px]` correctly caps the footer content width while letting the `bg-ink-900` flood edge-to-edge on the `<footer>` element.
 ---
+
+## 2026-05-03 — US-014 Build Header component (HOME link + brand mark)
+- Created components/layout/header.tsx exporting <Header /> — sticky top-0 z-50, bg-ink-900/95 backdrop-blur, border-bottom on ink-700/60
+- Skip-to-content link is the FIRST focusable element (sr-only by default; focus:not-sr-only positions it as a yellow pill at top-left)
+- Brand mark: <Link href="/"> with /images/Pops-no-border.png at h-10 w-auto + 'POP'S INDUSTRIAL COATINGS' wordmark in font-display tracking-tight (text-sm sm:text-base)
+- HOME link: <nav aria-label="Primary"> wrapping a single <Link href="/"> in font-text text-sm font-medium uppercase tracking-[0.04em], min-h-11 tap target, hover:text-pops-yellow-500
+- Both interactive links use the canonical focus-visible ring tokens (pops-yellow-300 ring + ink-900 offset)
+- Logo <Image> uses alt="" because the adjacent wordmark already names the link via aria-label on <Link>
+- Created app/dev/header/page.tsx as a working preview with scroll filler to verify sticky behavior
+- Files changed: components/layout/header.tsx, app/dev/header/page.tsx
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (Playwright at http://localhost:3001/dev/header — confirmed tab order skip-link → logo → HOME, both nav links resolve to /)
+- **Learnings for future iterations:**
+  - Skip-to-content link pattern: `sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] ...` — visually hidden until focused, then it pops into the corner as a yellow pill. Apply this same pattern wherever a top-level skip link is needed (page-level layouts, route shells).
+  - When a link has an `aria-label` AND contains an icon/logo plus visible text, set the icon's `alt=""` so screen readers don't announce the visual twice — the `aria-label` on the link is canonical, and the visible wordmark is already part of the link's accessible name fallback.
+  - Header `bg-ink-900/95 backdrop-blur` requires the page underneath to actually have content scrolling under it for the blur to be visible. Verify sticky behavior via a dev preview page with scroll filler — the homepage hero (US-015/017) will sit directly under the header so backdrop-blur kicks in over the hero photo.
+  - `min-h-11` on a flex/inline-flex link with `items-center` gives a 44px tap target without affecting the visible text size. Pair with horizontal `px-3 py-2` for a comfortable touch zone that stays compact on desktop.
+---

@@ -254,7 +254,7 @@
         "Verify in browser using dev-browser skill: tab order starts with skip-link; logo and HOME both navigate to /"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "Per site-globals.json#header.note \u2014 the live site has NO main nav menu. Don't invent one in this story. Future iterations can add a fuller nav once content owners decide. Skip-to-content is required by design principles \u00a79."
     },
     {
