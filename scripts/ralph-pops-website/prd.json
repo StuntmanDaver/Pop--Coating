@@ -592,7 +592,7 @@
         "Verify in browser using dev-browser skill: check-in form renders, safety acknowledgment is a real checkbox and submission is blocked when unchecked"
       ],
       "priority": 32,
-      "passes": false,
+      "passes": true,
       "notes": "The safety checkbox is mandatory \u2014 its label includes a link to /guest-safety-rules. The Zod schema must require it true."
     },
     {

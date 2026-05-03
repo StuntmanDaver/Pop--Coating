@@ -666,3 +666,18 @@ OVERALL: 16/49 stories passing
   - schema.ts / contact-form.tsx split: schema can be imported server-side for Server Action validation
   - Map iframe URL verbatim: `https://www.google.com/maps/embed?origin=mfe&pb=!1m4!2m1!1s3515+Airport+Road+Lakeland,+FL+33811!5e0!6i10`
 ---
+
+## 2026-05-03 — US-032 Build /check-in page (visitor check-in form)
+- Hero: "GUEST" eyebrow, "Check In" H1, slide-01.jpg background, "Guest Safety Rules" CTA
+- Form fields: First Name (required), Last Name (required), Company Name (optional), Email (required), Phone (required), Reason for Visit (textarea, optional)
+- Safety acknowledgment: Radix Checkbox via Controller + z.boolean().refine() requiring true; label links to /guest-safety-rules
+- Form centered in max-w-[640px] container on dark section
+- defaultValues: { safetyAcknowledged: false } to ensure boolean type throughout
+- Files: apps/pops-website/app/check-in/schema.ts, apps/pops-website/app/check-in/check-in-form.tsx, apps/pops-website/app/check-in/page.tsx (all new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (validation errors fire correctly; safety box blocks submission)
+- **Learnings:**
+  - Radix Checkbox (not native input) requires Controller from react-hook-form, not register
+  - z.literal(true, { errorMap: ... }) syntax not supported in this Zod version; use z.boolean().refine(val => val === true, { message: ... }) instead
+  - defaultValues: { safetyAcknowledged: false } needed so RHF treats it as boolean, not undefined
+  - Controller onChange: `(checked) => field.onChange(checked === true)` — converts Radix CheckedState to boolean
+---
