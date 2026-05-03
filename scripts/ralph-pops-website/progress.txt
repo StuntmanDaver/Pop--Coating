@@ -14,19 +14,22 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Logo canonical: /images/Pops-no-border.png
 - pops-website uses `apps/pops-website/app/` for routes (NOT `src/`) — no src-dir convention here
 - pops-website .gitignore must exclude node_modules, .next, *.tsbuildinfo to avoid committing build artifacts
+- Tailwind v4 is CSS-first: `@import "tailwindcss"` + `@theme { ... }` in app/globals.css; postcss.config.mjs uses `@tailwindcss/postcss`. NO tailwind.config.ts.
+- Design tokens (color-pops-yellow-*, color-ink-*, semantic, font-display/text/mono, radius-*, shadow-1..4) are sourced VERBATIM from docs/design/popsindustrial-design-principles.md §10. Do NOT diverge — those values are paint-chip-locked.
+- Tailwind v4 auto-generates utility classes from `@theme` tokens (e.g. `bg-ink-800`, `text-pops-yellow-500`, `font-display`, `rounded-sm`, `shadow-3`) — no need to declare them.
 
 ---
 
 ## Story Status (49 stories total)
 
-Phase A — Workspace + foundation (US-001 to US-005): 1/5 complete
+Phase A — Workspace + foundation (US-001 to US-005): 2/5 complete
 Phase B — Design primitives (US-006 to US-016): 0/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 1/49 stories passing
+OVERALL: 2/49 stories passing
 
 ---
 
@@ -46,4 +49,28 @@ OVERALL: 1/49 stories passing
   - Turbopack (Next.js 16) discovers middleware relative to the pnpm workspace root, not the package directory. The fix is a `src/proxy.ts` stub in pops-website that passes through all requests. This MUST exist for every Next.js app in this monorepo unless proper workspace isolation is configured.
   - pops-website has no `src/` convention — routes live in `apps/pops-website/app/` directly. The `src/proxy.ts` stub file is solely for the Turbopack workaround.
   - The `@/*` path alias in pops-website tsconfig maps to `./src/*` (i.e., `apps/pops-website/src/*`) — this is correct and consistent with the SaaS app convention, but note that pops-website's src only contains the proxy stub, not actual app code.
+---
+
+## 2026-05-02 — US-002 Add Tailwind v4 + design tokens to apps/pops-website/app/globals.css
+- Added tailwindcss@^4.2.4 + @tailwindcss/postcss@^4.2.4 to devDependencies via `pnpm --filter pops-website add -D`
+- Wrote apps/pops-website/postcss.config.mjs registering `@tailwindcss/postcss` plugin
+- Replaced apps/pops-website/app/globals.css placeholder with:
+  - `@import "tailwindcss"` directive
+  - `@theme { ... }` block VERBATIM from docs/design/popsindustrial-design-principles.md §10:
+    - 5 brand colors (pops-yellow 100/300/500/600 + tan-400)
+    - 11 ink/paper neutrals (ink-50..900 + paper)
+    - 8 semantic colors (success/warn/danger/info — 100/500 pairs)
+    - 3 font tokens (display/text/mono)
+    - 5 radius tokens (none/sm/md/lg/full)
+    - 4 elevation tokens (shadow-1..shadow-4)
+  - `html { background: var(--color-ink-800); color: var(--color-ink-100); }` per AC
+  - `@media (prefers-reduced-motion: reduce)` block disabling animations/transitions per design principles §8
+- Files changed: apps/pops-website/app/globals.css, apps/pops-website/postcss.config.mjs, apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ (Compiled successfully in 1886ms; 3/3 static pages generated)
+- **Learnings for future iterations:**
+  - Tailwind v4 auto-derives utility class names from `@theme` token names. e.g. `--color-pops-yellow-500: #FECD08` automatically yields `bg-pops-yellow-500`, `text-pops-yellow-500`, `border-pops-yellow-500`, etc. NO `tailwind.config.ts` required, NO `theme.extend` block.
+  - For radius and shadow, the same auto-mapping applies: `--radius-sm` → `rounded-sm`, `--shadow-3` → `shadow-3`. Future component stories can reference these utility classes directly.
+  - For fonts, `--font-display` → `font-display`, `--font-text` → `font-text`. The font *files* will land in US-003 (next/font wiring); §10 tokens declare the FALLBACK stacks only.
+  - The `html` element styles in globals.css apply globally before next/font wires up CSS vars (US-003), so initial paint is dark + light text — no FOUC on the dark theme.
+  - Build via Turbopack pulls the @theme block + reduced-motion media query into the final CSS automatically; nothing extra was needed in next.config.ts.
 ---

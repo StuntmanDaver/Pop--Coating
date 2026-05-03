@@ -37,7 +37,7 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Copy the @theme block VERBATIM from §10 of the design principles. The SaaS at src/ uses different tokens — don't cross-pollinate. No tailwind.config.ts — Tailwind v4 is CSS-first per CLAUDE.md."
     },
     {
