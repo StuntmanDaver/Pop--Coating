@@ -711,3 +711,14 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/lib/email.ts (new)
 - Quality checks: typecheck ✓ | build ✓
 ---
+
+## 2026-05-03 — US-036 Build /request-a-quote server action
+- Created apps/pops-website/app/request-a-quote/actions.ts with submitQuote() 'use server'
+- Validates with quoteSchema.safeParse; returns { ok: false, fieldErrors } on failure
+- Calls sendFormEmail({ to: company.emails.info, subject: `New quote request from ${name}`, html, replyTo: email })
+- Returns { ok: true } on success; { ok: false, serverError } if email send fails
+- Updated quote-form.tsx: onSubmit calls submitQuote(); success shows inline success card; server error shows role="alert" banner
+- Validated in browser: field errors fire (Name/Email/Project Details required); valid submit shows server error message (RESEND_API_KEY not set in dev — expected)
+- Files: apps/pops-website/app/request-a-quote/actions.ts (new), apps/pops-website/app/request-a-quote/quote-form.tsx (updated)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---

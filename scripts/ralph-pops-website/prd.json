@@ -666,7 +666,7 @@
         "Verify in browser using dev-browser skill: submit a valid form, see success message; submit invalid, see field-level errors"
       ],
       "priority": 36,
-      "passes": false,
+      "passes": true,
       "notes": "Server actions in Next.js 16 are async functions exported from a 'use server' module. Per CLAUDE.md, Server Actions are the preferred mutation path. reCAPTCHA verification gets bolted on in US-039."
     },
     {
