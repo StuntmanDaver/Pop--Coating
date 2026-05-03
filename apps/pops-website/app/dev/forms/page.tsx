@@ -1,3 +1,4 @@
+import { Checkbox } from "../../../components/forms/checkbox";
 import { Input } from "../../../components/forms/input";
 import { Label } from "../../../components/forms/label";
 import { Textarea } from "../../../components/forms/textarea";
@@ -95,6 +96,65 @@ export default function DevFormsPage() {
                 >
                   Project details are required.
                 </p>
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="checkbox-state">
+            <h2
+              id="checkbox-state"
+              className="font-text text-lg font-bold mb-4"
+            >
+              Checkbox
+            </h2>
+            <div className="grid gap-4">
+              <div className="flex items-center gap-2">
+                <Checkbox id="ack-default" name="ack-default" />
+                <Label
+                  htmlFor="ack-default"
+                  className="mb-0 cursor-pointer select-none"
+                >
+                  Default (unchecked)
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox id="ack-checked" name="ack-checked" defaultChecked />
+                <Label
+                  htmlFor="ack-checked"
+                  className="mb-0 cursor-pointer select-none"
+                >
+                  Default checked
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="ack-required"
+                  name="ack-required"
+                  required
+                  aria-describedby="ack-required-help"
+                />
+                <Label
+                  htmlFor="ack-required"
+                  className="mb-0 cursor-pointer select-none"
+                >
+                  I acknowledge the safety requirements
+                  <span className="text-pops-yellow-500"> *</span>
+                </Label>
+              </div>
+              <p
+                id="ack-required-help"
+                className="font-text text-sm text-ink-400"
+              >
+                Required for guest sign-in on /check-in.
+              </p>
+              <div className="flex items-center gap-2">
+                <Checkbox id="ack-disabled" name="ack-disabled" disabled />
+                <Label
+                  htmlFor="ack-disabled"
+                  className="mb-0 cursor-not-allowed select-none opacity-50"
+                >
+                  Disabled
+                </Label>
               </div>
             </div>
           </section>

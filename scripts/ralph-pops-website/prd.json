@@ -216,7 +216,7 @@
         "Verify in browser using dev-browser skill: keyboard space toggles, screen-reader announces state"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Add @radix-ui/react-checkbox to apps/pops-website/package.json. The 44\u00d744 tap target is non-negotiable per design principles \u00a79."
     },
     {

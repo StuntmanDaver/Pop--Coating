@@ -43,19 +43,22 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - `resize-y` on Textarea (vertical-only resize) prevents users from breaking the form layout by dragging horizontally. It's the convention for content-bearing fields like message/project-details.
 - FormField (US-011) is the wiring contract for accessibility on every form field: it owns the Label/htmlFor pairing, the helper-or-error `<p id={`${name}-help`}>`, and uses `React.cloneElement` to inject `id`, `name`, `aria-invalid`, and `aria-describedby` onto the single input child. Consumers only pass `<Input />` / `<Textarea />` as children — they NEVER set those four attrs themselves. If the consumer already sets `id`/`name`/`aria-describedby`, FormField preserves them (cloneElement uses `child.props.x ?? name` for id/name and joins existing `aria-describedby` tokens with the help id). Error string takes precedence over helperText, and both render with `mt-2 font-text text-sm` — error in `text-danger-500`, helper in `text-ink-400`.
 - Use `Children.only(children)` to enforce a single React child at runtime — failing fast with a clear error if a consumer wraps multiple inputs in one FormField. Pair with `isValidElement<P>()` (typed generic) for the cloneElement narrowing — this is the only way to keep TS strict-mode happy without `any`.
+- Radix primitive wrappers (Checkbox, future RadioGroup/Switch/Select/Dialog/Dropdown/Tabs) MUST start with `"use client"` — Radix uses React Context + hooks internally and will throw if imported from a Server Component. Apply this rule to every new file under `components/forms/` or `components/ui/` that imports from `@radix-ui/*`.
+- For Radix Root + Indicator primitives (Checkbox, RadioGroup, Switch), the canonical "double-element" pattern is: Root carries the interactive semantics + tap target + focus ring; an `aria-hidden` inner element carries the visible chrome that responds to `data-state` via `group-data-[state=*]`. This decouples the visual size (e.g. 18x18) from the WCAG 2.1 AA tap-target size (44x44 per design principles §9). Use `inline-flex items-center justify-center` on a `h-11 w-11` Root with a smaller centered child — never use `padding` to grow the target, since that would shift the visual box.
+- Use `forceMount` on Radix's `Indicator` subcomponents to keep them in the DOM at all times so `opacity` / `scale` transitions can fire on state change. Without `forceMount`, the indicator unmounts on state flip and re-mounts on the next state — transitions never get a starting frame to animate from.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 6/11 complete
+Phase B — Design primitives (US-006 to US-016): 7/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 11/49 stories passing
+OVERALL: 12/49 stories passing
 
 ---
 
@@ -301,3 +304,26 @@ OVERALL: 11/49 stories passing
   - `isValidElement<P>()` (with a generic param) is the strict-mode-safe way to narrow ReactNode → ReactElement<P> for cloneElement. Without the generic, child.props is `unknown` and you'd need either a cast or `any`. With it, child.props is fully typed as `P` and TS is happy without escape hatches.
   - cloneElement merge convention: for multi-token attrs like `aria-describedby`, JOIN existing tokens with the new one (`[existing, helpId].filter(Boolean).join(" ")`). Don't replace — a consumer might already have other describedby targets.
   - `error ?? helperText` picks the right message, and a single `hasMessage` boolean drives both the `<p>` rendering and the `aria-describedby` injection — guarantees the wiring is in sync (no orphan describedby pointing at a non-existent <p>).
+---
+
+## 2026-05-03 — US-012 Build Checkbox component
+- Added @radix-ui/react-checkbox@^1.x to apps/pops-website/package.json (via `pnpm --filter pops-website add @radix-ui/react-checkbox`)
+- Created apps/pops-website/components/forms/checkbox.tsx exporting <Checkbox /> built on `CheckboxPrimitive.Root` with a forwardRef
+- Pattern: Root is a 44x44 invisible tap-target frame (`h-11 w-11 inline-flex items-center justify-center`) wrapping a visually-rendered 18x18 inner `<span aria-hidden="true">` box. The tap target gets the focus ring; the inner span gets the visible 2px border + bg.
+- Checked state styling driven by `group-data-[state=checked]:*` — Radix sets `data-state` on the Root, the inner box reads it via the `group` class. Same approach for `data-state=indeterminate`.
+- Indicator uses `forceMount` + opacity toggle so the SVG checkmark is always present in the DOM and just fades in/out — keeps the inner box layout stable on toggle.
+- SVG checkmark: 14x14 inline path, `text-ink-900`, drawn with currentColor so it inherits the ink-900 color over the yellow bg.
+- Added a "Checkbox" preview section to apps/pops-website/app/dev/forms/page.tsx with: default unchecked, default checked, required + helper-text-described, and disabled variants.
+- Files changed: apps/pops-website/components/forms/checkbox.tsx (new), apps/pops-website/app/dev/forms/page.tsx, apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/forms):
+  - Root: `<button role="checkbox" data-state="unchecked">`, 44x44 bounding box ✓
+  - Inner box: 18x18, border 2px `rgb(137,144,160)` (ink-400), bg `rgb(42,48,59)` (ink-700), border-radius 2px (rounded-sm) ✓
+  - Pressing Space toggled `data-state` → `checked`, `aria-checked="true"`; inner bg + border → `rgb(254,205,8)` (`#FECD08`, pops-yellow-500); SVG opacity 0 → 1; SVG color `rgb(17,20,26)` (`#11141A`, ink-900) ✓
+  - Focus visible state confirmed via `:focus-visible` matching after `.focus()` — yellow halo visible in screenshot at progress/screenshots/US-012-checkbox.png
+- **Learnings for future iterations:**
+  - For Radix primitives that ship a Root + Indicator pair (Checkbox, RadioGroup, Switch, ToggleGroup), the canonical "double-element" pattern is: Root carries the interactive semantics + tap target + focus ring; an `aria-hidden` inner element carries the visible chrome that responds to `data-state` via `group-data-[state=*]`. This keeps the visual size (18x18) decoupled from the touch size (44x44) without breaking ARIA.
+  - `forceMount` on `CheckboxPrimitive.Indicator` (and the equivalent on RadioGroup/Switch) is what enables transition animations — without it Radix unmounts the indicator when state flips, so opacity/scale transitions never fire because the element re-mounts each toggle. Use `forceMount` + `group-data-[state=checked]:opacity-100` as the canonical animated-toggle pattern.
+  - The `"use client"` directive is REQUIRED on Radix primitive wrappers because Radix uses React Context + hooks internally. Without it, importing `@radix-ui/react-checkbox` from a Server Component throws at build/SSR time. Apply the same to future Radix wrappers (Select, Dialog, Dropdown, Tabs, RadioGroup, Switch).
+  - Tap-target padding is achieved with `inline-flex items-center justify-center` on a `h-11 w-11` Root that contains a smaller visual box. This is a more accessible alternative than `padding` (which would push the visual box around inside its own bounding box) — the Root IS the target, and the inner box just renders centered inside it.
+  - For label-checkbox pairing in dev previews, use `<Label htmlFor={cbId} className="mb-0 cursor-pointer select-none">` (override the default `mb-2` and add `cursor-pointer` so the label feels clickable). Clicking the label triggers the Root via the htmlFor/id linkage even though the Root is a `<button>` (the browser routes the click through).
