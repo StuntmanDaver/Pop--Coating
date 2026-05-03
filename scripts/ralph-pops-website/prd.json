@@ -108,7 +108,7 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Spacing scale is in design principles \u00a75.1 (4px base, --space-1 through --space-32). These primitives are used by every subsequent page story \u2014 keep them minimal and stable."
     },
     {

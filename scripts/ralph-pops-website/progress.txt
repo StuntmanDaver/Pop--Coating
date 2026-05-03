@@ -21,19 +21,24 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Static assets are in `apps/pops-website/public/` (URL: `/images/<file>`, `/pdfs/<file>`, `/favicon.ico`). Server-side content imports live at `apps/pops-website/content/` (e.g. `content/site-globals.json` for footer / nav columns). NEVER serve content/site-globals.json over HTTP — it's an `import` target only.
 - Source of static assets: `.firecrawl/popsindustrial/assets/{images,pdfs}/` — 194 images + 4 PDFs. If a story needs an image, check this directory first; the file is already at `/images/<exact-filename>` after US-004.
 - Multi-resolution `favicon.ico` was generated via `magick <png> -define icon:auto-resize=16,32,48,64,128,256 favicon.ico`. Re-run that command if `cropped-favicon.png` is ever updated.
+- Components live at `apps/pops-website/components/<area>/<file>.tsx` (kebab-case files, PascalCase named exports). Areas: `layout/`, `marketing/`, `ui/`, `forms/`, `seo/` (per the per-AC notes scattered through US-006..US-049).
+- Layout primitives use named exports + `forwardRef` to accept refs and pass through HTML element props (`ComponentPropsWithoutRef<"div">` for Container, `ComponentPropsWithoutRef<"section">` for Section). React 19 still supports forwardRef; use it where ACs explicitly require ref forwarding.
+- className merging convention until clsx lands: `className ? \`${base} ${className}\` : base`. shadcn primitives (US-008+) will introduce `cn()` from `lib/utils.ts`; switch to that once available.
+- Tailwind v4 ships a default 4px spacing scale, so `py-16` / `md:py-24` (= 64px / 96px) match `--space-16` / `--space-24` from design principles §5.1 without declaring a custom `--spacing-*` namespace in `@theme`.
+- Container caps at `max-w-[1280px]` with responsive horizontal padding `px-4 sm:px-6 lg:px-8`. Don't lower the cap; the design contract assumes 1280px on every page (hero, contact form, service grid).
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 0/11 complete
+Phase B — Design primitives (US-006 to US-016): 1/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 5/49 stories passing
+OVERALL: 6/49 stories passing
 
 ---
 
@@ -132,4 +137,18 @@ OVERALL: 5/49 stories passing
   - tsconfig.json `include: ["**/*.ts", "**/*.tsx"]` already covers `content/` so `content/company.ts` is type-checked without any include changes — same applies to future server-side imports under content/.
   - Keep `as const` on the entire object so consumers get literal types (e.g. `company.services[0]` is the literal "Wet Paint Coatings", not `string`). This matters for type-safe footer columns, JSON-LD `@type: "Service"` arrays, and Zod refinements that pin allowed service names.
   - The hours string uses an em dash (–) for "Monday–Friday 8am–4pm" matching the PRD §7 source verbatim — don't normalize to ASCII; copy faithfulness is part of the brand voice.
+---
+
+## 2026-05-03 — US-006 Build Container and Section layout primitives
+- Created apps/pops-website/components/layout/container.tsx — `Container` via forwardRef<HTMLDivElement, ComponentPropsWithoutRef<"div">>; classes: `mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8`; className passthrough preserves AC contract
+- Created apps/pops-website/components/layout/section.tsx — `Section` via forwardRef<HTMLElement, SectionProps>; props `{ tone?: "dark" | "light" } & ComponentPropsWithoutRef<"section">`; tone="dark" → `bg-ink-800 text-ink-100`, tone="light" → `bg-paper text-ink-800`; vertical rhythm `py-16 md:py-24` (= --space-16 / --space-24 per design principles §5.1)
+- Both components are server-component-safe (no "use client", no event handlers, no state) so they can be the outer wrapper in any RSC page without forcing client boundary
+- Files changed: apps/pops-website/components/layout/container.tsx (new), apps/pops-website/components/layout/section.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.3s; TS in 1103ms; 3/3 static pages) | browser N/A (no page renders these yet — first usage lands in US-013 Footer + US-015 Hero + US-017 home page)
+- **Learnings for future iterations:**
+  - Tailwind v4's auto-generated utilities pick up tokens from `@theme` but ALSO ship a default spacing scale at 4px increments. So `py-16` / `md:py-24` resolve to 64px / 96px without needing custom `--spacing-*` declarations. Keep `@theme` minimal — only override what design principles §10 explicitly defines.
+  - Section's `text-ink-100` on dark and `text-ink-800` on light isn't in the AC but follows from the global default (`html { color: var(--color-ink-100); }`) — the explicit `text-ink-800` on the light variant is required to invert. Future readers shouldn't be surprised by the explicit text classes.
+  - Component file naming: kebab-case file (`section.tsx`), PascalCase named export (`Section`). This will be the project pattern for all `components/<area>/<name>.tsx` files (no default exports).
+  - Until shadcn lands (US-008), no `cn()` helper exists; the simple template-literal merge (`className ? \`${base} ${className}\` : base`) is the convention. When `lib/utils.ts` ships with `clsx + tailwind-merge`, retrofit these primitives in the same PR that adds it.
+  - React 19 still supports `forwardRef`; the AC explicitly requires it. Don't refactor to "ref as prop" without a story authorizing it — the AC is the contract.
 ---
