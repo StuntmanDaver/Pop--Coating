@@ -123,7 +123,7 @@
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "Eyebrow labels appear above every H2 in the rebuild \u2014 see design principles \u00a76.2 hero pattern and \u00a76.3 service cards."
     },
     {

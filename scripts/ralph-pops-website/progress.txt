@@ -26,19 +26,20 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - className merging convention until clsx lands: `className ? \`${base} ${className}\` : base`. shadcn primitives (US-008+) will introduce `cn()` from `lib/utils.ts`; switch to that once available.
 - Tailwind v4 ships a default 4px spacing scale, so `py-16` / `md:py-24` (= 64px / 96px) match `--space-16` / `--space-24` from design principles §5.1 without declaring a custom `--spacing-*` namespace in `@theme`.
 - Container caps at `max-w-[1280px]` with responsive horizontal padding `px-4 sm:px-6 lg:px-8`. Don't lower the cap; the design contract assumes 1280px on every page (hero, contact form, service grid).
+- Eyebrow / micro-label convention (design principles §4.3 + §10): `text-xs` (12px) Inter 600 uppercase with `tracking-[0.04em]`. Default brand tone uses `text-pops-yellow-500`; secondary "ink" tone uses `text-ink-400` — the canonical "secondary text" color (per token comment in §3.2). Uppercase is reserved for micro-labels, button text, and the wordmark — never headings.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 1/11 complete
+Phase B — Design primitives (US-006 to US-016): 2/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 6/49 stories passing
+OVERALL: 7/49 stories passing
 
 ---
 
@@ -151,4 +152,20 @@ OVERALL: 6/49 stories passing
   - Component file naming: kebab-case file (`section.tsx`), PascalCase named export (`Section`). This will be the project pattern for all `components/<area>/<name>.tsx` files (no default exports).
   - Until shadcn lands (US-008), no `cn()` helper exists; the simple template-literal merge (`className ? \`${base} ${className}\` : base`) is the convention. When `lib/utils.ts` ships with `clsx + tailwind-merge`, retrofit these primitives in the same PR that adds it.
   - React 19 still supports `forwardRef`; the AC explicitly requires it. Don't refactor to "ref as prop" without a story authorizing it — the AC is the contract.
+---
+
+## 2026-05-03 — US-007 Build EyebrowLabel component
+- Created apps/pops-website/components/marketing/eyebrow.tsx — `EyebrowLabel` via forwardRef<HTMLParagraphElement, EyebrowLabelProps>
+- Props: `{ tone?: "yellow" | "ink" } & ComponentPropsWithoutRef<"p">`; default tone "yellow" → `text-pops-yellow-500`, "ink" → `text-ink-400`
+- Style classes: `inline-block font-text text-xs font-semibold uppercase tracking-[0.04em]` per AC + design principles §4.3 (uppercase reserved for micro-labels) + §10 token names
+- Renders as `<p>` (semantic block-level paragraph; ARIA-friendly because the context-introducing label sits above its heading sibling — no role override needed)
+- className passthrough using same template-literal merge convention as Container/Section (cn() lands with shadcn in US-008)
+- Files changed: apps/pops-website/components/marketing/eyebrow.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1951ms; TS in 1112ms; 3/3 static pages) | browser N/A (no AC requires browser verification — first visible usage lands in US-015 Hero + US-016 ServiceTile)
+- **Learnings for future iterations:**
+  - For tone="ink", chose `text-ink-400` because §3.2 of the design principles tags `--ink-400: #8990A0` as "secondary text on light" — it's the canonical secondary text token. On dark surfaces it still reads well as a quiet micro-label (4.5:1+ vs ink-800 background). Future stories using EyebrowLabel on light surfaces (paper) get the contrast right by default.
+  - `font-text` Tailwind utility maps to `var(--font-text)` which next/font (US-003) wires to Inter. The `font-semibold` class is Tailwind's default (= weight 600), matching the design principles §6.3 spec ("Inter 600").
+  - The `tracking-[0.04em]` arbitrary value is required because Tailwind v4's default `tracking-wide` is 0.025em and `tracking-wider` is 0.05em — neither matches the design contract's +0.04em. Don't substitute the closest preset; the contract is exact.
+  - First marketing component lands at `components/marketing/` (alongside `components/layout/` from US-006). Keep `marketing/` for content-presentation primitives (Hero, ServiceTile, EyebrowLabel) and `layout/` for structural primitives (Container, Section, Header, Footer).
+  - The "ARIA-friendly markup" note in the AC is satisfied by using a real `<p>` element rather than a `<div>` or `<span>` — screen readers announce paragraphs by default and the label gets its semantic context from being adjacent to its target heading. No `aria-label` or `role` needed.
 ---
