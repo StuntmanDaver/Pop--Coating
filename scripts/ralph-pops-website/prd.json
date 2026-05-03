@@ -181,7 +181,7 @@
         "Verify in browser using dev-browser skill on a test page"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles \u00a76.4 \u2014 labels above inputs, NEVER floating placeholders for B2B forms (manufacturers fill on tablets). Install shadcn input/textarea/label primitives then customize."
     },
     {

@@ -36,19 +36,24 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Tailwind v4 wraps the `hover:*` utility under `@media (hover: hover)`, so hover styles only fire on devices with a fine pointer. In headless Chromium under Playwright that media query evaluates true — so `hover:shadow-3` works in browser-verification — but mobile tablets and touch devices won't see hover states (this is the correct behavior for design principles §6.3 service-tile lift; touch users get the same affordance via tap → navigate, not via persistent hover).
 - Card sub-component composition: Card itself owns `bg + border + radius + p-6` so consumers don't double-pad; CardHeader/CardContent/CardFooter are organizational only (margin/flex, never padding). CardTitle defaults to `<h3>` for semantics — wrap in your own heading element via `asChild`-style cloneElement OR just render the right tag inside the card if you need an h2/h4 instead.
 - CardDescription uses `opacity-80` (not a separate muted color token) so it adapts to whatever tone the parent Card is on (dark→ink-100 muted, light→ink-800 muted) without a context provider. Override with an explicit `text-*` class via `className` if a darker description is needed.
+- Form input primitives (Input/Textarea/Label) use a NATIVE element pattern (no Radix wrappers) because each is a single-element control where the browser default ARIA semantics are already correct. Surface styling lives in one place per file (no cva — only one visual variant). Error state is styled via the dual selector `data-[error=true]:border-danger-500 aria-[invalid=true]:border-danger-500` so consumers can use either: react-hook-form sets `aria-invalid` automatically, while a manually-controlled form can set `data-error`. Both fire the same red-border treatment.
+- The form input focus-visible halo uses the SAME ring tokens as Button (US-008): `focus-visible:border-pops-yellow-500 focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800`. The border-color change to `pops-yellow-500` matches design principles §6.4 ("2px `--pops-yellow-500` border + `--elev-focus` ring") — the visual reads as a single yellow halo because the inner border and outer ring share the same family.
+- Labels use `font-medium` (Inter 500) per AC, intentionally lighter than CardTitle's `font-bold` (700). This is the right hierarchy: a label is a micro-prompt, not a heading. Required-field asterisk pattern is `<Label>{label}<span className="text-pops-yellow-500"> *</span></Label>` — wired up properly in US-011 FormField wrapper, but the asterisk color comes from the design principles §6.4 spec.
+- `placeholder:text-ink-400` is the canonical placeholder color on dark inputs. Don't reuse it for labels — placeholders disappear on focus, labels persist; mixing them causes B2B field confusion (per §6.4 "never floating placeholders").
+- `resize-y` on Textarea (vertical-only resize) prevents users from breaking the form layout by dragging horizontally. It's the convention for content-bearing fields like message/project-details.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 4/11 complete
+Phase B — Design primitives (US-006 to US-016): 5/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 9/49 stories passing
+OVERALL: 10/49 stories passing
 
 ---
 
@@ -242,4 +247,40 @@ OVERALL: 9/49 stories passing
   - Tailwind v4 ships a default `--spacing` scale at 4px increments AND wraps `hover:*` under `@media (hover: hover)` — both are auto-derived from the v4 defaults; nothing in `@theme` needed to enable them. Mobile tap users will not see the hover lift; that's the right design (touch → navigate is the affordance, not hover).
   - When wrapping a Card in a `<Link>`, put the focus-visible ring on the Link (the actual focusable element), not on the Card. The dev preview wires `rounded-sm focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800` on `<Link>` — this is the pattern ServiceTile and any future card-as-link should follow.
   - `<h3>` is the right default heading level for CardTitle because cards live inside sections with `<h2>` headings (per design principles §6 patterns and the home page wireframe in PRD §6.2). If a future story needs a different level (e.g. card with `<h4>` deep inside a sub-section), pass an `as="h4"` prop OR replace the heading manually inside the card — don't change the default for one consumer.
+---
+
+## 2026-05-03 — US-010 Build form input primitives (Input, Textarea, Label)
+- Created apps/pops-website/components/forms/input.tsx — `Input` via forwardRef<HTMLInputElement, InputHTMLAttributes>
+  - h-11 (44px) px-4, bg-ink-700 text-ink-100, 1px border-ink-600, rounded-sm, font-text text-base
+  - placeholder:text-ink-400 for muted placeholder text
+  - focus-visible: border-pops-yellow-500 + ring-2 ring-pops-yellow-300 ring-offset-2 ring-offset-ink-800 (matches Button focus halo from US-008)
+  - error: data-[error=true]:border-danger-500 + aria-[invalid=true]:border-danger-500 (dual selector — react-hook-form sets aria-invalid; manual forms can set data-error)
+  - disabled: cursor-not-allowed opacity-50
+  - type defaults to "text" if omitted; consumers pass type="email" / "tel" etc.
+- Created apps/pops-website/components/forms/textarea.tsx — `Textarea` via forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes>
+  - Same surface styling as Input but min-h-[120px], py-3 (vertical padding for multi-line)
+  - resize-y (vertical-only resize) so users can't break the form layout horizontally
+- Created apps/pops-website/components/forms/label.tsx — `Label` via forwardRef<HTMLLabelElement, LabelHTMLAttributes>
+  - block mb-2 font-text text-sm font-medium text-ink-100
+  - Default text-ink-100 so it reads on dark surfaces; passes through className for tone overrides
+- Created apps/pops-website/app/dev/forms/page.tsx — internal preview with 3 sections (default, error, disabled) for browser verification
+- Files changed: apps/pops-website/components/forms/input.tsx (new), components/forms/textarea.tsx (new), components/forms/label.tsx (new), app/dev/forms/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.8s; TS in 1477ms; 6/6 static pages incl /dev/forms) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/forms):
+  - Input default: 44px height, bg rgb(42,48,59) (= #2A303B = ink-700), color rgb(236,238,242) (= #ECEEF2 = ink-100), border rgb(63,70,84) (= #3F4654 = ink-600) at 1px, radius 2px (= --radius-sm), padding 0/16, Inter 16px ✓
+  - Textarea default: same surface, min-h 120px, py-3 (12px) ✓
+  - Label: 14px Inter weight 500, mb-2 (8px), color ink-100 ✓
+  - Error Input (aria-invalid="true"): borderColor rgb(176,50,46) (= #B0322E = danger-500) ✓
+  - Error Textarea (data-error="true"): borderColor rgb(176,50,46) ✓
+  - Disabled Input: opacity 0.5, cursor not-allowed, disabled=true ✓
+  - Tab to Email field: borderColor changes to rgb(254,205,8) (= #FECD08 = pops-yellow-500); box-shadow shows ink-800 (rgb(27,31,39)) inner offset + pops-yellow-300 (rgb(255,224,103)) outer ring ✓
+  - Programmatic .focus() does NOT trigger focus-visible (correct — only keyboard tab/shift-tab does); pattern matches Button's keyboard-only focus-ring behavior
+  - Screenshot: progress/screenshots/US-010.png — captured at the moment Email is keyboard-focused, so the yellow focus halo is visible on it
+- **Learnings for future iterations:**
+  - Two ways to signal an input is invalid: (1) `aria-invalid="true"` (react-hook-form sets this automatically when there's a Zod error) or (2) `data-error="true"` (handy for plain HTML forms or when you want to trigger the red border without lying to assistive tech). Both fire the same `border-danger-500` style via paired selectors. Always pair with a visible error message (US-011 FormField wiring + aria-describedby).
+  - The native `<label>`/`<input>` pairing — using `htmlFor`/`id` — is sufficient for screen readers; no aria-label needed on the input. The FormField wrapper (US-011) automates this pairing so per-field consumers don't have to remember.
+  - Tailwind v4's `data-[attr=value]:` and `aria-[attr=value]:` arbitrary variants both work without a config — they generate `[data-attr="value"]` / `[aria-attr="value"]` attribute selectors at compile time. Tested: only the matching attribute value triggers the style; an absent or different value falls back to the default border.
+  - When wiring forms to react-hook-form (US-021+), the pattern is: `<Input {...register("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} />`. The component handles all the styling; the consumer only manages the form state.
+  - Internal preview at `/dev/forms` follows the convention from US-008 (`/dev/buttons`) and US-009 (`/dev/cards`) — one route per primitive, all auto-excluded from sitemap (US-042). The trailing `/dev/*` namespace stays as a permanent design-system reference.
+  - The dev preview page uses `font-display` directly on its h1 (not via a Hero component) — this is acceptable for internal pages but PRODUCTION pages should use the Hero/EyebrowLabel/Container pattern from US-015 onward.
 ---
