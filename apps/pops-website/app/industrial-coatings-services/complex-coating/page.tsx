@@ -8,6 +8,8 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { JsonLd } from "../../../components/seo/json-ld";
+import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
 
 export const metadata: Metadata = {
@@ -29,6 +31,13 @@ const OTHER_SERVICES = [
 export default function ComplexCoatingPage() {
   return (
     <>
+      <JsonLd
+        data={getServiceJsonLd({
+          name: "Complex Coating",
+          description:
+            "Specialty corrosion-resistant coating services in Lakeland, FL. Tank liners, baked coatings, and plural component coatings.",
+        })}
+      />
       <Header />
       <main id="content">
         <Hero

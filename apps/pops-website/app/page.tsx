@@ -9,7 +9,9 @@ import { Section } from "../components/layout/section";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
 import { ServiceTile } from "../components/marketing/service-tile";
+import { JsonLd } from "../components/seo/json-ld";
 import { Button } from "../components/ui/button";
+import { getOrgJsonLd } from "../lib/jsonld";
 
 export const metadata: Metadata = {
   title: {
@@ -65,6 +67,7 @@ const SERVICES = [
 export default function HomePage() {
   return (
     <>
+      <JsonLd data={getOrgJsonLd()} />
       <Header />
       <main id="content">
         {/* Hero — rebuilt per design principles §6.2; replaces 3-slide tagline rotator */}

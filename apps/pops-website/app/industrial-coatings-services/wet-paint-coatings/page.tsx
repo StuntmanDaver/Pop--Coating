@@ -8,7 +8,9 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { JsonLd } from "../../../components/seo/json-ld";
 import { Button } from "../../../components/ui/button";
+import { getServiceJsonLd } from "../../../lib/jsonld";
 
 export const metadata: Metadata = {
   title: "Wet Paint Coatings - Pop's Industrial Lakeland FL",
@@ -56,6 +58,13 @@ const GALLERY = [
 export default function WetPaintCoatingsPage() {
   return (
     <>
+      <JsonLd
+        data={getServiceJsonLd({
+          name: "Wet Paint Coatings",
+          description:
+            "Industrial wet paint coating services in Lakeland, FL. Precision application for equipment, machinery, and structural components.",
+        })}
+      />
       <Header />
       <main id="content">
         <Hero

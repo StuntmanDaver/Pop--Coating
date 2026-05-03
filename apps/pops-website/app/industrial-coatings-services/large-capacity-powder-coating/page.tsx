@@ -8,6 +8,8 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { JsonLd } from "../../../components/seo/json-ld";
+import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
 
 export const metadata: Metadata = {
@@ -44,6 +46,13 @@ const GALLERY = [
 export default function LargeCapacityPowderCoatingPage() {
   return (
     <>
+      <JsonLd
+        data={getServiceJsonLd({
+          name: "Large Capacity Powder Coating",
+          description:
+            "Large-scale powder coating services in Lakeland, FL. Uniform coverage and robust protection for significant size and volume projects.",
+        })}
+      />
       <Header />
       <main id="content">
         <Hero

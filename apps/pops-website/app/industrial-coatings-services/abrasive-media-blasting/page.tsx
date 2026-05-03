@@ -8,6 +8,8 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { JsonLd } from "../../../components/seo/json-ld";
+import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
 
 export const metadata: Metadata = {
@@ -56,6 +58,13 @@ const GALLERY = [
 export default function AbrasiveMediaBlastingPage() {
   return (
     <>
+      <JsonLd
+        data={getServiceJsonLd({
+          name: "Abrasive Media Blasting",
+          description:
+            "SSPC and NACE certified abrasive media blasting services in Lakeland, FL. Surface preparation for optimal coating adhesion.",
+        })}
+      />
       <Header />
       <main id="content">
         <Hero

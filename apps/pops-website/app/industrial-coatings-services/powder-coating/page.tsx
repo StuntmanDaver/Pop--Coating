@@ -8,6 +8,8 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { JsonLd } from "../../../components/seo/json-ld";
+import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
 
 export const metadata: Metadata = {
@@ -64,6 +66,13 @@ const GALLERY = [
 export default function PowderCoatingPage() {
   return (
     <>
+      <JsonLd
+        data={getServiceJsonLd({
+          name: "Industrial Powder Coating",
+          description:
+            "Electrostatic powder coating services in Lakeland, FL. Tough, uniform finish with superior resistance to corrosion, impact, and chemicals.",
+        })}
+      />
       <Header />
       <main id="content">
         <Hero
