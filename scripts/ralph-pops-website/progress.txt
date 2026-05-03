@@ -581,3 +581,18 @@ OVERALL: 16/49 stories passing
   - PDF download links: use target="_blank" + rel="noopener" (not download attr) so PDFs open in browser's built-in PDF viewer rather than forcing a download. Add aria-label with "PDF download" per AC. Pair with a ↓ icon (aria-hidden) and "(PDF)" text suffix so the link's purpose is clear visually AND to screen readers.
   - Certification logo images (PNG on dark background): use explicit width/height + object-contain + centered layout. Don't use fill — these have meaningful aspect ratios.
 ---
+
+## 2026-05-03 — US-024 Build /request-a-quote/terms-conditions page
+- Implemented /request-a-quote/terms-conditions at apps/pops-website/app/request-a-quote/terms-conditions/page.tsx
+- Hero: "LEGAL" eyebrow, "Terms & Conditions" H1, lede summarizing the document
+- Content: max-w-[720px] centered reading column; H2 company name + H3 subtitle; PdfDownloadLink at top; 18 numbered sections as `<p>` with `<strong>` label, line-height 1.7, space-y-6 for paragraph spacing; PdfDownloadLink again at bottom (border-t separator)
+- PdfDownloadLink extracted as a small RSC component (no "use client" needed — just an anchor) to avoid duplicating the long aria-label. Used inline in RSC page at both top and bottom positions.
+- Uppercased disclaimer paragraphs (§8 warranty exclusion, §10 liability cap) rendered with `uppercase text-sm` classes matching legal document conventions.
+- Files changed: apps/pops-website/app/request-a-quote/terms-conditions/page.tsx (new, 110 lines)
+- Quality checks: typecheck ✓ | build ✓ (17/17 static pages) | browser ✓
+- Browser verification: pdfLinkCount: 2 ✓ (top + bottom); correct href ✓; aria-labels contain "PDF download" ✓; containerMaxWidth: 720px ✓; paragraphCount: 24 ✓
+- **Learnings for future iterations:**
+  - For legal text pages, a `space-y-6` container with `text-base leading-[1.7]` gives a comfortable reading experience without needing a prose/typography plugin.
+  - Helper components that are just markup (no hooks, no event handlers) can remain plain RSCs even inside a "use client" parent page — but since page.tsx is itself an RSC, PdfDownloadLink is also an RSC. This is fine; the link is purely static.
+  - Legal disclaimer paragraphs in ALL CAPS (§8, §10) should be rendered with `uppercase text-sm` to match the source document convention but with slightly reduced size to avoid visual shouting.
+---

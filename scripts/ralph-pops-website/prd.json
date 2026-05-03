@@ -445,7 +445,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 24,
-      "passes": false,
+      "passes": true,
       "notes": "Long legal page \u2014 readability matters more than visual flair. Restrict to a reading-width column."
     },
     {
