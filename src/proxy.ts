@@ -86,6 +86,27 @@ export async function proxy(request: NextRequest) {
     // staff_shop on app.* is allowed (workstations sign in via /scan/enroll on app.*)
   }
 
+  // 5. HOST-TO-SEGMENT REWRITE — keep user-facing URLs clean (/sign-in, /dashboard, /jobs)
+  //    while internally routing to src/app/office/* or src/app/portal/* per host.
+  //    Skip rewrite for shared paths (/scan, /api, /_next, /favicon.ico) and for paths
+  //    that already include the segment prefix (direct access, e.g. /office/dashboard).
+  const isSharedPath =
+    url.pathname.startsWith('/scan') ||
+    url.pathname.startsWith('/api') ||
+    url.pathname.startsWith('/_next') ||
+    url.pathname.startsWith('/office') ||
+    url.pathname.startsWith('/portal') ||
+    url.pathname === '/favicon.ico'
+
+  if (!isSharedPath) {
+    if (isOffice) {
+      return NextResponse.rewrite(new URL(`/office${url.pathname}${url.search}`, request.url))
+    }
+    if (isPortal) {
+      return NextResponse.rewrite(new URL(`/portal${url.pathname}${url.search}`, request.url))
+    }
+  }
+
   return response
 }
 
