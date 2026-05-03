@@ -237,7 +237,7 @@
         "Verify in browser using dev-browser skill: footer renders on a test page; tap targets \u226544px; tab order is logical"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Source ALL link hrefs from content/site-globals.json \u2014 don't retype. Source addresses/phone/emails from content/company.ts. Use logo /images/Pops-no-border.png (canonical wordmark per PRD \u00a712.3)."
     },
     {

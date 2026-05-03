@@ -46,19 +46,24 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Radix primitive wrappers (Checkbox, future RadioGroup/Switch/Select/Dialog/Dropdown/Tabs) MUST start with `"use client"` — Radix uses React Context + hooks internally and will throw if imported from a Server Component. Apply this rule to every new file under `components/forms/` or `components/ui/` that imports from `@radix-ui/*`.
 - For Radix Root + Indicator primitives (Checkbox, RadioGroup, Switch), the canonical "double-element" pattern is: Root carries the interactive semantics + tap target + focus ring; an `aria-hidden` inner element carries the visible chrome that responds to `data-state` via `group-data-[state=*]`. This decouples the visual size (e.g. 18x18) from the WCAG 2.1 AA tap-target size (44x44 per design principles §9). Use `inline-flex items-center justify-center` on a `h-11 w-11` Root with a smaller centered child — never use `padding` to grow the target, since that would shift the visual box.
 - Use `forceMount` on Radix's `Indicator` subcomponents to keep them in the DOM at all times so `opacity` / `scale` transitions can fire on state change. Without `forceMount`, the indicator unmounts on state flip and re-mounts on the next state — transitions never get a starting frame to animate from.
+- Scraped URLs in `content/site-globals.json` are absolute (`https://popsindustrial.com/...`). When rendering links inside the rebuild, run them through a `toRelative(url)` helper that uses `new URL(url).pathname` and strips the trailing slash — never pass absolute live-site URLs into `<Link>`. Apply this rule to footer nav, header (US-014), and any future story that consumes scraped href data.
+- Footer-style nav lists give every link a `min-h-11` (44px) tap target via vertical padding (`py-2`) so touch users get a WCAG-compliant target without enlarging the visible text. Pair with `space-y-3` on the `<ul>` to keep adjacent targets from overlapping. Text-only links inside content (vs nav lists) don't need this.
+- Use `inline-block` (not the default inline) on a link that needs `min-h-*` to take effect — height/min-height are ignored on inline elements. The footer nav links use `inline-block min-h-11 py-2` for this reason.
+- JSON imports (`import data from "../../content/site-globals.json"`) work in both Server and Client Components because tsconfig has `resolveJsonModule: true`. The import is fully typed by TS literal inference; cast to a richer interface (e.g. `Record<string, ColumnEntry[]>`) when you need a discriminated-union shape. The build inlines the JSON — don't ship `content/*.json` to `public/` or it'll be served twice.
+- For mixed-shape lists where some entries are `{label, href}` and others are `{label, value}` (the Visiting Us footer column has hour `value` rows, not links), use a discriminated union with a type-narrowing predicate (`isLinkEntry`). Render each shape as a different element — never render `<a href="">{value}</a>` as a fallback because it would create a useless empty link.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 7/11 complete
+Phase B — Design primitives (US-006 to US-016): 8/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 12/49 stories passing
+OVERALL: 13/49 stories passing
 
 ---
 
@@ -327,3 +332,40 @@ OVERALL: 12/49 stories passing
   - The `"use client"` directive is REQUIRED on Radix primitive wrappers because Radix uses React Context + hooks internally. Without it, importing `@radix-ui/react-checkbox` from a Server Component throws at build/SSR time. Apply the same to future Radix wrappers (Select, Dialog, Dropdown, Tabs, RadioGroup, Switch).
   - Tap-target padding is achieved with `inline-flex items-center justify-center` on a `h-11 w-11` Root that contains a smaller visual box. This is a more accessible alternative than `padding` (which would push the visual box around inside its own bounding box) — the Root IS the target, and the inner box just renders centered inside it.
   - For label-checkbox pairing in dev previews, use `<Label htmlFor={cbId} className="mb-0 cursor-pointer select-none">` (override the default `mb-2` and add `cursor-pointer` so the label feels clickable). Clicking the label triggers the Root via the htmlFor/id linkage even though the Root is a `<button>` (the browser routes the click through).
+
+## 2026-05-03 — US-013 Build Footer component from content/site-globals.json
+- Created apps/pops-website/components/layout/footer.tsx exporting `<Footer />` (RSC, no "use client" needed — pure layout)
+- 3-column grid: `grid-cols-1 md:grid-cols-3` with `gap-12 py-16 md:gap-10 md:py-20`. Mobile stacks; desktop is 3 equal columns.
+- Column titles read directly from `content/site-globals.json#footer.navigation_columns` keys: "Doing business with Pop's Industrial", "Services", "Visiting Us" (in that order). Column titles render as `<h2>` micro-labels using the eyebrow style from US-007 (uppercase tracking-[0.04em] text-pops-yellow-500 text-xs font-semibold).
+- Column 1 layout: logo + brand wordmark (next/image of /images/Pops-no-border.png at 56×56 + "POP'S INDUSTRIAL COATINGS" in font-display split across 2 lines), then nav links, then GET A QUOTE button (variant="primary" asChild wrapping a Link to /request-a-quote)
+- Column 2: Services nav (5 service links from site-globals.json)
+- Column 3: Main Office and Shipping & Receiving addresses in semantic `<address>` elements (with .not-italic since the design uses Inter, not the browser default italic), then Phone tel: link, Fax (text only, NOT a tel: link per AC), info@ and invoices@ mailto: links, then hours
+- All scraped href values pass through a `toRelative(url)` helper that does `new URL(url).pathname.replace(/\/$/, "") || "/"` so the navigation works in the rebuild instead of leaking the live-site origin
+- Mixed-shape list handling: site-globals.json's "Visiting Us" column entries are `{label, value}` not `{label, href}`. A discriminated union with `isLinkEntry()` type guard renders link rows as `<Link>` and value rows as plain `<li>` — but the AC's stronger directive ("addresses + phone + fax + emails + hours come from company.ts") meant Visiting Us doesn't actually consume the JSON column at all; it composes from `company.ts` directly for tel:/mailto: wiring fidelity. The `isLinkEntry` discriminated union still ships in case future stories use this shape (e.g. a Hours row in the eventual tenant onboarding nav).
+- Tap targets: every nav link has `min-h-11 inline-block py-2` (44px height via vertical padding), satisfying WCAG 2.1 AA per design principles §9. Each link gets the standard yellow focus halo (`focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900`). Hover: text-pops-yellow-500 + underline-offset-2 underline.
+- Footer surface uses `bg-ink-900 text-ink-100` per AC. Bottom rail: `border-t border-ink-700 py-6` with copyright in text-ink-400 + dynamic year via `new Date().getFullYear()`.
+- Created apps/pops-website/app/dev/footer/page.tsx — internal preview wrapping `<Footer />` for browser verification (sibling to /dev/buttons, /dev/cards, /dev/forms)
+- Files changed: apps/pops-website/components/layout/footer.tsx (new), apps/pops-website/app/dev/footer/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.6s; TS in 1390ms; 7/7 static pages incl /dev/footer) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/footer):
+  - Footer bg: rgb(17, 20, 26) (= #11141A = ink-900) ✓
+  - Footer text color: rgb(236, 238, 242) (= #ECEEF2 = ink-100) ✓
+  - Desktop (1280w): grid-template-columns = "378.656px 378.672px 378.656px" — three equal columns ✓
+  - 9 nav links total (4 + 5; Visiting Us has no nav links by AC) ✓
+  - First nav link href: "/request-a-quote/facilities-equipment" — origin stripped, relative path ✓
+  - 2 `<address>` elements ✓
+  - Phone link href: "tel:+18636447473" (per AC) ✓
+  - 2 mailto: links: info@popsindustrial.com, invoices@popsindustrial.com ✓
+  - GET A QUOTE CTA: <a href="/request-a-quote">, bg rgb(254,205,8) (= pops-yellow-500), color rgb(17,20,26) (= ink-900), 14px Inter weight 600, 44px height, 2px radius — primary Button variant projected onto the Link via Slot ✓
+  - First 4 nav-link tap targets all measure exactly 44px high (Our Capabilities 105×44, Our Certifications 117×44, Request a Quote 110×44, Terms & Conditions 129×44) — width varies with text length, height locked at WCAG-compliant 44px ✓
+  - Mobile (375w): grid-template-columns = "328px" — single column, no horizontal overflow (bodyScrollWidth === clientWidth) ✓
+  - Screenshots: progress/screenshots/US-013-desktop.png, progress/screenshots/US-013-mobile.png
+- **Learnings for future iterations:**
+  - The `min-h-11` trick on `<a>` requires `inline-block` (or `flex` / `block`) on the same element — height-related properties are ignored on naturally inline `<a>` elements. This is the cleanest way to give nav links a 44px tap target without bloating the visual chrome with padding that would force visible whitespace between links.
+  - `<address>` defaults to `font-style: italic` in the browser default stylesheet — apply `not-italic` (Tailwind's italic-reset utility) to render in the design's Inter/upright treatment. The element is still semantic for screen readers regardless of styling.
+  - Two cumulative-tracking conventions used here: `tracking-[0.04em]` for micro-labels (matches the EyebrowLabel from US-007) and `tracking-tight` (-0.025em) for the brand wordmark (uppercase tightens better with negative tracking). Don't mix them — micro-labels stay positive, display headings stay tight or zero.
+  - When a JSON column has mixed shapes (some `href`, some `value`), code defensively even if the current AC only needs one shape — the discriminated union + type guard pattern costs nothing extra and prevents a future regression where someone adds a `value`-only row and it silently renders as `<a href="">{value}</a>`.
+  - The footer uses `<h2>` for column titles (not `<h3>` or `<p>`). Reasoning: the footer is a top-level region of every page, and its column titles are the only headings inside that region — they need to participate in the page heading outline. Per design principles §9, headings are how screen readers navigate; orphan `<p>` titles would skip them. The page's main `<h1>` is unaffected because page content sits in `<main>`, not `<footer>`.
+  - The dev preview page (`app/dev/footer/page.tsx`) uses a custom `<main>` wrapper rather than the ServiceSection/Container primitives so the Footer is the visual focus. Keep dev pages minimal and component-focused — they're a design-system reference, not full-page mockups.
+  - Footer has NO outer padding from Container itself; padding lives on the inner grid and bottom rail. This way Container's `max-w-[1280px]` correctly caps the footer content width while letting the `bg-ink-900` flood edge-to-edge on the `<footer>` element.
+---
