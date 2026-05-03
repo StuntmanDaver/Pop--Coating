@@ -335,7 +335,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "Content from .firecrawl/popsindustrial/pages/about-us.md. The original is short (2.8KB) \u2014 don't pad. The 'family business' theme is the differentiator."
     },
     {

@@ -470,3 +470,24 @@ OVERALL: 16/49 stories passing
   - The three-column section uses `Section tone="dark"` with `border-t border-ink-700` className — the Section component accepts arbitrary classNames so border-top dividers between dark sections work cleanly.
   - All heading hierarchy on this page: H1 (Hero) → H2 (section headings in content sections + 3 footer columns) → H3 (ServiceTile card titles). This matches the semantic structure from the live site.
 ---
+
+## 2026-05-03 — US-018 Build /about-us page
+- Implemented /about-us page at apps/pops-website/app/about-us/page.tsx
+- Hero: facility-01.jpg background, eyebrow "OUR STORY", H1 "About Pop's Industrial Coatings", lede summarizing the 4-generations mission, primary CTA "Request a Quote" → /request-a-quote (no secondary CTA per AC)
+- Main content section: 2-column grid (lg:grid-cols-2) — left column has "ABOUT" eyebrow + H2 "Pop's Industrial Coatings" + body + "Industrial Size Projects" H3 + "Expansive Facilities" H3; right column has "Experience & Expertise" H3 + "Large Capacity Ovens" H3 + dual CTA buttons ("Our History" primary + "Meet the Family" secondary)
+- Facility photos: 2-up side-by-side grid (sm:grid-cols-2) using next/image fill, aspect-[4/3], full-res variants for both facility-01 and facility-02; alt text describes each image's distinct angle
+- Cross-links section (3 columns): Company History → /about-us/history; Our Certifications → /request-a-quote/standards-specifications-certifications; Complete Services → /industrial-coatings-services
+- Files changed: apps/pops-website/app/about-us/page.tsx (new, 183 lines)
+- Quality checks: typecheck ✓ | build ✓ (11/11 static pages including /about-us) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/about-us):
+  - h1Count: 1 ✓ (text: "About Pop's Industrial Coatings")
+  - h2Count: 7 (4 content + 3 footer columns) ✓
+  - h3Count: 4 (Industrial Size, Expansive Facilities, Experience & Expertise, Large Capacity Ovens) ✓
+  - facilityImgs: both facility-01 and facility-02 present with descriptive alt text ✓
+  - crossLinks: "Our History" → /about-us/history ✓, "Meet the Family" → /about-us/leadership ✓
+  - Screenshot saved: progress/screenshots/US-018-desktop.png
+- **Learnings for future iterations:**
+  - For inner page Heroes, use the relevant on-page photo as the background (facility-01 here) rather than always defaulting to slide-01.jpg — it gives each page visual identity.
+  - The 2-up facility photo grid uses `Section` with no padding (`pt-0 pb-0`) and `border-t border-ink-700`. The photos fill the full row width with `aspect-[4/3]` + `relative overflow-hidden` + `fill` image.
+  - "Our History" and "Meet the Family" are the two required cross-links per US-018 AC — these link to /about-us/history and /about-us/leadership respectively (US-019 and US-020 will build those pages).
+---
