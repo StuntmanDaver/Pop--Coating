@@ -145,7 +145,7 @@
         "Verify in browser using dev-browser skill: render a test page with one of each variant; tab through to confirm focus ring visible"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles \u00a76.1 \u2014 44px default height is critical (touch target). Don't make buttons uppercase \u2014 that's reserved for micro-labels and the brand wordmark. Install shadcn button primitive via 'pnpm dlx shadcn@latest add button' if helpful, then customize per the variants here."
     },
     {

@@ -27,19 +27,25 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Tailwind v4 ships a default 4px spacing scale, so `py-16` / `md:py-24` (= 64px / 96px) match `--space-16` / `--space-24` from design principles §5.1 without declaring a custom `--spacing-*` namespace in `@theme`.
 - Container caps at `max-w-[1280px]` with responsive horizontal padding `px-4 sm:px-6 lg:px-8`. Don't lower the cap; the design contract assumes 1280px on every page (hero, contact form, service grid).
 - Eyebrow / micro-label convention (design principles §4.3 + §10): `text-xs` (12px) Inter 600 uppercase with `tracking-[0.04em]`. Default brand tone uses `text-pops-yellow-500`; secondary "ink" tone uses `text-ink-400` — the canonical "secondary text" color (per token comment in §3.2). Uppercase is reserved for micro-labels, button text, and the wordmark — never headings.
+- `lib/utils.ts` exports `cn(...inputs)` = `twMerge(clsx(inputs))`. Use it in every component that takes a `className` prop or composes Tailwind class lists. Deps already added: `clsx`, `tailwind-merge`. Replace the `className ? \`${base} ${className}\` : base` template-literal merge in older primitives (Container/Section/EyebrowLabel) when next touched.
+- shadcn-style `cva()` from `class-variance-authority` is the convention for components with multiple visual variants (Button, future Card, future Input). Define a single `cvaXxx` recipe with `variants` + `defaultVariants`, expose `VariantProps<typeof recipe>` to props, and merge via `cn(recipe({...}), className)`.
+- `asChild` pattern via `@radix-ui/react-slot`: when consumers want the component to project its styles onto a child element (typically `<Link>` or `<a>`), accept `asChild?: boolean` and render `Slot` instead of the native element. Slot forwards props and merges classes onto the immediate child. The native element variant is the default — preserve focus, type attributes, ARIA, etc. on it.
+- Focus ring convention: `focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800` + `outline-none`. Tailwind v4 implements `ring-*` via `box-shadow`, so the ring color (`pops-yellow-300` = `#FFE067`) appears as a 2px outer halo with a 2px ink-800 offset between it and the element — matches `--shadow-focus` from design principles §10. Use `focus-visible` (not `focus`) to avoid showing the ring on mouse click.
+- Loading-state width preservation: render the original children invisibly (`aria-hidden + invisible`) so the layout box keeps its measured width, then absolutely-position the spinner in `absolute inset-0`. This avoids a "snap" when toggling `isLoading` mid-submit. Use `aria-busy={isLoading || undefined}` on the button.
+- Internal preview pages live at `apps/pops-website/app/dev/<feature>/page.tsx` (NOT `_dev/` — Next.js App Router treats `_folder` as a private folder that is opted out of routing). The `dev/*` namespace must be excluded from the sitemap (US-042) and `robots.ts`. These are working previews for browser verification of components — keep them around as a reference panel for the design system.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 2/11 complete
+Phase B — Design primitives (US-006 to US-016): 3/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 7/49 stories passing
+OVERALL: 8/49 stories passing
 
 ---
 
@@ -168,4 +174,38 @@ OVERALL: 7/49 stories passing
   - The `tracking-[0.04em]` arbitrary value is required because Tailwind v4's default `tracking-wide` is 0.025em and `tracking-wider` is 0.05em — neither matches the design contract's +0.04em. Don't substitute the closest preset; the contract is exact.
   - First marketing component lands at `components/marketing/` (alongside `components/layout/` from US-006). Keep `marketing/` for content-presentation primitives (Hero, ServiceTile, EyebrowLabel) and `layout/` for structural primitives (Container, Section, Header, Footer).
   - The "ARIA-friendly markup" note in the AC is satisfied by using a real `<p>` element rather than a `<div>` or `<span>` — screen readers announce paragraphs by default and the label gets its semantic context from being adjacent to its target heading. No `aria-label` or `role` needed.
+---
+
+## 2026-05-03 — US-008 Build Button component with 4 variants
+- Added deps to apps/pops-website: class-variance-authority@^0.7.1, clsx@^2.1.1, tailwind-merge@^3.5.0, @radix-ui/react-slot@^1.2.4
+- Created apps/pops-website/lib/utils.ts → exports `cn(...inputs)` = `twMerge(clsx(inputs))` (the canonical class merger from this story onward)
+- Created apps/pops-website/components/ui/button.tsx:
+  - cva recipe with 4 variants: primary (bg-pops-yellow-500 text-ink-900 + hover yellow-600), secondary (transparent + border-current text-ink-100 + hover bg-ink-100/10), ghost (transparent text-ink-400 + hover text-ink-100), destructive (bg-danger-500 text-paper + hover/90)
+  - 2 sizes: default (h-11 / 44px, px-6 py-3), compact (h-9 / 36px, px-5 py-2)
+  - Radius rounded-sm (= --radius-sm 2px), font-text font-semibold text-sm, NOT uppercase (per design principles §6.1)
+  - Focus-visible: ring-2 ring-pops-yellow-300 ring-offset-2 ring-offset-ink-800 + outline-none
+  - Disabled: opacity-50 cursor-not-allowed (via Tailwind `disabled:` modifier)
+  - Loading: invisible original children preserve width; absolutely-positioned 16px Spinner (inline SVG, animate-spin); button auto-disabled and aria-busy=true
+  - asChild via @radix-ui/react-slot (when true, projects styles onto child <Link> / <a> via Slot; loading state intentionally not applied in asChild mode)
+  - forwardRef<HTMLButtonElement, ButtonProps> with className passthrough via cn()
+- Created apps/pops-website/app/dev/buttons/page.tsx — internal preview rendering all variants × sizes × disabled × loading × asChild for browser verification
+- Files changed: apps/pops-website/lib/utils.ts (new), apps/pops-website/components/ui/button.tsx (new), apps/pops-website/app/dev/buttons/page.tsx (new), apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1944ms; TS in 1169ms; 4/4 static pages incl /dev/buttons) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/buttons):
+  - primary: 44px, bg rgb(254,205,8) (= #FECD08 = pops-yellow-500), color rgb(17,20,26) (= #11141A = ink-900), border 0, font-family Inter, weight 600, size 14px, text-transform none, radius 2px, padding 24/12 ✓
+  - secondary: 44px, bg transparent, color ink-100, 1px border-current ✓
+  - ghost: 44px, bg transparent, color ink-400 ✓
+  - destructive: 44px, bg rgb(176,50,46) (= #B0322E = danger-500), color #FFF (= paper) ✓
+  - compact (Save): 36px height, px 20 py 8 ✓
+  - disabled: opacity 0.5, cursor not-allowed ✓
+  - loading: width preserved (177px), aria-busy=true, button.disabled=true, spinner SVG present ✓
+  - asChild Go home: tag <a>, href="/", carries bg-pops-yellow-500 class via Slot ✓
+  - Tab to first button: focus ring shows rgb(255,224,103) (= #FFE067 = pops-yellow-300) over rgb(27,31,39) (= #1B1F27 = ink-800) offset, matching design principles §10 --shadow-focus spec ✓
+- **Learnings for future iterations:**
+  - Tailwind v4 `ring-*` is implemented via `box-shadow`, not the legacy `outline` API, and `ring-offset-*` requires a known offset color so the gap reads cleanly. On dark surfaces (most of pops-website is bg-ink-800), use `ring-offset-ink-800` to make the ring float, not bleed. Future components doing focus rings on `bg-paper` (light surfaces) should switch to `ring-offset-paper`.
+  - `focus-visible:` (not `focus:`) is the right modifier for the focus ring — it suppresses the ring on mouse click while still showing it on keyboard tab. Pair with `outline-none` to nuke the browser default.
+  - The `cva` recipe approach is clean for variant explosions (4 variants × 2 sizes = 8 combinations) but overkill for primitives with 1 visual state (e.g. Container/Section/EyebrowLabel). Use cva when there are ≥2 variants of any axis.
+  - Loading-state UX: the `invisible inline-flex items-center gap-2` + absolute spinner trick preserves measured width (browser-verified: 177px) so `<Button isLoading>Submitting request</Button>` doesn't jump as the parent toggles state during a Server Action. This is the pattern to reuse in form submit handlers (US-021, US-031, US-032, US-033 → wire-up in US-036+).
+  - The `asChild` Slot pattern intentionally skips the loading UI because consumers using `<Button asChild><Link></Link></Button>` are wrapping a navigation element where there's no async submit. If a future story needs an asChild + loading combination (e.g. signed-out CTA that triggers an async redirect), revisit.
+  - Internal preview pages MUST live at `app/dev/<feature>/page.tsx` and NOT `app/_dev/<feature>/page.tsx` — App Router treats `_folder` as a private folder opted out of routing (the page just won't be reachable). When US-042 lands, exclude `/dev/*` from the sitemap and `robots.ts`.
 ---
