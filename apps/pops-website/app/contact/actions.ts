@@ -2,6 +2,7 @@
 
 import { company } from "../../content/company";
 import { buildEmailHtml, sendFormEmail } from "../../lib/email";
+import { verifyRecaptcha } from "../../lib/recaptcha";
 import { contactSchema, type ContactFormValues } from "./schema";
 
 export type SubmitContactResult =
@@ -9,7 +10,10 @@ export type SubmitContactResult =
   | { ok: false; serverError: string }
   | { ok: false; fieldErrors: Partial<Record<keyof ContactFormValues, string[]>> };
 
-export async function submitContact(data: ContactFormValues): Promise<SubmitContactResult> {
+export async function submitContact(
+  data: ContactFormValues,
+  recaptchaToken: string,
+): Promise<SubmitContactResult> {
   const parsed = contactSchema.safeParse(data);
 
   if (!parsed.success) {
@@ -17,6 +21,15 @@ export async function submitContact(data: ContactFormValues): Promise<SubmitCont
       Record<keyof ContactFormValues, string[]>
     >;
     return { ok: false, fieldErrors };
+  }
+
+  try {
+    const recaptcha = await verifyRecaptcha(recaptchaToken);
+    if (!recaptcha.success) {
+      return { ok: false, serverError: "reCAPTCHA verification failed. Please try again." };
+    }
+  } catch (err) {
+    return { ok: false, serverError: `reCAPTCHA error: ${err instanceof Error ? err.message : "Unknown"}` };
   }
 
   const { name, email, message } = parsed.data;

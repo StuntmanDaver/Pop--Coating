@@ -2,6 +2,7 @@
 
 import { company } from "../../content/company";
 import { buildEmailHtml, sendFormEmail } from "../../lib/email";
+import { verifyRecaptcha } from "../../lib/recaptcha";
 import { checkInSchema, type CheckInFormValues } from "./schema";
 
 export type SubmitCheckInResult =
@@ -9,7 +10,10 @@ export type SubmitCheckInResult =
   | { ok: false; serverError: string }
   | { ok: false; fieldErrors: Partial<Record<keyof CheckInFormValues, string[]>> };
 
-export async function submitCheckIn(data: CheckInFormValues): Promise<SubmitCheckInResult> {
+export async function submitCheckIn(
+  data: CheckInFormValues,
+  recaptchaToken: string,
+): Promise<SubmitCheckInResult> {
   const parsed = checkInSchema.safeParse(data);
 
   if (!parsed.success) {
@@ -17,6 +21,15 @@ export async function submitCheckIn(data: CheckInFormValues): Promise<SubmitChec
       Record<keyof CheckInFormValues, string[]>
     >;
     return { ok: false, fieldErrors };
+  }
+
+  try {
+    const recaptcha = await verifyRecaptcha(recaptchaToken);
+    if (!recaptcha.success) {
+      return { ok: false, serverError: "reCAPTCHA verification failed. Please try again." };
+    }
+  } catch (err) {
+    return { ok: false, serverError: `reCAPTCHA error: ${err instanceof Error ? err.message : "Unknown"}` };
   }
 
   const { firstName, lastName, companyName, email, phone, reason } = parsed.data;
