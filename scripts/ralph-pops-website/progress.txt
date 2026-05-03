@@ -722,3 +722,11 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/app/request-a-quote/actions.ts (new), apps/pops-website/app/request-a-quote/quote-form.tsx (updated)
 - Quality checks: typecheck ✓ | build ✓ | browser ✓
 ---
+
+## 2026-05-03 — US-037 Build /contact server action
+- Created apps/pops-website/app/contact/actions.ts with submitContact() 'use server'
+- Same pattern as US-036: safeParse → fieldErrors or sendFormEmail → { ok: true } / { ok: false, serverError }
+- Updated contact-form.tsx: onSubmit calls submitContact(), success card, server error alert
+- Files: apps/pops-website/app/contact/actions.ts (new), apps/pops-website/app/contact/contact-form.tsx (updated)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (field errors fire correctly)
+---

@@ -682,7 +682,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 37,
-      "passes": false,
+      "passes": true,
       "notes": "Mirror the pattern from US-036. Keep schema and action small."
     },
     {
