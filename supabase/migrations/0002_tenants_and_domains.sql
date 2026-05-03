@@ -51,8 +51,8 @@ CREATE TABLE tenant_domains (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 -- Seed for v1 (executed via supabase/seed.sql or scripts/seed-tenant.ts):
---  ('app.popscoating.com', pops_tenant_id, 'staff'),
---  ('track.popscoating.com', pops_tenant_id, 'customer')
+--  ('app.popsindustrial.com', pops_tenant_id, 'staff'),
+--  ('track.popsindustrial.com', pops_tenant_id, 'customer')
 CREATE INDEX ON tenant_domains (tenant_id);
 
 -- Immutable audit trail for sensitive operations.

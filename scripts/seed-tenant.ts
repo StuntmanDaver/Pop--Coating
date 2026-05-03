@@ -15,7 +15,7 @@
 // What this script does (per CONTEXT.md D-10/D-11):
 //   1. INSERT tenants row (auto-generated UUID, name, slug)
 //   2. INSERT shop_settings row (tenant_id)
-//   3. INSERT tenant_domains rows (app.popscoating.com + track.popscoating.com)
+//   3. INSERT tenant_domains rows (app.popsindustrial.com + track.popsindustrial.com)
 //   4. INSERT staff row (role='admin', is_active=true, auth_user_id=NULL)
 //   5. auth.admin.inviteUserByEmail → dispatches invite via Resend SMTP
 //   6. auth.admin.updateUserById → sets app_metadata.tenant_id + intended_actor='staff'
@@ -109,15 +109,15 @@ async function main() {
   const { error: dErr } = await supabase
     .from('tenant_domains')
     .insert([
-      { tenant_id: tenant.id, host: 'app.popscoating.com',   audience: 'staff'    },
-      { tenant_id: tenant.id, host: 'track.popscoating.com', audience: 'customer' },
+      { tenant_id: tenant.id, host: 'app.popsindustrial.com',   audience: 'staff'    },
+      { tenant_id: tenant.id, host: 'track.popsindustrial.com', audience: 'customer' },
     ])
 
   if (dErr != null) {
     // Log but don't throw — domains can be added manually if DNS is not yet configured
     console.warn(`  tenant_domains INSERT warning: ${dErr.message}`)
   } else {
-    console.log(`  tenant_domains created (app.popscoating.com, track.popscoating.com)`)
+    console.log(`  tenant_domains created (app.popsindustrial.com, track.popsindustrial.com)`)
   }
 
   // ─── Step 4: Create staff row (auth_user_id NULL until invite accepted) ───
