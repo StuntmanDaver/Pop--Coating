@@ -1,11 +1,18 @@
 import * as Sentry from "@sentry/nextjs";
 import { Resend } from "resend";
 
+export type EmailAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType?: string;
+};
+
 export type FormEmailParams = {
   to: string;
   subject: string;
   html: string;
   replyTo?: string;
+  attachments?: EmailAttachment[];
 };
 
 function getResend(): Resend {
@@ -20,7 +27,13 @@ function getFromAddress(): string {
   return process.env.RESEND_FROM ?? "noreply@popsindustrial.com";
 }
 
-export async function sendFormEmail({ to, subject, html, replyTo }: FormEmailParams) {
+export async function sendFormEmail({
+  to,
+  subject,
+  html,
+  replyTo,
+  attachments,
+}: FormEmailParams) {
   const resend = getResend();
 
   const { data, error } = await resend.emails.send({
@@ -29,6 +42,15 @@ export async function sendFormEmail({ to, subject, html, replyTo }: FormEmailPar
     subject,
     html,
     ...(replyTo ? { replyTo } : {}),
+    ...(attachments && attachments.length > 0
+      ? {
+          attachments: attachments.map((a) => ({
+            filename: a.filename,
+            content: a.content,
+            ...(a.contentType ? { contentType: a.contentType } : {}),
+          })),
+        }
+      : {}),
   });
 
   if (error) {
