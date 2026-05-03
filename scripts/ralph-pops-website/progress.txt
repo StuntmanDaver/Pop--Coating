@@ -41,19 +41,21 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Labels use `font-medium` (Inter 500) per AC, intentionally lighter than CardTitle's `font-bold` (700). This is the right hierarchy: a label is a micro-prompt, not a heading. Required-field asterisk pattern is `<Label>{label}<span className="text-pops-yellow-500"> *</span></Label>` — wired up properly in US-011 FormField wrapper, but the asterisk color comes from the design principles §6.4 spec.
 - `placeholder:text-ink-400` is the canonical placeholder color on dark inputs. Don't reuse it for labels — placeholders disappear on focus, labels persist; mixing them causes B2B field confusion (per §6.4 "never floating placeholders").
 - `resize-y` on Textarea (vertical-only resize) prevents users from breaking the form layout by dragging horizontally. It's the convention for content-bearing fields like message/project-details.
+- FormField (US-011) is the wiring contract for accessibility on every form field: it owns the Label/htmlFor pairing, the helper-or-error `<p id={`${name}-help`}>`, and uses `React.cloneElement` to inject `id`, `name`, `aria-invalid`, and `aria-describedby` onto the single input child. Consumers only pass `<Input />` / `<Textarea />` as children — they NEVER set those four attrs themselves. If the consumer already sets `id`/`name`/`aria-describedby`, FormField preserves them (cloneElement uses `child.props.x ?? name` for id/name and joins existing `aria-describedby` tokens with the help id). Error string takes precedence over helperText, and both render with `mt-2 font-text text-sm` — error in `text-danger-500`, helper in `text-ink-400`.
+- Use `Children.only(children)` to enforce a single React child at runtime — failing fast with a clear error if a consumer wraps multiple inputs in one FormField. Pair with `isValidElement<P>()` (typed generic) for the cloneElement narrowing — this is the only way to keep TS strict-mode happy without `any`.
 
 ---
 
 ## Story Status (49 stories total)
 
 Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
-Phase B — Design primitives (US-006 to US-016): 5/11 complete
+Phase B — Design primitives (US-006 to US-016): 6/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 10/49 stories passing
+OVERALL: 11/49 stories passing
 
 ---
 
@@ -284,3 +286,18 @@ OVERALL: 10/49 stories passing
   - Internal preview at `/dev/forms` follows the convention from US-008 (`/dev/buttons`) and US-009 (`/dev/cards`) — one route per primitive, all auto-excluded from sitemap (US-042). The trailing `/dev/*` namespace stays as a permanent design-system reference.
   - The dev preview page uses `font-display` directly on its h1 (not via a Hero component) — this is acceptable for internal pages but PRODUCTION pages should use the Hero/EyebrowLabel/Container pattern from US-015 onward.
 ---
+
+## 2026-05-03 — US-011 Build FormField wrapper with error helper text
+- Created apps/pops-website/components/forms/form-field.tsx exporting FormField
+- Props: { label, name, required?, error?, helperText?, children: ReactNode }
+- Renders <Label htmlFor={name}>label{required && <span className="text-pops-yellow-500"> *</span>}</Label>
+- Wraps the single child in a div, then renders helper-or-error <p id={`${name}-help`}>
+- Uses React.cloneElement (with Children.only + isValidElement<ChildAttrs>) to inject id, name, aria-invalid, and aria-describedby onto the input/textarea child WITHOUT clobbering anything the consumer explicitly set (id/name fall back to `name` prop; aria-describedby joins existing tokens with the help id)
+- Error message uses text-danger-500; helper text uses text-ink-400 (the canonical secondary text color)
+- Files changed: apps/pops-website/components/forms/form-field.tsx
+- Quality checks: typecheck ✓ | build ✓ | browser N/A (AC does not require browser verification — this is a wrapper component validated by typecheck + downstream consumers in US-021+)
+- **Learnings for future iterations:**
+  - The FormField wrapper REPLACES the manual Label + Input + <p aria-describedby="..."> wiring shown in /dev/forms (US-010). Future form pages (request-a-quote US-021, contact US-031, check-in US-024) should use FormField instead of hand-wiring aria attrs. The dev/forms page is left as-is since it intentionally demos the raw primitives.
+  - `isValidElement<P>()` (with a generic param) is the strict-mode-safe way to narrow ReactNode → ReactElement<P> for cloneElement. Without the generic, child.props is `unknown` and you'd need either a cast or `any`. With it, child.props is fully typed as `P` and TS is happy without escape hatches.
+  - cloneElement merge convention: for multi-token attrs like `aria-describedby`, JOIN existing tokens with the new one (`[existing, helpId].filter(Boolean).join(" ")`). Don't replace — a consumer might already have other describedby targets.
+  - `error ?? helperText` picks the right message, and a single `hasMessage` boolean drives both the `<p>` rendering and the `aria-describedby` injection — guarantees the wiring is in sync (no orphan describedby pointing at a non-existent <p>).

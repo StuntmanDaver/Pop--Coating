@@ -198,7 +198,7 @@
         "Typecheck passes"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles \u00a76.4 + \u00a79 \u2014 errors must be programmatically described. Use React.cloneElement on children to inject id and aria-describedby."
     },
     {
