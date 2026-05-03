@@ -681,3 +681,12 @@ OVERALL: 16/49 stories passing
   - defaultValues: { safetyAcknowledged: false } needed so RHF treats it as boolean, not undefined
   - Controller onChange: `(checked) => field.onChange(checked === true)` — converts Radix CheckedState to boolean
 ---
+
+## 2026-05-03 — US-033 Build /check-out page (visitor check-out form)
+- Hero: "GUEST" eyebrow, "Check Out" H1, slide-01.jpg background, "Back to Home" CTA
+- Form fields: First Name (required), Last Name (required), Company Name (optional), Email (required), Phone (required) — matching check-in pattern for pairing
+- No safety checkbox (not in source)
+- Form centered in max-w-[640px] container on dark section
+- Files: apps/pops-website/app/check-out/schema.ts, apps/pops-website/app/check-out/check-out-form.tsx, apps/pops-website/app/check-out/page.tsx (all new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---

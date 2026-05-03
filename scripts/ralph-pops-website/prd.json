@@ -611,7 +611,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 33,
-      "passes": false,
+      "passes": true,
       "notes": "Check-out is shorter than check-in (no reason/safety fields per source). Don't add fields that aren't in the source."
     },
     {
