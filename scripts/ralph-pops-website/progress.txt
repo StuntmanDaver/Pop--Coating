@@ -26,14 +26,14 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 
 ## Story Status (49 stories total)
 
-Phase A — Workspace + foundation (US-001 to US-005): 4/5 complete
+Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
 Phase B — Design primitives (US-006 to US-016): 0/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 4/49 stories passing
+OVERALL: 5/49 stories passing
 
 ---
 
@@ -119,4 +119,17 @@ OVERALL: 4/49 stories passing
   - The 4 PDFs are: Application checklist, Quality checklist, Receiving checklist, Shipping checklist (per `.firecrawl/popsindustrial/assets/pdfs/`). Reference them at `/pdfs/<filename>.pdf`.
   - For favicon, Next.js 16 will surface `app/icon.{png,svg,ico}` via the App Router automatically, but the AC explicitly asked for `public/favicon.ico` — keeping that location works for both legacy `<link rel="icon">` and the default Next.js favicon resolution from `public/`.
   - macOS ships `magick` (ImageMagick 7) at `/opt/homebrew/bin/magick`; preferred over `convert` (legacy alias) and `sips` (no ICO support).
+---
+
+## 2026-05-02 — US-005 Build content/company.ts single-source-of-truth file
+- Created apps/pops-website/content/company.ts with `as const` company object
+- Fields per PRD §7: name, founded (1972), generations (4), mainOffice, shippingReceiving, phone, fax, emails {info, invoices}, hours, tagline, taglineSecondary, services (5)
+- mainOffice.zip = "33811", shippingReceiving.zip = "33811" (locked per open question §12.1; live footer says 33813 — flagged with TODO comment)
+- Exported `type Company = typeof company` for downstream consumers (footer US-013, contact US-031, JSON-LD US-041)
+- Files changed: apps/pops-website/content/company.ts (new file)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1987ms; 3/3 static pages) | browser N/A (no UI yet)
+- **Learnings for future iterations:**
+  - tsconfig.json `include: ["**/*.ts", "**/*.tsx"]` already covers `content/` so `content/company.ts` is type-checked without any include changes — same applies to future server-side imports under content/.
+  - Keep `as const` on the entire object so consumers get literal types (e.g. `company.services[0]` is the literal "Wet Paint Coatings", not `string`). This matters for type-safe footer columns, JSON-LD `@type: "Service"` arrays, and Zod refinements that pin allowed service names.
+  - The hours string uses an em dash (–) for "Monday–Friday 8am–4pm" matching the PRD §7 source verbatim — don't normalize to ASCII; copy faithfulness is part of the brand voice.
 ---

@@ -91,7 +91,7 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Source values from docs/prd/POPS-WEBSITE-REBUILD.md \u00a77. The 33813 vs 33811 ZIP discrepancy is flagged as open question \u00a712.1 \u2014 until client confirms, lock 33811. Add a TODO comment on the shipping zip pointing to that open question."
     },
     {
