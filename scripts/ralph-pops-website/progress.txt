@@ -530,3 +530,24 @@ OVERALL: 16/49 stories passing
   - Leadership pages work best with a data-driven LEADERS array (typed constant) rather than repeated JSX blocks — easier to add/remove members, consistent structure, easy to see at a glance if a field is missing.
   - Per AC notes: Mark Woods and Chris Woods Jr have no LinkedIn in source — do NOT fabricate URLs. The optional `linkedIn?: string` type makes this self-documenting.
 ---
+
+## 2026-05-03 — US-021 Build /request-a-quote page (form scaffold)
+- Installed react-hook-form@7.74.0, zod@4.4.2, @hookform/resolvers@5.2.2 into apps/pops-website
+- Created apps/pops-website/app/request-a-quote/schema.ts — exported `quoteSchema` (Zod) + `QuoteFormValues` type; name/email/projectDetails required; phone/company optional
+- Created apps/pops-website/app/request-a-quote/quote-form.tsx — "use client" form component using useForm + zodResolver; 2-col grid for name/email/phone/company; full-width Textarea for projectDetails; recaptcha-container div placeholder; Submit button isLoading=isSubmitting; onSubmit console.logs for now (server action in US-036)
+- Created apps/pops-website/app/request-a-quote/page.tsx — RSC page; Hero with "GET STARTED" eyebrow + "Request a Quote" H1 + phone CTA; max-w-[720px] centered form section; required-field legend paragraph; renders <QuoteForm />
+- Files changed: apps/pops-website/app/request-a-quote/{page.tsx, quote-form.tsx, schema.ts} (all new), apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ (14/14 static pages) | browser ✓
+- Browser verification:
+  - 5 fields: name, email, phone, company, projectDetails ✓
+  - recaptchaPresent: true ✓
+  - submitBtnText: "Submit Request" ✓
+  - starCount: 9 (3 field labels + 1 in legend paragraph + footer links) ✓
+  - Validation on empty submit: errors["Name is required", "Email is required", "Project details are required"] in danger-500 ✓
+  - Error fields get red border via aria-invalid ✓
+- **Learnings for future iterations:**
+  - The QuoteForm is a separate "use client" component file (quote-form.tsx) imported into the RSC page.tsx — this is the standard RSC/client-component split pattern. The page stays a Server Component (for metadata export) while only the interactive form is a client component.
+  - The Zod schema lives in schema.ts (NOT in quote-form.tsx) so US-036's server action can import the same source without a client-boundary crossing.
+  - react-hook-form's `register()` spreads `name`, `ref`, `onChange`, `onBlur` onto the input. FormField uses cloneElement to also inject `id`, `aria-invalid`, and `aria-describedby`. Both cooperate: register's name wins because cloneElement uses `child.props.name ?? name` (register already set name). The aria-invalid="true" from FormField fires the danger-border selector via CSS attribute selector `aria-[invalid=true]:border-danger-500`.
+  - `noValidate` on the form disables native browser validation bubbles — react-hook-form's own validation runs instead, giving us full control over error placement and style.
+---

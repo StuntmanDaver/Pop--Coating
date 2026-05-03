@@ -390,7 +390,7 @@
         "Verify in browser using dev-browser skill: tab order field-by-field, errors display when submitting empty"
       ],
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "notes": "Install react-hook-form, zod, @hookform/resolvers/zod into apps/pops-website/. The Zod schema goes in apps/pops-website/app/request-a-quote/schema.ts so the server action (US-036) imports the same source. Form layout per design principles \u00a76.4."
     },
     {
