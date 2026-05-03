@@ -11,7 +11,8 @@
     "audit:alt": "npx tsx scripts/audit-alt.ts",
     "audit:headings": "npx tsx scripts/audit-headings.ts",
     "contrast-lint": "npx tsx scripts/contrast-lint.ts",
-    "lighthouse": "pnpm dlx @lhci/cli autorun"
+    "lighthouse": "pnpm dlx @lhci/cli autorun",
+    "mobile-audit": "npx tsx scripts/mobile-audit.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
