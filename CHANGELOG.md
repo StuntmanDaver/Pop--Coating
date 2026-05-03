@@ -15,6 +15,50 @@ All notable changes to the Pops Industrial Coatings platform and its Claude Code
 
 ---
 
+## [pops-website rebuild] — 2026-05-02 → 2026-05-03
+
+The popsindustrial.com marketing site rebuilt as `apps/pops-website/` — a separate pnpm workspace alongside the SaaS shell. Driven by the Ralph autonomous harness across two runs (rate-limit interrupted at 16/49 stories, restarted with cap=100, completed). 49/49 stories passing. Branch: `ralph/pops-website`.
+
+### Added — Source materials
+- Firecrawl scrape of the live popsindustrial.com captured at `.firecrawl/popsindustrial/` (308 files / 71 MB) — per-page clean markdown, raw HTML, desktop + mobile screenshots at 1440w / 375w, 194 image assets, 4 PDFs, site-globals JSON, manifest with company facts
+- `docs/prd/POPS-WEBSITE-REBUILD.md` v1.0 — 49-story rebuild PRD with page-by-page content map, forms spec, SEO + performance budgets, definition of done
+- `docs/design/popsindustrial-design-principles.md` — design contract (oklch palette, Pops yellow `#FECD08` accent, Archivo Black 56→28 / Inter 22→12 type scale, component contracts, accessibility floor)
+- Ralph harness at `scripts/ralph-pops-website/` (`prd.json`, `progress.txt`, `CLAUDE.md`, `ralph.sh`)
+
+### Added — Marketing site (apps/pops-website/)
+- **Foundation:** pnpm workspace package, Next.js 16 App Router, strict TypeScript, Tailwind v4 (CSS-first `@theme`), Archivo Black + Inter via `next/font/google`, `content/company.ts` single source of truth for business facts, 194 images + 4 PDFs + multi-resolution favicon copied to `public/`
+- **Primitives** (`components/`): Container, Section, EyebrowLabel, Button (4 variants × 2 sizes, asChild Slot, focus ring, loading state), Card, Input/Textarea/Label, FormField with aria-describedby wiring, Radix Checkbox (44×44 tap target), Header (with skip-to-content), Footer (3-column nav from site-globals.json), Hero (eyebrow + display H1 + lede + dual CTA + dark-overlay photo per principles §6.2), ServiceTile, MapEmbed
+- **Pages:** all 18 production routes — home, about-us trio (about/history/leadership), request-a-quote quartet (quote/facilities/standards/terms), services index + 5 service detail pages (wet-paint, complex, abrasive, powder, large-capacity), contact (form + Google Maps embed), check-in, check-out, guest-safety-rules
+- **Forms (Phase D):** `lib/email.ts` shared Resend helper; Server Actions for Quote, Contact, Check-In, Check-Out; Google reCAPTCHA v3 verification across all four
+- **SEO + a11y (Phase E):** per-page `Metadata`, JSON-LD Organization + WebSite + Service schema on home + service pages, `app/sitemap.ts` + `app/robots.ts`, alt-text audit script, heading-order audit script
+- **Quality (Phase F):** Playwright contrast lint (`scripts/contrast-lint.ts` — fails build on AA violations), Lighthouse CI budgets (`lighthouserc.json` — Perf ≥95 mobile, ≥98 desktop), mobile responsive audit script, Vercel deploy config (`vercel.ts` with cache headers, security headers, env-var template), `apps/pops-website/README.md` handoff documentation
+- **Visual proof:** per-story Playwright screenshots committed at `scripts/ralph-pops-website/progress/screenshots/US-XX-*.png` (17 baselines)
+
+### Fixed
+- Sentry install wizard had regressed deliberate project decisions; restored `process.env.SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` (was hardcoded literal in 3 files), `tracesSampleRate: 0.1` (was 1.0 — 10× cost), removed `sendDefaultPii: true` (multi-tenant privacy), restored `environment: process.env.VERCEL_ENV ?? 'development'`, restored tenant_id tagging hint comment in `sentry.server.config.ts`, deleted wizard smoke-test pages (`src/app/sentry-example-page/`, `src/app/api/sentry-example-api/`)
+
+### Changed
+- `pnpm-workspace.yaml` extended with `packages: ["apps/*"]` to enable the new workspace
+- `package.json`: `@sentry/nextjs` bumped to `^10`, added `@sentry/cli` devDep, added `pnpm.allowBuild` allowlist
+- `next.config.ts` (root SaaS app) — wrapped with `withSentryConfig` (org/project, widenClientFileUpload, automaticVercelMonitors, treeshake.removeDebugLogging)
+- New `src/instrumentation.ts` (App Router instrumentation) and `src/instrumentation-client.ts` (with project-tuned values + Session Replay 10% session / 100% error)
+- New `src/app/global-error.tsx` (Sentry-aware top-level error boundary)
+- `.gitignore` refined: ignored `.playwright-mcp/`, `.claude/skills/`, `.claude/rules/`, `.agents/`, `scripts/ralph-*/{ralph.pid,ralph.log,.last-branch}`, stale `.firecrawl/*` (with `popsindustrial/` exception)
+- `.claude/settings.json` enabled ~150 plugins from awesome-claude-skills + impeccable
+
+### Documented
+- `docs/prd/`, `docs/design/` populated
+- `.planning/STATE.md` bumped to phase 01 verified (10/12 must-haves; 2 gaps flagged for live Supabase + Vercel domain wiring)
+- `.planning/phases/01-foundation/01-VERIFICATION.md` GSD verification report
+
+### Outstanding (operator steps Ralph cannot do)
+- Set env vars per `apps/pops-website/.env.example` in Vercel + locally
+- Link Vercel project to `apps/pops-website/` as project root; add `popsindustrial.com` apex + `www → 301`
+- Resolve open question: shipping ZIP `33811` (PRD-locked) vs `33813` (live site footer) with client; update `apps/pops-website/content/company.ts` if needed
+- Rename Sentry project slug from wizard default `'javascript-nextjs'` to something Pops-specific (label only, non-blocking)
+
+---
+
 ## [Phase 01-06] — 2026-05-02
 
 ### Fixed
