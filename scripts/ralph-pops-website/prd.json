@@ -352,7 +352,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "notes": "Per the manifest, the full-res marcus-woods-pops-industrial-coatings.jpg (543KB) is on disk. Use it, not the thumbnail."
     },
     {

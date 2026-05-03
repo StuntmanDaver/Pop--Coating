@@ -491,3 +491,21 @@ OVERALL: 16/49 stories passing
   - The 2-up facility photo grid uses `Section` with no padding (`pt-0 pb-0`) and `border-t border-ink-700`. The photos fill the full row width with `aspect-[4/3]` + `relative overflow-hidden` + `fill` image.
   - "Our History" and "Meet the Family" are the two required cross-links per US-018 AC — these link to /about-us/history and /about-us/leadership respectively (US-019 and US-020 will build those pages).
 ---
+
+## 2026-05-03 — US-019 Build /about-us/history page
+- Implemented /about-us/history page at apps/pops-website/app/about-us/history/page.tsx
+- Hero: pops-4-generations.jpg background (thematic fit — the family photo on the history page), eyebrow "OUR LEGACY", H1 "Our History", lede summarizing 50+ years
+- Content: 2-column layout (lg:grid-cols-[1fr_320px]) — main body with 4 paragraphs faithful to source + dual CTA ("Request a Quote" primary + "Meet the Family" secondary); right sidebar with Marcus Woods founder photo
+- Founder photo: /images/marcus-woods-pops-industrial-coatings.jpg (full-res 543KB, NOT the -239x300 thumbnail) with alt "Marcus Woods, founder of Pop's Industrial Coatings" + "Founder Marcus Woods" caption
+- Files changed: apps/pops-website/app/about-us/history/page.tsx (new, 107 lines)
+- Quality checks: typecheck ✓ | build ✓ (12/12 static pages including /about-us/history) | browser ✓
+- Browser verification:
+  - h1Text: "Our History" ✓
+  - Marcus photo loaded with correct alt text ✓
+  - "Meet the Family" link → /about-us/leadership ✓
+  - All 4 body paragraphs rendered faithfully ✓
+- **Learnings for future iterations:**
+  - Use `grid-cols-[1fr_320px]` (custom column sizing) for text+portrait layouts. The portrait column stays fixed at 320px while the text body gets the rest.
+  - For portrait images with known aspect ratios, use explicit width/height props on next/image (not fill) so the browser knows dimensions without layout shift. Use `sizes="320px"` to prevent fetching oversized variants.
+  - The pops-4-generations.jpg works well as a hero background for the history page since it's the most thematically resonant image for "four generations."
+---
