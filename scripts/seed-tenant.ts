@@ -138,36 +138,37 @@ async function main() {
   }
   console.log(`  Staff row created: id=${staff.id} (auth_user_id=NULL until invite accepted)`)
 
-  // ─── Step 5: Invite owner via Supabase Auth (dispatched via Resend SMTP) ──
-  const { data: invited, error: iErr } = await supabase.auth.admin.inviteUserByEmail(ownerEmail, {
-    data: { name: ownerName },
+  // ─── Step 5: Create owner with app_metadata BAKED IN at creation ──────────
+  // CRITICAL: The link_auth_user_to_actor trigger (migration 0010) fires
+  // AFTER INSERT on auth.users and REQUIRES app_metadata.tenant_id at that
+  // moment. inviteUserByEmail creates the user without app_metadata, so
+  // the trigger raises 'auth_user_created_without_tenant_id'. We must use
+  // createUser with app_metadata in the first call. (RESEARCH.md Pitfall 5)
+  const { data: created, error: cErr } = await supabase.auth.admin.createUser({
+    email:          ownerEmail,
+    email_confirm:  true,
+    user_metadata:  { name: ownerName },
+    app_metadata:   { tenant_id: tenant.id, intended_actor: 'staff' },
   })
 
-  if (iErr != null || invited?.user == null) {
-    throw new Error(`inviteUserByEmail failed: ${iErr?.message ?? 'no user returned'}`)
+  if (cErr != null || created?.user == null) {
+    throw new Error(`createUser failed: ${cErr?.message ?? 'no user returned'}`)
   }
-  const authUserId = invited.user.id
-  console.log(`  Invite dispatched to ${ownerEmail} (auth.users.id=${authUserId})`)
+  const authUserId = created.user.id
+  console.log(`  Auth user created: ${authUserId} (app_metadata stamped at creation)`)
 
-  // ─── Step 6: CRITICAL — set app_metadata BEFORE invite link is clicked ────
-  // The link_auth_user_to_actor trigger (migration 0010) fires on AFTER INSERT
-  // on auth.users. inviteUserByEmail creates the auth.users row, then we
-  // MUST set app_metadata.tenant_id + intended_actor so the trigger can link
-  // the auth.users row to the staff row. Without this, the trigger raises
-  // 'auth_user_created_without_tenant_id' when the owner clicks the invite link.
-  // (RESEARCH.md Pitfall 5)
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- authUserId validated above (invited.user.id is non-null after success check)
-  const { error: updErr } = await supabase.auth.admin.updateUserById(authUserId!, {
-    app_metadata: {
-      tenant_id:      tenant.id,
-      intended_actor: 'staff',
-    },
+  // ─── Step 6: Generate invite/recovery link, dispatched via Resend SMTP ────
+  // The user exists; send a recovery (password-set) link so they can sign in.
+  const { data: link, error: lErr } = await supabase.auth.admin.generateLink({
+    type:  'recovery',
+    email: ownerEmail,
   })
 
-  if (updErr != null) {
-    throw new Error(`updateUserById app_metadata failed: ${updErr.message}`)
+  if (lErr != null) {
+    throw new Error(`generateLink failed: ${lErr.message}`)
   }
-  console.log(`  app_metadata set: { tenant_id: "${tenant.id}", intended_actor: "staff" }`)
+  console.log(`  Recovery link dispatched via Resend SMTP to ${ownerEmail}`)
+  console.log(`  (action_link in console: ${link?.properties?.action_link ?? 'n/a'})`)
 
   console.log('')
   console.log('Bootstrap complete.')
