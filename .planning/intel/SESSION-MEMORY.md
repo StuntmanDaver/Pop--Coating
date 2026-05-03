@@ -4,6 +4,35 @@ Cross-session facts that belong in-repo (not ephemeral MCP memory). **Never stor
 
 Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic>`.
 
+**Cursor picks this up automatically** via [`.cursor/rules/plan06-phase1-continuity.mdc`](../../.cursor/rules/plan06-phase1-continuity.mdc) (`alwaysApply: true`).
+
+---
+
+## Phase 1 Plan 06 checklist (canonical — matches Claude Code terminal 48 summary)
+
+### Automated / verified
+
+| Item | Notes |
+|------|--------|
+| Build error | Route conflict — `(office)` + `(portal)` root pages merged into `src/app/page.tsx` with host detection; both sign-in flows unified into `src/app/sign-in/page.tsx`. |
+| `next.config.ts` | `typedRoutes` out of `experimental`; `disableLogger` removed. |
+| TypeScript types | Aligned with live schema once migrations applied (confirm on current `main`). |
+| GitHub secrets | `RESEND_API_KEY` and `SUPABASE_PROJECT_REF` added for Actions — no values in-repo. |
+| DB migrations | All migrations applied on live Supabase — re-verify before sign-off. |
+
+### Still requires manual action
+
+| Item | Where |
+|------|--------|
+| JWT expiry → 3600s | Supabase Dashboard → Authentication → Settings → JWT Expiry |
+| Auth Hook registration | Supabase Dashboard → Authentication → Hooks → Custom Access Token → `app.custom_access_token_hook` |
+| Upstash credentials | Vercel Marketplace → Upstash; env: `UPSTASH_REDIS_REST_URL` + token |
+| Sentry DSN | Sentry project; `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` on Vercel + `.env.local` |
+| Vercel domains | `app.popsindustrial.com` + `track.popsindustrial.com` (remove stale `popscoating.com` if present) |
+| Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (registrar). |
+
+After push/sync and the **two Supabase Dashboard** steps (JWT + Auth Hook), Phase 1 **Task 5** (success criteria walkthrough) can run for Phase 1 sign-off.
+
 ---
 
 ## 2026-05-03

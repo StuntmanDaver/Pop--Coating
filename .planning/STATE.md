@@ -110,6 +110,8 @@ Phase 4 [----------] 0%  Portal & Ops
 
 **Context for next session:**
 
+- **Cursor:** Rule `.cursor/rules/plan06-phase1-continuity.mdc` is `alwaysApply` — Plan 06 checklist loads automatically.
+
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Plans 01-05 complete: Next.js scaffold, 10 SQL migrations, auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry, auth Server Actions + sign-in UI + module stubs
 - Plan 06: checkpoint — Supabase Cloud + Vercel setup, seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration, supabase gen types (replaces placeholder types.ts)

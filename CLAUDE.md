@@ -108,7 +108,8 @@ The project optionally uses two [ruflo](https://github.com/ruvnet/ruflo) plugins
 
 ## Repo state
 
-- **No application code yet.** Wave 1 Week 0 pre-flight is next.
+- **Every new session:** Respect **Phase 1 Plan 06 continuity** — automated vs manual infrastructure checklist in [`.cursor/rules/plan06-phase1-continuity.mdc`](.cursor/rules/plan06-phase1-continuity.mdc) (always applied in Cursor) and [`.planning/intel/SESSION-MEMORY.md`](.planning/intel/SESSION-MEMORY.md). Do not assume Phase 1 is signed off until Task 5 criteria pass.
+- **Application code:** Foundation (auth, schema, proxy, app routes) ships on `main`; ongoing work follows GSD phases in `.planning/`.
 - Git repo initialized; remote `origin` → `https://github.com/StuntmanDaver/Pop--Coating.git`. Default branch `main`.
 - `.claude/skills/` — 93 design/UX/process skills (pre-loaded via Claude Code skill plugins; gitignored as plugin-managed).
 - `.claude/agents/` — 23 project sub-agent definitions (committed): every agent type referenced in `docs/EXECUTION.md` (catalog in §2 plus `infrastructure-builder` / `devops` / `shadcn-installer` / `design-token-integrator` cited elsewhere) plus `phase-planner` from the Tier-1 harness work.
@@ -122,7 +123,7 @@ The project optionally uses two [ruflo](https://github.com/ruvnet/ruflo) plugins
 ## What NOT to do
 
 - Don't introduce dependencies outside the stack listed above without surfacing it as a decision.
-- Don't write code yet. The current phase is planning + tooling.
+- Don't bypass GSD workflow for multi-step phase work unless the user explicitly bypasses it; trivial doc fixes are fine.
 - Don't bypass RLS. Ever. If you think you need to, you don't — you need an audited admin path.
 - Don't invent agent type names. Use the catalog in EXECUTION.md §2.
 

@@ -7,6 +7,8 @@ All notable changes to this repository are documented here. The format is inspir
 ### Documentation
 
 - Added this changelog and `.planning/intel/SESSION-MEMORY.md` for dated operational/session notes.
+- Added always-on Cursor rule `.cursor/rules/plan06-phase1-continuity.mdc` so new Cursor sessions inherit the Phase 1 Plan 06 automated vs manual checklist (terminal 48 parity).
+- Canonical checklist tables duplicated in SESSION-MEMORY; CLAUDE.md repo state updated to reference continuity docs and remove obsolete “no application code yet” line.
 
 ### Ops / discovery (2026-05-03)
 
