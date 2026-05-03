@@ -1,0 +1,347 @@
+{
+  "project": "Pops Industrial Coatings — Wave 1 Foundation",
+  "branchName": "ralph/foundation-completion",
+  "description": "Complete the Phase 1 database foundation and shared infrastructure. Plans 01-03 through 01-06: auth hook, production_status REVOKE, workstation lifecycle functions, Supabase clients, proxy.ts, rate limiters, Sentry, auth module + UI, pgTAP suite, CI, and seed scripts.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Custom access token hook migration (0007)",
+      "description": "As a platform operator, I need the Supabase custom access token hook to stamp tenant_id, audience, and role into JWT app_metadata so that every authenticated request carries the correct tenant context without additional DB lookups.",
+      "acceptanceCriteria": [
+        "supabase/migrations/0007_auth_hook.sql exists",
+        "app.custom_access_token_hook function is declared STABLE",
+        "Function body contains zero INSERT, UPDATE, or DELETE statements",
+        "Function reads from staff, workstations, and customer_users (in that order) to determine audience",
+        "Function stamps tenant_id, audience ('staff_office' | 'staff_shop' | 'customer'), and role into event.claims.app_metadata",
+        "GRANT EXECUTE on app.custom_access_token_hook to supabase_auth_admin is present",
+        "REVOKE EXECUTE on app.custom_access_token_hook from authenticated, anon, public is present",
+        "GRANT SELECT on staff, workstations, customer_users to supabase_auth_admin is present",
+        "No ALTER ROLE statement touches supabase_auth_admin (BYPASSRLS must remain intact)",
+        "supabase db reset applies all migrations 0001-0007 without error",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "CRITICAL: Hook deadlock (Supabase Issue #29073) — any write inside the hook causes a deadlock. This is a hidden invariant in CLAUDE.md. Do NOT add INSERT/UPDATE/DELETE under any circumstances. Read CLAUDE.md hidden invariants and 01-RESEARCH.md Pitfall 1 before writing this migration."
+    },
+    {
+      "id": "US-002",
+      "title": "production_status column-level REVOKE migration (0008)",
+      "description": "As a platform operator, I need direct UPDATE of jobs.production_status to be forbidden at the database level so that all stage transitions must go through app.record_scan_event() and are always auditable.",
+      "acceptanceCriteria": [
+        "supabase/migrations/0008_production_status_revoke.sql exists",
+        "Migration contains: REVOKE UPDATE (production_status) ON jobs FROM authenticated",
+        "Running UPDATE jobs SET production_status = 'prep' as the authenticated role returns a permission error",
+        "supabase db reset applies all migrations 0001-0008 without error",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Single-line migration. Keep it minimal — do not add anything else to this file."
+    },
+    {
+      "id": "US-003",
+      "title": "Workstation lifecycle SECURITY DEFINER functions migration (0009)",
+      "description": "As a workstation tablet, I need SECURITY DEFINER functions to claim a workstation session, record heartbeats, and release the session so that workstation identity is managed safely without exposing the workstations table to direct writes.",
+      "acceptanceCriteria": [
+        "supabase/migrations/0009_workstation_lifecycle_functions.sql exists",
+        "app.claim_workstation(p_device_token TEXT) RETURNS UUID exists as SECURITY DEFINER",
+        "app.record_workstation_heartbeat() RETURNS VOID exists as SECURITY DEFINER",
+        "app.release_workstation() RETURNS VOID exists as SECURITY DEFINER",
+        "Each function validates that the caller's app.workstation_id() matches the row being modified",
+        "claim_workstation verifies the device_token bcrypt hash against the stored hash",
+        "supabase db reset applies all migrations 0001-0009 without error",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Read DESIGN.md §3.2 for the exact function signatures. These functions must not expose raw workstation credentials."
+    },
+    {
+      "id": "US-004",
+      "title": "link_auth_user_to_actor trigger migration (0010)",
+      "description": "As a platform operator, I need an AFTER INSERT trigger on auth.users to automatically link new auth users to their pre-created staff or customer_users row by tenant_id and email so that the hook can find them on first sign-in.",
+      "acceptanceCriteria": [
+        "supabase/migrations/0010_link_auth_user_trigger.sql exists",
+        "app.link_auth_user_to_actor() SECURITY DEFINER function exists",
+        "AFTER INSERT trigger on auth.users fires app.link_auth_user_to_actor",
+        "Function reads app_metadata.tenant_id from NEW.raw_app_meta_data to scope the search",
+        "Function raises exception 'auth_user_created_without_tenant_id' if app_metadata.tenant_id is missing",
+        "Function links staff row (by tenant_id + email) if found; else links customer_users row",
+        "Function does NOT run inside the custom_access_token_hook (it is a separate trigger)",
+        "supabase db reset applies all migrations 0001-0010 without error",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Read 01-RESEARCH.md Pitfall 5. This trigger fires on auth.users INSERT (e.g. inviteUserByEmail), NOT inside the hook. The hook is read-only; this trigger is the write path."
+    },
+    {
+      "id": "US-005",
+      "title": "Supabase database clients in src/shared/db/",
+      "description": "As a developer, I need typed Supabase clients (server, browser, admin) in src/shared/db/ so that all database access is consistently typed and the service-role client is gated by ESLint.",
+      "acceptanceCriteria": [
+        "src/shared/db/server.ts exports async createClient() using await cookies() from next/headers, returns SupabaseClient<Database>",
+        "src/shared/db/client.ts exports createBrowserClient() for browser-side subscriptions",
+        "src/shared/db/admin.ts exports createServiceClient() using SUPABASE_SERVICE_ROLE_KEY (not NEXT_PUBLIC_*)",
+        "src/shared/db/types.ts exports a placeholder Database type (to be replaced by pnpm gen:types after Plan 06)",
+        "src/shared/db/index.ts re-exports all three clients",
+        "pnpm type-check passes",
+        "pnpm lint passes (no ESLint violations for these files)",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "NEVER use getSession() anywhere in these files — always getUser(). cookies() from next/headers is async; always await it. Read CLAUDE.md stack constraints before writing."
+    },
+    {
+      "id": "US-006",
+      "title": "Auth helper guards and claims accessor in src/shared/auth-helpers/",
+      "description": "As a developer, I need typed auth guard functions (requireOfficeStaff, requireShopStaff, requireCustomer) and a getCurrentClaims() helper so that Server Components and Server Actions can enforce audience in a single call.",
+      "acceptanceCriteria": [
+        "src/shared/auth-helpers/require.ts exports requireOfficeStaff(), requireShopStaff(), requireCustomer()",
+        "Each guard calls supabase.auth.getUser() (never getSession())",
+        "Each guard reads audience from JWT app_metadata (via getCurrentClaims()) and redirects to /sign-in on mismatch",
+        "src/shared/auth-helpers/claims.ts exports getCurrentClaims() returning typed { tenant_id, audience, role, staff_id?, workstation_id?, company_id? }",
+        "src/shared/auth-helpers/index.ts re-exports both files",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Read DESIGN.md §4.4 for the exact function signatures expected by downstream modules. Guards redirect (not throw) on failure."
+    },
+    {
+      "id": "US-007",
+      "title": "src/proxy.ts multi-domain routing and session refresh",
+      "description": "As a platform operator, I need proxy.ts to inspect the Host header and enforce that office JWTs cannot access the portal domain (and vice versa) so that audience isolation is enforced at the routing layer.",
+      "acceptanceCriteria": [
+        "src/proxy.ts exists (NOT middleware.ts — Next.js 16 uses proxy.ts)",
+        "File reads NEXT_PUBLIC_APP_HOST and NEXT_PUBLIC_PORTAL_HOST env vars for domain comparison",
+        "Customer JWT on app.* domain redirects to track.* sign-in",
+        "Office/shop JWT on track.* domain redirects to app.* sign-in",
+        "Supabase session is refreshed on every request using @supabase/ssr",
+        "Near-expiry workstation sessions are silently re-authenticated (1-hour TTL mitigation)",
+        "Cookie domain attribute is never set (host-scoped only, no cross-subdomain bleed)",
+        "Rate limiting applied to /sign-in and /magic-link paths using signInLimiter and magicLinkLimiter from src/shared/rate-limit/",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "Read DESIGN.md §102 and 01-RESEARCH.md for proxy.ts requirements. The file must be named proxy.ts not middleware.ts. Read CLAUDE.md stack constraints."
+    },
+    {
+      "id": "US-008",
+      "title": "Upstash rate limiters in src/shared/rate-limit/",
+      "description": "As a platform operator, I need sliding-window rate limiters for sign-in and magic-link endpoints so that brute-force and enumeration attacks are blocked at both the proxy and Server Action layers.",
+      "acceptanceCriteria": [
+        "src/shared/rate-limit/index.ts exports signInLimiter and magicLinkLimiter",
+        "Both limiters use @upstash/ratelimit sliding-window algorithm",
+        "signInLimiter: 5 attempts per hour per IP+email",
+        "magicLinkLimiter: 3 attempts per hour per email",
+        "src/shared/rate-limit/adapter.ts exports a getIdentifier(req) helper for extracting the rate-limit key",
+        ".env.local.example contains UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN placeholders",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "Rate limiters are consumed by BOTH proxy.ts (proxy layer) and Server Actions (defense-in-depth). Do not implement only in one place."
+    },
+    {
+      "id": "US-009",
+      "title": "Sentry initialization with tenant_id tagging",
+      "description": "As a platform operator, I need Sentry initialized on client, server, and edge so that errors are captured and tagged with tenant_id from the JWT for cross-tenant observability.",
+      "acceptanceCriteria": [
+        "instrumentation.ts registers Sentry on server and edge",
+        "sentry.client.config.ts initializes Sentry browser SDK",
+        "sentry.server.config.ts initializes Sentry server SDK",
+        "sentry.edge.config.ts initializes Sentry edge SDK",
+        "Every Sentry event is tagged with tenant_id when available from JWT app_metadata",
+        "next.config.ts is wrapped with withSentryConfig()",
+        ".env.local.example contains SENTRY_DSN and SENTRY_AUTH_TOKEN placeholders",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": "Use @sentry/nextjs. Read the installed version from package.json (10.51.0). Tag tenant_id at the scope level so it propagates to all events in the request."
+    },
+    {
+      "id": "US-010",
+      "title": "Shared infrastructure stubs (audit, realtime, storage)",
+      "description": "As a developer, I need stub modules for src/shared/audit/, src/shared/realtime/, and src/shared/storage/ so that downstream modules can import from the canonical paths without hitting missing-module errors.",
+      "acceptanceCriteria": [
+        "src/shared/audit/index.ts exports withAudit() HOF stub (body: TODO, returns the wrapped fn unchanged)",
+        "src/shared/realtime/index.ts exports a createRealtimeClient() stub",
+        "src/shared/storage/index.ts exports a getSignedUrl() stub",
+        "All stubs are typed (no `any`)",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": "Stubs only — no real implementation. Mark each export with a TODO comment indicating which phase fills them in."
+    },
+    {
+      "id": "US-011",
+      "title": "Office sign-in Server Action and sign-in page UI",
+      "description": "As an office staff member, I want to sign in with my email and password at app.popsindustrial.com/sign-in so that I can access the CRM, jobs, and dashboard.",
+      "acceptanceCriteria": [
+        "src/modules/auth/actions/sign-in.ts exports signInAction(formData: FormData) Server Action",
+        "Action calls supabase.auth.signInWithPassword() then redirects to /(office)/dashboard on success",
+        "Action validates email and password with Zod before calling Supabase",
+        "Action applies signInLimiter rate check before attempting auth",
+        "Action returns typed error on failure (invalid credentials, rate limit, network)",
+        "src/app/(office)/sign-in/page.tsx renders sign-in form using shadcn Form + Input + Button + Alert",
+        "Form shows error messages from the Server Action using next-intl t() keys from src/messages/en/auth.json",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Verify in browser using dev-browser skill",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": true,
+      "notes": "Read src/messages/en/auth.json for existing error string keys. Use only keys that exist — do not add new strings without updating the messages file."
+    },
+    {
+      "id": "US-012",
+      "title": "Sign-out Server Action",
+      "description": "As an office staff member or customer, I want to sign out so that my session is cleared and I am redirected to the sign-in page.",
+      "acceptanceCriteria": [
+        "src/modules/auth/actions/sign-out.ts exports signOutAction() Server Action",
+        "Action calls supabase.auth.signOut() then redirects to /sign-in for the current domain",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": true,
+      "notes": "Keep this minimal. The redirect target should use the proxy.ts domain logic."
+    },
+    {
+      "id": "US-013",
+      "title": "Portal magic-link Server Action, callback route, and portal sign-in UI",
+      "description": "As a customer, I want to enter my email at track.popsindustrial.com/sign-in to receive a magic link so that I can access my job tracking portal without a password.",
+      "acceptanceCriteria": [
+        "src/modules/auth/actions/request-magic-link.ts exports requestMagicLinkAction(formData: FormData) Server Action",
+        "Action applies magicLinkLimiter rate check before calling Supabase",
+        "Action calls supabase.auth.signInWithOtp() with redirectTo pointing to /api/auth/callback",
+        "Action always returns silent success regardless of whether the email exists (anti-enumeration)",
+        "src/app/api/auth/callback/route.ts exchanges the auth code for a session and redirects to /(portal)/jobs",
+        "src/app/(portal)/sign-in/page.tsx renders the magic-link request form using shadcn Form + Input + Button",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Verify in browser using dev-browser skill",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": true,
+      "notes": "Silent success on unknown email is security-critical (anti-enumeration per §7.2). The callback route must handle both the code exchange and session cookie setting."
+    },
+    {
+      "id": "US-014",
+      "title": "createWorkstation Server Action",
+      "description": "As an office staff admin, I want a Server Action to enroll a new workstation tablet so that the tablet gets a synthetic Supabase user and a device_token.",
+      "acceptanceCriteria": [
+        "src/modules/auth/actions/create-workstation.ts exports createWorkstationAction(formData: FormData) Server Action",
+        "Action is guarded by requireOfficeStaff()",
+        "Action uses the service-role client (createServiceClient) to call auth.admin.createUser() with a synthetic email and device_token as password",
+        "Action creates a row in the workstations table with the new auth user's id, tenant_id, and label",
+        "Action returns the device_token (shown once to the admin for QR generation)",
+        "pnpm type-check passes",
+        "pnpm lint passes",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": true,
+      "notes": "The device_token is a 48-char URL-safe random string. Generate with crypto.randomBytes(36).toString('base64url'). This is the workstation's password — shown once, never stored plaintext."
+    },
+    {
+      "id": "US-015",
+      "title": "Wave 1 module stubs",
+      "description": "As a developer, I need stub index.ts barrel files for all Wave 1 modules so that ESLint module-boundary rules can be validated and downstream plans can import from modules without missing-module errors.",
+      "acceptanceCriteria": [
+        "src/modules/auth/index.ts exists and re-exports the auth actions",
+        "src/modules/crm/index.ts exists with a stub export",
+        "src/modules/jobs/index.ts exists with a stub export",
+        "src/modules/packets/index.ts exists with a stub export",
+        "src/modules/scanning/index.ts exists with a stub export",
+        "src/modules/timeline/index.ts exists with a stub export",
+        "src/modules/dashboard/index.ts exists with a stub export",
+        "src/modules/portal/index.ts exists with a stub export",
+        "src/modules/settings/index.ts exists with a stub export",
+        "src/modules/tags/index.ts exists with a stub export",
+        "pnpm lint passes (madge:check finds no circular imports)",
+        "Typecheck passes"
+      ],
+      "priority": 15,
+      "passes": true,
+      "notes": "Stubs only — each index.ts can export a single comment or a placeholder type. The point is to satisfy ESLint no-restricted-imports rules that require cross-module imports to go through index.ts."
+    },
+    {
+      "id": "US-016",
+      "title": "pgTAP RLS test suite",
+      "description": "As a platform operator, I need a pgTAP test suite covering cross-tenant isolation and audience-scoped access so that RLS regressions are caught in CI before they reach production.",
+      "acceptanceCriteria": [
+        "supabase/tests/01_rls_tenant_isolation.sql exists",
+        "Test verifies that a query from Tenant A cannot return rows belonging to Tenant B on any business table",
+        "supabase/tests/02_rls_audience_scoped.sql exists",
+        "Test verifies that shop audience cannot INSERT into CRM tables",
+        "Test verifies that customer audience cannot INSERT into any table",
+        "supabase/tests/03_rls_customer_filters.sql exists",
+        "Test verifies that customer audience SELECT on jobs returns only rows where company_id matches app.company_id()",
+        "Test verifies that customer audience cannot see jobs with archived_at set",
+        "supabase/tests/04_rls_no_delete.sql exists",
+        "Test verifies that DELETE on any business table from authenticated role returns a permission error",
+        "pnpm supabase db reset && pnpm supabase test db passes with all tests green",
+        "Typecheck passes"
+      ],
+      "priority": 16,
+      "passes": true,
+      "notes": "Read 01-RESEARCH.md for pgTAP patterns. Each test file should set_config role and JWT claims before running assertions. Use set_config('request.jwt.claims', ...) to mock the JWT."
+    },
+    {
+      "id": "US-017",
+      "title": "GitHub Actions CI workflow",
+      "description": "As a developer, I need a GitHub Actions workflow that runs type-check, lint, and pgTAP tests on every push so that regressions are caught before merge.",
+      "acceptanceCriteria": [
+        ".github/workflows/ci.yml exists",
+        "Workflow triggers on push to main and pull_request",
+        "Workflow runs: pnpm install --frozen-lockfile",
+        "Workflow runs: pnpm type-check",
+        "Workflow runs: pnpm lint",
+        "Workflow runs: supabase db reset && supabase test db (pgTAP suite)",
+        "Workflow uses Node.js 20 and pnpm (correct version from package.json)",
+        "Typecheck passes"
+      ],
+      "priority": 17,
+      "passes": true,
+      "notes": "Use the official pnpm/action-setup and supabase/setup-cli GitHub Actions. Cache pnpm store between runs."
+    },
+    {
+      "id": "US-018",
+      "title": "Tenant 1 seed script and local dev fixture data",
+      "description": "As a developer, I need a seed-tenant.ts script and a supabase/seed.sql file so that I can bootstrap Tenant 1 (Pops Industrial Coatings) in both production and local dev with one command.",
+      "acceptanceCriteria": [
+        "scripts/seed-tenant.ts exists and is executable via pnpm tsx scripts/seed-tenant.ts",
+        "Script creates a tenants row for Pops with a fixed UUID (00000000-0000-0000-0000-000000000001)",
+        "Script creates a shop_settings row for Tenant 1",
+        "Script calls supabase.auth.admin.inviteUserByEmail() to create the first office staff user",
+        "Script is idempotent (running twice does not error or duplicate data)",
+        "supabase/seed.sql exists and seeds local dev with: 1 tenant, 1 staff user, 2 companies, 1 contact, 3 jobs at different production_status values",
+        "supabase db reset applies seed.sql automatically (seed file in expected Supabase location)",
+        "Typecheck passes"
+      ],
+      "priority": 18,
+      "passes": true,
+      "notes": "The seed-tenant.ts script uses the service-role client. Read DESIGN.md §3.2 for the Tenant 1 UUID. The seed.sql fixture data is for local development only — never committed with real credentials."
+    }
+  ]
+}

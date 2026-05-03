@@ -200,7 +200,7 @@ This system solves those by creating:
 
 - Multi-tenant database (`tenant_id` on every table; RLS at DB level)
 - Three audiences in Wave 1: office staff, shop staff (per-workstation Supabase auth + PIN tap), customers (magic link). Wave 4 adds a fourth: agency super-admin (cross-tenant, consent-token-gated).
-- Two domains in Wave 1: `app.popscoating.com` (internal) + `track.popscoating.com` (customer portal). Wave 4 generalizes to per-tenant domains (`app.<tenant>.com`, `track.<tenant>.com`) plus `admin.<platform>.com` for the agency console.
+- Two domains in Wave 1: `app.popsindustrial.com` (internal) + `track.popsindustrial.com` (customer portal). Wave 4 generalizes to per-tenant domains (`app.<tenant>.com`, `track.<tenant>.com`) plus `admin.<platform>.com` for the agency console.
 - CRM: companies, contacts, activities, tags
 - Jobs with intake_status (draft → scheduled → in_production → archived) + production_status (Received → Prep → Coating → Curing → QC → Completed → Picked Up) with **flexible (any-to-any) transitions** + `on_hold` flag with reason
 - Multi-color jobs via parent/child (`parent_job_id`)
@@ -352,7 +352,7 @@ Alerts must:
 - Account settings page (edit name, email — Wave 2 adds notification prefs, Wave 2+ adds data export for CCPA/GDPR)
 - Realtime updates (status changes appear without page refresh)
 - Custom branding (shop logo + brand color from `shop_settings`)
-- Hosted at `track.popscoating.com` for Tenant 1 (separate cookie pool from `app.popscoating.com`); Wave 4 generalizes to per-tenant `track.<tenant>.com` domains via `tenant_domains`
+- Hosted at `track.popsindustrial.com` for Tenant 1 (separate cookie pool from `app.popsindustrial.com`); Wave 4 generalizes to per-tenant `track.<tenant>.com` domains via `tenant_domains`
 
 **Wave 2:**
 - Customer roles within a company (admin / viewer / accounting)
@@ -394,7 +394,7 @@ Charts via Recharts. Materialized views added if any dashboard exceeds 2-second 
 ### 6.10 Public job tracking (Wave 3)
 
 Generate per-job tokenized URLs for sharing without authentication:
-- Format: `https://track.popscoating.com/track/{token}` (32-char URL-safe random)
+- Format: `https://track.popsindustrial.com/track/{token}` (32-char URL-safe random)
 - Rate-limited per token + per IP
 - Tokens can have expiry
 - Read-only view; no sensitive customer data exposed
@@ -430,7 +430,7 @@ Generate per-job tokenized URLs for sharing without authentication:
 
 ### 6.13 Office / Manager dashboard (Wave 1)
 
-The office homepage at `app.popscoating.com/` shows a live operational view of the shop. Original PRD §17 ("Manager Dashboard") covered most of this; this section makes it explicit.
+The office homepage at `app.popsindustrial.com/` shows a live operational view of the shop. Original PRD §17 ("Manager Dashboard") covered most of this; this section makes it explicit.
 
 **Must show (Wave 1):**
 - **Kanban by stage** — every active job, grouped by `production_status` (Received | Prep | Coating | Curing | QC | Completed | Picked Up). Drag-disabled (status changes only via scan). Click a card to drill into job detail.
@@ -691,7 +691,7 @@ This module ships with its own pgTAP test suite verifying that consent tokens ar
 - Each workstation has reliable 110V power on a circuit not shared with booth fans/oven contactors
 - Apple Business Manager enrolled (D-U-N-S number required)
 - MDM (Jamf School free or Mosyle free) for iPad kiosk mode
-- Single App Mode pinned to Safari with allow-list for `app.popscoating.com` and `track.popscoating.com`
+- Single App Mode pinned to Safari with allow-list for `app.popsindustrial.com` and `track.popsindustrial.com`
 - Google Workspace ($6/user/mo) for Pops's owner + bookkeeper email infrastructure
 
 ### 8.3 Browser support
@@ -724,8 +724,8 @@ This module ships with its own pgTAP test suite verifying that consent tokens ar
        └────────────────────────────────────────────────────────────┘
 ```
 
-- `app.popscoating.com` → office (CRM, jobs, dashboard) + scanner (workstations)
-- `track.popscoating.com` → customer portal
+- `app.popsindustrial.com` → office (CRM, jobs, dashboard) + scanner (workstations)
+- `track.popsindustrial.com` → customer portal
 
 **Stack:**
 - Next.js 16 (App Router, Server Actions, `proxy.ts` not `middleware.ts`)

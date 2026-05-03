@@ -1,0 +1,830 @@
+# Ralph Progress Log — Pops Website Rebuild
+Started: (not yet — set by ralph.sh on first run)
+Branch: ralph/pops-website
+PRD: scripts/ralph-pops-website/prd.json
+Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
+
+## Codebase Patterns
+
+- **Turbopack monorepo middleware shadowing**: Next.js 16 + Turbopack uses the pnpm workspace root as the project base for middleware discovery. It finds `src/proxy.ts` at the monorepo root (the SaaS app's middleware) when building pops-website. Fix: create `apps/pops-website/src/proxy.ts` as a no-op stub to shadow the root's middleware for this workspace package.
+- All page content sources from .firecrawl/popsindustrial/pages/<slug>.md
+- content/company.ts is the single source of truth for business facts
+- Footer is rendered from content/site-globals.json#footer.navigation_columns
+- Shipping ZIP locked at 33811 (open question §12.1 unresolved)
+- Logo canonical: /images/Pops-no-border.png
+- pops-website uses `apps/pops-website/app/` for routes (NOT `src/`) — no src-dir convention here
+- pops-website .gitignore must exclude node_modules, .next, *.tsbuildinfo to avoid committing build artifacts
+- Tailwind v4 is CSS-first: `@import "tailwindcss"` + `@theme { ... }` in app/globals.css; postcss.config.mjs uses `@tailwindcss/postcss`. NO tailwind.config.ts.
+- Design tokens (color-pops-yellow-*, color-ink-*, semantic, font-display/text/mono, radius-*, shadow-1..4) are sourced VERBATIM from docs/design/popsindustrial-design-principles.md §10. Do NOT diverge — those values are paint-chip-locked.
+- Tailwind v4 auto-generates utility classes from `@theme` tokens (e.g. `bg-ink-800`, `text-pops-yellow-500`, `font-display`, `rounded-sm`, `shadow-3`) — no need to declare them.
+- next/font CSS variables (`--font-display`, `--font-text`) are set on `<html>` via the className spread; they CASCADE-OVERRIDE the static fallback stacks declared in `@theme`. The `font-display` / `font-text` Tailwind utilities resolve `var(--font-*)` at the element, so the next/font self-hosted family wins. Self-hosted assets land at `/_next/static/media/*.woff2` — never the Google Fonts CDN.
+- Static assets are in `apps/pops-website/public/` (URL: `/images/<file>`, `/pdfs/<file>`, `/favicon.ico`). Server-side content imports live at `apps/pops-website/content/` (e.g. `content/site-globals.json` for footer / nav columns). NEVER serve content/site-globals.json over HTTP — it's an `import` target only.
+- Source of static assets: `.firecrawl/popsindustrial/assets/{images,pdfs}/` — 194 images + 4 PDFs. If a story needs an image, check this directory first; the file is already at `/images/<exact-filename>` after US-004.
+- Multi-resolution `favicon.ico` was generated via `magick <png> -define icon:auto-resize=16,32,48,64,128,256 favicon.ico`. Re-run that command if `cropped-favicon.png` is ever updated.
+- Components live at `apps/pops-website/components/<area>/<file>.tsx` (kebab-case files, PascalCase named exports). Areas: `layout/`, `marketing/`, `ui/`, `forms/`, `seo/` (per the per-AC notes scattered through US-006..US-049).
+- Layout primitives use named exports + `forwardRef` to accept refs and pass through HTML element props (`ComponentPropsWithoutRef<"div">` for Container, `ComponentPropsWithoutRef<"section">` for Section). React 19 still supports forwardRef; use it where ACs explicitly require ref forwarding.
+- className merging convention until clsx lands: `className ? \`${base} ${className}\` : base`. shadcn primitives (US-008+) will introduce `cn()` from `lib/utils.ts`; switch to that once available.
+- Tailwind v4 ships a default 4px spacing scale, so `py-16` / `md:py-24` (= 64px / 96px) match `--space-16` / `--space-24` from design principles §5.1 without declaring a custom `--spacing-*` namespace in `@theme`.
+- Container caps at `max-w-[1280px]` with responsive horizontal padding `px-4 sm:px-6 lg:px-8`. Don't lower the cap; the design contract assumes 1280px on every page (hero, contact form, service grid).
+- Eyebrow / micro-label convention (design principles §4.3 + §10): `text-xs` (12px) Inter 600 uppercase with `tracking-[0.04em]`. Default brand tone uses `text-pops-yellow-500`; secondary "ink" tone uses `text-ink-400` — the canonical "secondary text" color (per token comment in §3.2). Uppercase is reserved for micro-labels, button text, and the wordmark — never headings.
+- `lib/utils.ts` exports `cn(...inputs)` = `twMerge(clsx(inputs))`. Use it in every component that takes a `className` prop or composes Tailwind class lists. Deps already added: `clsx`, `tailwind-merge`. Replace the `className ? \`${base} ${className}\` : base` template-literal merge in older primitives (Container/Section/EyebrowLabel) when next touched.
+- shadcn-style `cva()` from `class-variance-authority` is the convention for components with multiple visual variants (Button, future Card, future Input). Define a single `cvaXxx` recipe with `variants` + `defaultVariants`, expose `VariantProps<typeof recipe>` to props, and merge via `cn(recipe({...}), className)`.
+- `asChild` pattern via `@radix-ui/react-slot`: when consumers want the component to project its styles onto a child element (typically `<Link>` or `<a>`), accept `asChild?: boolean` and render `Slot` instead of the native element. Slot forwards props and merges classes onto the immediate child. The native element variant is the default — preserve focus, type attributes, ARIA, etc. on it.
+- Focus ring convention: `focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800` + `outline-none`. Tailwind v4 implements `ring-*` via `box-shadow`, so the ring color (`pops-yellow-300` = `#FFE067`) appears as a 2px outer halo with a 2px ink-800 offset between it and the element — matches `--shadow-focus` from design principles §10. Use `focus-visible` (not `focus`) to avoid showing the ring on mouse click.
+- Loading-state width preservation: render the original children invisibly (`aria-hidden + invisible`) so the layout box keeps its measured width, then absolutely-position the spinner in `absolute inset-0`. This avoids a "snap" when toggling `isLoading` mid-submit. Use `aria-busy={isLoading || undefined}` on the button.
+- Internal preview pages live at `apps/pops-website/app/dev/<feature>/page.tsx` (NOT `_dev/` — Next.js App Router treats `_folder` as a private folder that is opted out of routing). The `dev/*` namespace must be excluded from the sitemap (US-042) and `robots.ts`. These are working previews for browser verification of components — keep them around as a reference panel for the design system.
+- Tailwind v4 wraps the `hover:*` utility under `@media (hover: hover)`, so hover styles only fire on devices with a fine pointer. In headless Chromium under Playwright that media query evaluates true — so `hover:shadow-3` works in browser-verification — but mobile tablets and touch devices won't see hover states (this is the correct behavior for design principles §6.3 service-tile lift; touch users get the same affordance via tap → navigate, not via persistent hover).
+- Card sub-component composition: Card itself owns `bg + border + radius + p-6` so consumers don't double-pad; CardHeader/CardContent/CardFooter are organizational only (margin/flex, never padding). CardTitle defaults to `<h3>` for semantics — wrap in your own heading element via `asChild`-style cloneElement OR just render the right tag inside the card if you need an h2/h4 instead.
+- CardDescription uses `opacity-80` (not a separate muted color token) so it adapts to whatever tone the parent Card is on (dark→ink-100 muted, light→ink-800 muted) without a context provider. Override with an explicit `text-*` class via `className` if a darker description is needed.
+- Form input primitives (Input/Textarea/Label) use a NATIVE element pattern (no Radix wrappers) because each is a single-element control where the browser default ARIA semantics are already correct. Surface styling lives in one place per file (no cva — only one visual variant). Error state is styled via the dual selector `data-[error=true]:border-danger-500 aria-[invalid=true]:border-danger-500` so consumers can use either: react-hook-form sets `aria-invalid` automatically, while a manually-controlled form can set `data-error`. Both fire the same red-border treatment.
+- The form input focus-visible halo uses the SAME ring tokens as Button (US-008): `focus-visible:border-pops-yellow-500 focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800`. The border-color change to `pops-yellow-500` matches design principles §6.4 ("2px `--pops-yellow-500` border + `--elev-focus` ring") — the visual reads as a single yellow halo because the inner border and outer ring share the same family.
+- Labels use `font-medium` (Inter 500) per AC, intentionally lighter than CardTitle's `font-bold` (700). This is the right hierarchy: a label is a micro-prompt, not a heading. Required-field asterisk pattern is `<Label>{label}<span className="text-pops-yellow-500"> *</span></Label>` — wired up properly in US-011 FormField wrapper, but the asterisk color comes from the design principles §6.4 spec.
+- `placeholder:text-ink-400` is the canonical placeholder color on dark inputs. Don't reuse it for labels — placeholders disappear on focus, labels persist; mixing them causes B2B field confusion (per §6.4 "never floating placeholders").
+- `resize-y` on Textarea (vertical-only resize) prevents users from breaking the form layout by dragging horizontally. It's the convention for content-bearing fields like message/project-details.
+- FormField (US-011) is the wiring contract for accessibility on every form field: it owns the Label/htmlFor pairing, the helper-or-error `<p id={`${name}-help`}>`, and uses `React.cloneElement` to inject `id`, `name`, `aria-invalid`, and `aria-describedby` onto the single input child. Consumers only pass `<Input />` / `<Textarea />` as children — they NEVER set those four attrs themselves. If the consumer already sets `id`/`name`/`aria-describedby`, FormField preserves them (cloneElement uses `child.props.x ?? name` for id/name and joins existing `aria-describedby` tokens with the help id). Error string takes precedence over helperText, and both render with `mt-2 font-text text-sm` — error in `text-danger-500`, helper in `text-ink-400`.
+- Use `Children.only(children)` to enforce a single React child at runtime — failing fast with a clear error if a consumer wraps multiple inputs in one FormField. Pair with `isValidElement<P>()` (typed generic) for the cloneElement narrowing — this is the only way to keep TS strict-mode happy without `any`.
+- Radix primitive wrappers (Checkbox, future RadioGroup/Switch/Select/Dialog/Dropdown/Tabs) MUST start with `"use client"` — Radix uses React Context + hooks internally and will throw if imported from a Server Component. Apply this rule to every new file under `components/forms/` or `components/ui/` that imports from `@radix-ui/*`.
+- For Radix Root + Indicator primitives (Checkbox, RadioGroup, Switch), the canonical "double-element" pattern is: Root carries the interactive semantics + tap target + focus ring; an `aria-hidden` inner element carries the visible chrome that responds to `data-state` via `group-data-[state=*]`. This decouples the visual size (e.g. 18x18) from the WCAG 2.1 AA tap-target size (44x44 per design principles §9). Use `inline-flex items-center justify-center` on a `h-11 w-11` Root with a smaller centered child — never use `padding` to grow the target, since that would shift the visual box.
+- Use `forceMount` on Radix's `Indicator` subcomponents to keep them in the DOM at all times so `opacity` / `scale` transitions can fire on state change. Without `forceMount`, the indicator unmounts on state flip and re-mounts on the next state — transitions never get a starting frame to animate from.
+- Scraped URLs in `content/site-globals.json` are absolute (`https://popsindustrial.com/...`). When rendering links inside the rebuild, run them through a `toRelative(url)` helper that uses `new URL(url).pathname` and strips the trailing slash — never pass absolute live-site URLs into `<Link>`. Apply this rule to footer nav, header (US-014), and any future story that consumes scraped href data.
+- Footer-style nav lists give every link a `min-h-11` (44px) tap target via vertical padding (`py-2`) so touch users get a WCAG-compliant target without enlarging the visible text. Pair with `space-y-3` on the `<ul>` to keep adjacent targets from overlapping. Text-only links inside content (vs nav lists) don't need this.
+- Use `inline-block` (not the default inline) on a link that needs `min-h-*` to take effect — height/min-height are ignored on inline elements. The footer nav links use `inline-block min-h-11 py-2` for this reason.
+- JSON imports (`import data from "../../content/site-globals.json"`) work in both Server and Client Components because tsconfig has `resolveJsonModule: true`. The import is fully typed by TS literal inference; cast to a richer interface (e.g. `Record<string, ColumnEntry[]>`) when you need a discriminated-union shape. The build inlines the JSON — don't ship `content/*.json` to `public/` or it'll be served twice.
+- For mixed-shape lists where some entries are `{label, href}` and others are `{label, value}` (the Visiting Us footer column has hour `value` rows, not links), use a discriminated union with a type-narrowing predicate (`isLinkEntry`). Render each shape as a different element — never render `<a href="">{value}</a>` as a fallback because it would create a useless empty link.
+- `useId()` from React works in Server Components — use it for ANY id that is referenced by an aria-* attribute in the same component (e.g. `aria-labelledby`, `aria-describedby`, `htmlFor`/`id` pairs that are NOT already wired by FormField). This makes the component safe to render multiple times on a single page without id collisions. Do NOT add `"use client"` just to use `useId()`.
+- `<Button asChild variant="..."><Link href="...">label</Link></Button>` is the canonical Button-styled router link pattern. Used by Hero (US-015) and any future marketing surface that needs a CTA pointing to an internal route. Preserves Button's variant colors, focus ring, hover state, and tap target while next/link delivers prefetch + RSC navigation. Don't reach for `<Link className="<button-classes>">` — that diverges whenever Button styles change.
+- `next/image` with `fill` (used for hero background photos) requires the parent to have `position: relative` (or absolute/fixed). Pair `relative isolate` on the parent so the overlay div + content div live in the same stacking context — the overlay is `absolute inset-0` (no z-index), and content sits on top via `relative z-10`.
+- Decorative background images on hero/marketing surfaces use `alt=""` (empty string, NOT null). Screen readers skip empty-alt images entirely; the heading + lede already convey meaning. Reserve descriptive alt text for images that ARE the message (leadership headshots, before/after job photos, certifications).
+- Display heading sizes are not yet declared as Tailwind tokens (the @theme block in app/globals.css does not include `--text-display-*`). Until a future story adds them, marketing components hit the §3.3 spec via arbitrary values: `text-[36px] md:text-[56px]` for display-lg with `leading-[1.05]`. Same approach applies for display-xl (72px), display-md (44px), display-sm (30px) when other components need them.
+- Tailwind v4's `scale-[1.03]` compiles to the modern CSS `scale: 1.03` property, NOT `transform: scale(1.03)`. So `getComputedStyle(el).transform` will read `none` even when the scale is applied — verify hover scale via `getComputedStyle(el).scale` instead. Both properties compose with `transform-origin` and respect `transition-transform` (which v4 transitions: transform, translate, scale, rotate together — see the transition shorthand emitted in `.transition-transform`).
+- Shop photography for service tiles lives at `/images/<service>-*.jpg` — pick the largest (non-thumbnail) variant available; next/image handles responsive crops. Avoid the `-300x*` and `-200x*` thumbnails as `src` (they degrade on retina). Examples used in US-016: `industrial-painting-lakeland-fl-1024x683-1.jpg`, `abrasive-media-blasting.jpg` (no -300x suffix), `industrial-powder-coating-lakeland-fl-IMG_3687.jpg`, `large-capacity-powder-coating.jpg`. The `.firecrawl/popsindustrial/manifest.json#alt_text_audit` flags which images need bespoke alt text — the rebuild closes that gap as it consumes them.
+- Card with edge-to-edge image: override Card's default `p-6` with `p-0` via className, wrap the image in `<div class="relative aspect-[16/10] overflow-hidden">`, and put padded content (eyebrow/title/body) in a sibling `<div class="p-6">`. Keep `overflow-hidden` on the Card too so the image clips into the rounded corners. The `interactive` Card variant (`hover:shadow-3`) still fires when an inner Link is hovered — `:hover` bubbles to ancestors.
+- For interactive tiles where the WHOLE card navigates: Card outside, Link inside, content inside Link. Put the focus ring on the Link (`focus-visible:ring-2 ring-pops-yellow-300 ring-offset-2 ring-offset-ink-800`) and rely on `:hover` bubbling for the Card's `hover:shadow-3` lift. Add `group` to the Link so descendants can opt into `group-hover:*` (e.g. image scale). Don't use `role="link"` on the Card — it makes the Link redundant for assistive tech.
+
+---
+
+## Story Status (49 stories total)
+
+Phase A — Workspace + foundation (US-001 to US-005): 5/5 complete
+Phase B — Design primitives (US-006 to US-016): 11/11 complete
+Phase C — Page implementations (US-017 to US-034): 0/18 complete
+Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
+Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
+Phase F — Quality + ship (US-045 to US-049): 0/5 complete
+
+OVERALL: 16/49 stories passing
+
+---
+
+## 2026-05-02 — US-001 Add apps/pops-website pnpm workspace + Next.js 16 scaffold
+- Created workspace scaffold with package.json (name: pops-website, scripts: dev/build/start/type-check/lint)
+- next.config.ts with images.formats: ["image/avif", "image/webp"]
+- tsconfig.json with strict: true, noUncheckedIndexedAccess, noImplicitOverride
+- app/layout.tsx with Metadata (title/description) and basic RootLayout
+- app/page.tsx with placeholder home content
+- app/globals.css with comment deferring Tailwind to US-002
+- .gitignore excluding node_modules, .next, *.tsbuildinfo
+- src/proxy.ts no-op middleware stub (see Codebase Patterns above)
+- pnpm-workspace.yaml already had "apps/*" — verified unchanged
+- Files changed: apps/pops-website/.gitignore, app/globals.css, app/layout.tsx, app/page.tsx, next.config.ts, package.json, src/proxy.ts, tsconfig.json
+- Quality checks: typecheck ✓ | build ✓ | browser N/A (no UI yet)
+- **Learnings for future iterations:**
+  - Turbopack (Next.js 16) discovers middleware relative to the pnpm workspace root, not the package directory. The fix is a `src/proxy.ts` stub in pops-website that passes through all requests. This MUST exist for every Next.js app in this monorepo unless proper workspace isolation is configured.
+  - pops-website has no `src/` convention — routes live in `apps/pops-website/app/` directly. The `src/proxy.ts` stub file is solely for the Turbopack workaround.
+  - The `@/*` path alias in pops-website tsconfig maps to `./src/*` (i.e., `apps/pops-website/src/*`) — this is correct and consistent with the SaaS app convention, but note that pops-website's src only contains the proxy stub, not actual app code.
+---
+
+## 2026-05-02 — US-002 Add Tailwind v4 + design tokens to apps/pops-website/app/globals.css
+- Added tailwindcss@^4.2.4 + @tailwindcss/postcss@^4.2.4 to devDependencies via `pnpm --filter pops-website add -D`
+- Wrote apps/pops-website/postcss.config.mjs registering `@tailwindcss/postcss` plugin
+- Replaced apps/pops-website/app/globals.css placeholder with:
+  - `@import "tailwindcss"` directive
+  - `@theme { ... }` block VERBATIM from docs/design/popsindustrial-design-principles.md §10:
+    - 5 brand colors (pops-yellow 100/300/500/600 + tan-400)
+    - 11 ink/paper neutrals (ink-50..900 + paper)
+    - 8 semantic colors (success/warn/danger/info — 100/500 pairs)
+    - 3 font tokens (display/text/mono)
+    - 5 radius tokens (none/sm/md/lg/full)
+    - 4 elevation tokens (shadow-1..shadow-4)
+  - `html { background: var(--color-ink-800); color: var(--color-ink-100); }` per AC
+  - `@media (prefers-reduced-motion: reduce)` block disabling animations/transitions per design principles §8
+- Files changed: apps/pops-website/app/globals.css, apps/pops-website/postcss.config.mjs, apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ (Compiled successfully in 1886ms; 3/3 static pages generated)
+- **Learnings for future iterations:**
+  - Tailwind v4 auto-derives utility class names from `@theme` token names. e.g. `--color-pops-yellow-500: #FECD08` automatically yields `bg-pops-yellow-500`, `text-pops-yellow-500`, `border-pops-yellow-500`, etc. NO `tailwind.config.ts` required, NO `theme.extend` block.
+  - For radius and shadow, the same auto-mapping applies: `--radius-sm` → `rounded-sm`, `--shadow-3` → `shadow-3`. Future component stories can reference these utility classes directly.
+  - For fonts, `--font-display` → `font-display`, `--font-text` → `font-text`. The font *files* will land in US-003 (next/font wiring); §10 tokens declare the FALLBACK stacks only.
+  - The `html` element styles in globals.css apply globally before next/font wires up CSS vars (US-003), so initial paint is dark + light text — no FOUC on the dark theme.
+  - Build via Turbopack pulls the @theme block + reduced-motion media query into the final CSS automatically; nothing extra was needed in next.config.ts.
+---
+
+## 2026-05-02 — US-003 Wire next/font Archivo Black + Inter via app/layout.tsx
+- Updated apps/pops-website/app/layout.tsx to:
+  - Import `Archivo_Black` and `Inter` from `next/font/google`
+  - Configure Archivo_Black with `weight: "400"`, `subsets: ["latin"]`, `variable: "--font-display"`, `display: "swap"`
+  - Configure Inter with `subsets: ["latin"]`, `variable: "--font-text"`, `display: "swap"`
+  - Set `<html className={`${display.variable} ${text.variable}`}>` so next/font injects both CSS vars
+  - Set `<body className="font-text">` so the Tailwind v4 utility maps to `var(--font-text)` (the next/font value wins via cascade)
+- Updated apps/pops-website/app/page.tsx so the placeholder `<h1>` carries `className="font-display"` (lets the browser-verification step prove Archivo Black actually renders on the heading)
+- Files changed: apps/pops-website/app/layout.tsx, apps/pops-website/app/page.tsx
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.1s; TS in 1093ms; 3/3 static pages) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001):
+  - `<html>` className contains both `archivo_black_*__variable` and `inter_*__variable` from next/font
+  - `getComputedStyle(html).getPropertyValue('--font-display')` → `"Archivo Black", "Archivo Black Fallback"`
+  - `getComputedStyle(html).getPropertyValue('--font-text')` → `"Inter", "Inter Fallback"`
+  - `<body>` computed font-family: `Inter, "Inter Fallback"` ✓
+  - `<h1>` computed font-family: `"Archivo Black", "Archivo Black Fallback"` ✓
+  - `<p>` computed font-family: `Inter, "Inter Fallback"` ✓
+  - Network: 2 woff2 files, both served from `/_next/static/media/*.woff2` (self-hosted, NOT Google Fonts CDN) ✓
+- **Learnings for future iterations:**
+  - Per design principles §4.4 the design contract suggests `axes: ["opsz"]` on Inter for crisp small text. The US-003 AC does NOT include `axes`, so I omitted it to keep the contract minimal — a future story (or a §4.4-tightening pass) can opt-in if the visual benefit warrants the extra weight (~30KB per axis). Document this trade-off if revisiting.
+  - When both `@theme { --font-text: ... }` (Tailwind v4 fallback stack) AND next/font's `variable: "--font-text"` (self-hosted family) declare the same variable, the next/font value wins because it's set on `<html>` (closer scope than `:root` from @theme). No conflict, no FOUC — Tailwind's `font-text` utility just dereferences `var(--font-text)` at the element and gets whichever value cascades.
+  - Putting the className spread on `<html>` (vs `<body>`) means the variables are also available to anything attached directly to `<html>` (e.g. global background color). Per the AC and Next.js docs, this is the recommended placement.
+  - Archivo Black is a single-weight font (400 file weight that visually renders as 900); next/font requires the `weight` prop because Archivo Black is non-variable. Inter is variable, so no `weight` prop is needed (next/font ships the full variable file).
+---
+
+## 2026-05-02 — US-004 Copy scraped images and PDFs into apps/pops-website/public/
+- Created `apps/pops-website/public/{images,pdfs}/` and `apps/pops-website/content/`
+- `cp -R .firecrawl/popsindustrial/assets/images/. apps/pops-website/public/images/` → 194 image files
+- `cp -R .firecrawl/popsindustrial/assets/pdfs/. apps/pops-website/public/pdfs/` → 4 PDF files
+- `cp .firecrawl/popsindustrial/_raw/site-globals.json apps/pops-website/content/site-globals.json`
+- Generated multi-resolution `apps/pops-website/public/favicon.ico` from `cropped-favicon.png` via ImageMagick `magick … -define icon:auto-resize=16,32,48,64,128,256` (16/32/48/64/128/256 px sizes embedded in single .ico)
+- `.gitignore` already does NOT exclude `public/` or `content/` — verified unchanged
+- Per AC notes, `site-globals.json` lives at `content/` (server-side import target), NOT `public/` (would get served verbatim to clients). The "Wait, correct that…" line in the AC is the corrected rule.
+- Files changed: apps/pops-website/public/** (194 images + 4 PDFs + favicon.ico), apps/pops-website/content/site-globals.json
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1984ms; 3/3 static pages) | browser N/A (no UI change yet)
+- **Learnings for future iterations:**
+  - The asset filenames frequently contain quirks from the original site (e.g. typos, locale variants, repeated numeric suffixes like `-1.jpg`, `-150x150.jpg`, `-300x300.jpg`). Use the actual filename present in `public/images/` — do NOT rename or "clean up" filenames unless an explicit story authorizes it. site-globals.json#alt_text_audit references a few of these typos that need preserving for content faithfulness.
+  - The 4 PDFs are: Application checklist, Quality checklist, Receiving checklist, Shipping checklist (per `.firecrawl/popsindustrial/assets/pdfs/`). Reference them at `/pdfs/<filename>.pdf`.
+  - For favicon, Next.js 16 will surface `app/icon.{png,svg,ico}` via the App Router automatically, but the AC explicitly asked for `public/favicon.ico` — keeping that location works for both legacy `<link rel="icon">` and the default Next.js favicon resolution from `public/`.
+  - macOS ships `magick` (ImageMagick 7) at `/opt/homebrew/bin/magick`; preferred over `convert` (legacy alias) and `sips` (no ICO support).
+---
+
+## 2026-05-02 — US-005 Build content/company.ts single-source-of-truth file
+- Created apps/pops-website/content/company.ts with `as const` company object
+- Fields per PRD §7: name, founded (1972), generations (4), mainOffice, shippingReceiving, phone, fax, emails {info, invoices}, hours, tagline, taglineSecondary, services (5)
+- mainOffice.zip = "33811", shippingReceiving.zip = "33811" (locked per open question §12.1; live footer says 33813 — flagged with TODO comment)
+- Exported `type Company = typeof company` for downstream consumers (footer US-013, contact US-031, JSON-LD US-041)
+- Files changed: apps/pops-website/content/company.ts (new file)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1987ms; 3/3 static pages) | browser N/A (no UI yet)
+- **Learnings for future iterations:**
+  - tsconfig.json `include: ["**/*.ts", "**/*.tsx"]` already covers `content/` so `content/company.ts` is type-checked without any include changes — same applies to future server-side imports under content/.
+  - Keep `as const` on the entire object so consumers get literal types (e.g. `company.services[0]` is the literal "Wet Paint Coatings", not `string`). This matters for type-safe footer columns, JSON-LD `@type: "Service"` arrays, and Zod refinements that pin allowed service names.
+  - The hours string uses an em dash (–) for "Monday–Friday 8am–4pm" matching the PRD §7 source verbatim — don't normalize to ASCII; copy faithfulness is part of the brand voice.
+---
+
+## 2026-05-03 — US-006 Build Container and Section layout primitives
+- Created apps/pops-website/components/layout/container.tsx — `Container` via forwardRef<HTMLDivElement, ComponentPropsWithoutRef<"div">>; classes: `mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8`; className passthrough preserves AC contract
+- Created apps/pops-website/components/layout/section.tsx — `Section` via forwardRef<HTMLElement, SectionProps>; props `{ tone?: "dark" | "light" } & ComponentPropsWithoutRef<"section">`; tone="dark" → `bg-ink-800 text-ink-100`, tone="light" → `bg-paper text-ink-800`; vertical rhythm `py-16 md:py-24` (= --space-16 / --space-24 per design principles §5.1)
+- Both components are server-component-safe (no "use client", no event handlers, no state) so they can be the outer wrapper in any RSC page without forcing client boundary
+- Files changed: apps/pops-website/components/layout/container.tsx (new), apps/pops-website/components/layout/section.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.3s; TS in 1103ms; 3/3 static pages) | browser N/A (no page renders these yet — first usage lands in US-013 Footer + US-015 Hero + US-017 home page)
+- **Learnings for future iterations:**
+  - Tailwind v4's auto-generated utilities pick up tokens from `@theme` but ALSO ship a default spacing scale at 4px increments. So `py-16` / `md:py-24` resolve to 64px / 96px without needing custom `--spacing-*` declarations. Keep `@theme` minimal — only override what design principles §10 explicitly defines.
+  - Section's `text-ink-100` on dark and `text-ink-800` on light isn't in the AC but follows from the global default (`html { color: var(--color-ink-100); }`) — the explicit `text-ink-800` on the light variant is required to invert. Future readers shouldn't be surprised by the explicit text classes.
+  - Component file naming: kebab-case file (`section.tsx`), PascalCase named export (`Section`). This will be the project pattern for all `components/<area>/<name>.tsx` files (no default exports).
+  - Until shadcn lands (US-008), no `cn()` helper exists; the simple template-literal merge (`className ? \`${base} ${className}\` : base`) is the convention. When `lib/utils.ts` ships with `clsx + tailwind-merge`, retrofit these primitives in the same PR that adds it.
+  - React 19 still supports `forwardRef`; the AC explicitly requires it. Don't refactor to "ref as prop" without a story authorizing it — the AC is the contract.
+---
+
+## 2026-05-03 — US-007 Build EyebrowLabel component
+- Created apps/pops-website/components/marketing/eyebrow.tsx — `EyebrowLabel` via forwardRef<HTMLParagraphElement, EyebrowLabelProps>
+- Props: `{ tone?: "yellow" | "ink" } & ComponentPropsWithoutRef<"p">`; default tone "yellow" → `text-pops-yellow-500`, "ink" → `text-ink-400`
+- Style classes: `inline-block font-text text-xs font-semibold uppercase tracking-[0.04em]` per AC + design principles §4.3 (uppercase reserved for micro-labels) + §10 token names
+- Renders as `<p>` (semantic block-level paragraph; ARIA-friendly because the context-introducing label sits above its heading sibling — no role override needed)
+- className passthrough using same template-literal merge convention as Container/Section (cn() lands with shadcn in US-008)
+- Files changed: apps/pops-website/components/marketing/eyebrow.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1951ms; TS in 1112ms; 3/3 static pages) | browser N/A (no AC requires browser verification — first visible usage lands in US-015 Hero + US-016 ServiceTile)
+- **Learnings for future iterations:**
+  - For tone="ink", chose `text-ink-400` because §3.2 of the design principles tags `--ink-400: #8990A0` as "secondary text on light" — it's the canonical secondary text token. On dark surfaces it still reads well as a quiet micro-label (4.5:1+ vs ink-800 background). Future stories using EyebrowLabel on light surfaces (paper) get the contrast right by default.
+  - `font-text` Tailwind utility maps to `var(--font-text)` which next/font (US-003) wires to Inter. The `font-semibold` class is Tailwind's default (= weight 600), matching the design principles §6.3 spec ("Inter 600").
+  - The `tracking-[0.04em]` arbitrary value is required because Tailwind v4's default `tracking-wide` is 0.025em and `tracking-wider` is 0.05em — neither matches the design contract's +0.04em. Don't substitute the closest preset; the contract is exact.
+  - First marketing component lands at `components/marketing/` (alongside `components/layout/` from US-006). Keep `marketing/` for content-presentation primitives (Hero, ServiceTile, EyebrowLabel) and `layout/` for structural primitives (Container, Section, Header, Footer).
+  - The "ARIA-friendly markup" note in the AC is satisfied by using a real `<p>` element rather than a `<div>` or `<span>` — screen readers announce paragraphs by default and the label gets its semantic context from being adjacent to its target heading. No `aria-label` or `role` needed.
+---
+
+## 2026-05-03 — US-008 Build Button component with 4 variants
+- Added deps to apps/pops-website: class-variance-authority@^0.7.1, clsx@^2.1.1, tailwind-merge@^3.5.0, @radix-ui/react-slot@^1.2.4
+- Created apps/pops-website/lib/utils.ts → exports `cn(...inputs)` = `twMerge(clsx(inputs))` (the canonical class merger from this story onward)
+- Created apps/pops-website/components/ui/button.tsx:
+  - cva recipe with 4 variants: primary (bg-pops-yellow-500 text-ink-900 + hover yellow-600), secondary (transparent + border-current text-ink-100 + hover bg-ink-100/10), ghost (transparent text-ink-400 + hover text-ink-100), destructive (bg-danger-500 text-paper + hover/90)
+  - 2 sizes: default (h-11 / 44px, px-6 py-3), compact (h-9 / 36px, px-5 py-2)
+  - Radius rounded-sm (= --radius-sm 2px), font-text font-semibold text-sm, NOT uppercase (per design principles §6.1)
+  - Focus-visible: ring-2 ring-pops-yellow-300 ring-offset-2 ring-offset-ink-800 + outline-none
+  - Disabled: opacity-50 cursor-not-allowed (via Tailwind `disabled:` modifier)
+  - Loading: invisible original children preserve width; absolutely-positioned 16px Spinner (inline SVG, animate-spin); button auto-disabled and aria-busy=true
+  - asChild via @radix-ui/react-slot (when true, projects styles onto child <Link> / <a> via Slot; loading state intentionally not applied in asChild mode)
+  - forwardRef<HTMLButtonElement, ButtonProps> with className passthrough via cn()
+- Created apps/pops-website/app/dev/buttons/page.tsx — internal preview rendering all variants × sizes × disabled × loading × asChild for browser verification
+- Files changed: apps/pops-website/lib/utils.ts (new), apps/pops-website/components/ui/button.tsx (new), apps/pops-website/app/dev/buttons/page.tsx (new), apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1944ms; TS in 1169ms; 4/4 static pages incl /dev/buttons) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/buttons):
+  - primary: 44px, bg rgb(254,205,8) (= #FECD08 = pops-yellow-500), color rgb(17,20,26) (= #11141A = ink-900), border 0, font-family Inter, weight 600, size 14px, text-transform none, radius 2px, padding 24/12 ✓
+  - secondary: 44px, bg transparent, color ink-100, 1px border-current ✓
+  - ghost: 44px, bg transparent, color ink-400 ✓
+  - destructive: 44px, bg rgb(176,50,46) (= #B0322E = danger-500), color #FFF (= paper) ✓
+  - compact (Save): 36px height, px 20 py 8 ✓
+  - disabled: opacity 0.5, cursor not-allowed ✓
+  - loading: width preserved (177px), aria-busy=true, button.disabled=true, spinner SVG present ✓
+  - asChild Go home: tag <a>, href="/", carries bg-pops-yellow-500 class via Slot ✓
+  - Tab to first button: focus ring shows rgb(255,224,103) (= #FFE067 = pops-yellow-300) over rgb(27,31,39) (= #1B1F27 = ink-800) offset, matching design principles §10 --shadow-focus spec ✓
+- **Learnings for future iterations:**
+  - Tailwind v4 `ring-*` is implemented via `box-shadow`, not the legacy `outline` API, and `ring-offset-*` requires a known offset color so the gap reads cleanly. On dark surfaces (most of pops-website is bg-ink-800), use `ring-offset-ink-800` to make the ring float, not bleed. Future components doing focus rings on `bg-paper` (light surfaces) should switch to `ring-offset-paper`.
+  - `focus-visible:` (not `focus:`) is the right modifier for the focus ring — it suppresses the ring on mouse click while still showing it on keyboard tab. Pair with `outline-none` to nuke the browser default.
+  - The `cva` recipe approach is clean for variant explosions (4 variants × 2 sizes = 8 combinations) but overkill for primitives with 1 visual state (e.g. Container/Section/EyebrowLabel). Use cva when there are ≥2 variants of any axis.
+  - Loading-state UX: the `invisible inline-flex items-center gap-2` + absolute spinner trick preserves measured width (browser-verified: 177px) so `<Button isLoading>Submitting request</Button>` doesn't jump as the parent toggles state during a Server Action. This is the pattern to reuse in form submit handlers (US-021, US-031, US-032, US-033 → wire-up in US-036+).
+  - The `asChild` Slot pattern intentionally skips the loading UI because consumers using `<Button asChild><Link></Link></Button>` are wrapping a navigation element where there's no async submit. If a future story needs an asChild + loading combination (e.g. signed-out CTA that triggers an async redirect), revisit.
+  - Internal preview pages MUST live at `app/dev/<feature>/page.tsx` and NOT `app/_dev/<feature>/page.tsx` — App Router treats `_folder` as a private folder opted out of routing (the page just won't be reachable). When US-042 lands, exclude `/dev/*` from the sitemap and `robots.ts`.
+---
+
+## 2026-05-03 — US-009 Build Card component
+- Created apps/pops-website/components/ui/card.tsx — exports `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` (all forwardRef + className passthrough via `cn()`)
+- `Card` uses cva recipe with two variant axes: `tone` ("dark" default | "light") and `interactive` (false default | true)
+  - Base: `rounded-sm border p-6 transition-shadow duration-200 ease-out` (per design principles §5.3, p-6 default per AC, transition matches §8 motion tokens)
+  - Dark: `bg-ink-700 text-ink-100 border-ink-600` (1px ink-600 border per §5.3 — shadow alone fails on dark surfaces)
+  - Light: `bg-paper text-ink-800 border-ink-200` per AC
+  - Interactive: adds `hover:shadow-3` (lift on hover, matches `--shadow-3` from §10)
+- `CardHeader` = `flex flex-col space-y-1.5 mb-4` (groups title+description above content)
+- `CardTitle` = `<h3>` with `font-text text-lg font-bold leading-snug tracking-tight` (matches design principles §4.3 `--text-h4`: 18px Inter 700, no uppercase per §6.3 service cards)
+- `CardDescription` = `<p>` with `text-sm leading-relaxed opacity-80` — opacity-80 adapts to whatever tone Card is on without a context provider
+- `CardContent` = pass-through `<div>` (no own padding because Card already pads)
+- `CardFooter` = `flex items-center gap-3 mt-6` (works with the Button gap convention from US-008)
+- Created apps/pops-website/app/dev/cards/page.tsx — 3 sections: dark default (with Button compositions), interactive (Link-wrapped + role='link'), light tone on paper surface
+- Files changed: apps/pops-website/components/ui/card.tsx (new), apps/pops-website/app/dev/cards/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.1s; TS in 1211ms; 5/5 static pages incl /dev/cards) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/cards):
+  - Dark Card: bg rgb(42,48,59) (= #2A303B = ink-700), color rgb(236,238,242) (= #ECEEF2 = ink-100), border rgb(63,70,84) (= #3F4654 = ink-600) at 1px, radius 2px (= --radius-sm), padding 24px (= p-6 = --space-6) ✓
+  - CardTitle: <h3>, Inter, 18px (= --text-h4), weight 700, line-height 24.75px, text-transform none ✓
+  - CardDescription: <p>, 14px (= --text-sm), opacity 0.8 ✓
+  - Light tone: bg rgb(255,255,255) (= --paper), color rgb(27,31,39) (= --ink-800), border rgb(215,219,226) (= --ink-200) ✓
+  - Interactive hover (Link-wrapped Wet Paint card): box-shadow `rgba(0,0,0,0.2) 0px 8px 16px, rgba(0,0,0,0.18) 0px 2px 4px` — exactly matches `--shadow-3` from §10 ✓
+  - Tailwind v4 emits `.shadow-3` and `@media (hover: hover) { .hover\:shadow-3:hover { ... } }` — confirmed both in stylesheet via document.styleSheets traversal
+  - Screenshot: progress/screenshots/US-009.png (full page, all 3 variant sections visible)
+- **Learnings for future iterations:**
+  - The cva double-axis pattern (`tone × interactive`) is the right shape for primitives that need the lift only on linkable cards — the same shape will scale to ServiceTile (US-016) where tile = `<Card interactive>` wrapped in `<Link>` and to leadership cards (US-020) which are typically not interactive.
+  - The opacity-80 trick for CardDescription means consumers shouldn't add `text-ink-300` etc. on top of CardDescription — let the opacity do the muting and the parent's color cascade. If you need a stronger contrast for legal text or warnings, override className on CardDescription explicitly.
+  - Tailwind v4 ships a default `--spacing` scale at 4px increments AND wraps `hover:*` under `@media (hover: hover)` — both are auto-derived from the v4 defaults; nothing in `@theme` needed to enable them. Mobile tap users will not see the hover lift; that's the right design (touch → navigate is the affordance, not hover).
+  - When wrapping a Card in a `<Link>`, put the focus-visible ring on the Link (the actual focusable element), not on the Card. The dev preview wires `rounded-sm focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800` on `<Link>` — this is the pattern ServiceTile and any future card-as-link should follow.
+  - `<h3>` is the right default heading level for CardTitle because cards live inside sections with `<h2>` headings (per design principles §6 patterns and the home page wireframe in PRD §6.2). If a future story needs a different level (e.g. card with `<h4>` deep inside a sub-section), pass an `as="h4"` prop OR replace the heading manually inside the card — don't change the default for one consumer.
+---
+
+## 2026-05-03 — US-010 Build form input primitives (Input, Textarea, Label)
+- Created apps/pops-website/components/forms/input.tsx — `Input` via forwardRef<HTMLInputElement, InputHTMLAttributes>
+  - h-11 (44px) px-4, bg-ink-700 text-ink-100, 1px border-ink-600, rounded-sm, font-text text-base
+  - placeholder:text-ink-400 for muted placeholder text
+  - focus-visible: border-pops-yellow-500 + ring-2 ring-pops-yellow-300 ring-offset-2 ring-offset-ink-800 (matches Button focus halo from US-008)
+  - error: data-[error=true]:border-danger-500 + aria-[invalid=true]:border-danger-500 (dual selector — react-hook-form sets aria-invalid; manual forms can set data-error)
+  - disabled: cursor-not-allowed opacity-50
+  - type defaults to "text" if omitted; consumers pass type="email" / "tel" etc.
+- Created apps/pops-website/components/forms/textarea.tsx — `Textarea` via forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes>
+  - Same surface styling as Input but min-h-[120px], py-3 (vertical padding for multi-line)
+  - resize-y (vertical-only resize) so users can't break the form layout horizontally
+- Created apps/pops-website/components/forms/label.tsx — `Label` via forwardRef<HTMLLabelElement, LabelHTMLAttributes>
+  - block mb-2 font-text text-sm font-medium text-ink-100
+  - Default text-ink-100 so it reads on dark surfaces; passes through className for tone overrides
+- Created apps/pops-website/app/dev/forms/page.tsx — internal preview with 3 sections (default, error, disabled) for browser verification
+- Files changed: apps/pops-website/components/forms/input.tsx (new), components/forms/textarea.tsx (new), components/forms/label.tsx (new), app/dev/forms/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.8s; TS in 1477ms; 6/6 static pages incl /dev/forms) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/forms):
+  - Input default: 44px height, bg rgb(42,48,59) (= #2A303B = ink-700), color rgb(236,238,242) (= #ECEEF2 = ink-100), border rgb(63,70,84) (= #3F4654 = ink-600) at 1px, radius 2px (= --radius-sm), padding 0/16, Inter 16px ✓
+  - Textarea default: same surface, min-h 120px, py-3 (12px) ✓
+  - Label: 14px Inter weight 500, mb-2 (8px), color ink-100 ✓
+  - Error Input (aria-invalid="true"): borderColor rgb(176,50,46) (= #B0322E = danger-500) ✓
+  - Error Textarea (data-error="true"): borderColor rgb(176,50,46) ✓
+  - Disabled Input: opacity 0.5, cursor not-allowed, disabled=true ✓
+  - Tab to Email field: borderColor changes to rgb(254,205,8) (= #FECD08 = pops-yellow-500); box-shadow shows ink-800 (rgb(27,31,39)) inner offset + pops-yellow-300 (rgb(255,224,103)) outer ring ✓
+  - Programmatic .focus() does NOT trigger focus-visible (correct — only keyboard tab/shift-tab does); pattern matches Button's keyboard-only focus-ring behavior
+  - Screenshot: progress/screenshots/US-010.png — captured at the moment Email is keyboard-focused, so the yellow focus halo is visible on it
+- **Learnings for future iterations:**
+  - Two ways to signal an input is invalid: (1) `aria-invalid="true"` (react-hook-form sets this automatically when there's a Zod error) or (2) `data-error="true"` (handy for plain HTML forms or when you want to trigger the red border without lying to assistive tech). Both fire the same `border-danger-500` style via paired selectors. Always pair with a visible error message (US-011 FormField wiring + aria-describedby).
+  - The native `<label>`/`<input>` pairing — using `htmlFor`/`id` — is sufficient for screen readers; no aria-label needed on the input. The FormField wrapper (US-011) automates this pairing so per-field consumers don't have to remember.
+  - Tailwind v4's `data-[attr=value]:` and `aria-[attr=value]:` arbitrary variants both work without a config — they generate `[data-attr="value"]` / `[aria-attr="value"]` attribute selectors at compile time. Tested: only the matching attribute value triggers the style; an absent or different value falls back to the default border.
+  - When wiring forms to react-hook-form (US-021+), the pattern is: `<Input {...register("email")} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} />`. The component handles all the styling; the consumer only manages the form state.
+  - Internal preview at `/dev/forms` follows the convention from US-008 (`/dev/buttons`) and US-009 (`/dev/cards`) — one route per primitive, all auto-excluded from sitemap (US-042). The trailing `/dev/*` namespace stays as a permanent design-system reference.
+  - The dev preview page uses `font-display` directly on its h1 (not via a Hero component) — this is acceptable for internal pages but PRODUCTION pages should use the Hero/EyebrowLabel/Container pattern from US-015 onward.
+---
+
+## 2026-05-03 — US-011 Build FormField wrapper with error helper text
+- Created apps/pops-website/components/forms/form-field.tsx exporting FormField
+- Props: { label, name, required?, error?, helperText?, children: ReactNode }
+- Renders <Label htmlFor={name}>label{required && <span className="text-pops-yellow-500"> *</span>}</Label>
+- Wraps the single child in a div, then renders helper-or-error <p id={`${name}-help`}>
+- Uses React.cloneElement (with Children.only + isValidElement<ChildAttrs>) to inject id, name, aria-invalid, and aria-describedby onto the input/textarea child WITHOUT clobbering anything the consumer explicitly set (id/name fall back to `name` prop; aria-describedby joins existing tokens with the help id)
+- Error message uses text-danger-500; helper text uses text-ink-400 (the canonical secondary text color)
+- Files changed: apps/pops-website/components/forms/form-field.tsx
+- Quality checks: typecheck ✓ | build ✓ | browser N/A (AC does not require browser verification — this is a wrapper component validated by typecheck + downstream consumers in US-021+)
+- **Learnings for future iterations:**
+  - The FormField wrapper REPLACES the manual Label + Input + <p aria-describedby="..."> wiring shown in /dev/forms (US-010). Future form pages (request-a-quote US-021, contact US-031, check-in US-024) should use FormField instead of hand-wiring aria attrs. The dev/forms page is left as-is since it intentionally demos the raw primitives.
+  - `isValidElement<P>()` (with a generic param) is the strict-mode-safe way to narrow ReactNode → ReactElement<P> for cloneElement. Without the generic, child.props is `unknown` and you'd need either a cast or `any`. With it, child.props is fully typed as `P` and TS is happy without escape hatches.
+  - cloneElement merge convention: for multi-token attrs like `aria-describedby`, JOIN existing tokens with the new one (`[existing, helpId].filter(Boolean).join(" ")`). Don't replace — a consumer might already have other describedby targets.
+  - `error ?? helperText` picks the right message, and a single `hasMessage` boolean drives both the `<p>` rendering and the `aria-describedby` injection — guarantees the wiring is in sync (no orphan describedby pointing at a non-existent <p>).
+---
+
+## 2026-05-03 — US-012 Build Checkbox component
+- Added @radix-ui/react-checkbox@^1.x to apps/pops-website/package.json (via `pnpm --filter pops-website add @radix-ui/react-checkbox`)
+- Created apps/pops-website/components/forms/checkbox.tsx exporting <Checkbox /> built on `CheckboxPrimitive.Root` with a forwardRef
+- Pattern: Root is a 44x44 invisible tap-target frame (`h-11 w-11 inline-flex items-center justify-center`) wrapping a visually-rendered 18x18 inner `<span aria-hidden="true">` box. The tap target gets the focus ring; the inner span gets the visible 2px border + bg.
+- Checked state styling driven by `group-data-[state=checked]:*` — Radix sets `data-state` on the Root, the inner box reads it via the `group` class. Same approach for `data-state=indeterminate`.
+- Indicator uses `forceMount` + opacity toggle so the SVG checkmark is always present in the DOM and just fades in/out — keeps the inner box layout stable on toggle.
+- SVG checkmark: 14x14 inline path, `text-ink-900`, drawn with currentColor so it inherits the ink-900 color over the yellow bg.
+- Added a "Checkbox" preview section to apps/pops-website/app/dev/forms/page.tsx with: default unchecked, default checked, required + helper-text-described, and disabled variants.
+- Files changed: apps/pops-website/components/forms/checkbox.tsx (new), apps/pops-website/app/dev/forms/page.tsx, apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/forms):
+  - Root: `<button role="checkbox" data-state="unchecked">`, 44x44 bounding box ✓
+  - Inner box: 18x18, border 2px `rgb(137,144,160)` (ink-400), bg `rgb(42,48,59)` (ink-700), border-radius 2px (rounded-sm) ✓
+  - Pressing Space toggled `data-state` → `checked`, `aria-checked="true"`; inner bg + border → `rgb(254,205,8)` (`#FECD08`, pops-yellow-500); SVG opacity 0 → 1; SVG color `rgb(17,20,26)` (`#11141A`, ink-900) ✓
+  - Focus visible state confirmed via `:focus-visible` matching after `.focus()` — yellow halo visible in screenshot at progress/screenshots/US-012-checkbox.png
+- **Learnings for future iterations:**
+  - For Radix primitives that ship a Root + Indicator pair (Checkbox, RadioGroup, Switch, ToggleGroup), the canonical "double-element" pattern is: Root carries the interactive semantics + tap target + focus ring; an `aria-hidden` inner element carries the visible chrome that responds to `data-state` via `group-data-[state=*]`. This keeps the visual size (18x18) decoupled from the touch size (44x44) without breaking ARIA.
+  - `forceMount` on `CheckboxPrimitive.Indicator` (and the equivalent on RadioGroup/Switch) is what enables transition animations — without it Radix unmounts the indicator when state flips, so opacity/scale transitions never fire because the element re-mounts each toggle. Use `forceMount` + `group-data-[state=checked]:opacity-100` as the canonical animated-toggle pattern.
+  - The `"use client"` directive is REQUIRED on Radix primitive wrappers because Radix uses React Context + hooks internally. Without it, importing `@radix-ui/react-checkbox` from a Server Component throws at build/SSR time. Apply the same to future Radix wrappers (Select, Dialog, Dropdown, Tabs, RadioGroup, Switch).
+  - Tap-target padding is achieved with `inline-flex items-center justify-center` on a `h-11 w-11` Root that contains a smaller visual box. This is a more accessible alternative than `padding` (which would push the visual box around inside its own bounding box) — the Root IS the target, and the inner box just renders centered inside it.
+  - For label-checkbox pairing in dev previews, use `<Label htmlFor={cbId} className="mb-0 cursor-pointer select-none">` (override the default `mb-2` and add `cursor-pointer` so the label feels clickable). Clicking the label triggers the Root via the htmlFor/id linkage even though the Root is a `<button>` (the browser routes the click through).
+
+## 2026-05-03 — US-013 Build Footer component from content/site-globals.json
+- Created apps/pops-website/components/layout/footer.tsx exporting `<Footer />` (RSC, no "use client" needed — pure layout)
+- 3-column grid: `grid-cols-1 md:grid-cols-3` with `gap-12 py-16 md:gap-10 md:py-20`. Mobile stacks; desktop is 3 equal columns.
+- Column titles read directly from `content/site-globals.json#footer.navigation_columns` keys: "Doing business with Pop's Industrial", "Services", "Visiting Us" (in that order). Column titles render as `<h2>` micro-labels using the eyebrow style from US-007 (uppercase tracking-[0.04em] text-pops-yellow-500 text-xs font-semibold).
+- Column 1 layout: logo + brand wordmark (next/image of /images/Pops-no-border.png at 56×56 + "POP'S INDUSTRIAL COATINGS" in font-display split across 2 lines), then nav links, then GET A QUOTE button (variant="primary" asChild wrapping a Link to /request-a-quote)
+- Column 2: Services nav (5 service links from site-globals.json)
+- Column 3: Main Office and Shipping & Receiving addresses in semantic `<address>` elements (with .not-italic since the design uses Inter, not the browser default italic), then Phone tel: link, Fax (text only, NOT a tel: link per AC), info@ and invoices@ mailto: links, then hours
+- All scraped href values pass through a `toRelative(url)` helper that does `new URL(url).pathname.replace(/\/$/, "") || "/"` so the navigation works in the rebuild instead of leaking the live-site origin
+- Mixed-shape list handling: site-globals.json's "Visiting Us" column entries are `{label, value}` not `{label, href}`. A discriminated union with `isLinkEntry()` type guard renders link rows as `<Link>` and value rows as plain `<li>` — but the AC's stronger directive ("addresses + phone + fax + emails + hours come from company.ts") meant Visiting Us doesn't actually consume the JSON column at all; it composes from `company.ts` directly for tel:/mailto: wiring fidelity. The `isLinkEntry` discriminated union still ships in case future stories use this shape (e.g. a Hours row in the eventual tenant onboarding nav).
+- Tap targets: every nav link has `min-h-11 inline-block py-2` (44px height via vertical padding), satisfying WCAG 2.1 AA per design principles §9. Each link gets the standard yellow focus halo (`focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900`). Hover: text-pops-yellow-500 + underline-offset-2 underline.
+- Footer surface uses `bg-ink-900 text-ink-100` per AC. Bottom rail: `border-t border-ink-700 py-6` with copyright in text-ink-400 + dynamic year via `new Date().getFullYear()`.
+- Created apps/pops-website/app/dev/footer/page.tsx — internal preview wrapping `<Footer />` for browser verification (sibling to /dev/buttons, /dev/cards, /dev/forms)
+- Files changed: apps/pops-website/components/layout/footer.tsx (new), apps/pops-website/app/dev/footer/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.6s; TS in 1390ms; 7/7 static pages incl /dev/footer) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/footer):
+  - Footer bg: rgb(17, 20, 26) (= #11141A = ink-900) ✓
+  - Footer text color: rgb(236, 238, 242) (= #ECEEF2 = ink-100) ✓
+  - Desktop (1280w): grid-template-columns = "378.656px 378.672px 378.656px" — three equal columns ✓
+  - 9 nav links total (4 + 5; Visiting Us has no nav links by AC) ✓
+  - First nav link href: "/request-a-quote/facilities-equipment" — origin stripped, relative path ✓
+  - 2 `<address>` elements ✓
+  - Phone link href: "tel:+18636447473" (per AC) ✓
+  - 2 mailto: links: info@popsindustrial.com, invoices@popsindustrial.com ✓
+  - GET A QUOTE CTA: <a href="/request-a-quote">, bg rgb(254,205,8) (= pops-yellow-500), color rgb(17,20,26) (= ink-900), 14px Inter weight 600, 44px height, 2px radius — primary Button variant projected onto the Link via Slot ✓
+  - First 4 nav-link tap targets all measure exactly 44px high (Our Capabilities 105×44, Our Certifications 117×44, Request a Quote 110×44, Terms & Conditions 129×44) — width varies with text length, height locked at WCAG-compliant 44px ✓
+  - Mobile (375w): grid-template-columns = "328px" — single column, no horizontal overflow (bodyScrollWidth === clientWidth) ✓
+  - Screenshots: progress/screenshots/US-013-desktop.png, progress/screenshots/US-013-mobile.png
+- **Learnings for future iterations:**
+  - The `min-h-11` trick on `<a>` requires `inline-block` (or `flex` / `block`) on the same element — height-related properties are ignored on naturally inline `<a>` elements. This is the cleanest way to give nav links a 44px tap target without bloating the visual chrome with padding that would force visible whitespace between links.
+  - `<address>` defaults to `font-style: italic` in the browser default stylesheet — apply `not-italic` (Tailwind's italic-reset utility) to render in the design's Inter/upright treatment. The element is still semantic for screen readers regardless of styling.
+  - Two cumulative-tracking conventions used here: `tracking-[0.04em]` for micro-labels (matches the EyebrowLabel from US-007) and `tracking-tight` (-0.025em) for the brand wordmark (uppercase tightens better with negative tracking). Don't mix them — micro-labels stay positive, display headings stay tight or zero.
+  - When a JSON column has mixed shapes (some `href`, some `value`), code defensively even if the current AC only needs one shape — the discriminated union + type guard pattern costs nothing extra and prevents a future regression where someone adds a `value`-only row and it silently renders as `<a href="">{value}</a>`.
+  - The footer uses `<h2>` for column titles (not `<h3>` or `<p>`). Reasoning: the footer is a top-level region of every page, and its column titles are the only headings inside that region — they need to participate in the page heading outline. Per design principles §9, headings are how screen readers navigate; orphan `<p>` titles would skip them. The page's main `<h1>` is unaffected because page content sits in `<main>`, not `<footer>`.
+  - The dev preview page (`app/dev/footer/page.tsx`) uses a custom `<main>` wrapper rather than the ServiceSection/Container primitives so the Footer is the visual focus. Keep dev pages minimal and component-focused — they're a design-system reference, not full-page mockups.
+  - Footer has NO outer padding from Container itself; padding lives on the inner grid and bottom rail. This way Container's `max-w-[1280px]` correctly caps the footer content width while letting the `bg-ink-900` flood edge-to-edge on the `<footer>` element.
+---
+
+## 2026-05-03 — US-014 Build Header component (HOME link + brand mark)
+- Created components/layout/header.tsx exporting <Header /> — sticky top-0 z-50, bg-ink-900/95 backdrop-blur, border-bottom on ink-700/60
+- Skip-to-content link is the FIRST focusable element (sr-only by default; focus:not-sr-only positions it as a yellow pill at top-left)
+- Brand mark: <Link href="/"> with /images/Pops-no-border.png at h-10 w-auto + 'POP'S INDUSTRIAL COATINGS' wordmark in font-display tracking-tight (text-sm sm:text-base)
+- HOME link: <nav aria-label="Primary"> wrapping a single <Link href="/"> in font-text text-sm font-medium uppercase tracking-[0.04em], min-h-11 tap target, hover:text-pops-yellow-500
+- Both interactive links use the canonical focus-visible ring tokens (pops-yellow-300 ring + ink-900 offset)
+- Logo <Image> uses alt="" because the adjacent wordmark already names the link via aria-label on <Link>
+- Created app/dev/header/page.tsx as a working preview with scroll filler to verify sticky behavior
+- Files changed: components/layout/header.tsx, app/dev/header/page.tsx
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (Playwright at http://localhost:3001/dev/header — confirmed tab order skip-link → logo → HOME, both nav links resolve to /)
+- **Learnings for future iterations:**
+  - Skip-to-content link pattern: `sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] ...` — visually hidden until focused, then it pops into the corner as a yellow pill. Apply this same pattern wherever a top-level skip link is needed (page-level layouts, route shells).
+  - When a link has an `aria-label` AND contains an icon/logo plus visible text, set the icon's `alt=""` so screen readers don't announce the visual twice — the `aria-label` on the link is canonical, and the visible wordmark is already part of the link's accessible name fallback.
+  - Header `bg-ink-900/95 backdrop-blur` requires the page underneath to actually have content scrolling under it for the blur to be visible. Verify sticky behavior via a dev preview page with scroll filler — the homepage hero (US-015/017) will sit directly under the header so backdrop-blur kicks in over the hero photo.
+  - `min-h-11` on a flex/inline-flex link with `items-center` gives a 44px tap target without affecting the visible text size. Pair with horizontal `px-3 py-2` for a comfortable touch zone that stays compact on desktop.
+---
+
+## 2026-05-03 — US-015 Build Hero component (rebuilt per design principles §6.2)
+- Created components/marketing/hero.tsx exporting <Hero /> per the §6.2 spec: eyebrow → display heading (h1) → optional lede → primary + optional secondary CTA, full-width section with `min-h-[480px] md:min-h-[560px]`, `<Image fill priority sizes="100vw" className="object-cover">` background + `bg-ink-900/60` overlay, content vertically centered inside a 1280px max-width column with `px-6` and `py-16 md:py-24`.
+- Heading uses arbitrary text sizes `text-[36px] md:text-[56px]` with `leading-[1.05]` (matches design principles §3.3 display-lg = 56/3.5 and the AC mobile target of 36px) — no `text-display-lg` Tailwind utility exists yet because the @theme block in app/globals.css does not declare `--text-display-*` tokens. Treat arbitrary values as the convention until/unless display tokens are added (none of the prior US-006..014 stories needed them either).
+- CTAs are rendered with `<Button asChild variant="primary|secondary">{<Link>...}</Link></Button>` — same pattern Button supports via its `asChild` prop, ensuring next/link prefetch + client-side nav while keeping Button styling/focus-ring/hover.
+- CTA row uses `flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4` so the buttons stack on mobile (per AC) and sit side-by-side from `sm` upward.
+- `useId()` powers `id={headingId}` + `aria-labelledby={headingId}` on the wrapping `<section>`, so multiple Hero instances on one page (e.g. dev preview) don't collide on a hardcoded `"hero-heading"` id. Caught this when the dev preview rendered two Heros and both regions advertised the same accessible name.
+- Background `Image` uses `alt=""` by default (decorative); a `backgroundAlt` prop lets a story override that for the rare case the photo carries content meaning. The `bg-ink-900` on the parent section is a fallback color while the image streams in.
+- Created app/dev/hero/page.tsx as the working preview — a primary Hero (eyebrow + heading + lede + dual CTA) plus a secondary minimal Hero (no lede, no secondary CTA) to exercise both code paths.
+- Files changed: components/marketing/hero.tsx (new), app/dev/hero/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (Playwright at http://localhost:3001/dev/hero — desktop 1280×800: heading reads at 56px on two lines, primary yellow CTA + secondary outlined CTA aligned, photo darkened to ~60%; mobile 375×812: heading at 36px on five lines, CTAs stacked full-width inside the column. Tab order: skip-link → logo link → HOME → Request a Quote → See our work, exactly per AC.)
+- **Learnings for future iterations:**
+  - `useId()` works in Server Components in React 19 — no `"use client"` needed just to get a stable unique id for `aria-labelledby`. Use it in any component that might render multiple times on a single page where ids would otherwise collide (Hero, Card with footer-id helper text, Tabs, Disclosure, etc.).
+  - The `<Button asChild><Link href>label</Link></Button>` pattern is the canonical way to make a Button-styled router link — preserves Button's focus ring, variant colors, and tap target while next/link gets prefetch + RSC nav. Use this instead of `<Link className="<button-classes>">` (which would diverge whenever Button styles change) or a separate ButtonLink component.
+  - `next/image` with `fill` requires the parent to have `position: relative` (or `absolute`/`fixed`); `relative isolate` on the Hero `<section>` covers it AND creates a stacking context so the absolutely-positioned overlay stays below the relatively-positioned content `z-10` div.
+  - For decorative background photos, set `alt=""` (NOT a description). Screen readers skip empty-alt images entirely; the heading + lede already convey the page meaning. Only set a meaningful alt when the photo is the message (e.g. a leadership headshot on /about-us/leadership).
+  - Display token gap: the design principles §3.3 lists `--text-display-xl/lg/md/sm` as 72/56/44/30 px tokens, but the @theme block in globals.css only ships color/font/radius/shadow tokens. Until a future story adds these as `--text-*` Tailwind v4 tokens, marketing components use arbitrary `text-[Npx]` values to hit the spec exactly.
+---
+
+## 2026-05-03 — US-016 Build ServiceTile component
+- Created apps/pops-website/components/marketing/service-tile.tsx — `ServiceTile({ number, name, lede, image, href, alt, className })` function component (no forwardRef per existing marketing convention; Hero uses the same pattern)
+- Layout: `<Card interactive className="overflow-hidden p-0">` wrapping `<Link href={href} className="group block ...focus-visible ring">` per AC ("Card wrapping Link"). Card's default `p-6` is overridden to `p-0` so the 16:10 image runs edge-to-edge to the card border; padded content sits in a sibling `<div class="p-6">`. `overflow-hidden` on the Card clips the image into the `rounded-sm` corners.
+- Image: `<Image fill>` inside `<div class="relative aspect-[16/10] overflow-hidden bg-ink-800">` with `sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"` so next/image picks an appropriate crop (avoids shipping the 1024w variant to a 300w mobile tile)
+- Eyebrow uses `EyebrowLabel` (from US-007) with the literal `Service ${number} / ${name}` per AC; default tone="yellow" → text-pops-yellow-500
+- Title: `<h3 class="font-text text-lg font-bold leading-tight tracking-tight">` — `text-lg` resolves to 18px = §4.3 `--text-h4` (Inter 700). NOT uppercase per design principles §4.3 ("Headings ditch the uppercase").
+- Body: `<p class="line-clamp-2 font-text text-sm leading-relaxed opacity-80">` — line-clamp-2 enforces the "2 lines of text-sm" AC even when the lede is long; `opacity-80` matches CardDescription's muted treatment from US-009 so the tile feels of a piece with the existing design system.
+- Footer: `<p class="inline-flex items-center gap-2 font-text text-sm font-semibold text-pops-yellow-500">` containing `<span aria-hidden="true">→</span>` + "Learn more". Decorative arrow gets `aria-hidden` so SR users don't hear "right arrow" before "Learn more"; the visible "Learn more" carries the affordance.
+- Hover (composes via group/peer):
+  - Card's `interactive` variant: `hover:shadow-3` lift (CVA recipe from US-009 — fires on Card via `:hover` bubbling from the inner Link)
+  - Image: `motion-safe:group-hover:scale-[1.03]` with the Link as the `group` ancestor — Tailwind v4 emits `@media (prefers-reduced-motion: no-preference) { @media (hover: hover) { ... :is(:where(.group):hover *) { scale: 1.03 } } }`. NOTE: v4's scale utility uses the modern CSS `scale` property (separate from `transform`), so `getComputedStyle(el).transform` reads `none`; verify via `getComputedStyle(el).scale === "1.03"`
+  - Both transitions: `duration-200 ease-out` per design principles §8 motion tokens
+- Reduced motion: the `motion-safe:` prefix gates the scale on `prefers-reduced-motion: no-preference`; users with reduce-motion get the shadow lift only, no image zoom — matches the AC explicit requirement
+- Created apps/pops-website/app/dev/service-tiles/page.tsx — preview page with all 5 services in the actual data shape consumers will pass (mirrors PRD §7), plus a 2-up density variant for tablet review. Uses real shop photography from `/images/`: industrial-painting-lakeland-fl-1024x683-1.jpg, industrial-complex-coatings-1.jpg, abrasive-media-blasting.jpg, industrial-powder-coating-lakeland-fl-IMG_3687.jpg, large-capacity-powder-coating.jpg
+- Files changed: apps/pops-website/components/marketing/service-tile.tsx (new), apps/pops-website/app/dev/service-tiles/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.2s; TS in 1369ms; 10/10 static pages including the new dev preview) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/dev/service-tiles):
+  - Eyebrow renders "SERVICE 01 / WET PAINT COATINGS" uppercase, color rgb(254, 205, 8) = pops-yellow-500 ✓
+  - h3 renders "Wet Paint Coatings" with font-family Inter, weight 700, size 18px, text-transform none ✓
+  - "Learn more" renders pops-yellow-500 with arrow span aria-hidden=true ✓
+  - Card surface bg-ink-700 (rgb(42,48,59)) with border-ink-600 (rgb(63,70,84)) ✓
+  - Image wrapper has aspect-ratio: 16 / 10; img object-fit: cover; transition includes transform/scale ✓
+  - Hover (Playwright .hover() on first tile): Card boxShadow elevates to 8px+16px shadow-3 (was "none" pre-hover); Image scale property = 1.03 (was 1 pre-hover) ✓
+  - Tab focus: Link receives focus-visible ring `rgba ink-800 0px 0px 0px 2px` offset + `pops-yellow-300 0px 0px 0px 4px` ring (matches US-008 button focus-ring convention) ✓
+  - All five tiles render in xl:grid-cols-5 (5-up desktop), lg:grid-cols-3, sm:grid-cols-2, mobile 1-up — design principles §6.3 "4-up grid desktop, 2-up tablet, 1-up mobile" is honored (the AC + PRD §6.2/§7 calls for 5-up for the home page; the component itself is grid-agnostic and adapts to the parent grid)
+  - Console: 0 errors, 1 unrelated warning (next/dev fast-refresh banner)
+- Note (visual parity): on the live site, service-tile images carry a tan/sepia tint that hides what the work actually looks like (per design principles §6.3 — "current sepia wash hides what the service actually looks like"). The rebuild ships full-color shop photography per the contract — this is intentional and is the explicit fix called out in §6.3.
+- **Learnings for future iterations:**
+  - Tailwind v4's `scale-[1.03]` produces the CSS `scale` property, not `transform: scale()`. When verifying hover transforms in Playwright, read `getComputedStyle(el).scale` — the `transform` will still be `none`. Both work with `transition-transform` because v4's transition shorthand transitions `transform, translate, scale, rotate` together.
+  - When the Card surface needs to be edge-to-edge (image), override `p-6` → `p-0` on the Card and put `p-6` on the inner content div. `cn()` with `tailwind-merge` resolves the conflict correctly because both classes target padding and twMerge picks the last one.
+  - For decorative iconography inside link text (e.g. `→` before "Learn more"), wrap in `<span aria-hidden="true">` so the link's accessible name is just "Learn more" (or, for whole-card links, the image alt). Do NOT use `aria-label` on the link to override — the natural text content is the right SR announcement and works without JS.
+  - The Card+Link composition (Card outside, Link inside, content inside Link) is the canonical "whole card is a target" pattern. Focus ring on the Link, hover lift on the Card via `:hover` bubbling, image scale on the Link via `group-hover`. Don't add `role="link"` to the Card — that would create a redundant target for SR users.
+  - Picking real shop photography from `public/images/` requires reading the manifest.json's filename list — the same service may have multiple variants (full-res, -300x225 thumbnail, -scaled, -150x150). Always pick the largest non-thumbnail variant; next/image handles responsive crops via `sizes`.
+---
+
+## 2026-05-03 — US-017 Build /(home) page with new hero + service grid + commitment columns
+- Implemented the full home page at apps/pops-website/app/page.tsx
+- Hero section: background /images/slide-01.jpg, eyebrow "FAMILY OWNED · LAKELAND, FL · SINCE 1972", H1 "Four generations of industrial finishing — done right the first time.", lede from design principles §6.2 wireframe, dual CTA (primary: Request a Quote, secondary: See our work)
+- Services section (tone="dark"): EyebrowLabel "OUR SERVICES", H2 "Four generations of expertise in industrial coatings", 5-up responsive grid (1 col mobile / 2 col sm / 5 col xl) using ServiceTile for all five services with real-product images (full-res variants, not thumbnails)
+- Three-column section (tone="dark", border-t): COMMITMENT / INFRASTRUCTURE / STANDARDS — content lifted verbatim from .firecrawl/popsindustrial/pages/home.md; each column has EyebrowLabel + H2 + body copy; Infrastructure has "View Facilities" secondary button; Standards has "Our Certifications" secondary + "Ask us!" ghost button
+- Family photo section: next/image fill on /images/pops-4-generations.jpg with ink-900/50 overlay and "About Us" primary CTA anchored to bottom-left via absolute positioning
+- Files changed: apps/pops-website/app/page.tsx (full rewrite from placeholder, ~193 lines)
+- Quality checks: typecheck ✓ | build ✓ (10/10 static pages, Compiled in ~2.2s) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/):
+  - h1Count: 1 ✓ (text: "Four generations of industrial finishing — done right the first time.")
+  - h2Count: 7 (4 content h2s + 3 footer column headings from US-013 Footer — correct)
+  - Hero, services grid, 3-column section, family photo all visually present at both mobile (375px) and desktop (1280px) viewports
+  - familySectionHeight: 500px ✓ (min-h-[500px] on md: respected)
+  - familyImgLoaded: true ✓ (next/image fill served correctly)
+  - Screenshots saved: progress/screenshots/US-017-full.png, progress/screenshots/US-017-desktop.png
+- **Learnings for future iterations:**
+  - The family photo section uses the `<section>` HTML element directly (not the `<Section>` layout component) because it needs custom min-height, relative+overflow-hidden for next/image fill, AND an absolutely positioned CTA overlay — the Section component doesn't support that pattern cleanly. This is the established pattern from the Hero component too.
+  - When a `next/image fill` parent needs content overlaid, use `absolute inset-0` for the overlay div and `absolute bottom-0 left-0 right-0` for the CTA layer. The parent needs `relative overflow-hidden` and an explicit `min-h-[*]` to have height (fill images have no intrinsic dimensions).
+  - The three-column section uses `Section tone="dark"` with `border-t border-ink-700` className — the Section component accepts arbitrary classNames so border-top dividers between dark sections work cleanly.
+  - All heading hierarchy on this page: H1 (Hero) → H2 (section headings in content sections + 3 footer columns) → H3 (ServiceTile card titles). This matches the semantic structure from the live site.
+---
+
+## 2026-05-03 — US-018 Build /about-us page
+- Implemented /about-us page at apps/pops-website/app/about-us/page.tsx
+- Hero: facility-01.jpg background, eyebrow "OUR STORY", H1 "About Pop's Industrial Coatings", lede summarizing the 4-generations mission, primary CTA "Request a Quote" → /request-a-quote (no secondary CTA per AC)
+- Main content section: 2-column grid (lg:grid-cols-2) — left column has "ABOUT" eyebrow + H2 "Pop's Industrial Coatings" + body + "Industrial Size Projects" H3 + "Expansive Facilities" H3; right column has "Experience & Expertise" H3 + "Large Capacity Ovens" H3 + dual CTA buttons ("Our History" primary + "Meet the Family" secondary)
+- Facility photos: 2-up side-by-side grid (sm:grid-cols-2) using next/image fill, aspect-[4/3], full-res variants for both facility-01 and facility-02; alt text describes each image's distinct angle
+- Cross-links section (3 columns): Company History → /about-us/history; Our Certifications → /request-a-quote/standards-specifications-certifications; Complete Services → /industrial-coatings-services
+- Files changed: apps/pops-website/app/about-us/page.tsx (new, 183 lines)
+- Quality checks: typecheck ✓ | build ✓ (11/11 static pages including /about-us) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/about-us):
+  - h1Count: 1 ✓ (text: "About Pop's Industrial Coatings")
+  - h2Count: 7 (4 content + 3 footer columns) ✓
+  - h3Count: 4 (Industrial Size, Expansive Facilities, Experience & Expertise, Large Capacity Ovens) ✓
+  - facilityImgs: both facility-01 and facility-02 present with descriptive alt text ✓
+  - crossLinks: "Our History" → /about-us/history ✓, "Meet the Family" → /about-us/leadership ✓
+  - Screenshot saved: progress/screenshots/US-018-desktop.png
+- **Learnings for future iterations:**
+  - For inner page Heroes, use the relevant on-page photo as the background (facility-01 here) rather than always defaulting to slide-01.jpg — it gives each page visual identity.
+  - The 2-up facility photo grid uses `Section` with no padding (`pt-0 pb-0`) and `border-t border-ink-700`. The photos fill the full row width with `aspect-[4/3]` + `relative overflow-hidden` + `fill` image.
+  - "Our History" and "Meet the Family" are the two required cross-links per US-018 AC — these link to /about-us/history and /about-us/leadership respectively (US-019 and US-020 will build those pages).
+---
+
+## 2026-05-03 — US-019 Build /about-us/history page
+- Implemented /about-us/history page at apps/pops-website/app/about-us/history/page.tsx
+- Hero: pops-4-generations.jpg background (thematic fit — the family photo on the history page), eyebrow "OUR LEGACY", H1 "Our History", lede summarizing 50+ years
+- Content: 2-column layout (lg:grid-cols-[1fr_320px]) — main body with 4 paragraphs faithful to source + dual CTA ("Request a Quote" primary + "Meet the Family" secondary); right sidebar with Marcus Woods founder photo
+- Founder photo: /images/marcus-woods-pops-industrial-coatings.jpg (full-res 543KB, NOT the -239x300 thumbnail) with alt "Marcus Woods, founder of Pop's Industrial Coatings" + "Founder Marcus Woods" caption
+- Files changed: apps/pops-website/app/about-us/history/page.tsx (new, 107 lines)
+- Quality checks: typecheck ✓ | build ✓ (12/12 static pages including /about-us/history) | browser ✓
+- Browser verification:
+  - h1Text: "Our History" ✓
+  - Marcus photo loaded with correct alt text ✓
+  - "Meet the Family" link → /about-us/leadership ✓
+  - All 4 body paragraphs rendered faithfully ✓
+- **Learnings for future iterations:**
+  - Use `grid-cols-[1fr_320px]` (custom column sizing) for text+portrait layouts. The portrait column stays fixed at 320px while the text body gets the rest.
+  - For portrait images with known aspect ratios, use explicit width/height props on next/image (not fill) so the browser knows dimensions without layout shift. Use `sizes="320px"` to prevent fetching oversized variants.
+  - The pops-4-generations.jpg works well as a hero background for the history page since it's the most thematically resonant image for "four generations."
+---
+
+## 2026-05-03 — US-020 Build /about-us/leadership page with 4 leadership cards
+- Implemented /about-us/leadership page at apps/pops-website/app/about-us/leadership/page.tsx
+- Hero: pops-4-generations.jpg background, eyebrow "MEET THE FAMILY", H1 "Leadership", lede from source description
+- LEADERS constant: typed array of 4 objects (slug, name, title, bio, optional linkedIn, photoAlt) — data-driven, no duplication
+- 2x2 card grid (sm:grid-cols-2): each Card uses overflow-hidden p-0, aspect-[4/3] fill image (object-top to show faces), then p-6 content block
+- Photo: full-res -320x480-1.jpg variants (NOT -200x300 thumbnails) for all 4 leaders; object-top ensures faces show in aspect-cropped view
+- Title rendered in pops-yellow-500 font-semibold to distinguish from name
+- LinkedIn links: Jamie and Kaitlyn only (Mark and Chris have none in source — not fabricated); target="_blank" rel="noopener" with → arrow icon
+- Files changed: apps/pops-website/app/about-us/leadership/page.tsx (new, 125 lines)
+- Quality checks: typecheck ✓ | build ✓ (13/13 static pages) | browser ✓
+- Browser verification:
+  - cardCount: 4 ✓
+  - linkedInCount: 2 (Jamie + Kaitlyn) ✓, both target="_blank" rel="noopener" ✓
+  - photoCount: 4 (all -320x480-1.jpg) ✓
+  - All 4 photoAlts descriptive and unique ✓
+- **Learnings for future iterations:**
+  - For portrait photos in cards where faces should be visible, use `object-top` instead of `object-cover` alone — the default `object-center` crops the face out when the image aspect ratio differs significantly from the card's aspect ratio.
+  - Leadership pages work best with a data-driven LEADERS array (typed constant) rather than repeated JSX blocks — easier to add/remove members, consistent structure, easy to see at a glance if a field is missing.
+  - Per AC notes: Mark Woods and Chris Woods Jr have no LinkedIn in source — do NOT fabricate URLs. The optional `linkedIn?: string` type makes this self-documenting.
+---
+
+## 2026-05-03 — US-021 Build /request-a-quote page (form scaffold)
+- Installed react-hook-form@7.74.0, zod@4.4.2, @hookform/resolvers@5.2.2 into apps/pops-website
+- Created apps/pops-website/app/request-a-quote/schema.ts — exported `quoteSchema` (Zod) + `QuoteFormValues` type; name/email/projectDetails required; phone/company optional
+- Created apps/pops-website/app/request-a-quote/quote-form.tsx — "use client" form component using useForm + zodResolver; 2-col grid for name/email/phone/company; full-width Textarea for projectDetails; recaptcha-container div placeholder; Submit button isLoading=isSubmitting; onSubmit console.logs for now (server action in US-036)
+- Created apps/pops-website/app/request-a-quote/page.tsx — RSC page; Hero with "GET STARTED" eyebrow + "Request a Quote" H1 + phone CTA; max-w-[720px] centered form section; required-field legend paragraph; renders <QuoteForm />
+- Files changed: apps/pops-website/app/request-a-quote/{page.tsx, quote-form.tsx, schema.ts} (all new), apps/pops-website/package.json, pnpm-lock.yaml
+- Quality checks: typecheck ✓ | build ✓ (14/14 static pages) | browser ✓
+- Browser verification:
+  - 5 fields: name, email, phone, company, projectDetails ✓
+  - recaptchaPresent: true ✓
+  - submitBtnText: "Submit Request" ✓
+  - starCount: 9 (3 field labels + 1 in legend paragraph + footer links) ✓
+  - Validation on empty submit: errors["Name is required", "Email is required", "Project details are required"] in danger-500 ✓
+  - Error fields get red border via aria-invalid ✓
+- **Learnings for future iterations:**
+  - The QuoteForm is a separate "use client" component file (quote-form.tsx) imported into the RSC page.tsx — this is the standard RSC/client-component split pattern. The page stays a Server Component (for metadata export) while only the interactive form is a client component.
+  - The Zod schema lives in schema.ts (NOT in quote-form.tsx) so US-036's server action can import the same source without a client-boundary crossing.
+  - react-hook-form's `register()` spreads `name`, `ref`, `onChange`, `onBlur` onto the input. FormField uses cloneElement to also inject `id`, `aria-invalid`, and `aria-describedby`. Both cooperate: register's name wins because cloneElement uses `child.props.name ?? name` (register already set name). The aria-invalid="true" from FormField fires the danger-border selector via CSS attribute selector `aria-[invalid=true]:border-danger-500`.
+  - `noValidate` on the form disables native browser validation bubbles — react-hook-form's own validation runs instead, giving us full control over error placement and style.
+---
+
+## 2026-05-03 — US-022 Build /request-a-quote/facilities-equipment page
+- Implemented /request-a-quote/facilities-equipment at apps/pops-website/app/request-a-quote/facilities-equipment/page.tsx
+- Hero: Pops-arial-photo.jpg (full-res aerial, NOT the 300x199 thumbnail), eyebrow "INFRASTRUCTURE", H1 "Facilities & Equipment"
+- Photo grid: 4-col responsive (2-col mobile / 4-col sm+) with aspect-[3/4] fill images: Industrial-Powder-Coating-Service-Lakeland-FL-scaled-1-225x300.jpg, facility-01-1-300x225.jpg, facility-02-1-300x225.jpg, large-capacity-powder-coating-270x138-1.png (png uses object-contain + padding on ink-800 bg)
+- Cross-links: Our Services / Our Certifications / What Makes Us Different — each with EyebrowLabel + H2 + body text + secondary Button
+- Fix: initial import depth was ../../../../ (wrong, 4 levels), corrected to ../../../  (3 levels: app/request-a-quote/facilities-equipment/page.tsx → components/)
+- Files changed: apps/pops-website/app/request-a-quote/facilities-equipment/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (15/15 static pages) | browser ✓
+- **Learnings for future iterations:**
+  - Depth pattern for nested routes: count the directory segments from `app/` to the file. `app/request-a-quote/facilities-equipment/page.tsx` is 3 levels → import path starts with `../../../`. `app/about-us/history/page.tsx` is also 3 levels → same. `app/about-us/page.tsx` is 2 levels → `../../`.
+  - For PNG images with wide/short aspect ratio (e.g. 270x138), use `object-contain` + padding on a colored background (`bg-ink-800`) rather than `object-cover` — cover would crop out the image entirely at a tall aspect ratio card.
+---
+
+## 2026-05-03 — US-023 Build /request-a-quote/standards-specifications-certifications page
+- Implemented standards/specs/certs page at apps/pops-website/app/request-a-quote/standards-specifications-certifications/page.tsx
+- Hero: slide-01.jpg background, eyebrow "QUALITY ASSURANCE", H1 "Standards, Specifications & Certifications"
+- Content: max-w-[720px] centered column; two sections (SSPC + FDOT) each with: centered logo image, EyebrowLabel, H2, body copy, PDF download link
+- SSPC logo: /images/sspc-accredited-contractor.png, alt "SSPC Accredited Contractor logo", 200x200
+- FDOT logo: /images/fdot-logo-color-768x339-1.png, alt "Florida Department of Transportation logo", 320x141
+- PDF links: ↓ icon + link text + "(PDF)" suffix; aria-label includes "PDF download"; target="_blank" rel="noopener"
+  - SSPC: /pdfs/SSPC-QP3-Pops-Coatings-Certificate-expires-3-31-27.pdf (newer 2026-04 version, not the archived 2025-03-31)
+  - FDOT: /pdfs/2025-03-06-Pops-Industrial-Coatings-FDOT-Audit-QCPIR.pdf
+- Files changed: apps/pops-website/app/request-a-quote/standards-specifications-certifications/page.tsx (new, 106 lines)
+- Quality checks: typecheck ✓ | build ✓ (16/16 static pages) | browser ✓
+- Browser verification: both logos load with correct alts; both PDF links correct href + aria-label containing "PDF download" + target/_blank + rel/noopener ✓
+- **Learnings for future iterations:**
+  - PDF download links: use target="_blank" + rel="noopener" (not download attr) so PDFs open in browser's built-in PDF viewer rather than forcing a download. Add aria-label with "PDF download" per AC. Pair with a ↓ icon (aria-hidden) and "(PDF)" text suffix so the link's purpose is clear visually AND to screen readers.
+  - Certification logo images (PNG on dark background): use explicit width/height + object-contain + centered layout. Don't use fill — these have meaningful aspect ratios.
+---
+
+## 2026-05-03 — US-024 Build /request-a-quote/terms-conditions page
+- Implemented /request-a-quote/terms-conditions at apps/pops-website/app/request-a-quote/terms-conditions/page.tsx
+- Hero: "LEGAL" eyebrow, "Terms & Conditions" H1, lede summarizing the document
+- Content: max-w-[720px] centered reading column; H2 company name + H3 subtitle; PdfDownloadLink at top; 18 numbered sections as `<p>` with `<strong>` label, line-height 1.7, space-y-6 for paragraph spacing; PdfDownloadLink again at bottom (border-t separator)
+- PdfDownloadLink extracted as a small RSC component (no "use client" needed — just an anchor) to avoid duplicating the long aria-label. Used inline in RSC page at both top and bottom positions.
+- Uppercased disclaimer paragraphs (§8 warranty exclusion, §10 liability cap) rendered with `uppercase text-sm` classes matching legal document conventions.
+- Files changed: apps/pops-website/app/request-a-quote/terms-conditions/page.tsx (new, 110 lines)
+- Quality checks: typecheck ✓ | build ✓ (17/17 static pages) | browser ✓
+- Browser verification: pdfLinkCount: 2 ✓ (top + bottom); correct href ✓; aria-labels contain "PDF download" ✓; containerMaxWidth: 720px ✓; paragraphCount: 24 ✓
+- **Learnings for future iterations:**
+  - For legal text pages, a `space-y-6` container with `text-base leading-[1.7]` gives a comfortable reading experience without needing a prose/typography plugin.
+  - Helper components that are just markup (no hooks, no event handlers) can remain plain RSCs even inside a "use client" parent page — but since page.tsx is itself an RSC, PdfDownloadLink is also an RSC. This is fine; the link is purely static.
+  - Legal disclaimer paragraphs in ALL CAPS (§8, §10) should be rendered with `uppercase text-sm` to match the source document convention but with slightly reduced size to avoid visual shouting.
+---
+
+## 2026-05-03 — US-025 Build /industrial-coatings-services index page
+- Hero: "SERVICES" eyebrow, "Industrial Coatings Services" H1, one-stop-shopping lede, slide-01.jpg background
+- 5-up ServiceTile grid reusing the same component + image paths as the home page, but with fuller lede text sourced from industrial-coatings-services.md (verbatim descriptions from the markdown)
+- "Specifications & Certifications" cross-link section below the grid (centered, secondary button → /request-a-quote/standards-specifications-certifications)
+- Files changed: apps/pops-website/app/industrial-coatings-services/page.tsx (new)
+- Import depth: 2 levels from app/ → ../../components/...
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (dev server on port 3001)
+- **Learnings for future iterations:**
+  - Services index page is intentionally lean — the ServiceTile grid plus a Specs & Certifications cross-link is sufficient; no need to repeat the home-page 3-column commitment section.
+  - Lede text for each tile uses the verbatim descriptions from the source markdown (fuller than the home-page shorthand ledes), which gives visitors better context before clicking into a detail page.
+---
+
+## 2026-05-03 — US-026 Build /industrial-coatings-services/wet-paint-coatings page
+- Hero: industrial-painting-lakeland-fl-1024x683-1.jpg background, "INDUSTRIAL" eyebrow, "Wet Paint Coatings" H1
+- 2-column layout: main body (3 paragraphs verbatim from source) + 4-photo grid + Get a Quote CTA left; services sidebar right (bold current page, links to other 4)
+- Photo gallery: industrial-painting, industrial-wet-painting-coatings.png, slide-02.jpg, teflon-coating.jpg
+- Files: apps/pops-website/app/industrial-coatings-services/wet-paint-coatings/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- **Learnings:** Service detail layout established: `grid lg:grid-cols-[1fr_280px]` with content on left, services sidebar on right. Current page shown as bold non-link; other services as yellow-hover links.
+---
+
+## 2026-05-03 — US-027 Build /industrial-coatings-services/complex-coating page
+- Hero: industrial-complex-coatings-1.jpg background, "COMPLEX INDUSTRIAL" eyebrow
+- Single featured image (wide aspect ratio) instead of photo grid — source only had one image reference
+- 4 paragraphs verbatim from source (tank lining, baked coatings, plural component coatings)
+- Files: apps/pops-website/app/industrial-coatings-services/complex-coating/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-028 Build /industrial-coatings-services/abrasive-media-blasting page
+- Hero: abrasive-media-blasting.jpg background, "SAND BLASTING" eyebrow
+- 3 paragraphs from source (SSPC/NACE standards, surface preparation, contaminant removal)
+- 6-photo grid (3-col): IMG_5019, IMG_5406, IMG_7484, IMG_7485, IMG_7486, IMG_7487
+- Files: apps/pops-website/app/industrial-coatings-services/abrasive-media-blasting/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- **Learnings:** The "Sandbalsting-2" typo file only exists in thumbnail (-300x200) and scaled forms, no plain full-res. Used the IMG_ series (full-res) for the grid instead.
+---
+
+## 2026-05-03 — US-029 Build /industrial-coatings-services/powder-coating page
+- Hero: industrial-powder-coating-lakeland-fl-IMG_3687.jpg, "POWDER" eyebrow
+- 3 paragraphs verbatim from source (electrostatic spray, corrosion/impact/chemical resistance, diverse applications)
+- 8-photo grid (4-col): IMG_3687, IMG_4029, IMG_4107, IMG_4181, IMG_4686, IMG_4980, IMG_5315, Ameron-pole-products
+- Files: apps/pops-website/app/industrial-coatings-services/powder-coating/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-030 Build /industrial-coatings-services/large-capacity-powder-coating page
+- Hero: large-capacity-powder-coating.jpg (full-res), "LARGE CAPACITY" eyebrow
+- 3 paragraphs from source (significant scale, structural members, uniform coverage)
+- 3-photo grid: large-capacity-powder-coating.jpg, large-capacity-industrial-powder-coating-scaled.jpeg, large-capacity-industrial-powder-coating2-scaled.jpeg
+- Files: apps/pops-website/app/industrial-coatings-services/large-capacity-powder-coating/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-031 Build /contact page (form + Google Maps embed)
+- Hero: "GET IN TOUCH" eyebrow, "Contact" H1, slide-01.jpg background, "Call us: 863.644.7473" CTA (tel: link)
+- lg:grid-cols-2 layout: left = contact info + map embed, right = contact form
+- Contact info sourced from content/company.ts: mainOffice, shippingReceiving, phone (tel:), fax, emails (mailto:), hours
+- MapEmbed RSC: iframe with verbatim Google Maps URL from scrape, loading="lazy", referrerPolicy="no-referrer-when-downgrade"
+- ContactForm "use client": React Hook Form + Zod, FormField + Input (name, email) + Textarea (message rows=6)
+- schema.ts separate file so server action (US-037) can import without "use client" constraint
+- reCAPTCHA placeholder <div id="recaptcha-container"> (wired in US-039)
+- Files: apps/pops-website/components/marketing/map-embed.tsx (new), apps/pops-website/app/contact/schema.ts (new), apps/pops-website/app/contact/contact-form.tsx (new), apps/pops-website/app/contact/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- **Learnings:**
+  - Google Maps embed doesn't load in Playwright sandbox (expected — security restrictions); iframe is correctly structured for production
+  - schema.ts / contact-form.tsx split: schema can be imported server-side for Server Action validation
+  - Map iframe URL verbatim: `https://www.google.com/maps/embed?origin=mfe&pb=!1m4!2m1!1s3515+Airport+Road+Lakeland,+FL+33811!5e0!6i10`
+---
+
+## 2026-05-03 — US-032 Build /check-in page (visitor check-in form)
+- Hero: "GUEST" eyebrow, "Check In" H1, slide-01.jpg background, "Guest Safety Rules" CTA
+- Form fields: First Name (required), Last Name (required), Company Name (optional), Email (required), Phone (required), Reason for Visit (textarea, optional)
+- Safety acknowledgment: Radix Checkbox via Controller + z.boolean().refine() requiring true; label links to /guest-safety-rules
+- Form centered in max-w-[640px] container on dark section
+- defaultValues: { safetyAcknowledged: false } to ensure boolean type throughout
+- Files: apps/pops-website/app/check-in/schema.ts, apps/pops-website/app/check-in/check-in-form.tsx, apps/pops-website/app/check-in/page.tsx (all new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (validation errors fire correctly; safety box blocks submission)
+- **Learnings:**
+  - Radix Checkbox (not native input) requires Controller from react-hook-form, not register
+  - z.literal(true, { errorMap: ... }) syntax not supported in this Zod version; use z.boolean().refine(val => val === true, { message: ... }) instead
+  - defaultValues: { safetyAcknowledged: false } needed so RHF treats it as boolean, not undefined
+  - Controller onChange: `(checked) => field.onChange(checked === true)` — converts Radix CheckedState to boolean
+---
+
+## 2026-05-03 — US-033 Build /check-out page (visitor check-out form)
+- Hero: "GUEST" eyebrow, "Check Out" H1, slide-01.jpg background, "Back to Home" CTA
+- Form fields: First Name (required), Last Name (required), Company Name (optional), Email (required), Phone (required) — matching check-in pattern for pairing
+- No safety checkbox (not in source)
+- Form centered in max-w-[640px] container on dark section
+- Files: apps/pops-website/app/check-out/schema.ts, apps/pops-website/app/check-out/check-out-form.tsx, apps/pops-website/app/check-out/page.tsx (all new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-034 Build /guest-safety-rules page
+- Hero: "VISITING US" eyebrow, "Guest Safety Rules" H1, slide-01.jpg, "Check In" CTA
+- Content: verbatim from .firecrawl/popsindustrial/pages/guest-safety-rules.md — all 6 rule sections + assumption of risk + authorization
+- max-w-[720px] reading column, font-text sm, nested bullet lists for each rule category
+- Section headings styled with pops-yellow-400 uppercase tracking; sub-category labels with font-semibold text-ink-100
+- "Proceed to Check In" button at bottom (inline anchor styled like primary button)
+- Files: apps/pops-website/app/guest-safety-rules/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-035 Build sendFormEmail() Resend helper
+- Created apps/pops-website/lib/email.ts with sendFormEmail({ to, subject, html, replyTo? })
+- Reads RESEND_API_KEY from process.env (throws if missing); RESEND_FROM env var with fallback to noreply@popsindustrial.com
+- Uses resend npm package (added to apps/pops-website/package.json at 6.12.2)
+- @sentry/nextjs resolves from root node_modules (pnpm workspace hoisting)
+- buildEmailHtml() helper: HTML table with Pop's yellow header, field rows, escapeHtml() for XSS safety
+- Error path: Sentry.captureException + throw new Error with message
+- Files: apps/pops-website/lib/email.ts (new)
+- Quality checks: typecheck ✓ | build ✓
+---
+
+## 2026-05-03 — US-036 Build /request-a-quote server action
+- Created apps/pops-website/app/request-a-quote/actions.ts with submitQuote() 'use server'
+- Validates with quoteSchema.safeParse; returns { ok: false, fieldErrors } on failure
+- Calls sendFormEmail({ to: company.emails.info, subject: `New quote request from ${name}`, html, replyTo: email })
+- Returns { ok: true } on success; { ok: false, serverError } if email send fails
+- Updated quote-form.tsx: onSubmit calls submitQuote(); success shows inline success card; server error shows role="alert" banner
+- Validated in browser: field errors fire (Name/Email/Project Details required); valid submit shows server error message (RESEND_API_KEY not set in dev — expected)
+- Files: apps/pops-website/app/request-a-quote/actions.ts (new), apps/pops-website/app/request-a-quote/quote-form.tsx (updated)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-037 Build /contact server action
+- Created apps/pops-website/app/contact/actions.ts with submitContact() 'use server'
+- Same pattern as US-036: safeParse → fieldErrors or sendFormEmail → { ok: true } / { ok: false, serverError }
+- Updated contact-form.tsx: onSubmit calls submitContact(), success card, server error alert
+- Files: apps/pops-website/app/contact/actions.ts (new), apps/pops-website/app/contact/contact-form.tsx (updated)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (field errors fire correctly)
+---
+
+## 2026-05-03 — US-038 Build /check-in and /check-out server actions
+- Created apps/pops-website/app/check-in/actions.ts with submitCheckIn() — validates safety acknowledgment via schema (boolean true required)
+- Created apps/pops-website/app/check-out/actions.ts with submitCheckOut()
+- Both send to company.emails.info with descriptive subjects: "Visitor check-in: {name} from {company}"
+- Updated check-in-form.tsx and check-out-form.tsx with full success/error state handling matching US-036/037 pattern
+- Verified: safety unchecked → blocked by client validation; safety checked + all fields → reaches server action (fails gracefully with no API key in dev)
+- Files: apps/pops-website/app/check-in/actions.ts (new), apps/pops-website/app/check-out/actions.ts (new), check-in-form.tsx (updated), check-out-form.tsx (updated)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-039 Wire Google reCAPTCHA v3 into all 4 form actions
+- Created apps/pops-website/lib/recaptcha.ts: verifyRecaptcha(token) calls siteverify API; dev pass-through when RECAPTCHA_SECRET_KEY not set (score: 1.0)
+- Updated all 4 server actions (submitQuote, submitContact, submitCheckIn, submitCheckOut) to accept recaptchaToken as 2nd param and call verifyRecaptcha before sendFormEmail
+- Updated all 4 form components: load next/script with NEXT_PUBLIC_RECAPTCHA_SITE_KEY; getRecaptchaToken() helper calls grecaptcha.execute before submit
+- Script conditional: only loaded when SITE_KEY is set (no-op in dev without key)
+- Created apps/pops-website/.env.example documenting RESEND_API_KEY, RESEND_FROM, NEXT_PUBLIC_RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY
+- Verified in browser: form passes reCAPTCHA (dev pass-through), reaches email step, fails with expected RESEND_API_KEY error
+- **Learnings:**
+  - In dev with no RECAPTCHA_SECRET_KEY, return { success: true, score: 1.0 } so forms work without keys
+  - (window as any).grecaptcha avoids need for global type declaration in each component file
+  - next/script is deduplicated by src — safe to include in multiple client components
+  - getRecaptchaToken returns '' if SITE_KEY not set; server verifyRecaptcha treats '' as pass-through in dev
+---
+
+## 2026-05-03 — US-040 Add per-page Metadata for SEO
+- layout.tsx: metadataBase, title template "%s | Pop's Industrial Coatings", OG image default Pops-no-border.png, twitter:summary_large_image
+- app/page.tsx: title.absolute to prevent template suffix doubling on homepage
+- 5 service pages: per-page OG image override pointing to hero backgroundImage
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (curl title verified, no suffix doubling)
+- **Learnings:**
+  - Homepage must use `title: { absolute: "..." }` or it gets `Home Title | Site Name | Site Name` doubling when nested layouts repeat the template
+  - OG image overrides at the page level merge with layout defaults — only specify what differs
+---
+
+## 2026-05-03 — US-041 Add JSON-LD structured data on home + service pages
+- components/seo/json-ld.tsx: `<JsonLd data={...} />` component using dangerouslySetInnerHTML for script tag
+- lib/jsonld.ts: `getOrgJsonLd()` (Organization + WebSite + SearchAction + logo ImageObject) and `getServiceJsonLd({ name, description })` (Service + provider @id + areaServed)
+- Homepage + 5 service pages updated with JSON-LD
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (JSON-LD visible in page source)
+- **Learnings:**
+  - `dangerouslySetInnerHTML` is correct and necessary for `<script type="application/ld+json">` — there is no XSS risk since we control the data, but it's important to use `JSON.stringify` (not template literal) so special characters are escaped
+---
+
+## 2026-05-03 — US-042 Add app/sitemap.ts and app/robots.ts
+- app/sitemap.ts: MetadataRoute.Sitemap for all 18 pages with priorities (1.0 home, 0.9 service, 0.8 quote, 0.7 contact, 0.5 visitor tools)
+- app/robots.ts: allow /, disallow /api/, sitemap pointer
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (curl /sitemap.xml and /robots.txt verified)
+---
+
+## 2026-05-03 — US-043 Alt-text audit pass
+- scripts/audit-alt.ts: walks app/ + components/ (excluding /dev/), checks every <Image>/<img> has alt= within 5-line window
+- package.json: lint script chains the audit; audit:alt script added
+- Audit ran: PASS — all images already had alt props from earlier stories
+- **Learnings:**
+  - TypeScript strict: `lines[i]` is `string | undefined` — add `if (!line) continue` guard before accessing line methods
+---
+
+## 2026-05-03 — US-044 Heading-order audit + skip-to-content verification
+- scripts/audit-headings.ts: walks all production page.tsx, counts <h1> tags, accepts Hero component as proxy for h1
+- package.json: audit:headings script added, lint chains it
+- Browser: Skip-to-content is first focusable element (sr-only, expands on focus) — confirmed via Playwright snapshot
+---
+
+## 2026-05-03 — US-045 Playwright contrast lint
+- Added @axe-core/playwright and playwright to devDependencies
+- scripts/contrast-lint.ts: visits 18 pages in Chromium at 375x844, runs axe color-contrast rule, exits 1 on any violation
+- Ran: PASS — zero violations across all 18 pages
+- package.json: contrast-lint script added
+---
+
+## 2026-05-03 — US-046 Lighthouse CI budgets
+- .lighthouserc.json: performance ≥0.95 mobile, accessibility = 1.0, best-practices ≥0.95, SEO ≥0.95
+- package.json: lighthouse script added (pnpm dlx @lhci/cli autorun)
+- Note: run `pnpm build && pnpm start` first, then `pnpm --filter pops-website lighthouse`
+---
+
+## 2026-05-03 — US-047 Mobile responsive audit + fixes
+- scripts/mobile-audit.ts: 375x844 Playwright audit — no horizontal overflow, body text ≥14px, touch targets ≥44px
+- Audit filter: skip sr-only (1px clip), hidden (visibility/display/opacity), pointer-events:none elements (e.g. Radix hidden input)
+- Ran: PASS — all 18 pages pass, no horizontal overflow, no small touch targets on visible elements
+- package.json: mobile-audit script added
+- **Learnings:**
+  - Radix UI Checkbox renders a hidden `<input>` at 13x13px. Must filter by pointer-events:none or opacity:0 to exclude from touch-target audit
+  - `sr-only` skip links are 1x1px in computed layout — exclude via `rect.width < 2 && rect.height < 2` guard
+---
+
+## 2026-05-03 — US-048 Vercel deploy config
+- vercel.json: framework: nextjs, buildCommand: pnpm build, installCommand: pnpm install --filter pops-website... --frozen-lockfile
+- Headers: /images/* and /pdfs/* Cache-Control public max-age=1 week immutable; all routes X-Content-Type-Options + Referrer-Policy
+- .env.example: added SENTRY_DSN and NEXT_PUBLIC_SENTRY_DSN
+- **Learnings:**
+  - PRD mentions `vercel.ts` via `@vercel/config` — this package does not exist. Standard `vercel.json` is the correct approach. The PRD note was incorrect.
+---
+
+## 2026-05-03 — US-049 README.md handoff documentation
+- apps/pops-website/README.md: Overview, Quickstart, Project Structure, Design System Reference, Content Sources, Forms (env vars + dev workflow), Deploy (Vercel), Audit Scripts, Troubleshooting
+---

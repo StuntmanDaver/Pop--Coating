@@ -1,13 +1,154 @@
 {
   "enabledPlugins": {
     "context7@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
+    "frontend-design@claude-plugins-official": true,
+    "impeccable@impeccable": true,
+    "brand-guidelines@awesome-claude-skills": true,
+    "competitive-ads-extractor@awesome-claude-skills": true,
+    "domain-name-brainstormer@awesome-claude-skills": true,
+    "internal-comms@awesome-claude-skills": true,
+    "lead-research-assistant@awesome-claude-skills": true,
+    "content-research-writer@awesome-claude-skills": true,
+    "meeting-insights-analyzer@awesome-claude-skills": true,
+    "twitter-algorithm-optimizer@awesome-claude-skills": true,
+    "canvas-design@awesome-claude-skills": true,
+    "image-enhancer@awesome-claude-skills": true,
+    "slack-gif-creator@awesome-claude-skills": true,
+    "theme-factory@awesome-claude-skills": true,
+    "video-downloader@awesome-claude-skills": true,
+    "algorithmic-art@awesome-claude-skills": true,
+    "artifacts-builder@awesome-claude-skills": true,
+    "changelog-generator@awesome-claude-skills": true,
+    "developer-growth-analysis@awesome-claude-skills": true,
+    "mcp-builder@awesome-claude-skills": true,
+    "skill-creator@awesome-claude-skills": true,
+    "webapp-testing@awesome-claude-skills": true,
+    "template-skill@awesome-claude-skills": true,
+    "file-organizer@awesome-claude-skills": true,
+    "invoice-organizer@awesome-claude-skills": true,
+    "raffle-winner-picker@awesome-claude-skills": true,
+    "tailored-resume-generator@awesome-claude-skills": true,
+    "document-skills-docx@awesome-claude-skills": true,
+    "document-skills-pdf@awesome-claude-skills": true,
+    "document-skills-pptx@awesome-claude-skills": true,
+    "document-skills-xlsx@awesome-claude-skills": true,
+    "activecampaign-automation@awesome-claude-skills": true,
+    "airtable-automation@awesome-claude-skills": true,
+    "amplitude-automation@awesome-claude-skills": true,
+    "asana-automation@awesome-claude-skills": true,
+    "bamboohr-automation@awesome-claude-skills": true,
+    "basecamp-automation@awesome-claude-skills": true,
+    "bitbucket-automation@awesome-claude-skills": true,
+    "box-automation@awesome-claude-skills": true,
+    "brevo-automation@awesome-claude-skills": true,
+    "cal-com-automation@awesome-claude-skills": true,
+    "calendly-automation@awesome-claude-skills": true,
+    "canva-automation@awesome-claude-skills": true,
+    "circleci-automation@awesome-claude-skills": true,
+    "clickup-automation@awesome-claude-skills": true,
+    "close-automation@awesome-claude-skills": true,
+    "coda-automation@awesome-claude-skills": true,
+    "confluence-automation@awesome-claude-skills": true,
+    "convertkit-automation@awesome-claude-skills": true,
+    "datadog-automation@awesome-claude-skills": true,
+    "discord-automation@awesome-claude-skills": true,
+    "docusign-automation@awesome-claude-skills": true,
+    "dropbox-automation@awesome-claude-skills": true,
+    "figma-automation@awesome-claude-skills": true,
+    "freshdesk-automation@awesome-claude-skills": true,
+    "freshservice-automation@awesome-claude-skills": true,
+    "github-automation@awesome-claude-skills": true,
+    "gitlab-automation@awesome-claude-skills": true,
+    "gmail-automation@awesome-claude-skills": true,
+    "google-analytics-automation@awesome-claude-skills": true,
+    "google-calendar-automation@awesome-claude-skills": true,
+    "google-drive-automation@awesome-claude-skills": true,
+    "googlesheets-automation@awesome-claude-skills": true,
+    "helpdesk-automation@awesome-claude-skills": true,
+    "hubspot-automation@awesome-claude-skills": true,
+    "instagram-automation@awesome-claude-skills": true,
+    "intercom-automation@awesome-claude-skills": true,
+    "jira-automation@awesome-claude-skills": true,
+    "klaviyo-automation@awesome-claude-skills": true,
+    "linear-automation@awesome-claude-skills": true,
+    "linkedin-automation@awesome-claude-skills": true,
+    "mailchimp-automation@awesome-claude-skills": true,
+    "make-automation@awesome-claude-skills": true,
+    "microsoft-teams-automation@awesome-claude-skills": true,
+    "miro-automation@awesome-claude-skills": true,
+    "mixpanel-automation@awesome-claude-skills": true,
+    "monday-automation@awesome-claude-skills": true,
+    "notion-automation@awesome-claude-skills": true,
+    "one-drive-automation@awesome-claude-skills": true,
+    "outlook-automation@awesome-claude-skills": true,
+    "outlook-calendar-automation@awesome-claude-skills": true,
+    "pagerduty-automation@awesome-claude-skills": true,
+    "pipedrive-automation@awesome-claude-skills": true,
+    "posthog-automation@awesome-claude-skills": true,
+    "postmark-automation@awesome-claude-skills": true,
+    "reddit-automation@awesome-claude-skills": true,
+    "render-automation@awesome-claude-skills": true,
+    "salesforce-automation@awesome-claude-skills": true,
+    "segment-automation@awesome-claude-skills": true,
+    "sendgrid-automation@awesome-claude-skills": true,
+    "sentry-automation@awesome-claude-skills": true,
+    "shopify-automation@awesome-claude-skills": true,
+    "slack-automation@awesome-claude-skills": true,
+    "square-automation@awesome-claude-skills": true,
+    "stripe-automation@awesome-claude-skills": true,
+    "supabase-automation@awesome-claude-skills": true,
+    "telegram-automation@awesome-claude-skills": true,
+    "tiktok-automation@awesome-claude-skills": true,
+    "todoist-automation@awesome-claude-skills": true,
+    "trello-automation@awesome-claude-skills": true,
+    "twitter-automation@awesome-claude-skills": true,
+    "vercel-automation@awesome-claude-skills": true,
+    "webflow-automation@awesome-claude-skills": true,
+    "whatsapp-automation@awesome-claude-skills": true,
+    "wrike-automation@awesome-claude-skills": true,
+    "youtube-automation@awesome-claude-skills": true,
+    "zendesk-automation@awesome-claude-skills": true,
+    "zoho-crm-automation@awesome-claude-skills": true,
+    "zoom-automation@awesome-claude-skills": true,
+    "connect-apps@composio-connect": true
   },
   "extraKnownMarketplaces": {
     "ruflo": {
       "source": {
         "source": "github",
         "repo": "ruvnet/ruflo"
+      }
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      }
+    },
+    "awesome-claude-skills": {
+      "source": {
+        "source": "github",
+        "repo": "ComposioHQ/awesome-claude-skills",
+        "path": "composio-skills/.claude-plugin/marketplace.json",
+        "sparsePaths": [
+          "composio-skills"
+        ]
+      }
+    },
+    "composio-connect": {
+      "source": {
+        "source": "settings",
+        "name": "composio-connect",
+        "plugins": [
+          {
+            "name": "connect-apps",
+            "source": {
+              "source": "git-subdir",
+              "url": "ComposioHQ/awesome-claude-skills",
+              "path": "connect-apps-plugin"
+            }
+          }
+        ]
       }
     }
   }
