@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -7,20 +8,53 @@ import { FormField } from "../../components/forms/form-field";
 import { Input } from "../../components/forms/input";
 import { Textarea } from "../../components/forms/textarea";
 import { Button } from "../../components/ui/button";
+import { submitQuote } from "./actions";
 import { quoteSchema, type QuoteFormValues } from "./schema";
 
 export function QuoteForm() {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteSchema),
   });
 
-  function onSubmit(data: QuoteFormValues) {
-    // Server action wires up in US-036
-    console.log("Quote form submitted:", data);
+  const onSubmit = async (data: QuoteFormValues) => {
+    setServerError(null);
+    const result = await submitQuote(data);
+    if (result.ok) {
+      setSubmitted(true);
+      reset();
+    } else if ("serverError" in result) {
+      setServerError(result.serverError);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-sm border border-pops-yellow-500 bg-pops-yellow-500/10 p-6 text-center"
+      >
+        <p className="mb-2 font-display text-xl text-ink-100">Request received!</p>
+        <p className="font-text text-sm text-ink-300">
+          Thank you for reaching out. We&apos;ll get back to you within one business day.
+        </p>
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="mt-4 font-text text-sm text-pops-yellow-500 underline hover:text-pops-yellow-300 transition-colors"
+        >
+          Submit another request
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -29,6 +63,15 @@ export function QuoteForm() {
       noValidate
       className="space-y-6"
     >
+      {serverError && (
+        <div
+          role="alert"
+          className="rounded-sm border border-danger-500 bg-danger-500/10 p-4 font-text text-sm text-danger-400"
+        >
+          {serverError}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <FormField label="Full Name" name="name" required error={errors.name?.message}>
           <Input
