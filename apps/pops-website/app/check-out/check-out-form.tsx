@@ -1,29 +1,72 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { FormField } from "../../components/forms/form-field";
 import { Input } from "../../components/forms/input";
 import { Button } from "../../components/ui/button";
+import { submitCheckOut } from "./actions";
 import { checkOutSchema, type CheckOutFormValues } from "./schema";
 
 export function CheckOutForm() {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<CheckOutFormValues>({
     resolver: zodResolver(checkOutSchema),
   });
 
   const onSubmit = async (data: CheckOutFormValues) => {
-    // Server action wired in US-038
-    console.log("Check-out form submitted:", data);
+    setServerError(null);
+    const result = await submitCheckOut(data);
+    if (result.ok) {
+      setSubmitted(true);
+      reset();
+    } else if ("serverError" in result) {
+      setServerError(result.serverError);
+    }
   };
+
+  if (submitted) {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-sm border border-pops-yellow-500 bg-pops-yellow-500/10 p-6 text-center"
+      >
+        <p className="mb-2 font-display text-xl text-ink-100">You&apos;re checked out!</p>
+        <p className="font-text text-sm text-ink-300">
+          Thank you for visiting Pop&apos;s Industrial Coatings. Drive safe!
+        </p>
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="mt-4 font-text text-sm text-pops-yellow-500 underline hover:text-pops-yellow-300 transition-colors"
+        >
+          Submit another check-out
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+      {serverError && (
+        <div
+          role="alert"
+          className="rounded-sm border border-danger-500 bg-danger-500/10 p-4 font-text text-sm text-danger-400"
+        >
+          {serverError}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <FormField label="First Name" name="firstName" required error={errors.firstName?.message}>
           <Input
