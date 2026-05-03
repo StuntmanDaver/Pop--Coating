@@ -509,3 +509,24 @@ OVERALL: 16/49 stories passing
   - For portrait images with known aspect ratios, use explicit width/height props on next/image (not fill) so the browser knows dimensions without layout shift. Use `sizes="320px"` to prevent fetching oversized variants.
   - The pops-4-generations.jpg works well as a hero background for the history page since it's the most thematically resonant image for "four generations."
 ---
+
+## 2026-05-03 — US-020 Build /about-us/leadership page with 4 leadership cards
+- Implemented /about-us/leadership page at apps/pops-website/app/about-us/leadership/page.tsx
+- Hero: pops-4-generations.jpg background, eyebrow "MEET THE FAMILY", H1 "Leadership", lede from source description
+- LEADERS constant: typed array of 4 objects (slug, name, title, bio, optional linkedIn, photoAlt) — data-driven, no duplication
+- 2x2 card grid (sm:grid-cols-2): each Card uses overflow-hidden p-0, aspect-[4/3] fill image (object-top to show faces), then p-6 content block
+- Photo: full-res -320x480-1.jpg variants (NOT -200x300 thumbnails) for all 4 leaders; object-top ensures faces show in aspect-cropped view
+- Title rendered in pops-yellow-500 font-semibold to distinguish from name
+- LinkedIn links: Jamie and Kaitlyn only (Mark and Chris have none in source — not fabricated); target="_blank" rel="noopener" with → arrow icon
+- Files changed: apps/pops-website/app/about-us/leadership/page.tsx (new, 125 lines)
+- Quality checks: typecheck ✓ | build ✓ (13/13 static pages) | browser ✓
+- Browser verification:
+  - cardCount: 4 ✓
+  - linkedInCount: 2 (Jamie + Kaitlyn) ✓, both target="_blank" rel="noopener" ✓
+  - photoCount: 4 (all -320x480-1.jpg) ✓
+  - All 4 photoAlts descriptive and unique ✓
+- **Learnings for future iterations:**
+  - For portrait photos in cards where faces should be visible, use `object-top` instead of `object-cover` alone — the default `object-center` crops the face out when the image aspect ratio differs significantly from the card's aspect ratio.
+  - Leadership pages work best with a data-driven LEADERS array (typed constant) rather than repeated JSX blocks — easier to add/remove members, consistent structure, easy to see at a glance if a field is missing.
+  - Per AC notes: Mark Woods and Chris Woods Jr have no LinkedIn in source — do NOT fabricate URLs. The optional `linkedIn?: string` type makes this self-documenting.
+---

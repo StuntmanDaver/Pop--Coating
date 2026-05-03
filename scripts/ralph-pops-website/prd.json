@@ -370,7 +370,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "notes": "Bios from .firecrawl/popsindustrial/pages/about-us-leadership.md. Note Mark Woods has no LinkedIn link in source; the other 3 do (Jamie, Kaitlyn, Chris). Don't fabricate LinkedIn URLs."
     },
     {
