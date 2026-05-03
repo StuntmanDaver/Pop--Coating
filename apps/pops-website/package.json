@@ -10,7 +10,8 @@
     "lint": "next lint && npx tsx scripts/audit-alt.ts && npx tsx scripts/audit-headings.ts",
     "audit:alt": "npx tsx scripts/audit-alt.ts",
     "audit:headings": "npx tsx scripts/audit-headings.ts",
-    "contrast-lint": "npx tsx scripts/contrast-lint.ts"
+    "contrast-lint": "npx tsx scripts/contrast-lint.ts",
+    "lighthouse": "pnpm dlx @lhci/cli autorun"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
