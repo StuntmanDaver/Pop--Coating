@@ -12,21 +12,6 @@ const CreateWorkstationSchema = z.object({
   location: z.string().optional(),
 })
 
-// Typed shape of a workstations row (mirrors supabase/migrations/0003_auth_tables.sql).
-// Replaced by generated types from `supabase gen types typescript --local` in Plan 06.
-type WorkstationRow = {
-  id: string
-  tenant_id: string
-  name: string
-  default_stage: string | null
-  physical_location: string | null
-  device_token: string
-  auth_user_id: string | null
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
 function generateDeviceToken(): string {
   // 48-char URL-safe random per DESIGN.md §3.3 workstations.device_token
   return crypto.randomBytes(48).toString('base64url').slice(0, 48)
@@ -38,14 +23,13 @@ export async function createWorkstation(input: unknown) {
 
   await requireOfficeStaff()
   const claims = await getCurrentClaims()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- placeholder DB types (Plan 06 generates real types); any required until `supabase gen types` runs
-  const supabase = (await createClient()) as any
+  const supabase = await createClient()
   const supabaseAdmin = createServiceClient()
 
   const device_token = generateDeviceToken()
 
   // Step 1: Insert workstations row FIRST (to get UUID for app_metadata)
-  const { data: ws, error: wsError } = await (supabase
+  const { data: ws, error: wsError } = await supabase
     .from('workstations')
     .insert({
       tenant_id: claims.tenant_id,
@@ -55,7 +39,7 @@ export async function createWorkstation(input: unknown) {
       device_token,
     })
     .select()
-    .single() as Promise<{ data: WorkstationRow | null; error: { message: string } | null }>)
+    .single()
 
   if (wsError || !ws) throw new Error(`Workstation insert failed: ${wsError?.message ?? 'unknown'}`)
 
@@ -77,10 +61,10 @@ export async function createWorkstation(input: unknown) {
   if (authError || !authData?.user) throw new Error(`Auth user creation failed: ${authError?.message ?? 'unknown'}`)
 
   // Step 3: Link auth_user_id back to workstations row
-  const { error: linkError } = await (supabase
+  const { error: linkError } = await supabase
     .from('workstations')
     .update({ auth_user_id: authData.user.id })
-    .eq('id', ws.id) as Promise<{ error: { message: string } | null }>)
+    .eq('id', ws.id)
 
   if (linkError) throw new Error(`Workstation link failed: ${linkError.message}`)
 

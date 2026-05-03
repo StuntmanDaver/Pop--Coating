@@ -1,7 +1,15 @@
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/shared/db/server'
 
-// Root page — redirects to sign-in.
-// The (office) and (portal) route groups handle domain-specific routing.
-export default function RootPage() {
-  redirect('/sign-in')
+export default async function RootPage() {
+  const headersList = await headers()
+  const host = headersList.get('host') ?? ''
+  const isPortal = host.startsWith('track.')
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) redirect('/sign-in')
+  redirect(isPortal ? '/jobs' : '/dashboard')
 }
