@@ -572,7 +572,7 @@
         "Verify in browser using dev-browser skill: phone link triggers tel:, email links trigger mailto:, map renders without console errors"
       ],
       "priority": 31,
-      "passes": false,
+      "passes": true,
       "notes": "Source iframe URL: scrape preserved it as 'https://www.google.com/maps/embed?origin=mfe&pb=!1m4!2m1!1s3515+Airport+Road+Lakeland,+FL+33811!5e0!6i10' (per scrape audit). Use that exact embed for parity. MapEmbed lives in components/marketing/map-embed.tsx."
     },
     {

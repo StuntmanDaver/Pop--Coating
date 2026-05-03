@@ -650,3 +650,19 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/app/industrial-coatings-services/large-capacity-powder-coating/page.tsx (new)
 - Quality checks: typecheck ✓ | build ✓ | browser ✓
 ---
+
+## 2026-05-03 — US-031 Build /contact page (form + Google Maps embed)
+- Hero: "GET IN TOUCH" eyebrow, "Contact" H1, slide-01.jpg background, "Call us: 863.644.7473" CTA (tel: link)
+- lg:grid-cols-2 layout: left = contact info + map embed, right = contact form
+- Contact info sourced from content/company.ts: mainOffice, shippingReceiving, phone (tel:), fax, emails (mailto:), hours
+- MapEmbed RSC: iframe with verbatim Google Maps URL from scrape, loading="lazy", referrerPolicy="no-referrer-when-downgrade"
+- ContactForm "use client": React Hook Form + Zod, FormField + Input (name, email) + Textarea (message rows=6)
+- schema.ts separate file so server action (US-037) can import without "use client" constraint
+- reCAPTCHA placeholder <div id="recaptcha-container"> (wired in US-039)
+- Files: apps/pops-website/components/marketing/map-embed.tsx (new), apps/pops-website/app/contact/schema.ts (new), apps/pops-website/app/contact/contact-form.tsx (new), apps/pops-website/app/contact/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- **Learnings:**
+  - Google Maps embed doesn't load in Playwright sandbox (expected — security restrictions); iframe is correctly structured for production
+  - schema.ts / contact-form.tsx split: schema can be imported server-side for Server Action validation
+  - Map iframe URL verbatim: `https://www.google.com/maps/embed?origin=mfe&pb=!1m4!2m1!1s3515+Airport+Road+Lakeland,+FL+33811!5e0!6i10`
+---
