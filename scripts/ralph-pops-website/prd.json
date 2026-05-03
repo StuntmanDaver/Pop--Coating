@@ -735,7 +735,7 @@
         "Verify in browser using dev-browser skill: View Source on / shows correct <title> and <meta>"
       ],
       "priority": 40,
-      "passes": false,
+      "passes": true,
       "notes": "Use the pages array from .firecrawl/popsindustrial/manifest.json \u2014 title and description are already extracted per page. Don't invent new ones unless improving."
     },
     {
@@ -751,7 +751,7 @@
         "Verify in browser using dev-browser skill: View Source on / shows JSON-LD; paste into Google Rich Results Test (manually) returns no errors \u2014 note in progress.txt"
       ],
       "priority": 41,
-      "passes": false,
+      "passes": true,
       "notes": "Source structured data from .firecrawl/popsindustrial/_raw/site-globals.json#json_ld \u2014 preserve the SearchAction and Article schema patterns the live site uses."
     },
     {
@@ -770,7 +770,7 @@
         "Verify in browser using dev-browser skill: GET /sitemap.xml returns valid XML; GET /robots.txt returns valid robots.txt"
       ],
       "priority": 42,
-      "passes": false,
+      "passes": true,
       "notes": "Next.js 16 generates these from the TypeScript source \u2014 no need to write XML by hand."
     },
     {
@@ -789,7 +789,7 @@
         "Verify in browser using dev-browser skill: open all 18 pages, hover/inspect each <img> to confirm alt is set"
       ],
       "priority": 43,
-      "passes": false,
+      "passes": true,
       "notes": "This fixes a real live-site accessibility gap (17/18 pages have zero alt) per .firecrawl/popsindustrial/_raw/site-globals.json#alt_text_audit. The rebuild is the chance to do this right."
     },
     {
@@ -805,7 +805,7 @@
         "Verify in browser using dev-browser skill: tab through / and confirm first focusable element is skip-to-content"
       ],
       "priority": 44,
-      "passes": false,
+      "passes": true,
       "notes": "If parsing JSX is too involved for one Ralph iteration, write a simpler grep-based audit that counts <h1> occurrences per page.tsx \u2014 single-file pages should have at most one h1 reference."
     },
     {
@@ -823,7 +823,7 @@
         "Typecheck passes"
       ],
       "priority": 45,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles \u00a73.5, every token pair in the system passes AA. If this lint surfaces a violation, it's a regression in implementation, not the tokens. Run as part of CI."
     },
     {
@@ -843,7 +843,7 @@
         "Typecheck passes"
       ],
       "priority": 46,
-      "passes": false,
+      "passes": true,
       "notes": "Static marketing site \u2192 these budgets are achievable. If Lighthouse fails, identify which budget is breached and address (e.g., image preload, font preconnect, smaller hero image) \u2014 but in this story just SET the budgets, don't over-tune."
     },
     {
@@ -861,7 +861,7 @@
         "Verify in browser using dev-browser skill: at 375w, no horizontal scroll on any page"
       ],
       "priority": 47,
-      "passes": false,
+      "passes": true,
       "notes": "Reference screenshots: .firecrawl/popsindustrial/screenshots/mobile/. The new site doesn't need to look identical \u2014 the new design is a deliberate improvement \u2014 but content parity (every section that existed before still exists somewhere) must hold."
     },
     {
@@ -879,7 +879,7 @@
         "Typecheck passes"
       ],
       "priority": 48,
-      "passes": false,
+      "passes": true,
       "notes": "Per Vercel knowledge update: vercel.ts (typed config via @vercel/config) is the modern way. Install @vercel/config in apps/pops-website. The actual Vercel project linking is a manual operator step \u2014 document it, don't try to do it from Ralph."
     },
     {
@@ -897,7 +897,7 @@
         "Typecheck passes"
       ],
       "priority": 49,
-      "passes": false,
+      "passes": true,
       "notes": "This is the LAST story. By the time Ralph reaches it, every other piece exists. The README is documentation only \u2014 make it accurate, not aspirational."
     }
   ]

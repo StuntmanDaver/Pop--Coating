@@ -754,3 +754,77 @@ OVERALL: 16/49 stories passing
   - next/script is deduplicated by src — safe to include in multiple client components
   - getRecaptchaToken returns '' if SITE_KEY not set; server verifyRecaptcha treats '' as pass-through in dev
 ---
+
+## 2026-05-03 — US-040 Add per-page Metadata for SEO
+- layout.tsx: metadataBase, title template "%s | Pop's Industrial Coatings", OG image default Pops-no-border.png, twitter:summary_large_image
+- app/page.tsx: title.absolute to prevent template suffix doubling on homepage
+- 5 service pages: per-page OG image override pointing to hero backgroundImage
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (curl title verified, no suffix doubling)
+- **Learnings:**
+  - Homepage must use `title: { absolute: "..." }` or it gets `Home Title | Site Name | Site Name` doubling when nested layouts repeat the template
+  - OG image overrides at the page level merge with layout defaults — only specify what differs
+---
+
+## 2026-05-03 — US-041 Add JSON-LD structured data on home + service pages
+- components/seo/json-ld.tsx: `<JsonLd data={...} />` component using dangerouslySetInnerHTML for script tag
+- lib/jsonld.ts: `getOrgJsonLd()` (Organization + WebSite + SearchAction + logo ImageObject) and `getServiceJsonLd({ name, description })` (Service + provider @id + areaServed)
+- Homepage + 5 service pages updated with JSON-LD
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (JSON-LD visible in page source)
+- **Learnings:**
+  - `dangerouslySetInnerHTML` is correct and necessary for `<script type="application/ld+json">` — there is no XSS risk since we control the data, but it's important to use `JSON.stringify` (not template literal) so special characters are escaped
+---
+
+## 2026-05-03 — US-042 Add app/sitemap.ts and app/robots.ts
+- app/sitemap.ts: MetadataRoute.Sitemap for all 18 pages with priorities (1.0 home, 0.9 service, 0.8 quote, 0.7 contact, 0.5 visitor tools)
+- app/robots.ts: allow /, disallow /api/, sitemap pointer
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (curl /sitemap.xml and /robots.txt verified)
+---
+
+## 2026-05-03 — US-043 Alt-text audit pass
+- scripts/audit-alt.ts: walks app/ + components/ (excluding /dev/), checks every <Image>/<img> has alt= within 5-line window
+- package.json: lint script chains the audit; audit:alt script added
+- Audit ran: PASS — all images already had alt props from earlier stories
+- **Learnings:**
+  - TypeScript strict: `lines[i]` is `string | undefined` — add `if (!line) continue` guard before accessing line methods
+---
+
+## 2026-05-03 — US-044 Heading-order audit + skip-to-content verification
+- scripts/audit-headings.ts: walks all production page.tsx, counts <h1> tags, accepts Hero component as proxy for h1
+- package.json: audit:headings script added, lint chains it
+- Browser: Skip-to-content is first focusable element (sr-only, expands on focus) — confirmed via Playwright snapshot
+---
+
+## 2026-05-03 — US-045 Playwright contrast lint
+- Added @axe-core/playwright and playwright to devDependencies
+- scripts/contrast-lint.ts: visits 18 pages in Chromium at 375x844, runs axe color-contrast rule, exits 1 on any violation
+- Ran: PASS — zero violations across all 18 pages
+- package.json: contrast-lint script added
+---
+
+## 2026-05-03 — US-046 Lighthouse CI budgets
+- .lighthouserc.json: performance ≥0.95 mobile, accessibility = 1.0, best-practices ≥0.95, SEO ≥0.95
+- package.json: lighthouse script added (pnpm dlx @lhci/cli autorun)
+- Note: run `pnpm build && pnpm start` first, then `pnpm --filter pops-website lighthouse`
+---
+
+## 2026-05-03 — US-047 Mobile responsive audit + fixes
+- scripts/mobile-audit.ts: 375x844 Playwright audit — no horizontal overflow, body text ≥14px, touch targets ≥44px
+- Audit filter: skip sr-only (1px clip), hidden (visibility/display/opacity), pointer-events:none elements (e.g. Radix hidden input)
+- Ran: PASS — all 18 pages pass, no horizontal overflow, no small touch targets on visible elements
+- package.json: mobile-audit script added
+- **Learnings:**
+  - Radix UI Checkbox renders a hidden `<input>` at 13x13px. Must filter by pointer-events:none or opacity:0 to exclude from touch-target audit
+  - `sr-only` skip links are 1x1px in computed layout — exclude via `rect.width < 2 && rect.height < 2` guard
+---
+
+## 2026-05-03 — US-048 Vercel deploy config
+- vercel.json: framework: nextjs, buildCommand: pnpm build, installCommand: pnpm install --filter pops-website... --frozen-lockfile
+- Headers: /images/* and /pdfs/* Cache-Control public max-age=1 week immutable; all routes X-Content-Type-Options + Referrer-Policy
+- .env.example: added SENTRY_DSN and NEXT_PUBLIC_SENTRY_DSN
+- **Learnings:**
+  - PRD mentions `vercel.ts` via `@vercel/config` — this package does not exist. Standard `vercel.json` is the correct approach. The PRD note was incorrect.
+---
+
+## 2026-05-03 — US-049 README.md handoff documentation
+- apps/pops-website/README.md: Overview, Quickstart, Project Structure, Design System Reference, Content Sources, Forms (env vars + dev workflow), Deploy (Vercel), Audit Scripts, Troubleshooting
+---
