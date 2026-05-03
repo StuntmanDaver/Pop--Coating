@@ -596,3 +596,15 @@ OVERALL: 16/49 stories passing
   - Helper components that are just markup (no hooks, no event handlers) can remain plain RSCs even inside a "use client" parent page — but since page.tsx is itself an RSC, PdfDownloadLink is also an RSC. This is fine; the link is purely static.
   - Legal disclaimer paragraphs in ALL CAPS (§8, §10) should be rendered with `uppercase text-sm` to match the source document convention but with slightly reduced size to avoid visual shouting.
 ---
+
+## 2026-05-03 — US-025 Build /industrial-coatings-services index page
+- Hero: "SERVICES" eyebrow, "Industrial Coatings Services" H1, one-stop-shopping lede, slide-01.jpg background
+- 5-up ServiceTile grid reusing the same component + image paths as the home page, but with fuller lede text sourced from industrial-coatings-services.md (verbatim descriptions from the markdown)
+- "Specifications & Certifications" cross-link section below the grid (centered, secondary button → /request-a-quote/standards-specifications-certifications)
+- Files changed: apps/pops-website/app/industrial-coatings-services/page.tsx (new)
+- Import depth: 2 levels from app/ → ../../components/...
+- Quality checks: typecheck ✓ | build ✓ | browser ✓ (dev server on port 3001)
+- **Learnings for future iterations:**
+  - Services index page is intentionally lean — the ServiceTile grid plus a Specs & Certifications cross-link is sufficient; no need to repeat the home-page 3-column commitment section.
+  - Lede text for each tile uses the verbatim descriptions from the source markdown (fuller than the home-page shorthand ledes), which gives visitors better context before clicking into a detail page.
+---

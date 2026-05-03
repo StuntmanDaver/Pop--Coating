@@ -462,7 +462,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 25,
-      "passes": false,
+      "passes": true,
       "notes": "This is the services index \u2014 keep it lean. The detail pages (US-026 through US-030) carry the deep content."
     },
     {
