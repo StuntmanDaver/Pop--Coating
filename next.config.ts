@@ -3,9 +3,10 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  experimental: {
-    typedRoutes: true,
-  },
+  // typedRoutes is incompatible with our proxy-rewrite pattern:
+  // user-facing URLs like /sign-in are virtual (proxy rewrites them to
+  // /office/sign-in or /portal/sign-in based on host), so the Route type
+  // cannot enumerate them.
 }
 
 export default withSentryConfig(nextConfig, {

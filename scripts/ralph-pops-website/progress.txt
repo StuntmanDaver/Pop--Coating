@@ -828,3 +828,14 @@ OVERALL: 16/49 stories passing
 ## 2026-05-03 — US-049 README.md handoff documentation
 - apps/pops-website/README.md: Overview, Quickstart, Project Structure, Design System Reference, Content Sources, Forms (env vars + dev workflow), Deploy (Vercel), Audit Scripts, Troubleshooting
 ---
+
+## 2026-05-03 — Loop complete (post-loop deployment fixes)
+All 49 user stories pass. Three post-loop deployment blockers were found when Vercel tried to build the merged branch and were fixed in commits on `ralph/pops-website`:
+1. **Route group collision in the main app** (Pops--Coating root, NOT the website): `src/app/(office)/` and `src/app/(portal)/` both resolved to URL `/`. Renamed to literal segments `office/` and `portal/` and added `NextResponse.rewrite()` in `src/proxy.ts` so user-facing URLs stay clean (`/sign-in` → `/office/sign-in` on `app.*`, → `/portal/sign-in` on `track.*`).
+2. **Root tsconfig was including `apps/**`** in its tsc pass, causing the root build to type-check the website. Excluded `apps` and `supabase/functions` so each Next.js app type-checks independently.
+3. **Disabled `experimental.typedRoutes`** in the main app (`next.config.ts`) — the proxy-rewrite pattern produces virtual URLs that typedRoutes cannot enumerate.
+
+Final state: `pnpm build` at the repo root passes — Turbopack compiles, type-check clean, 13 routes generated (5 static + 8 dynamic + 1 middleware). The website itself was untouched.
+
+<promise>COMPLETE</promise>
+---
