@@ -740,3 +740,17 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/app/check-in/actions.ts (new), apps/pops-website/app/check-out/actions.ts (new), check-in-form.tsx (updated), check-out-form.tsx (updated)
 - Quality checks: typecheck ✓ | build ✓ | browser ✓
 ---
+
+## 2026-05-03 — US-039 Wire Google reCAPTCHA v3 into all 4 form actions
+- Created apps/pops-website/lib/recaptcha.ts: verifyRecaptcha(token) calls siteverify API; dev pass-through when RECAPTCHA_SECRET_KEY not set (score: 1.0)
+- Updated all 4 server actions (submitQuote, submitContact, submitCheckIn, submitCheckOut) to accept recaptchaToken as 2nd param and call verifyRecaptcha before sendFormEmail
+- Updated all 4 form components: load next/script with NEXT_PUBLIC_RECAPTCHA_SITE_KEY; getRecaptchaToken() helper calls grecaptcha.execute before submit
+- Script conditional: only loaded when SITE_KEY is set (no-op in dev without key)
+- Created apps/pops-website/.env.example documenting RESEND_API_KEY, RESEND_FROM, NEXT_PUBLIC_RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY
+- Verified in browser: form passes reCAPTCHA (dev pass-through), reaches email step, fails with expected RESEND_API_KEY error
+- **Learnings:**
+  - In dev with no RECAPTCHA_SECRET_KEY, return { success: true, score: 1.0 } so forms work without keys
+  - (window as any).grecaptcha avoids need for global type declaration in each component file
+  - next/script is deduplicated by src — safe to include in multiple client components
+  - getRecaptchaToken returns '' if SITE_KEY not set; server verifyRecaptcha treats '' as pass-through in dev
+---

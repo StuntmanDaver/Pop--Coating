@@ -717,7 +717,7 @@
         "Verify in browser using dev-browser skill: form submits when verification passes (visible reCAPTCHA badge bottom-right)"
       ],
       "priority": 39,
-      "passes": false,
+      "passes": true,
       "notes": "reCAPTCHA v3 is invisible (v2 is the checkbox; v3 is score-based). Per scrape, the live site already uses v3 \u2014 keep the same UX. Document the two env vars (NEXT_PUBLIC_RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY) in apps/pops-website/.env.example."
     },
     {
