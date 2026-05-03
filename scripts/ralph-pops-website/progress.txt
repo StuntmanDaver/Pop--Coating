@@ -564,3 +564,20 @@ OVERALL: 16/49 stories passing
   - Depth pattern for nested routes: count the directory segments from `app/` to the file. `app/request-a-quote/facilities-equipment/page.tsx` is 3 levels → import path starts with `../../../`. `app/about-us/history/page.tsx` is also 3 levels → same. `app/about-us/page.tsx` is 2 levels → `../../`.
   - For PNG images with wide/short aspect ratio (e.g. 270x138), use `object-contain` + padding on a colored background (`bg-ink-800`) rather than `object-cover` — cover would crop out the image entirely at a tall aspect ratio card.
 ---
+
+## 2026-05-03 — US-023 Build /request-a-quote/standards-specifications-certifications page
+- Implemented standards/specs/certs page at apps/pops-website/app/request-a-quote/standards-specifications-certifications/page.tsx
+- Hero: slide-01.jpg background, eyebrow "QUALITY ASSURANCE", H1 "Standards, Specifications & Certifications"
+- Content: max-w-[720px] centered column; two sections (SSPC + FDOT) each with: centered logo image, EyebrowLabel, H2, body copy, PDF download link
+- SSPC logo: /images/sspc-accredited-contractor.png, alt "SSPC Accredited Contractor logo", 200x200
+- FDOT logo: /images/fdot-logo-color-768x339-1.png, alt "Florida Department of Transportation logo", 320x141
+- PDF links: ↓ icon + link text + "(PDF)" suffix; aria-label includes "PDF download"; target="_blank" rel="noopener"
+  - SSPC: /pdfs/SSPC-QP3-Pops-Coatings-Certificate-expires-3-31-27.pdf (newer 2026-04 version, not the archived 2025-03-31)
+  - FDOT: /pdfs/2025-03-06-Pops-Industrial-Coatings-FDOT-Audit-QCPIR.pdf
+- Files changed: apps/pops-website/app/request-a-quote/standards-specifications-certifications/page.tsx (new, 106 lines)
+- Quality checks: typecheck ✓ | build ✓ (16/16 static pages) | browser ✓
+- Browser verification: both logos load with correct alts; both PDF links correct href + aria-label containing "PDF download" + target/_blank + rel/noopener ✓
+- **Learnings for future iterations:**
+  - PDF download links: use target="_blank" + rel="noopener" (not download attr) so PDFs open in browser's built-in PDF viewer rather than forcing a download. Add aria-label with "PDF download" per AC. Pair with a ↓ icon (aria-hidden) and "(PDF)" text suffix so the link's purpose is clear visually AND to screen readers.
+  - Certification logo images (PNG on dark background): use explicit width/height + object-contain + centered layout. Don't use fill — these have meaningful aspect ratios.
+---

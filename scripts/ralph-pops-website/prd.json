@@ -427,7 +427,7 @@
         "Verify in browser using dev-browser skill: PDFs download (or open in new tab) when clicked"
       ],
       "priority": 23,
-      "passes": false,
+      "passes": true,
       "notes": "Per the scrape audit, the newer SSPC certificate (expires-3-31-27) is the canonical one. The older 2025-03-31 file is archived but not linked from any page."
     },
     {
