@@ -68,7 +68,7 @@ These are not coding tasks, but they will block the launch if missed. Treat them
 Pops likely has no dedicated IT staff. The owner is probably the de facto IT contact, possibly with an external consultant on retainer. Identify this person in **Week 0**, get them in writing as the point of contact for:
 
 - WiFi credentials and router admin access
-- DNS records (for `popscoating.com`)
+- DNS records (for `popsindustrial.com`)
 - Apple ID / Apple Business Manager organizational account
 - Email infrastructure decisions
 - Future MDM enrollment
@@ -95,7 +95,7 @@ Production tablets must be locked down to a single PWA — they cannot be allowe
   - **Jamf School** (free for under 100 devices) — overkill for a powder shop but offers proper Single App Mode (kiosk mode), guided access, restricted Safari
   - **Mosyle Manager** — free tier available, well-suited for small deployments
 - Configure each iPad:
-  - Single App Mode pinned to Safari with an allow-list for `app.popscoating.com` and `track.popscoating.com`
+  - Single App Mode pinned to Safari with an allow-list for `app.popsindustrial.com` and `track.popsindustrial.com`
   - Auto-rejoin on WiFi disconnect
   - Disable AirDrop, AirPlay, screenshot sharing
   - Disable App Store, Settings access, Control Center
@@ -104,9 +104,9 @@ Production tablets must be locked down to a single PWA — they cannot be allowe
 
 **Email infrastructure**
 
-Pops's owner likely uses a personal email (Comcast, Yahoo, Gmail). A `noreply@popscoating.com` sender will be flagged as phishing if the domain has no SPF/DKIM/DMARC records.
+Pops's owner likely uses a personal email (Comcast, Yahoo, Gmail). A `noreply@popsindustrial.com` sender will be flagged as phishing if the domain has no SPF/DKIM/DMARC records.
 
-- Recommend **Google Workspace** ($6/user/mo, Business Starter) for Pops's owner and any office staff who need authoritative `@popscoating.com` addresses
+- Recommend **Google Workspace** ($6/user/mo, Business Starter) for Pops's owner and any office staff who need authoritative `@popsindustrial.com` addresses
 - Configure SPF, DKIM, DMARC records when DNS is set up
 - Resend will use the same domain for transactional sends (see 9.1 for cost)
 
@@ -122,12 +122,12 @@ Charging: leaving an iPad plugged in 24/7 is fine; iOS manages charge cycles int
 
 **Domain ownership**
 
-In **Week 0**, verify `popscoating.com` is available or already owned by Pops. If owned by a third party (parked, cybersquatter), negotiate or pivot to an alternative (`popscoatings.com`, `popsindustrialcoatings.com`).
+In **Week 0**, verify `popsindustrial.com` is available or already owned by Pops. If owned by a third party (parked, cybersquatter), negotiate or pivot to an alternative (`popscoatings.com`, `popsindustrialcoatings.com`).
 
 Subdomains:
-- `app.popscoating.com` — internal staff
-- `track.popscoating.com` — customer portal
-- `www.popscoating.com` — marketing (out of scope)
+- `app.popsindustrial.com` — internal staff
+- `track.popsindustrial.com` — customer portal
+- `www.popsindustrial.com` — marketing (out of scope)
 
 Registrar recommendation: **Cloudflare Registrar** (at-cost pricing, ~$10/yr for `.com`, free WHOIS privacy, integrated DNS). Avoid GoDaddy.
 
@@ -237,7 +237,7 @@ Document this in the MSA. Reset expectations: "I am one person. If you need 24/7
 
 **Status page**
 
-Not needed for Wave 1 (one shop). For Wave 2+, set up `status.popscoating.com` via a free service (BetterStack, Uptime Robot's status page). Display Supabase, Vercel, and Resend status alongside the app's own uptime.
+Not needed for Wave 1 (one shop). For Wave 2+, set up `status.popsindustrial.com` via a free service (BetterStack, Uptime Robot's status page). Display Supabase, Vercel, and Resend status alongside the app's own uptime.
 
 ### 6.6 Backup Strategy (Operational)
 
@@ -738,7 +738,7 @@ These are the irreducible infrastructure costs to run the production system for 
 | Resend | Pro | $20/mo for 50,000 emails | Wave 1 | Free tier (3k emails/mo) likely sufficient initially; upgrade when transactional volume grows |
 | Vercel KV / Upstash Redis | Pay-as-you-go | $10–15/mo | Wave 1 | Used for rate limiting magic links, scan throttling. Free tier may suffice for a single shop |
 | Sentry | Free → Team | $0 → $26/mo | Wave 1 → Wave 2 | Free tier covers 5k events/mo. Upgrade when error volume grows or team grows |
-| Domain (`popscoating.com`) | Cloudflare Registrar | $10/yr ≈ $0.85/mo | Week 0 | At-cost pricing |
+| Domain (`popsindustrial.com`) | Cloudflare Registrar | $10/yr ≈ $0.85/mo | Week 0 | At-cost pricing |
 | Google Workspace | Business Starter | $6/user/mo × 2 = $12/mo | Week 1 | For Pops's owner + bookkeeper email infrastructure |
 | Backup storage (B2) | Pay-as-you-go | $2–5/mo | Week 8 | Offsite backup retention; cheaper than S3 |
 | 1Password Business | Business plan | $8/mo | Week 0 | Shared credential vault between dev and Pops |

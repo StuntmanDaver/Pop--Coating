@@ -51,7 +51,7 @@ What must already be done before this wave starts.
 - [ ] Prior wave shipped (if N > 1)
 - [ ] <e.g., Pops on-site WiFi survey complete>
 - [ ] <e.g., Hardware ordered + arrived>
-- [ ] <e.g., DNS for `app.popscoating.com` and `track.popscoating.com` configured>
+- [ ] <e.g., DNS for `app.popsindustrial.com` and `track.popsindustrial.com` configured>
 
 ## Active risks for this wave
 

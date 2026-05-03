@@ -144,7 +144,7 @@ Some agents (security auditor, doc maintainer) run after every PR, in background
 ### Week 0: Pre-flight (HUMAN-HEAVY, agent assist)
 
 **HUMAN tasks (cannot delegate):**
-- Verify `popscoating.com` available; register
+- Verify `popsindustrial.com` available; register
 - Pay for: Vercel Pro, Supabase Pro, Resend, 1Password, Sentry
 - Sign MSA with Pops's owner
 - Identify Pops's IT contact
@@ -378,7 +378,7 @@ Some agents (security auditor, doc maintainer) run after every PR, in background
 ### Week 9: Customer portal
 
 **SEQUENTIAL: DNS + middleware first**
-- AGENT 9.0: **deployment-agent** — Verify track.popscoating.com DNS + Vercel domain attached + tenant_domains seeded
+- AGENT 9.0: **deployment-agent** — Verify track.popsindustrial.com DNS + Vercel domain attached + tenant_domains seeded
 
 **PARALLEL batch 9.A (5 agents):**
 - AGENT 9.A.1: **backend-builder** — `modules/portal/actions.ts` (requestCustomerMagicLink with rate limit + anti-enumeration, signOutCustomer)
@@ -728,7 +728,7 @@ Wave 4 makes the platform whitelabel-ready and onboards Tenant 2 (sandblasting).
 **PARALLEL batch 29.C (3 agents) — tests:**
 - AGENT 29.C.1: **test-writer** — pgTAP RLS for tenant_config (cross-tenant isolation verified)
 - AGENT 29.C.2: **test-writer** — pgTAP for tenant_domains (uniqueness across tenants; mutation only by tenant_admin)
-- AGENT 29.C.3: **test-writer** — Playwright: Tenant 1 changes branding, sees update on `app.popscoating.com`; doesn't affect other tenants
+- AGENT 29.C.3: **test-writer** — Playwright: Tenant 1 changes branding, sees update on `app.popsindustrial.com`; doesn't affect other tenants
 
 ### Weeks 31-32: Vertical workflow templates
 
