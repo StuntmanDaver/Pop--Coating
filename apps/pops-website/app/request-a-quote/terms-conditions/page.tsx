@@ -95,6 +95,8 @@ export default function TermsConditionsPage() {
                 <p><strong>17. Survival.</strong> These Terms and Conditions shall survive and continue in full force and effect following the expiration, cancellation or termination of a Quotation and any related purchase order.</p>
 
                 <p><strong>18. Entire Agreement.</strong> The Quotation, including these Terms and Conditions and any other attachments, exhibits or supplements specifically referenced in the Quotation, constitutes the entire agreement between Seller and Purchaser with respect to the matters contained in the Quotation and supersedes all prior oral or written representations and agreements. Except as otherwise provided in these Terms and Conditions, the Quotation may only be modified by a written agreement signed by Seller.</p>
+
+                <p><strong>19. Governing Law; Jurisdiction; Venue.</strong> Each Quotation and any purchase order or other documentation between Seller and Purchaser for the Products shall be governed by the internal laws of the State of Florida without regard to any applicable conflict of law&rsquo;s provisions. The United Nations Convention on the International Sale of Goods is expressly excluded. Purchaser consents to the exclusive jurisdiction of the Courts of the State of Florida and the United States District Court for the Middle District of Florida for any action or proceeding arising out of, or in connection with, each Quotation and any purchase order or other documentation between Seller and Purchaser for the Products. Purchaser specifically waives any and all objections to venue in such courts.</p>
               </div>
 
               <div className="mt-10 border-t border-ink-700 pt-8">
