@@ -20,7 +20,7 @@
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Read docs/prd/POPS-WEBSITE-REBUILD.md §2 for the target layout. Don't touch src/ — that's the SaaS app and is out of scope. Match the Next.js 16 version pinned in root package.json."
+      "notes": "Read docs/prd/POPS-WEBSITE-REBUILD.md \u00a72 for the target layout. Don't touch src/ \u2014 that's the SaaS app and is out of scope. Match the Next.js 16 version pinned in root package.json."
     },
     {
       "id": "US-002",
@@ -28,7 +28,7 @@
       "description": "As a designer, I need every color, type, radius, and elevation token from the design principles available as CSS variables and Tailwind v4 utilities.",
       "acceptanceCriteria": [
         "apps/pops-website/app/globals.css contains an @import 'tailwindcss' directive",
-        "globals.css contains an @theme block with the EXACT token set from docs/design/popsindustrial-design-principles.md §10 (color-pops-yellow-100/300/500/600, color-pops-tan-400, color-ink-50 through 900, color-paper, semantic 100/500 pairs for success/warn/danger/info, font-display/text/mono, radius-none/sm/md/lg/full, shadow-1/2/3/4)",
+        "globals.css contains an @theme block with the EXACT token set from docs/design/popsindustrial-design-principles.md \u00a710 (color-pops-yellow-100/300/500/600, color-pops-tan-400, color-ink-50 through 900, color-paper, semantic 100/500 pairs for success/warn/danger/info, font-display/text/mono, radius-none/sm/md/lg/full, shadow-1/2/3/4)",
         "globals.css sets html { background: var(--color-ink-800); color: var(--color-ink-100); }",
         "globals.css adds @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }",
         "apps/pops-website/postcss.config.mjs configures @tailwindcss/postcss",
@@ -38,7 +38,7 @@
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Copy the @theme block VERBATIM from §10 of the design principles. The SaaS at src/ uses different tokens — don't cross-pollinate. No tailwind.config.ts — Tailwind v4 is CSS-first per CLAUDE.md."
+      "notes": "Copy the @theme block VERBATIM from \u00a710 of the design principles. The SaaS at src/ uses different tokens \u2014 don't cross-pollinate. No tailwind.config.ts \u2014 Tailwind v4 is CSS-first per CLAUDE.md."
     },
     {
       "id": "US-003",
@@ -56,7 +56,7 @@
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Per design principles §4.4 — only 'latin' subset for Wave 1 (English-only). Don't add latin-ext. JetBrains Mono is mentioned in principles but is for the SaaS app, not this marketing site — skip it here."
+      "notes": "Per design principles \u00a74.4 \u2014 only 'latin' subset for Wave 1 (English-only). Don't add latin-ext. JetBrains Mono is mentioned in principles but is for the SaaS app, not this marketing site \u2014 skip it here."
     },
     {
       "id": "US-004",
@@ -67,15 +67,15 @@
         "apps/pops-website/public/pdfs/ contains all 4 PDF files from .firecrawl/popsindustrial/assets/pdfs/",
         "apps/pops-website/public/favicon.ico exists (convert from cropped-favicon.png)",
         "apps/pops-website/public/site-globals.json copied from .firecrawl/popsindustrial/_raw/site-globals.json (for build-time content reference, NOT served to client)",
-        "Wait, correct that — site-globals.json should live at apps/pops-website/content/site-globals.json (NOT in public/) so it's a server-side import",
+        "Wait, correct that \u2014 site-globals.json should live at apps/pops-website/content/site-globals.json (NOT in public/) so it's a server-side import",
         "apps/pops-website/content/site-globals.json copied from .firecrawl/popsindustrial/_raw/site-globals.json",
         "apps/pops-website/.gitignore does NOT exclude public/ or content/",
         "Build succeeds with all assets present",
         "Typecheck passes"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "These are static assets. Use 'cp -R' from .firecrawl/popsindustrial/assets/{images,pdfs}/ to apps/pops-website/public/{images,pdfs}/. Ignore the AC line that contains 'Wait, correct that' — the corrected location (content/ not public/) for site-globals.json is the actual rule."
+      "passes": true,
+      "notes": "These are static assets. Use 'cp -R' from .firecrawl/popsindustrial/assets/{images,pdfs}/ to apps/pops-website/public/{images,pdfs}/. Ignore the AC line that contains 'Wait, correct that' \u2014 the corrected location (content/ not public/) for site-globals.json is the actual rule."
     },
     {
       "id": "US-005",
@@ -85,14 +85,14 @@
         "apps/pops-website/content/company.ts exists and exports a const company object",
         "Object includes: name, founded (1972), generations (4), mainOffice {street, city, state, zip}, shippingReceiving {street, city, state, zip}, phone, fax, emails {info, invoices}, hours, tagline, taglineSecondary, services (array of 5)",
         "mainOffice.zip is '33811'",
-        "shippingReceiving.zip is '33811' (NOT 33813 — see open question §12 in PRD)",
+        "shippingReceiving.zip is '33811' (NOT 33813 \u2014 see open question \u00a712 in PRD)",
         "Object is exported with 'as const' assertion for literal types",
         "A type Company = typeof company is exported",
         "Typecheck passes"
       ],
       "priority": 5,
       "passes": false,
-      "notes": "Source values from docs/prd/POPS-WEBSITE-REBUILD.md §7. The 33813 vs 33811 ZIP discrepancy is flagged as open question §12.1 — until client confirms, lock 33811. Add a TODO comment on the shipping zip pointing to that open question."
+      "notes": "Source values from docs/prd/POPS-WEBSITE-REBUILD.md \u00a77. The 33813 vs 33811 ZIP discrepancy is flagged as open question \u00a712.1 \u2014 until client confirms, lock 33811. Add a TODO comment on the shipping zip pointing to that open question."
     },
     {
       "id": "US-006",
@@ -109,12 +109,12 @@
       ],
       "priority": 6,
       "passes": false,
-      "notes": "Spacing scale is in design principles §5.1 (4px base, --space-1 through --space-32). These primitives are used by every subsequent page story — keep them minimal and stable."
+      "notes": "Spacing scale is in design principles \u00a75.1 (4px base, --space-1 through --space-32). These primitives are used by every subsequent page story \u2014 keep them minimal and stable."
     },
     {
       "id": "US-007",
       "title": "Build EyebrowLabel component",
-      "description": "As a designer, I need an uppercase tracked micro-label component for use above every section heading per design principles §6.",
+      "description": "As a designer, I need an uppercase tracked micro-label component for use above every section heading per design principles \u00a76.",
       "acceptanceCriteria": [
         "apps/pops-website/components/marketing/eyebrow.tsx exports EyebrowLabel taking { children, tone?: 'yellow' | 'ink' }",
         "Default tone is 'yellow' rendering text-pops-yellow-500",
@@ -124,12 +124,12 @@
       ],
       "priority": 7,
       "passes": false,
-      "notes": "Eyebrow labels appear above every H2 in the rebuild — see design principles §6.2 hero pattern and §6.3 service cards."
+      "notes": "Eyebrow labels appear above every H2 in the rebuild \u2014 see design principles \u00a76.2 hero pattern and \u00a76.3 service cards."
     },
     {
       "id": "US-008",
       "title": "Build Button component with 4 variants",
-      "description": "As a designer, I need primary/secondary/ghost/destructive button variants per design principles §6.1 to fix the live site's single-button problem.",
+      "description": "As a designer, I need primary/secondary/ghost/destructive button variants per design principles \u00a76.1 to fix the live site's single-button problem.",
       "acceptanceCriteria": [
         "apps/pops-website/components/ui/button.tsx exports Button using class-variance-authority (cva)",
         "Variants: 'primary' (bg-pops-yellow-500 text-ink-900), 'secondary' (transparent border-1 currentColor), 'ghost' (transparent text-ink-400), 'destructive' (bg-danger-500 text-paper)",
@@ -146,7 +146,7 @@
       ],
       "priority": 8,
       "passes": false,
-      "notes": "Per design principles §6.1 — 44px default height is critical (touch target). Don't make buttons uppercase — that's reserved for micro-labels and the brand wordmark. Install shadcn button primitive via 'pnpm dlx shadcn@latest add button' if helpful, then customize per the variants here."
+      "notes": "Per design principles \u00a76.1 \u2014 44px default height is critical (touch target). Don't make buttons uppercase \u2014 that's reserved for micro-labels and the brand wordmark. Install shadcn button primitive via 'pnpm dlx shadcn@latest add button' if helpful, then customize per the variants here."
     },
     {
       "id": "US-009",
@@ -154,7 +154,7 @@
       "description": "As a designer, I need a Card primitive for service tiles, leadership cards, and certification cards.",
       "acceptanceCriteria": [
         "apps/pops-website/components/ui/card.tsx exports Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter",
-        "Card uses bg-ink-700 by default, with 1px border in border-ink-600 (per design principles §5.3 — shadow alone fails on dark surfaces)",
+        "Card uses bg-ink-700 by default, with 1px border in border-ink-600 (per design principles \u00a75.3 \u2014 shadow alone fails on dark surfaces)",
         "Card radius is rounded-sm (--radius-sm)",
         "Card supports hover:shadow-3 lift on interactive cards (when role='link' or wrapping a Link)",
         "Padding: p-6 default",
@@ -169,11 +169,11 @@
     {
       "id": "US-010",
       "title": "Build form input primitives (Input, Textarea, Label)",
-      "description": "As a developer, I need accessible form input primitives that match the design principles §6.4 form spec.",
+      "description": "As a developer, I need accessible form input primitives that match the design principles \u00a76.4 form spec.",
       "acceptanceCriteria": [
-        "apps/pops-website/components/forms/input.tsx exports Input — h-11 (44px), bg-ink-700, border-1 border-ink-600, rounded-sm, px-4, text-base font-text",
+        "apps/pops-website/components/forms/input.tsx exports Input \u2014 h-11 (44px), bg-ink-700, border-1 border-ink-600, rounded-sm, px-4, text-base font-text",
         "apps/pops-website/components/forms/textarea.tsx exports Textarea with same surface styling, min-h-[120px]",
-        "apps/pops-website/components/forms/label.tsx exports Label — text-sm font-medium block mb-2",
+        "apps/pops-website/components/forms/label.tsx exports Label \u2014 text-sm font-medium block mb-2",
         "Focus state on Input/Textarea: border-pops-yellow-500 + ring-2 ring-pops-yellow-300",
         "Error state (data-error or aria-invalid): border-danger-500",
         "All three components use forwardRef and pass through HTML attributes",
@@ -182,7 +182,7 @@
       ],
       "priority": 10,
       "passes": false,
-      "notes": "Per design principles §6.4 — labels above inputs, NEVER floating placeholders for B2B forms (manufacturers fill on tablets). Install shadcn input/textarea/label primitives then customize."
+      "notes": "Per design principles \u00a76.4 \u2014 labels above inputs, NEVER floating placeholders for B2B forms (manufacturers fill on tablets). Install shadcn input/textarea/label primitives then customize."
     },
     {
       "id": "US-011",
@@ -199,7 +199,7 @@
       ],
       "priority": 11,
       "passes": false,
-      "notes": "Per design principles §6.4 + §9 — errors must be programmatically described. Use React.cloneElement on children to inject id and aria-describedby."
+      "notes": "Per design principles \u00a76.4 + \u00a79 \u2014 errors must be programmatically described. Use React.cloneElement on children to inject id and aria-describedby."
     },
     {
       "id": "US-012",
@@ -208,21 +208,21 @@
       "acceptanceCriteria": [
         "apps/pops-website/components/forms/checkbox.tsx exports Checkbox",
         "Uses Radix UI Checkbox primitive (@radix-ui/react-checkbox)",
-        "Visible 18×18 box with 2px border, rounded-sm",
+        "Visible 18\u00d718 box with 2px border, rounded-sm",
         "Checked state: bg-pops-yellow-500 with ink-900 checkmark icon",
         "Focus ring: ring-2 ring-pops-yellow-300",
-        "Tap target ≥ 44×44 via padding around the visual box",
+        "Tap target \u2265 44\u00d744 via padding around the visual box",
         "Typecheck passes",
         "Verify in browser using dev-browser skill: keyboard space toggles, screen-reader announces state"
       ],
       "priority": 12,
       "passes": false,
-      "notes": "Add @radix-ui/react-checkbox to apps/pops-website/package.json. The 44×44 tap target is non-negotiable per design principles §9."
+      "notes": "Add @radix-ui/react-checkbox to apps/pops-website/package.json. The 44\u00d744 tap target is non-negotiable per design principles \u00a79."
     },
     {
       "id": "US-013",
       "title": "Build Footer component from content/site-globals.json",
-      "description": "As a designer, I need the global Footer with three nav columns, both addresses, phone tel:, fax, both emails, hours, and a 'Get a Quote' primary CTA — exactly matching the live site's footer structure.",
+      "description": "As a designer, I need the global Footer with three nav columns, both addresses, phone tel:, fax, both emails, hours, and a 'Get a Quote' primary CTA \u2014 exactly matching the live site's footer structure.",
       "acceptanceCriteria": [
         "apps/pops-website/components/layout/footer.tsx exports <Footer />",
         "Three columns rendering from content/site-globals.json#footer.navigation_columns: 'Doing business with Pop's Industrial', 'Services', 'Visiting Us'",
@@ -234,16 +234,16 @@
         "Footer uses bg-ink-900 text-ink-100",
         "Mobile: stacks columns vertically; desktop: 3-column grid",
         "Typecheck passes",
-        "Verify in browser using dev-browser skill: footer renders on a test page; tap targets ≥44px; tab order is logical"
+        "Verify in browser using dev-browser skill: footer renders on a test page; tap targets \u226544px; tab order is logical"
       ],
       "priority": 13,
       "passes": false,
-      "notes": "Source ALL link hrefs from content/site-globals.json — don't retype. Source addresses/phone/emails from content/company.ts. Use logo /images/Pops-no-border.png (canonical wordmark per PRD §12.3)."
+      "notes": "Source ALL link hrefs from content/site-globals.json \u2014 don't retype. Source addresses/phone/emails from content/company.ts. Use logo /images/Pops-no-border.png (canonical wordmark per PRD \u00a712.3)."
     },
     {
       "id": "US-014",
       "title": "Build Header component (HOME link + brand mark)",
-      "description": "As a designer, I need a minimal Header — the live site only has a HOME link in the nav. Replicate that, but with the canonical wordmark and clean typography.",
+      "description": "As a designer, I need a minimal Header \u2014 the live site only has a HOME link in the nav. Replicate that, but with the canonical wordmark and clean typography.",
       "acceptanceCriteria": [
         "apps/pops-website/components/layout/header.tsx exports <Header />",
         "Sticky header (position sticky top-0 z-50) bg-ink-900/95 backdrop-blur",
@@ -255,12 +255,12 @@
       ],
       "priority": 14,
       "passes": false,
-      "notes": "Per site-globals.json#header.note — the live site has NO main nav menu. Don't invent one in this story. Future iterations can add a fuller nav once content owners decide. Skip-to-content is required by design principles §9."
+      "notes": "Per site-globals.json#header.note \u2014 the live site has NO main nav menu. Don't invent one in this story. Future iterations can add a fuller nav once content owners decide. Skip-to-content is required by design principles \u00a79."
     },
     {
       "id": "US-015",
-      "title": "Build Hero component (rebuilt per design principles §6.2)",
-      "description": "As a designer, I need a Hero that fixes the live site's content-light hero — eyebrow, display heading, lede, dual CTA, dark-overlay background photo.",
+      "title": "Build Hero component (rebuilt per design principles \u00a76.2)",
+      "description": "As a designer, I need a Hero that fixes the live site's content-light hero \u2014 eyebrow, display heading, lede, dual CTA, dark-overlay background photo.",
       "acceptanceCriteria": [
         "apps/pops-website/components/marketing/hero.tsx exports <Hero {...props} />",
         "Props: { eyebrow: string, heading: string, lede?: string, primaryCta: { label: string, href: string }, secondaryCta?: { label: string, href: string }, backgroundImage: string }",
@@ -270,11 +270,11 @@
         "Renders <EyebrowLabel> on top, then <h1 className='font-display text-display-lg ...'>, then <p className='text-lg max-w-2xl'>, then a button row with primary + secondary",
         "On mobile: heading scales from 56px to 36px; CTAs stack",
         "Typecheck passes",
-        "Verify in browser using dev-browser skill: hero renders on a placeholder home page; tab order: skip-link → primary CTA → secondary CTA"
+        "Verify in browser using dev-browser skill: hero renders on a placeholder home page; tab order: skip-link \u2192 primary CTA \u2192 secondary CTA"
       ],
       "priority": 15,
       "passes": false,
-      "notes": "Per design principles §6.2 — this REPLACES the live site's 3-slide tagline-only rotator. The 3 slides become supporting visuals (rotating background photo) but the headline is now content-rich and stable."
+      "notes": "Per design principles \u00a76.2 \u2014 this REPLACES the live site's 3-slide tagline-only rotator. The 3 slides become supporting visuals (rotating background photo) but the headline is now content-rich and stable."
     },
     {
       "id": "US-016",
@@ -286,7 +286,7 @@
         "Layout: <Card> wrapping <Link href={href}>",
         "Image: 16:10 aspect using next/image with explicit dimensions",
         "Eyebrow label: 'Service {number} / {name}' (uppercase)",
-        "Title: <h3> font-text font-bold text-h4 (NOT uppercase per design principles §4.3)",
+        "Title: <h3> font-text font-bold text-h4 (NOT uppercase per design principles \u00a74.3)",
         "Body: 2 lines of text-sm",
         "Footer: arrow icon + 'Learn more' in text-pops-yellow-500",
         "Hover: shadow-3 lift, image scale 1.03 over 200ms ease-out",
@@ -296,7 +296,7 @@
       ],
       "priority": 16,
       "passes": false,
-      "notes": "Per design principles §6.3 — no tan/sepia tint on images (that's a current-site bug). Use real shop photography. The 5 services and their images are listed in PRD §7."
+      "notes": "Per design principles \u00a76.3 \u2014 no tan/sepia tint on images (that's a current-site bug). Use real shop photography. The 5 services and their images are listed in PRD \u00a77."
     },
     {
       "id": "US-017",
@@ -304,21 +304,21 @@
       "description": "As a visitor, when I land on popsindustrial.com I see a content-rich hero, the 5-service grid, the commitment/facilities/standards columns, the family photo, and the footer.",
       "acceptanceCriteria": [
         "apps/pops-website/app/page.tsx exists and renders the home page",
-        "Hero uses /images/slide-01.jpg as background, eyebrow 'FAMILY OWNED · LAKELAND, FL · SINCE 1972', heading 'Four generations of industrial finishing — done right the first time.', lede '...' (see PRD §6.2 wireframe), primary CTA 'Request a Quote' → /request-a-quote, secondary CTA 'See our work' → /industrial-coatings-services",
+        "Hero uses /images/slide-01.jpg as background, eyebrow 'FAMILY OWNED \u00b7 LAKELAND, FL \u00b7 SINCE 1972', heading 'Four generations of industrial finishing \u2014 done right the first time.', lede '...' (see PRD \u00a76.2 wireframe), primary CTA 'Request a Quote' \u2192 /request-a-quote, secondary CTA 'See our work' \u2192 /industrial-coatings-services",
         "Below hero: section 'Four generations of expertise in industrial coatings' (H2)",
         "5-up service grid using ServiceTile for: Wet Paint, Complex, Abrasive Media Blasting, Powder, Large Capacity Powder Coating (images from /images/{wet-paint-coatings,complex-coating,abrasive-media-blasting,powder-coating,large-capacity-powder-coating}-300x... per the live mapping in .firecrawl/popsindustrial/pages/home.md)",
         "Three-column section: Commitment / Our Facilities & Equipment / Industry Standards & High Performance Solutions (content from .firecrawl/popsindustrial/pages/home.md)",
         "Family photo section (use /images/pops-4-generations.jpg)",
         "Footer renders below content",
-        "All images have meaningful alt text — NOT alt='' unless decorative",
+        "All images have meaningful alt text \u2014 NOT alt='' unless decorative",
         "Exactly one <h1> on the page",
         "Build succeeds; page renders at apps/pops-website dev server '/'",
         "Typecheck passes",
-        "Verify in browser using dev-browser skill: open / and visually compare against .firecrawl/popsindustrial/screenshots/desktop/home.png — all sections present"
+        "Verify in browser using dev-browser skill: open / and visually compare against .firecrawl/popsindustrial/screenshots/desktop/home.png \u2014 all sections present"
       ],
       "priority": 17,
       "passes": false,
-      "notes": "Content source: .firecrawl/popsindustrial/pages/home.md (clean main content) + .firecrawl/popsindustrial/screenshots/desktop/home.png (visual reference). The hero is the BIGGEST DEPARTURE from the live site — read PRD §6.2 wireframe carefully. Keep the 4-generations / commitment / facilities / equipment / high-performance sections faithful to the existing copy."
+      "notes": "Content source: .firecrawl/popsindustrial/pages/home.md (clean main content) + .firecrawl/popsindustrial/screenshots/desktop/home.png (visual reference). The hero is the BIGGEST DEPARTURE from the live site \u2014 read PRD \u00a76.2 wireframe carefully. Keep the 4-generations / commitment / facilities / equipment / high-performance sections faithful to the existing copy."
     },
     {
       "id": "US-018",
@@ -336,7 +336,7 @@
       ],
       "priority": 18,
       "passes": false,
-      "notes": "Content from .firecrawl/popsindustrial/pages/about-us.md. The original is short (2.8KB) — don't pad. The 'family business' theme is the differentiator."
+      "notes": "Content from .firecrawl/popsindustrial/pages/about-us.md. The original is short (2.8KB) \u2014 don't pad. The 'family business' theme is the differentiator."
     },
     {
       "id": "US-019",
@@ -347,7 +347,7 @@
         "Renders content from .firecrawl/popsindustrial/pages/about-us-history.md",
         "Founder photo /images/marcus-woods-pops-industrial-coatings.jpg (full-res, NOT the 239x300 thumbnail) with alt 'Marcus Woods, founder of Pop's Industrial Coatings'",
         "Heading: 'History' or 'Our History' as appropriate from source",
-        "Body: faithful to source markdown — Marcus story + 1972 founding + 4-generations transition",
+        "Body: faithful to source markdown \u2014 Marcus story + 1972 founding + 4-generations transition",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
@@ -391,7 +391,7 @@
       ],
       "priority": 21,
       "passes": false,
-      "notes": "Install react-hook-form, zod, @hookform/resolvers/zod into apps/pops-website/. The Zod schema goes in apps/pops-website/app/request-a-quote/schema.ts so the server action (US-036) imports the same source. Form layout per design principles §6.4."
+      "notes": "Install react-hook-form, zod, @hookform/resolvers/zod into apps/pops-website/. The Zod schema goes in apps/pops-website/app/request-a-quote/schema.ts so the server action (US-036) imports the same source. Form layout per design principles \u00a76.4."
     },
     {
       "id": "US-022",
@@ -421,7 +421,7 @@
         "Hero with heading 'Standards, Specifications & Certifications'",
         "SSPC accredited contractor logo: /images/sspc-accredited-contractor.png with alt 'SSPC Accredited Contractor logo'",
         "FDOT logo: /images/fdot-logo-color-768x339-1.png with alt 'Florida Department of Transportation logo'",
-        "Two PDF download links (using a PdfLink component if it makes sense, or a simple <a> with download attr): FDOT Audit QCPIR (/pdfs/2025-03-06-Pops-Industrial-Coatings-FDOT-Audit-QCPIR.pdf) and SSPC QP3 Certificate (/pdfs/SSPC-QP3-Pops-Coatings-Certificate-expires-3-31-27.pdf — the newer 2026-04 version, not the older 2025-03-31)",
+        "Two PDF download links (using a PdfLink component if it makes sense, or a simple <a> with download attr): FDOT Audit QCPIR (/pdfs/2025-03-06-Pops-Industrial-Coatings-FDOT-Audit-QCPIR.pdf) and SSPC QP3 Certificate (/pdfs/SSPC-QP3-Pops-Coatings-Certificate-expires-3-31-27.pdf \u2014 the newer 2026-04 version, not the older 2025-03-31)",
         "PDF links show file size and have aria-label including 'PDF download'",
         "Typecheck passes",
         "Verify in browser using dev-browser skill: PDFs download (or open in new tab) when clicked"
@@ -446,7 +446,7 @@
       ],
       "priority": 24,
       "passes": false,
-      "notes": "Long legal page — readability matters more than visual flair. Restrict to a reading-width column."
+      "notes": "Long legal page \u2014 readability matters more than visual flair. Restrict to a reading-width column."
     },
     {
       "id": "US-025",
@@ -463,7 +463,7 @@
       ],
       "priority": 25,
       "passes": false,
-      "notes": "This is the services index — keep it lean. The detail pages (US-026 through US-030) carry the deep content."
+      "notes": "This is the services index \u2014 keep it lean. The detail pages (US-026 through US-030) carry the deep content."
     },
     {
       "id": "US-026",
@@ -475,8 +475,8 @@
         "Hero with /images/industrial-painting-lakeland-fl-1024x683-1.jpg as background, heading 'Wet Paint Coatings'",
         "Service description body from source",
         "Sidebar/footer: 'Our Services' nav listing the other 4 services (per source structure)",
-        "CTA: 'Get a Quote' button → /request-a-quote",
-        "Image gallery if present in source — alt text on every image",
+        "CTA: 'Get a Quote' button \u2192 /request-a-quote",
+        "Image gallery if present in source \u2014 alt text on every image",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
@@ -510,14 +510,14 @@
         "Renders content from .firecrawl/popsindustrial/pages/industrial-coatings-services-abrasive-media-blasting.md",
         "Hero with /images/industrial-sandblasting.png or appropriate sandblasting photo",
         "Same structure as US-026",
-        "Photo grid with sandblasting work — many on disk (industrial-sandblasting-lakeland-fl-IMG_5019, IMG_5406, IMG_7485, IMG_7487, Sandblasting-1, Sandbalsting-2 [sic])",
+        "Photo grid with sandblasting work \u2014 many on disk (industrial-sandblasting-lakeland-fl-IMG_5019, IMG_5406, IMG_7485, IMG_7487, Sandblasting-1, Sandbalsting-2 [sic])",
         "Each photo gets alt text describing what's being sandblasted",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 28,
       "passes": false,
-      "notes": "Note the original WP filename typo 'Sandbalsting' (per .firecrawl/popsindustrial/_raw/site-globals.json#filename_typos_in_uploads). Reference the file as-is — don't rename. The rebuild can fix the filename later."
+      "notes": "Note the original WP filename typo 'Sandbalsting' (per .firecrawl/popsindustrial/_raw/site-globals.json#filename_typos_in_uploads). Reference the file as-is \u2014 don't rename. The rebuild can fix the filename later."
     },
     {
       "id": "US-029",
@@ -528,14 +528,14 @@
         "Renders content from .firecrawl/popsindustrial/pages/industrial-coatings-services-powder-coating.md",
         "Hero with /images/industrial-powder-coating.png or full-res /images/powder-coating.jpg",
         "Same structure as US-026",
-        "Photo grid with powder-coating work (industrial-powder-coating-lakeland-fl-IMG_3687, IMG_4029, IMG_4107, IMG_4180/4181, IMG_4686, IMG_4980, IMG_5315, IMG_6000, IMG_7157, IMG_7161, plus Ameron-pole-products, Arcosa-25-4570 — all on disk)",
+        "Photo grid with powder-coating work (industrial-powder-coating-lakeland-fl-IMG_3687, IMG_4029, IMG_4107, IMG_4180/4181, IMG_4686, IMG_4980, IMG_5315, IMG_6000, IMG_7157, IMG_7161, plus Ameron-pole-products, Arcosa-25-4570 \u2014 all on disk)",
         "Each photo gets descriptive alt text",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 29,
       "passes": false,
-      "notes": "Most photo-rich service page — many recent shop photos. Use the full-res versions where available; the rebuild lets next/image handle responsive variants."
+      "notes": "Most photo-rich service page \u2014 many recent shop photos. Use the full-res versions where available; the rebuild lets next/image handle responsive variants."
     },
     {
       "id": "US-030",
@@ -545,14 +545,14 @@
         "apps/pops-website/app/industrial-coatings-services/large-capacity-powder-coating/page.tsx exists",
         "Renders content from .firecrawl/popsindustrial/pages/industrial-coatings-services-large-capacity-powder-coating.md",
         "Hero with /images/large-capacity-powder-coating.jpg (full-res 1800x1198 variant) or /images/large-capacity-powder-coating-scaled.jpeg",
-        "Body emphasizes oven size and capacity — call out specific dimensions if in source",
+        "Body emphasizes oven size and capacity \u2014 call out specific dimensions if in source",
         "Same structure as US-026",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 30,
       "passes": false,
-      "notes": "This is the differentiated service — largest powder-coating oven. Make sure the size differentiation comes through."
+      "notes": "This is the differentiated service \u2014 largest powder-coating oven. Make sure the size differentiation comes through."
     },
     {
       "id": "US-031",
@@ -566,7 +566,7 @@
         "Contact info pulled from content/company.ts (NOT hardcoded): main office, shipping & receiving, phone (tel:), fax, both emails (mailto:), hours",
         "Contact form: name, email, message (required), submit button",
         "Form uses React Hook Form + Zod schema; submit handler scaffolded for US-037 server action",
-        "<MapEmbed /> component below the form: Google Maps iframe of '3515 Airport Road, Lakeland, FL 33811' (use the same embed URL from .firecrawl/popsindustrial/pages/contact.html — preserved verbatim per the scrape)",
+        "<MapEmbed /> component below the form: Google Maps iframe of '3515 Airport Road, Lakeland, FL 33811' (use the same embed URL from .firecrawl/popsindustrial/pages/contact.html \u2014 preserved verbatim per the scrape)",
         "Map iframe has title='Map showing Pop's Industrial Coatings shipping & receiving entrance' for screen readers",
         "Typecheck passes",
         "Verify in browser using dev-browser skill: phone link triggers tel:, email links trigger mailto:, map renders without console errors"
@@ -593,7 +593,7 @@
       ],
       "priority": 32,
       "passes": false,
-      "notes": "The safety checkbox is mandatory — its label includes a link to /guest-safety-rules. The Zod schema must require it true."
+      "notes": "The safety checkbox is mandatory \u2014 its label includes a link to /guest-safety-rules. The Zod schema must require it true."
     },
     {
       "id": "US-033",
@@ -623,14 +623,14 @@
         "Renders content from .firecrawl/popsindustrial/pages/guest-safety-rules.md",
         "Heading: 'Guest Safety Rules'",
         "Body uses Container max-w-[720px] reading column",
-        "Body text from source — preserve all rules verbatim (this page is partly legal/safety, don't paraphrase)",
+        "Body text from source \u2014 preserve all rules verbatim (this page is partly legal/safety, don't paraphrase)",
         "Cross-link back to /check-in at the bottom",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 34,
       "passes": false,
-      "notes": "Source markdown at .firecrawl/popsindustrial/pages/guest-safety-rules.md is 3.2KB. Don't add or remove rules — replicate verbatim."
+      "notes": "Source markdown at .firecrawl/popsindustrial/pages/guest-safety-rules.md is 3.2KB. Don't add or remove rules \u2014 replicate verbatim."
     },
     {
       "id": "US-035",
@@ -648,7 +648,7 @@
       ],
       "priority": 35,
       "passes": false,
-      "notes": "Read the RESEND env names in CLAUDE.md or root .env.example if available. Don't accidentally use a different SMTP provider — the project locks to Resend."
+      "notes": "Read the RESEND env names in CLAUDE.md or root .env.example if available. Don't accidentally use a different SMTP provider \u2014 the project locks to Resend."
     },
     {
       "id": "US-036",
@@ -675,7 +675,7 @@
       "description": "As a customer, when I submit the contact form it sends an email and I see a success or error message.",
       "acceptanceCriteria": [
         "apps/pops-website/app/contact/actions.ts exports async function submitContact(formData) marked 'use server'",
-        "Zod schema in apps/pops-website/app/contact/schema.ts (name, email, message — all required)",
+        "Zod schema in apps/pops-website/app/contact/schema.ts (name, email, message \u2014 all required)",
         "On valid input, calls sendFormEmail({ to: company.emails.info, subject: `Contact form from ${name}`, html, replyTo: email })",
         "contact/page.tsx (from US-031) wired up; shows inline success/error",
         "Typecheck passes",
@@ -690,16 +690,16 @@
       "title": "Build /check-in and /check-out server actions",
       "description": "As shop staff, I can see when visitors check in and out via emails to info@popsindustrial.com.",
       "acceptanceCriteria": [
-        "apps/pops-website/app/check-in/actions.ts exports submitCheckIn — Zod requires safety acknowledgment === true",
+        "apps/pops-website/app/check-in/actions.ts exports submitCheckIn \u2014 Zod requires safety acknowledgment === true",
         "apps/pops-website/app/check-out/actions.ts exports submitCheckOut",
         "Both call sendFormEmail to company.emails.info with descriptive subject lines ('Visitor check-in: {firstName} {lastName} from {company}')",
         "check-in/page.tsx (US-032) and check-out/page.tsx (US-033) wired up with inline success/error states",
         "Typecheck passes",
-        "Verify in browser using dev-browser skill: submit check-in with safety unchecked → blocked; check it → submits"
+        "Verify in browser using dev-browser skill: submit check-in with safety unchecked \u2192 blocked; check it \u2192 submits"
       ],
       "priority": 38,
       "passes": false,
-      "notes": "These are shop-floor forms — keep them fast. Loading state on the submit button is critical for tablet usage."
+      "notes": "These are shop-floor forms \u2014 keep them fast. Loading state on the submit button is critical for tablet usage."
     },
     {
       "id": "US-039",
@@ -718,7 +718,7 @@
       ],
       "priority": 39,
       "passes": false,
-      "notes": "reCAPTCHA v3 is invisible (v2 is the checkbox; v3 is score-based). Per scrape, the live site already uses v3 — keep the same UX. Document the two env vars (NEXT_PUBLIC_RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY) in apps/pops-website/.env.example."
+      "notes": "reCAPTCHA v3 is invisible (v2 is the checkbox; v3 is score-based). Per scrape, the live site already uses v3 \u2014 keep the same UX. Document the two env vars (NEXT_PUBLIC_RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY) in apps/pops-website/.env.example."
     },
     {
       "id": "US-040",
@@ -736,7 +736,7 @@
       ],
       "priority": 40,
       "passes": false,
-      "notes": "Use the pages array from .firecrawl/popsindustrial/manifest.json — title and description are already extracted per page. Don't invent new ones unless improving."
+      "notes": "Use the pages array from .firecrawl/popsindustrial/manifest.json \u2014 title and description are already extracted per page. Don't invent new ones unless improving."
     },
     {
       "id": "US-041",
@@ -748,11 +748,11 @@
         "Home page (/) renders <JsonLd data={getOrgJsonLd()} />",
         "Each service page (US-026 through US-030) renders <JsonLd data={getServiceJsonLd({ name, description })} /> with @type: 'Service' and provider: { '@id': '/#person' }",
         "Typecheck passes",
-        "Verify in browser using dev-browser skill: View Source on / shows JSON-LD; paste into Google Rich Results Test (manually) returns no errors — note in progress.txt"
+        "Verify in browser using dev-browser skill: View Source on / shows JSON-LD; paste into Google Rich Results Test (manually) returns no errors \u2014 note in progress.txt"
       ],
       "priority": 41,
       "passes": false,
-      "notes": "Source structured data from .firecrawl/popsindustrial/_raw/site-globals.json#json_ld — preserve the SearchAction and Article schema patterns the live site uses."
+      "notes": "Source structured data from .firecrawl/popsindustrial/_raw/site-globals.json#json_ld \u2014 preserve the SearchAction and Article schema patterns the live site uses."
     },
     {
       "id": "US-042",
@@ -771,18 +771,18 @@
       ],
       "priority": 42,
       "passes": false,
-      "notes": "Next.js 16 generates these from the TypeScript source — no need to write XML by hand."
+      "notes": "Next.js 16 generates these from the TypeScript source \u2014 no need to write XML by hand."
     },
     {
       "id": "US-043",
-      "title": "Alt-text audit pass — every image has meaningful alt",
-      "description": "As a screen-reader user, I can understand what every image conveys. Per the scrape, the live site has 17 of 18 pages with ZERO alt text — this story closes that gap across the rebuild.",
+      "title": "Alt-text audit pass \u2014 every image has meaningful alt",
+      "description": "As a screen-reader user, I can understand what every image conveys. Per the scrape, the live site has 17 of 18 pages with ZERO alt text \u2014 this story closes that gap across the rebuild.",
       "acceptanceCriteria": [
         "Run a script (or grep) across apps/pops-website/app/**/*.tsx and components/**/*.tsx finding every <Image> and <img>",
         "Every <Image> has alt= prop (not undefined)",
         "Decorative images (background-only, purely visual) explicitly have alt=''",
-        "Content images have descriptive alt — at minimum 'Industrial powder coating equipment at Pop's Lakeland facility' style descriptions",
-        "apps/pops-website/scripts/audit-alt.ts (or similar) exists and prints PASS/FAIL — wire into pnpm lint script",
+        "Content images have descriptive alt \u2014 at minimum 'Industrial powder coating equipment at Pop's Lakeland facility' style descriptions",
+        "apps/pops-website/scripts/audit-alt.ts (or similar) exists and prints PASS/FAIL \u2014 wire into pnpm lint script",
         "Updated apps/pops-website/package.json#scripts.lint chains the alt audit",
         "All existing pages pass the audit",
         "Typecheck passes",
@@ -797,20 +797,20 @@
       "title": "Heading-order audit + skip-to-content verification",
       "description": "As a screen-reader user, every page has exactly one H1 and a monotonic heading order so I can navigate by headings.",
       "acceptanceCriteria": [
-        "apps/pops-website/scripts/audit-headings.ts walks every app/**/page.tsx, parses the JSX, and verifies: exactly one <h1>, no skipped heading levels (no h2 → h4)",
+        "apps/pops-website/scripts/audit-headings.ts walks every app/**/page.tsx, parses the JSX, and verifies: exactly one <h1>, no skipped heading levels (no h2 \u2192 h4)",
         "Audit fails build if violations found",
         "Skip-to-content link (from US-014 Header) is the first focusable element on every page",
-        "Add an a11y.test.tsx Playwright/Vitest test (if test infrastructure exists in apps/pops-website — otherwise document in progress.txt that test infra is deferred to a follow-up)",
+        "Add an a11y.test.tsx Playwright/Vitest test (if test infrastructure exists in apps/pops-website \u2014 otherwise document in progress.txt that test infra is deferred to a follow-up)",
         "Typecheck passes",
         "Verify in browser using dev-browser skill: tab through / and confirm first focusable element is skip-to-content"
       ],
       "priority": 44,
       "passes": false,
-      "notes": "If parsing JSX is too involved for one Ralph iteration, write a simpler grep-based audit that counts <h1> occurrences per page.tsx — single-file pages should have at most one h1 reference."
+      "notes": "If parsing JSX is too involved for one Ralph iteration, write a simpler grep-based audit that counts <h1> occurrences per page.tsx \u2014 single-file pages should have at most one h1 reference."
     },
     {
       "id": "US-045",
-      "title": "Playwright contrast lint — fail build on AA violations",
+      "title": "Playwright contrast lint \u2014 fail build on AA violations",
       "description": "As a designer, the build refuses to ship if any rendered page has a color combination below WCAG AA (4.5:1 normal, 3:1 large).",
       "acceptanceCriteria": [
         "apps/pops-website/scripts/contrast-lint.ts runs Playwright against the dev server",
@@ -819,12 +819,12 @@
         "Exits non-zero if any violations",
         "Wire into apps/pops-website/package.json#scripts.contrast-lint",
         "Add @axe-core/playwright to apps/pops-website devDependencies",
-        "Run reports zero failures (because tokens are designed to pass — see design principles §3.5)",
+        "Run reports zero failures (because tokens are designed to pass \u2014 see design principles \u00a73.5)",
         "Typecheck passes"
       ],
       "priority": 45,
       "passes": false,
-      "notes": "Per design principles §3.5, every token pair in the system passes AA. If this lint surfaces a violation, it's a regression in implementation, not the tokens. Run as part of CI."
+      "notes": "Per design principles \u00a73.5, every token pair in the system passes AA. If this lint surfaces a violation, it's a regression in implementation, not the tokens. Run as part of CI."
     },
     {
       "id": "US-046",
@@ -832,37 +832,37 @@
       "description": "As an operator, every PR runs Lighthouse on the deployed preview and fails if Performance < 95 mobile or < 98 desktop on home page.",
       "acceptanceCriteria": [
         "apps/pops-website/lighthouserc.json (or .lighthouseci/) configured with mobile + desktop assertions",
-        "Performance ≥ 95 mobile, ≥ 98 desktop",
-        "Best Practices ≥ 95",
+        "Performance \u2265 95 mobile, \u2265 98 desktop",
+        "Best Practices \u2265 95",
         "Accessibility = 100",
-        "SEO ≥ 95",
+        "SEO \u2265 95",
         "Run via pnpm dlx @lhci/cli autorun against http://localhost:3000 (after build + start)",
-        "If Vercel preview is configured, Lighthouse can run against the preview URL — note the env var pattern",
+        "If Vercel preview is configured, Lighthouse can run against the preview URL \u2014 note the env var pattern",
         "Wire into apps/pops-website/package.json#scripts.lighthouse",
         "Tests pass",
         "Typecheck passes"
       ],
       "priority": 46,
       "passes": false,
-      "notes": "Static marketing site → these budgets are achievable. If Lighthouse fails, identify which budget is breached and address (e.g., image preload, font preconnect, smaller hero image) — but in this story just SET the budgets, don't over-tune."
+      "notes": "Static marketing site \u2192 these budgets are achievable. If Lighthouse fails, identify which budget is breached and address (e.g., image preload, font preconnect, smaller hero image) \u2014 but in this story just SET the budgets, don't over-tune."
     },
     {
       "id": "US-047",
       "title": "Mobile responsive audit + fixes",
-      "description": "As a mobile visitor at 375px viewport, every page renders without horizontal scroll, with touch targets ≥ 44px and readable text.",
+      "description": "As a mobile visitor at 375px viewport, every page renders without horizontal scroll, with touch targets \u2265 44px and readable text.",
       "acceptanceCriteria": [
         "Playwright script visits all 18 pages at 375x844 viewport (iPhone 14 Pro)",
         "Asserts no horizontal overflow (scrollWidth === clientWidth on <body>)",
         "Asserts every interactive element (button, a, input) has bounding box >= 44px in at least one dimension",
         "Asserts body text computed font-size >= 14px on mobile",
-        "Compare each new screenshot to .firecrawl/popsindustrial/screenshots/mobile/<slug>.png — note major content omissions in progress.txt (this is the parity check)",
+        "Compare each new screenshot to .firecrawl/popsindustrial/screenshots/mobile/<slug>.png \u2014 note major content omissions in progress.txt (this is the parity check)",
         "Fix any violations found; re-run until clean",
         "Typecheck passes",
         "Verify in browser using dev-browser skill: at 375w, no horizontal scroll on any page"
       ],
       "priority": 47,
       "passes": false,
-      "notes": "Reference screenshots: .firecrawl/popsindustrial/screenshots/mobile/. The new site doesn't need to look identical — the new design is a deliberate improvement — but content parity (every section that existed before still exists somewhere) must hold."
+      "notes": "Reference screenshots: .firecrawl/popsindustrial/screenshots/mobile/. The new site doesn't need to look identical \u2014 the new design is a deliberate improvement \u2014 but content parity (every section that existed before still exists somewhere) must hold."
     },
     {
       "id": "US-048",
@@ -875,12 +875,12 @@
         "Headers entry adds Cache-Control public, max-age=1 week, immutable for /images/* and /pdfs/*",
         "Headers entry adds X-Content-Type-Options: nosniff and Referrer-Policy: strict-origin-when-cross-origin to all routes",
         "apps/pops-website/.env.example committed listing: RESEND_API_KEY, RESEND_FROM, RECAPTCHA_SECRET_KEY, NEXT_PUBLIC_RECAPTCHA_SITE_KEY, SENTRY_DSN, NEXT_PUBLIC_SENTRY_DSN",
-        "apps/pops-website/README.md includes 'Deploy to Vercel' section: link Vercel project to apps/pops-website as the project root, set env vars listed above, add domain popsindustrial.com (and www → 301 → apex)",
+        "apps/pops-website/README.md includes 'Deploy to Vercel' section: link Vercel project to apps/pops-website as the project root, set env vars listed above, add domain popsindustrial.com (and www \u2192 301 \u2192 apex)",
         "Typecheck passes"
       ],
       "priority": 48,
       "passes": false,
-      "notes": "Per Vercel knowledge update: vercel.ts (typed config via @vercel/config) is the modern way. Install @vercel/config in apps/pops-website. The actual Vercel project linking is a manual operator step — document it, don't try to do it from Ralph."
+      "notes": "Per Vercel knowledge update: vercel.ts (typed config via @vercel/config) is the modern way. Install @vercel/config in apps/pops-website. The actual Vercel project linking is a manual operator step \u2014 document it, don't try to do it from Ralph."
     },
     {
       "id": "US-049",
@@ -898,7 +898,7 @@
       ],
       "priority": 49,
       "passes": false,
-      "notes": "This is the LAST story. By the time Ralph reaches it, every other piece exists. The README is documentation only — make it accurate, not aspirational."
+      "notes": "This is the LAST story. By the time Ralph reaches it, every other piece exists. The README is documentation only \u2014 make it accurate, not aspirational."
     }
   ]
 }

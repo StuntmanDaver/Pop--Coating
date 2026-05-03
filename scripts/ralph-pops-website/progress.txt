@@ -18,19 +18,22 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Design tokens (color-pops-yellow-*, color-ink-*, semantic, font-display/text/mono, radius-*, shadow-1..4) are sourced VERBATIM from docs/design/popsindustrial-design-principles.md §10. Do NOT diverge — those values are paint-chip-locked.
 - Tailwind v4 auto-generates utility classes from `@theme` tokens (e.g. `bg-ink-800`, `text-pops-yellow-500`, `font-display`, `rounded-sm`, `shadow-3`) — no need to declare them.
 - next/font CSS variables (`--font-display`, `--font-text`) are set on `<html>` via the className spread; they CASCADE-OVERRIDE the static fallback stacks declared in `@theme`. The `font-display` / `font-text` Tailwind utilities resolve `var(--font-*)` at the element, so the next/font self-hosted family wins. Self-hosted assets land at `/_next/static/media/*.woff2` — never the Google Fonts CDN.
+- Static assets are in `apps/pops-website/public/` (URL: `/images/<file>`, `/pdfs/<file>`, `/favicon.ico`). Server-side content imports live at `apps/pops-website/content/` (e.g. `content/site-globals.json` for footer / nav columns). NEVER serve content/site-globals.json over HTTP — it's an `import` target only.
+- Source of static assets: `.firecrawl/popsindustrial/assets/{images,pdfs}/` — 194 images + 4 PDFs. If a story needs an image, check this directory first; the file is already at `/images/<exact-filename>` after US-004.
+- Multi-resolution `favicon.ico` was generated via `magick <png> -define icon:auto-resize=16,32,48,64,128,256 favicon.ico`. Re-run that command if `cropped-favicon.png` is ever updated.
 
 ---
 
 ## Story Status (49 stories total)
 
-Phase A — Workspace + foundation (US-001 to US-005): 3/5 complete
+Phase A — Workspace + foundation (US-001 to US-005): 4/5 complete
 Phase B — Design primitives (US-006 to US-016): 0/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 3/49 stories passing
+OVERALL: 4/49 stories passing
 
 ---
 
@@ -99,4 +102,21 @@ OVERALL: 3/49 stories passing
   - When both `@theme { --font-text: ... }` (Tailwind v4 fallback stack) AND next/font's `variable: "--font-text"` (self-hosted family) declare the same variable, the next/font value wins because it's set on `<html>` (closer scope than `:root` from @theme). No conflict, no FOUC — Tailwind's `font-text` utility just dereferences `var(--font-text)` at the element and gets whichever value cascades.
   - Putting the className spread on `<html>` (vs `<body>`) means the variables are also available to anything attached directly to `<html>` (e.g. global background color). Per the AC and Next.js docs, this is the recommended placement.
   - Archivo Black is a single-weight font (400 file weight that visually renders as 900); next/font requires the `weight` prop because Archivo Black is non-variable. Inter is variable, so no `weight` prop is needed (next/font ships the full variable file).
+---
+
+## 2026-05-02 — US-004 Copy scraped images and PDFs into apps/pops-website/public/
+- Created `apps/pops-website/public/{images,pdfs}/` and `apps/pops-website/content/`
+- `cp -R .firecrawl/popsindustrial/assets/images/. apps/pops-website/public/images/` → 194 image files
+- `cp -R .firecrawl/popsindustrial/assets/pdfs/. apps/pops-website/public/pdfs/` → 4 PDF files
+- `cp .firecrawl/popsindustrial/_raw/site-globals.json apps/pops-website/content/site-globals.json`
+- Generated multi-resolution `apps/pops-website/public/favicon.ico` from `cropped-favicon.png` via ImageMagick `magick … -define icon:auto-resize=16,32,48,64,128,256` (16/32/48/64/128/256 px sizes embedded in single .ico)
+- `.gitignore` already does NOT exclude `public/` or `content/` — verified unchanged
+- Per AC notes, `site-globals.json` lives at `content/` (server-side import target), NOT `public/` (would get served verbatim to clients). The "Wait, correct that…" line in the AC is the corrected rule.
+- Files changed: apps/pops-website/public/** (194 images + 4 PDFs + favicon.ico), apps/pops-website/content/site-globals.json
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 1984ms; 3/3 static pages) | browser N/A (no UI change yet)
+- **Learnings for future iterations:**
+  - The asset filenames frequently contain quirks from the original site (e.g. typos, locale variants, repeated numeric suffixes like `-1.jpg`, `-150x150.jpg`, `-300x300.jpg`). Use the actual filename present in `public/images/` — do NOT rename or "clean up" filenames unless an explicit story authorizes it. site-globals.json#alt_text_audit references a few of these typos that need preserving for content faithfulness.
+  - The 4 PDFs are: Application checklist, Quality checklist, Receiving checklist, Shipping checklist (per `.firecrawl/popsindustrial/assets/pdfs/`). Reference them at `/pdfs/<filename>.pdf`.
+  - For favicon, Next.js 16 will surface `app/icon.{png,svg,ico}` via the App Router automatically, but the AC explicitly asked for `public/favicon.ico` — keeping that location works for both legacy `<link rel="icon">` and the default Next.js favicon resolution from `public/`.
+  - macOS ships `magick` (ImageMagick 7) at `/opt/homebrew/bin/magick`; preferred over `convert` (legacy alias) and `sips` (no ICO support).
 ---
