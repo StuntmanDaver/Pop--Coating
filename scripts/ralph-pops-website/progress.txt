@@ -448,3 +448,25 @@ OVERALL: 16/49 stories passing
   - The Card+Link composition (Card outside, Link inside, content inside Link) is the canonical "whole card is a target" pattern. Focus ring on the Link, hover lift on the Card via `:hover` bubbling, image scale on the Link via `group-hover`. Don't add `role="link"` to the Card — that would create a redundant target for SR users.
   - Picking real shop photography from `public/images/` requires reading the manifest.json's filename list — the same service may have multiple variants (full-res, -300x225 thumbnail, -scaled, -150x150). Always pick the largest non-thumbnail variant; next/image handles responsive crops via `sizes`.
 ---
+
+## 2026-05-03 — US-017 Build /(home) page with new hero + service grid + commitment columns
+- Implemented the full home page at apps/pops-website/app/page.tsx
+- Hero section: background /images/slide-01.jpg, eyebrow "FAMILY OWNED · LAKELAND, FL · SINCE 1972", H1 "Four generations of industrial finishing — done right the first time.", lede from design principles §6.2 wireframe, dual CTA (primary: Request a Quote, secondary: See our work)
+- Services section (tone="dark"): EyebrowLabel "OUR SERVICES", H2 "Four generations of expertise in industrial coatings", 5-up responsive grid (1 col mobile / 2 col sm / 5 col xl) using ServiceTile for all five services with real-product images (full-res variants, not thumbnails)
+- Three-column section (tone="dark", border-t): COMMITMENT / INFRASTRUCTURE / STANDARDS — content lifted verbatim from .firecrawl/popsindustrial/pages/home.md; each column has EyebrowLabel + H2 + body copy; Infrastructure has "View Facilities" secondary button; Standards has "Our Certifications" secondary + "Ask us!" ghost button
+- Family photo section: next/image fill on /images/pops-4-generations.jpg with ink-900/50 overlay and "About Us" primary CTA anchored to bottom-left via absolute positioning
+- Files changed: apps/pops-website/app/page.tsx (full rewrite from placeholder, ~193 lines)
+- Quality checks: typecheck ✓ | build ✓ (10/10 static pages, Compiled in ~2.2s) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001/):
+  - h1Count: 1 ✓ (text: "Four generations of industrial finishing — done right the first time.")
+  - h2Count: 7 (4 content h2s + 3 footer column headings from US-013 Footer — correct)
+  - Hero, services grid, 3-column section, family photo all visually present at both mobile (375px) and desktop (1280px) viewports
+  - familySectionHeight: 500px ✓ (min-h-[500px] on md: respected)
+  - familyImgLoaded: true ✓ (next/image fill served correctly)
+  - Screenshots saved: progress/screenshots/US-017-full.png, progress/screenshots/US-017-desktop.png
+- **Learnings for future iterations:**
+  - The family photo section uses the `<section>` HTML element directly (not the `<Section>` layout component) because it needs custom min-height, relative+overflow-hidden for next/image fill, AND an absolutely positioned CTA overlay — the Section component doesn't support that pattern cleanly. This is the established pattern from the Hero component too.
+  - When a `next/image fill` parent needs content overlaid, use `absolute inset-0` for the overlay div and `absolute bottom-0 left-0 right-0` for the CTA layer. The parent needs `relative overflow-hidden` and an explicit `min-h-[*]` to have height (fill images have no intrinsic dimensions).
+  - The three-column section uses `Section tone="dark"` with `border-t border-ink-700` className — the Section component accepts arbitrary classNames so border-top dividers between dark sections work cleanly.
+  - All heading hierarchy on this page: H1 (Hero) → H2 (section headings in content sections + 3 footer columns) → H3 (ServiceTile card titles). This matches the semantic structure from the live site.
+---

@@ -317,7 +317,7 @@
         "Verify in browser using dev-browser skill: open / and visually compare against .firecrawl/popsindustrial/screenshots/desktop/home.png \u2014 all sections present"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "Content source: .firecrawl/popsindustrial/pages/home.md (clean main content) + .firecrawl/popsindustrial/screenshots/desktop/home.png (visual reference). The hero is the BIGGEST DEPARTURE from the live site \u2014 read PRD \u00a76.2 wireframe carefully. Keep the 4-generations / commitment / facilities / equipment / high-performance sections faithful to the existing copy."
     },
     {
