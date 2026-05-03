@@ -551,3 +551,16 @@ OVERALL: 16/49 stories passing
   - react-hook-form's `register()` spreads `name`, `ref`, `onChange`, `onBlur` onto the input. FormField uses cloneElement to also inject `id`, `aria-invalid`, and `aria-describedby`. Both cooperate: register's name wins because cloneElement uses `child.props.name ?? name` (register already set name). The aria-invalid="true" from FormField fires the danger-border selector via CSS attribute selector `aria-[invalid=true]:border-danger-500`.
   - `noValidate` on the form disables native browser validation bubbles — react-hook-form's own validation runs instead, giving us full control over error placement and style.
 ---
+
+## 2026-05-03 — US-022 Build /request-a-quote/facilities-equipment page
+- Implemented /request-a-quote/facilities-equipment at apps/pops-website/app/request-a-quote/facilities-equipment/page.tsx
+- Hero: Pops-arial-photo.jpg (full-res aerial, NOT the 300x199 thumbnail), eyebrow "INFRASTRUCTURE", H1 "Facilities & Equipment"
+- Photo grid: 4-col responsive (2-col mobile / 4-col sm+) with aspect-[3/4] fill images: Industrial-Powder-Coating-Service-Lakeland-FL-scaled-1-225x300.jpg, facility-01-1-300x225.jpg, facility-02-1-300x225.jpg, large-capacity-powder-coating-270x138-1.png (png uses object-contain + padding on ink-800 bg)
+- Cross-links: Our Services / Our Certifications / What Makes Us Different — each with EyebrowLabel + H2 + body text + secondary Button
+- Fix: initial import depth was ../../../../ (wrong, 4 levels), corrected to ../../../  (3 levels: app/request-a-quote/facilities-equipment/page.tsx → components/)
+- Files changed: apps/pops-website/app/request-a-quote/facilities-equipment/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ (15/15 static pages) | browser ✓
+- **Learnings for future iterations:**
+  - Depth pattern for nested routes: count the directory segments from `app/` to the file. `app/request-a-quote/facilities-equipment/page.tsx` is 3 levels → import path starts with `../../../`. `app/about-us/history/page.tsx` is also 3 levels → same. `app/about-us/page.tsx` is 2 levels → `../../`.
+  - For PNG images with wide/short aspect ratio (e.g. 270x138), use `object-contain` + padding on a colored background (`bg-ink-800`) rather than `object-cover` — cover would crop out the image entirely at a tall aspect ratio card.
+---
