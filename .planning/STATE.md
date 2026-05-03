@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-02T01:44:16Z"
+last_updated: "2026-05-03T12:00:00Z"
 progress:
   total_phases: 4
   completed_phases: 0
@@ -94,19 +94,19 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ### Blockers
 
-*(none)*
+- **Plan 06 Task 2:** Human-action checkpoint (Supabase JWT + Auth Hook dashboard, Vercel domains, DNS, env secrets) — see `SESSION-MEMORY.md` and `01-06-PLAN.md`.
 
 ### Todos Carried Forward
 
-*(none — clean start)*
+- Confirm Vercel deployment lives under the correct team; link locally with `vercel link` if URL needed from CLI.
 
 ---
 
 ## Session Continuity
 
-**Last updated:** 2026-05-02
-**Last action:** 01-06-PLAN.md Tasks 1a+1b complete — pgTAP RLS test suite (4 files + jwt_helpers), seed.sql expanded, seed-tenant.ts written, GitHub Actions CI pipeline written. PAUSED at Task 2 human-action checkpoint.
-**Next action:** Complete Task 2 manual setup (Supabase Dashboard JWT Expiry=3600s + Auth Hook + SMTP + Vercel domains + GitHub secrets), then Tasks 3-5 (db push, type-regen, seed run, verification)
+**Last updated:** 2026-05-03
+**Last action:** Documented 2026-05-03 session outcomes in `CHANGELOG.md` and `.planning/intel/SESSION-MEMORY.md` (Vercel URL discovery, Plan 06 automation recap, remaining manual checkpoints). Prior: 01-06-PLAN.md Tasks 1a+1b complete — pgTAP RLS test suite, seed + CI; PAUSED at Task 2 human-action checkpoint.
+**Next action:** Complete remaining Plan 06 manual steps (Supabase JWT=3600s + Auth Hook dashboard registration; Vercel domains for `popsindustrial.com` app/track hosts; Resend DNS; Upstash + Sentry env), then Tasks 3–5 sign-off. Push feature branch with explicit `git push origin <branch>` if not on `main`. See `SESSION-MEMORY.md` for the full checklist.
 
 **Context for next session:**
 
@@ -116,3 +116,4 @@ Phase 4 [----------] 0%  Portal & Ops
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
 - vitest.config.ts is in place; 21 unit tests for auth + settings pass
+- **Vercel URL:** not in repo; use dashboard or `vercel link` after selecting the correct team — see `SESSION-MEMORY.md`
