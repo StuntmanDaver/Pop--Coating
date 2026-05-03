@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start --port 3001",
     "type-check": "tsc --noEmit",
-    "lint": "next lint && npx tsx scripts/audit-alt.ts",
-    "audit:alt": "npx tsx scripts/audit-alt.ts"
+    "lint": "next lint && npx tsx scripts/audit-alt.ts && npx tsx scripts/audit-headings.ts",
+    "audit:alt": "npx tsx scripts/audit-alt.ts",
+    "audit:headings": "npx tsx scripts/audit-headings.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
