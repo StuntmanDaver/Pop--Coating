@@ -698,7 +698,7 @@
         "Verify in browser using dev-browser skill: submit check-in with safety unchecked \u2192 blocked; check it \u2192 submits"
       ],
       "priority": 38,
-      "passes": false,
+      "passes": true,
       "notes": "These are shop-floor forms \u2014 keep them fast. Loading state on the submit button is critical for tablet usage."
     },
     {

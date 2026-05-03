@@ -730,3 +730,13 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/app/contact/actions.ts (new), apps/pops-website/app/contact/contact-form.tsx (updated)
 - Quality checks: typecheck ✓ | build ✓ | browser ✓ (field errors fire correctly)
 ---
+
+## 2026-05-03 — US-038 Build /check-in and /check-out server actions
+- Created apps/pops-website/app/check-in/actions.ts with submitCheckIn() — validates safety acknowledgment via schema (boolean true required)
+- Created apps/pops-website/app/check-out/actions.ts with submitCheckOut()
+- Both send to company.emails.info with descriptive subjects: "Visitor check-in: {name} from {company}"
+- Updated check-in-form.tsx and check-out-form.tsx with full success/error state handling matching US-036/037 pattern
+- Verified: safety unchecked → blocked by client validation; safety checked + all fields → reaches server action (fails gracefully with no API key in dev)
+- Files: apps/pops-website/app/check-in/actions.ts (new), apps/pops-website/app/check-out/actions.ts (new), check-in-form.tsx (updated), check-out-form.tsx (updated)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
