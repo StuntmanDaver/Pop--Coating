@@ -55,7 +55,7 @@
         "Verify in browser using dev-browser skill: render apps/pops-website dev server, confirm h1 uses Archivo Black and body uses Inter"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Per design principles §4.4 — only 'latin' subset for Wave 1 (English-only). Don't add latin-ext. JetBrains Mono is mentioned in principles but is for the SaaS app, not this marketing site — skip it here."
     },
     {

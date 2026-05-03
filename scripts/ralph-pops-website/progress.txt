@@ -17,19 +17,20 @@ Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
 - Tailwind v4 is CSS-first: `@import "tailwindcss"` + `@theme { ... }` in app/globals.css; postcss.config.mjs uses `@tailwindcss/postcss`. NO tailwind.config.ts.
 - Design tokens (color-pops-yellow-*, color-ink-*, semantic, font-display/text/mono, radius-*, shadow-1..4) are sourced VERBATIM from docs/design/popsindustrial-design-principles.md §10. Do NOT diverge — those values are paint-chip-locked.
 - Tailwind v4 auto-generates utility classes from `@theme` tokens (e.g. `bg-ink-800`, `text-pops-yellow-500`, `font-display`, `rounded-sm`, `shadow-3`) — no need to declare them.
+- next/font CSS variables (`--font-display`, `--font-text`) are set on `<html>` via the className spread; they CASCADE-OVERRIDE the static fallback stacks declared in `@theme`. The `font-display` / `font-text` Tailwind utilities resolve `var(--font-*)` at the element, so the next/font self-hosted family wins. Self-hosted assets land at `/_next/static/media/*.woff2` — never the Google Fonts CDN.
 
 ---
 
 ## Story Status (49 stories total)
 
-Phase A — Workspace + foundation (US-001 to US-005): 2/5 complete
+Phase A — Workspace + foundation (US-001 to US-005): 3/5 complete
 Phase B — Design primitives (US-006 to US-016): 0/11 complete
 Phase C — Page implementations (US-017 to US-034): 0/18 complete
 Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
 Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
 Phase F — Quality + ship (US-045 to US-049): 0/5 complete
 
-OVERALL: 2/49 stories passing
+OVERALL: 3/49 stories passing
 
 ---
 
@@ -73,4 +74,29 @@ OVERALL: 2/49 stories passing
   - For fonts, `--font-display` → `font-display`, `--font-text` → `font-text`. The font *files* will land in US-003 (next/font wiring); §10 tokens declare the FALLBACK stacks only.
   - The `html` element styles in globals.css apply globally before next/font wires up CSS vars (US-003), so initial paint is dark + light text — no FOUC on the dark theme.
   - Build via Turbopack pulls the @theme block + reduced-motion media query into the final CSS automatically; nothing extra was needed in next.config.ts.
+---
+
+## 2026-05-02 — US-003 Wire next/font Archivo Black + Inter via app/layout.tsx
+- Updated apps/pops-website/app/layout.tsx to:
+  - Import `Archivo_Black` and `Inter` from `next/font/google`
+  - Configure Archivo_Black with `weight: "400"`, `subsets: ["latin"]`, `variable: "--font-display"`, `display: "swap"`
+  - Configure Inter with `subsets: ["latin"]`, `variable: "--font-text"`, `display: "swap"`
+  - Set `<html className={`${display.variable} ${text.variable}`}>` so next/font injects both CSS vars
+  - Set `<body className="font-text">` so the Tailwind v4 utility maps to `var(--font-text)` (the next/font value wins via cascade)
+- Updated apps/pops-website/app/page.tsx so the placeholder `<h1>` carries `className="font-display"` (lets the browser-verification step prove Archivo Black actually renders on the heading)
+- Files changed: apps/pops-website/app/layout.tsx, apps/pops-website/app/page.tsx
+- Quality checks: typecheck ✓ | build ✓ (Compiled in 2.1s; TS in 1093ms; 3/3 static pages) | browser ✓
+- Browser verification (Playwright MCP at http://localhost:3001):
+  - `<html>` className contains both `archivo_black_*__variable` and `inter_*__variable` from next/font
+  - `getComputedStyle(html).getPropertyValue('--font-display')` → `"Archivo Black", "Archivo Black Fallback"`
+  - `getComputedStyle(html).getPropertyValue('--font-text')` → `"Inter", "Inter Fallback"`
+  - `<body>` computed font-family: `Inter, "Inter Fallback"` ✓
+  - `<h1>` computed font-family: `"Archivo Black", "Archivo Black Fallback"` ✓
+  - `<p>` computed font-family: `Inter, "Inter Fallback"` ✓
+  - Network: 2 woff2 files, both served from `/_next/static/media/*.woff2` (self-hosted, NOT Google Fonts CDN) ✓
+- **Learnings for future iterations:**
+  - Per design principles §4.4 the design contract suggests `axes: ["opsz"]` on Inter for crisp small text. The US-003 AC does NOT include `axes`, so I omitted it to keep the contract minimal — a future story (or a §4.4-tightening pass) can opt-in if the visual benefit warrants the extra weight (~30KB per axis). Document this trade-off if revisiting.
+  - When both `@theme { --font-text: ... }` (Tailwind v4 fallback stack) AND next/font's `variable: "--font-text"` (self-hosted family) declare the same variable, the next/font value wins because it's set on `<html>` (closer scope than `:root` from @theme). No conflict, no FOUC — Tailwind's `font-text` utility just dereferences `var(--font-text)` at the element and gets whichever value cascades.
+  - Putting the className spread on `<html>` (vs `<body>`) means the variables are also available to anything attached directly to `<html>` (e.g. global background color). Per the AC and Next.js docs, this is the recommended placement.
+  - Archivo Black is a single-weight font (400 file weight that visually renders as 900); next/font requires the `weight` prop because Archivo Black is non-variable. Inter is variable, so no `weight` prop is needed (next/font ships the full variable file).
 ---
