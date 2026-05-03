@@ -629,7 +629,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 34,
-      "passes": false,
+      "passes": true,
       "notes": "Source markdown at .firecrawl/popsindustrial/pages/guest-safety-rules.md is 3.2KB. Don't add or remove rules \u2014 replicate verbatim."
     },
     {

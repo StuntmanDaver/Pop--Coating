@@ -690,3 +690,13 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/app/check-out/schema.ts, apps/pops-website/app/check-out/check-out-form.tsx, apps/pops-website/app/check-out/page.tsx (all new)
 - Quality checks: typecheck ✓ | build ✓ | browser ✓
 ---
+
+## 2026-05-03 — US-034 Build /guest-safety-rules page
+- Hero: "VISITING US" eyebrow, "Guest Safety Rules" H1, slide-01.jpg, "Check In" CTA
+- Content: verbatim from .firecrawl/popsindustrial/pages/guest-safety-rules.md — all 6 rule sections + assumption of risk + authorization
+- max-w-[720px] reading column, font-text sm, nested bullet lists for each rule category
+- Section headings styled with pops-yellow-400 uppercase tracking; sub-category labels with font-semibold text-ink-100
+- "Proceed to Check In" button at bottom (inline anchor styled like primary button)
+- Files: apps/pops-website/app/guest-safety-rules/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
