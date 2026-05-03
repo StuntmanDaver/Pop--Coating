@@ -21,6 +21,9 @@
   --color-ink-900: #11141A;
   --color-paper:   #FFFFFF;
 
+  /* Light canvas — warm near-white for light sections */
+  --color-canvas:  oklch(98.5% 0.005 88);
+
   /* Semantic */
   --color-success-100: #D4E9D6;
   --color-success-500: #2F7A3A;
@@ -51,8 +54,8 @@
 }
 
 html {
-  background: var(--color-ink-800);
-  color: var(--color-ink-100);
+  background: oklch(98.5% 0.005 88);
+  color: oklch(13% 0.015 250);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -5,10 +5,9 @@ import Link from "next/link";
 import { Container } from "../components/layout/container";
 import { Footer } from "../components/layout/footer";
 import { Header } from "../components/layout/header";
-import { Section } from "../components/layout/section";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
-import { ServiceTile } from "../components/marketing/service-tile";
+import { ServiceRow } from "../components/marketing/service-row";
 import { JsonLd } from "../components/seo/json-ld";
 import { Button } from "../components/ui/button";
 import { getOrgJsonLd } from "../lib/jsonld";
@@ -60,8 +59,23 @@ const SERVICES = [
     lede: "Tailored for significant scale.",
     image: "/images/large-capacity-powder-coating.jpg",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
-    alt: "Large capacity powder coating at Pop's Industrial Coatings — accommodating the biggest industrial projects",
+    alt: "Large capacity powder coating at Pop's Industrial Coatings",
   },
+];
+
+const STATS = [
+  { label: "Founded",      value: "1972",      detail: "50+ years serving Florida" },
+  { label: "Generations",  value: "4th Gen",   detail: "Family-owned & operated" },
+  { label: "Specialties",  value: "5 Services", detail: "Coating, blasting & more" },
+  { label: "Location",     value: "Lakeland, FL", detail: "Serving all of Polk County" },
+];
+
+// Per-cell border classes for a 2-col (mobile) → 4-col (desktop) grid.
+const STAT_CELL_CLASSES = [
+  "border-r border-b border-ink-200 md:border-b-0",
+  "border-b border-ink-200 md:border-r md:border-b-0",
+  "border-r border-ink-200",
+  "",
 ];
 
 export default function HomePage() {
@@ -70,7 +84,8 @@ export default function HomePage() {
       <JsonLd data={getOrgJsonLd()} />
       <Header />
       <main id="content">
-        {/* Hero — rebuilt per design principles §6.2; replaces 3-slide tagline rotator */}
+
+        {/* ── Hero ── */}
         <Hero
           eyebrow="FAMILY OWNED · LAKELAND, FL · SINCE 1972"
           heading="Four generations of industrial finishing — done right the first time."
@@ -80,97 +95,127 @@ export default function HomePage() {
           backgroundImage="/images/slide-01.jpg"
         />
 
-        {/* Services grid */}
-        <Section tone="dark">
+        {/* ── Stats / Trust bar ── */}
+        <div className="border-b border-ink-200 bg-canvas">
           <Container>
-            <EyebrowLabel className="mb-4">OUR SERVICES</EyebrowLabel>
-            <h2 className="mb-10 font-display text-[28px] leading-[1.2] text-ink-100">
-              Four generations of expertise in industrial coatings
-            </h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-5">
-              {SERVICES.map((service) => (
-                <ServiceTile key={service.href} {...service} />
+            <dl className="grid grid-cols-2 md:grid-cols-4">
+              {STATS.map(({ label, value, detail }, i) => (
+                <div
+                  key={label}
+                  className={`px-6 py-6 text-center md:py-8 ${STAT_CELL_CLASSES[i]}`}
+                >
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                    {label}
+                  </dt>
+                  <dd className="mt-1 font-display text-2xl tracking-tight text-ink-900 md:text-3xl">
+                    {value}
+                  </dd>
+                  {detail && (
+                    <p className="mt-0.5 font-text text-xs text-ink-400">{detail}</p>
+                  )}
+                </div>
               ))}
+            </dl>
+          </Container>
+        </div>
+
+        {/* ── Services — numbered rows ── */}
+        <section className="bg-canvas py-16 md:py-24" aria-labelledby="services-heading">
+          <Container>
+            <EyebrowLabel tone="dark" className="mb-4">OUR SERVICES</EyebrowLabel>
+            <h2
+              id="services-heading"
+              className="mb-12 font-display text-[30px] leading-tight tracking-tight text-ink-900 md:text-[42px]"
+            >
+              Four generations of expertise
+              <br className="hidden md:block" /> in industrial coatings
+            </h2>
+            <div>
+              {SERVICES.map((service) => (
+                <ServiceRow key={service.href} {...service} />
+              ))}
+              <div className="border-t border-ink-200" aria-hidden="true" />
             </div>
           </Container>
-        </Section>
+        </section>
 
-        {/* Commitment + Facilities & Equipment + Industry Standards — 3-column */}
-        <Section tone="dark" className="border-t border-ink-700">
+        {/* ── Commitment · Infrastructure · Standards ── */}
+        <section
+          className="border-t border-ink-200 bg-canvas py-16 md:py-24"
+          aria-labelledby="commitment-heading"
+        >
           <Container>
             <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
 
-              {/* Column 1: Commitment */}
               <div>
-                <EyebrowLabel className="mb-4">COMMITMENT</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[28px] leading-[1.2] text-ink-100">
+                <EyebrowLabel tone="dark" className="mb-4">COMMITMENT</EyebrowLabel>
+                <h2
+                  id="commitment-heading"
+                  className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900"
+                >
                   It&apos;s a family thing
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-100">
+                <p className="font-text text-base leading-relaxed text-ink-600">
                   With a rich history rooted in a deep understanding of the industry,
-                  Pop&apos;s Industrial Coatings seamlessly blends tradition with a
-                  contemporary approach to applications, solidifying our position as a
-                  principal company in the industrial coating sector.
+                  Pop&apos;s Industrial Coatings blends tradition with a contemporary approach,
+                  solidifying our position as a principal company in industrial finishing.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-100">
-                  Choose Pop&apos;s Industrial Coatings for your next project. We don&apos;t
-                  just meet expectations, we exceed them. Let us show you what
-                  commitment to precision and technical expertise looks like.
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-600">
+                  We don&apos;t just meet expectations — we exceed them. Let us show you
+                  what commitment to precision and technical expertise looks like.
                 </p>
               </div>
 
-              {/* Column 2: Our Facilities & Equipment */}
               <div>
-                <EyebrowLabel className="mb-4">INFRASTRUCTURE</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[28px] leading-[1.2] text-ink-100">
+                <EyebrowLabel tone="dark" className="mb-4">INFRASTRUCTURE</EyebrowLabel>
+                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900">
                   Our Facilities &amp; Equipment
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-100">
+                <p className="font-text text-base leading-relaxed text-ink-600">
                   In constant expansion to meet the demands of our customers, Pop&apos;s
                   facilities give us ample room for the largest projects.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-100">
-                  State-of-the-art equipment and highly skilled personnel makes all
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-600">
+                  State-of-the-art equipment and highly skilled personnel make all
                   the difference in your project&apos;s success.
                 </p>
                 <div className="mt-6">
-                  <Button asChild variant="secondary">
+                  <Button asChild variant="outline" size="compact">
                     <Link href="/request-a-quote/facilities-equipment">View Facilities</Link>
                   </Button>
                 </div>
               </div>
 
-              {/* Column 3: Industry Standards & High Performance Solutions */}
               <div>
-                <EyebrowLabel className="mb-4">STANDARDS</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[28px] leading-[1.2] text-ink-100">
-                  Industry Standards &amp; High Performance Solutions
+                <EyebrowLabel tone="dark" className="mb-4">STANDARDS</EyebrowLabel>
+                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900">
+                  Industry Standards &amp; Certifications
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-100">
-                  We adhere to strict industry specifications and best practices. Read
-                  about our certifications &amp; the standards that guide us.
+                <p className="font-text text-base leading-relaxed text-ink-600">
+                  We adhere to strict industry specifications and best practices.
+                  Read about our certifications and the standards that guide us.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-100">
-                  We love questions about coatings. Don&apos;t know the best product to
-                  meet your project&apos;s requirements?
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-600">
+                  We love questions about coatings — don&apos;t know the best product
+                  for your project? Ask us.
                 </p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <Button asChild variant="secondary">
+                  <Button asChild variant="outline" size="compact">
                     <Link href="/request-a-quote/standards-specifications-certifications">
                       Our Certifications
                     </Link>
                   </Button>
-                  <Button asChild variant="ghost">
-                    <Link href="/request-a-quote">Ask us!</Link>
+                  <Button asChild variant="ghost" size="compact">
+                    <Link href="/request-a-quote">Ask us</Link>
                   </Button>
                 </div>
               </div>
 
             </div>
           </Container>
-        </Section>
+        </section>
 
-        {/* Family photo section */}
+        {/* ── Family photo ── */}
         <section
           aria-label="Four generations of the Pop's Industrial Coatings family"
           className="relative min-h-[400px] overflow-hidden bg-ink-900 md:min-h-[500px]"
@@ -191,6 +236,34 @@ export default function HomePage() {
             </Container>
           </div>
         </section>
+
+        {/* ── CTA Banner — yellow ── */}
+        <section
+          className="bg-pops-yellow-500 py-16 md:py-20"
+          aria-labelledby="cta-heading"
+        >
+          <Container>
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2
+                  id="cta-heading"
+                  className="font-display text-[30px] leading-tight tracking-tight text-ink-900 md:text-[40px]"
+                >
+                  Ready to start your project?
+                </h2>
+                <p className="mt-3 max-w-xl font-text text-base leading-relaxed text-ink-800">
+                  From powder coating to abrasive blasting — get a quote within 24 hours.
+                </p>
+              </div>
+              <div className="shrink-0">
+                <Button asChild variant="dark">
+                  <Link href="/request-a-quote">Request a Quote →</Link>
+                </Button>
+              </div>
+            </div>
+          </Container>
+        </section>
+
       </main>
       <Footer />
     </>

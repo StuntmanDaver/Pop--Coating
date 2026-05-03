@@ -6,6 +6,21 @@ All notable changes to the Pops Industrial Coatings platform and its Claude Code
 
 ## [Unreleased]
 
+### Added — pops-website Stripe-inspired redesign (2026-05-03)
+
+Impeccable skill — Stripe design principles extracted and applied to `apps/pops-website/`. Branch: `ralph/pops-website`.
+
+- **`PRODUCT.md`** — product context file for the pops-website (brand, users, register, strategic principles); required by impeccable skill
+- **`docs/STRIPE-INSPIRED-REDESIGN.md`** — design document: Stripe principles observed, current issues catalogued, color system, component-level change spec, section rhythm plan
+- **`components/marketing/service-row.tsx`** — new component; numbered horizontal list row with thumbnail, replaces the 5-identical-card grid; desktop: 3-col grid (number / content / photo); mobile: inline number + content, photo hidden
+- **`app/globals.css`** — added `--color-canvas: oklch(98.5% 0.005 88)` warm-white token; flipped `html` default background from `ink-800` to canvas (light-dominant foundation)
+- **`components/layout/section.tsx`** — added `tone="canvas"` variant (`bg-canvas text-ink-800`)
+- **`components/marketing/eyebrow.tsx`** — added `tone="dark"` (`text-ink-600`) for eyebrows on light-background sections
+- **`components/ui/button.tsx`** — added `variant="dark"` (`bg-ink-900 text-pops-yellow-500`, for yellow-bg CTA section) and `variant="outline"` (`border border-ink-300 text-ink-800`, for light-bg sections); fixed `ghost` hover from `text-ink-100` (invisible on light) to `text-ink-700`
+- **`components/layout/header.tsx`** — full rewrite: light canvas background, border-bottom, logo left, `Services / About Us / Contact` nav center (hidden on mobile), `Request a Quote` yellow CTA button right, hamburger icon placeholder for mobile
+- **`components/marketing/hero.tsx`** — headline scale 36→46px mobile / 56→66px tablet / new 78px desktop; `tracking-tight` letter-spacing; directional gradient overlay (`from-ink-900/85 via-ink-900/55 to-ink-900/20`) replaces flat 60% scrim; min-height increased to 520→620px
+- **`app/page.tsx`** — homepage restructured with Stripe-like section rhythm (light ↔ dark ↔ yellow): Stats/Trust bar (Since 1972 / 4th Gen / 5 Services / Lakeland FL); numbered ServiceRow list; Commitment/Infrastructure/Standards converted from dark to canvas; new yellow CTA banner (`bg-pops-yellow-500`) before footer with `variant="dark"` button
+
 ### Added
 - `everything-claude-code` (ECC) harness installed globally and in project (2026-05-03)
   - **Global** (`~/.claude/`): 48 agents, 182 skills, 68 slash commands, rules for 15 language namespaces, `hooks/hooks.json` preflight dispatchers

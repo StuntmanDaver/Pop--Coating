@@ -20,11 +20,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-pops-yellow-500 text-ink-900 hover:bg-pops-yellow-600",
-        secondary:
-          "bg-transparent border border-current text-ink-100 hover:bg-ink-100/10",
-        ghost: "bg-transparent text-ink-400 hover:text-ink-100",
+        primary:     "bg-pops-yellow-500 text-ink-900 hover:bg-pops-yellow-600",
+        secondary:   "bg-transparent border border-current text-ink-100 hover:bg-ink-100/10",
+        ghost:       "bg-transparent text-ink-400 hover:text-ink-700",
         destructive: "bg-danger-500 text-paper hover:bg-danger-500/90",
+        dark:        "bg-ink-900 text-pops-yellow-500 hover:bg-ink-800",
+        outline:     "bg-transparent border border-ink-300 text-ink-800 hover:border-ink-600 hover:text-ink-900",
       },
       size: {
         default: "h-11",

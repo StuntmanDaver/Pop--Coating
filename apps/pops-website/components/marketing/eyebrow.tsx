@@ -1,6 +1,6 @@
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 
-type EyebrowTone = "yellow" | "ink";
+type EyebrowTone = "yellow" | "ink" | "dark";
 
 type EyebrowLabelProps = ComponentPropsWithoutRef<"p"> & {
   tone?: EyebrowTone;
@@ -8,7 +8,8 @@ type EyebrowLabelProps = ComponentPropsWithoutRef<"p"> & {
 
 const TONE_CLASSES: Record<EyebrowTone, string> = {
   yellow: "text-pops-yellow-500",
-  ink: "text-ink-400",
+  ink:    "text-ink-400",
+  dark:   "text-ink-600",
 };
 
 export const EyebrowLabel = forwardRef<HTMLParagraphElement, EyebrowLabelProps>(
