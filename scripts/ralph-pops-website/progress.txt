@@ -700,3 +700,14 @@ OVERALL: 16/49 stories passing
 - Files: apps/pops-website/app/guest-safety-rules/page.tsx (new)
 - Quality checks: typecheck ✓ | build ✓ | browser ✓
 ---
+
+## 2026-05-03 — US-035 Build sendFormEmail() Resend helper
+- Created apps/pops-website/lib/email.ts with sendFormEmail({ to, subject, html, replyTo? })
+- Reads RESEND_API_KEY from process.env (throws if missing); RESEND_FROM env var with fallback to noreply@popsindustrial.com
+- Uses resend npm package (added to apps/pops-website/package.json at 6.12.2)
+- @sentry/nextjs resolves from root node_modules (pnpm workspace hoisting)
+- buildEmailHtml() helper: HTML table with Pop's yellow header, field rows, escapeHtml() for XSS safety
+- Error path: Sentry.captureException + throw new Error with message
+- Files: apps/pops-website/lib/email.ts (new)
+- Quality checks: typecheck ✓ | build ✓
+---

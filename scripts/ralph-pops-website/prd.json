@@ -647,7 +647,7 @@
         "Typecheck passes"
       ],
       "priority": 35,
-      "passes": false,
+      "passes": true,
       "notes": "Read the RESEND env names in CLAUDE.md or root .env.example if available. Don't accidentally use a different SMTP provider \u2014 the project locks to Resend."
     },
     {
