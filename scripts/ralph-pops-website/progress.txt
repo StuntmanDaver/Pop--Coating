@@ -608,3 +608,45 @@ OVERALL: 16/49 stories passing
   - Services index page is intentionally lean — the ServiceTile grid plus a Specs & Certifications cross-link is sufficient; no need to repeat the home-page 3-column commitment section.
   - Lede text for each tile uses the verbatim descriptions from the source markdown (fuller than the home-page shorthand ledes), which gives visitors better context before clicking into a detail page.
 ---
+
+## 2026-05-03 — US-026 Build /industrial-coatings-services/wet-paint-coatings page
+- Hero: industrial-painting-lakeland-fl-1024x683-1.jpg background, "INDUSTRIAL" eyebrow, "Wet Paint Coatings" H1
+- 2-column layout: main body (3 paragraphs verbatim from source) + 4-photo grid + Get a Quote CTA left; services sidebar right (bold current page, links to other 4)
+- Photo gallery: industrial-painting, industrial-wet-painting-coatings.png, slide-02.jpg, teflon-coating.jpg
+- Files: apps/pops-website/app/industrial-coatings-services/wet-paint-coatings/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- **Learnings:** Service detail layout established: `grid lg:grid-cols-[1fr_280px]` with content on left, services sidebar on right. Current page shown as bold non-link; other services as yellow-hover links.
+---
+
+## 2026-05-03 — US-027 Build /industrial-coatings-services/complex-coating page
+- Hero: industrial-complex-coatings-1.jpg background, "COMPLEX INDUSTRIAL" eyebrow
+- Single featured image (wide aspect ratio) instead of photo grid — source only had one image reference
+- 4 paragraphs verbatim from source (tank lining, baked coatings, plural component coatings)
+- Files: apps/pops-website/app/industrial-coatings-services/complex-coating/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-028 Build /industrial-coatings-services/abrasive-media-blasting page
+- Hero: abrasive-media-blasting.jpg background, "SAND BLASTING" eyebrow
+- 3 paragraphs from source (SSPC/NACE standards, surface preparation, contaminant removal)
+- 6-photo grid (3-col): IMG_5019, IMG_5406, IMG_7484, IMG_7485, IMG_7486, IMG_7487
+- Files: apps/pops-website/app/industrial-coatings-services/abrasive-media-blasting/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+- **Learnings:** The "Sandbalsting-2" typo file only exists in thumbnail (-300x200) and scaled forms, no plain full-res. Used the IMG_ series (full-res) for the grid instead.
+---
+
+## 2026-05-03 — US-029 Build /industrial-coatings-services/powder-coating page
+- Hero: industrial-powder-coating-lakeland-fl-IMG_3687.jpg, "POWDER" eyebrow
+- 3 paragraphs verbatim from source (electrostatic spray, corrosion/impact/chemical resistance, diverse applications)
+- 8-photo grid (4-col): IMG_3687, IMG_4029, IMG_4107, IMG_4181, IMG_4686, IMG_4980, IMG_5315, Ameron-pole-products
+- Files: apps/pops-website/app/industrial-coatings-services/powder-coating/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---
+
+## 2026-05-03 — US-030 Build /industrial-coatings-services/large-capacity-powder-coating page
+- Hero: large-capacity-powder-coating.jpg (full-res), "LARGE CAPACITY" eyebrow
+- 3 paragraphs from source (significant scale, structural members, uniform coverage)
+- 3-photo grid: large-capacity-powder-coating.jpg, large-capacity-industrial-powder-coating-scaled.jpeg, large-capacity-industrial-powder-coating2-scaled.jpeg
+- Files: apps/pops-website/app/industrial-coatings-services/large-capacity-powder-coating/page.tsx (new)
+- Quality checks: typecheck ✓ | build ✓ | browser ✓
+---

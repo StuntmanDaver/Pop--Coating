@@ -481,7 +481,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 26,
-      "passes": false,
+      "passes": true,
       "notes": "This page on the live site is the only one with proper alt text. Maintain or improve that. The service-detail pattern (hero + description + services-nav + CTA) is shared by US-026 through US-030."
     },
     {
@@ -498,7 +498,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "notes": "Source markdown is at .firecrawl/popsindustrial/pages/industrial-coatings-services-complex-coating.md."
     },
     {
@@ -516,7 +516,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 28,
-      "passes": false,
+      "passes": true,
       "notes": "Note the original WP filename typo 'Sandbalsting' (per .firecrawl/popsindustrial/_raw/site-globals.json#filename_typos_in_uploads). Reference the file as-is \u2014 don't rename. The rebuild can fix the filename later."
     },
     {
@@ -534,7 +534,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 29,
-      "passes": false,
+      "passes": true,
       "notes": "Most photo-rich service page \u2014 many recent shop photos. Use the full-res versions where available; the rebuild lets next/image handle responsive variants."
     },
     {
@@ -551,7 +551,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 30,
-      "passes": false,
+      "passes": true,
       "notes": "This is the differentiated service \u2014 largest powder-coating oven. Make sure the size differentiation comes through."
     },
     {
