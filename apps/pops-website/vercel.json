@@ -1,7 +1,8 @@
 {
   "framework": "nextjs",
-  "buildCommand": "pnpm build",
-  "installCommand": "pnpm install --filter pops-website... --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm --filter pops-website build",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+  "outputDirectory": ".next",
   "headers": [
     {
       "source": "/images/(.*)",
