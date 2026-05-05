@@ -12,3 +12,9 @@ export type { CreateContactInput, UpdateContactInput } from './actions/contacts'
 
 export { listContacts, getContactById } from './queries/contacts'
 export type { ListContactsParams, ContactListItem } from './queries/contacts'
+
+export { logActivity } from './actions/activities'
+export type { LogActivityInput } from './actions/activities'
+
+export { listActivities } from './queries/activities'
+export type { ListActivitiesParams, ActivityListItem } from './queries/activities'
