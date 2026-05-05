@@ -1,0 +1,10 @@
+{
+  "pid": null,
+  "startedAt": "2026-05-05T05:29:00Z",
+  "provider": "claude",
+  "invokedVia": "skill",
+  "status": "running",
+  "scope": "src/modules/* (excluding apps/pops-website)",
+  "complexity": "complex",
+  "notes": "Single Claude Code session — degraded from autonomy/run.sh harness. Canonical-doc-bound: PRD.md, docs/DESIGN.md, docs/EXECUTION.md, .planning/STATE.md."
+}
