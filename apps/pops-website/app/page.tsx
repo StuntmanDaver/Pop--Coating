@@ -11,6 +11,7 @@ import { NumberTicker } from "../components/magicui/number-ticker";
 import { CertificationMarquee } from "../components/marketing/certification-marquee";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
+import { IndustriesGrid } from "../components/marketing/industries-grid";
 import { ServiceRow } from "../components/marketing/service-row";
 import { JsonLd } from "../components/seo/json-ld";
 import { Button } from "../components/ui/button";
@@ -171,6 +172,9 @@ export default function HomePage() {
             </div>
           </Container>
         </section>
+
+        {/* ── Industries served ── */}
+        <IndustriesGrid />
 
         {/* ── Commitment · Infrastructure · Standards ── */}
         <section
