@@ -1,6 +1,18 @@
-// Phase 4 module. Public API will export: inviteCustomer, sendInitialMagicLink,
-// getPortalJobs, getPortalJobDetail — see docs/DESIGN.md §4.3 Module 9 (Portal).
-// Note: the customer magic-link re-auth flow (requestCustomerMagicLink) lives in
-// src/modules/auth/ (customer-initiated). This module handles office-initiated
-// customer provisioning and portal-specific data queries.
-export {}
+// Public API for the Customer Portal module.
+// docs/DESIGN.md §4.3 Module 9 (Portal). Customer-audience reads only.
+// Re-exports getCustomerVisibleTimeline from the timeline module so the portal
+// surface is one import for callers.
+//
+// Wave-1 scope: data queries only (listMyJobs, getMyJob, getCustomerVisibleTimeline).
+// Office-initiated customer provisioning (inviteCustomer, sendInitialMagicLink) lands
+// in Wave 2 once portal UI surfaces stabilize.
+
+export { listMyJobs, getMyJob } from './queries/portal'
+export type {
+  ListMyJobsParams,
+  PortalJobListItem,
+  PortalJobDetail,
+} from './queries/portal'
+
+export { getCustomerVisibleTimeline } from '@/modules/timeline'
+export type { TimelineEvent } from '@/modules/timeline'
