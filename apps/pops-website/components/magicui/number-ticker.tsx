@@ -65,7 +65,7 @@ export function NumberTicker({
     // SSR'd text content (value) stays untouched in every other case.
     if (!isInView || prefersReducedMotion) return;
 
-    const unsubscribe = springValue.on("change", (latest) => {
+    const unsubscribe = springValue.on("change", (latest: number) => {
       if (!ref.current) return;
       ref.current.textContent = formatter.format(
         Number(latest.toFixed(decimalPlaces)),
