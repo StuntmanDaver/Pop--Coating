@@ -106,7 +106,7 @@ export function QuoteForm({ prefillService }: QuoteFormProps) {
           Need to talk now? Call{" "}
           <a
             href="tel:+18636447473"
-            className="text-pops-yellow-500 underline-offset-2 hover:underline"
+            className="text-pops-yellow-500 underline underline-offset-2 hover:text-pops-yellow-300"
           >
             863.644.7473
           </a>
@@ -137,7 +137,7 @@ export function QuoteForm({ prefillService }: QuoteFormProps) {
         Call{" "}
         <a
           href="tel:+18636447473"
-          className="text-pops-yellow-500 underline-offset-2 hover:underline"
+          className="text-pops-yellow-500 underline underline-offset-2 hover:text-pops-yellow-300"
         >
           863.644.7473
         </a>{" "}

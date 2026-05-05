@@ -96,7 +96,7 @@ export default function ContactPage() {
                         className="block text-xs text-ink-400 hover:text-ink-200 transition-colors"
                       >
                         {company.emails.invoices}{" "}
-                        <span className="text-ink-500">(billing only)</span>
+                        <span className="text-ink-300">(billing only)</span>
                       </a>
                     </div>
                   </div>
