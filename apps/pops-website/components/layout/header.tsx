@@ -72,7 +72,7 @@ export function Header({ className }: HeaderProps) {
           <a
             href={PHONE_TEL_HREF}
             aria-label={`Call ${company.name} at ${company.phone}`}
-            className="inline-flex min-h-11 items-center gap-2 rounded-sm px-2 py-2 font-text text-sm font-medium text-ink-700 outline-none transition-colors hover:text-ink-900 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:px-3"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-sm px-2 py-2 font-text text-sm font-medium text-ink-700 outline-none transition-colors hover:text-ink-900 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:px-3"
           >
             <svg
               width="16"
@@ -89,7 +89,7 @@ export function Header({ className }: HeaderProps) {
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="hidden lg:inline">{company.phone}</span>
+            <span className="hidden sm:inline">{company.phone}</span>
           </a>
 
           <Button asChild variant="primary" size="compact" className="hidden sm:inline-flex">
