@@ -14,6 +14,7 @@ import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
 import { IndustriesGrid } from "../components/marketing/industries-grid";
 import { ServiceRow } from "../components/marketing/service-row";
+import { Testimonials } from "../components/marketing/testimonials";
 import { JsonLd } from "../components/seo/json-ld";
 import { Button } from "../components/ui/button";
 import { getOrgJsonLd } from "../lib/jsonld";
@@ -277,6 +278,9 @@ export default function HomePage() {
             </Container>
           </div>
         </section>
+
+        {/* ── Testimonials ── */}
+        <Testimonials />
 
         {/* ── CTA Banner — yellow card on dark, with traced border beam ── */}
         <section
