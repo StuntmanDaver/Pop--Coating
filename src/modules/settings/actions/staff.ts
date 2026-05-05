@@ -39,14 +39,13 @@ export type UpdateStaffInput = z.infer<typeof UpdateStaffSchema>
 
 const DeactivateStaffSchema = z.object({ id: z.string().uuid() })
 
-interface StaffRow {
-  id: string
-  tenant_id: string
-  email: string
-  role: string
+interface StaffInviteResult {
+  staff: { id: string; tenant_id: string; email: string; role: string }
+  auth_user_id: string
+  invite_link: string | null
 }
 
-export async function inviteStaff(input: unknown): Promise<StaffRow> {
+export async function inviteStaff(input: unknown): Promise<StaffInviteResult> {
   const parsed = InviteStaffSchema.safeParse(input)
   if (!parsed.success) throw new Error('Invalid input')
 
@@ -55,7 +54,7 @@ export async function inviteStaff(input: unknown): Promise<StaffRow> {
   const supabase = await createClient()
   const supabaseAdmin = createServiceClient()
 
-  // Step 1: insert the staff row (auth_user_id NULL until invite accepted).
+  // Step 1: insert the staff row (auth_user_id NULL until link trigger fires at acceptance).
   const { data: staff, error: insertError } = await supabase
     .from('staff')
     .insert({
@@ -72,25 +71,48 @@ export async function inviteStaff(input: unknown): Promise<StaffRow> {
     throw new Error(`Staff insert failed: ${insertError?.message ?? 'unknown'}`)
   }
 
-  // Step 2: dispatch invite. App metadata carries tenant_id + intended_actor for
-  // the auth-hook + link-trigger to wire auth.users.id ↔ staff.id at acceptance.
-  const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-    parsed.data.email,
-    {
-      data: { name: parsed.data.name },
-      // app_metadata field is supported by inviteUserByEmail v2.49+ via the second-arg `data`
-      // hack-shape; supabase-js doesn't expose app_metadata directly here, so we follow up
-      // with updateUserById once auth.users row exists. For Wave 1 we tag tenant via
-      // raw_app_meta_data through a separate call after acceptance — see Phase-4 OPS-01.
-    }
-  )
+  // Step 2: createUser with app_metadata BAKED IN at creation. CRITICAL — the
+  // link_auth_user_to_actor trigger (migration 0010) fires AFTER INSERT on
+  // auth.users and REQUIRES app_metadata.tenant_id. inviteUserByEmail does NOT
+  // accept app_metadata, so it would raise 'auth_user_created_without_tenant_id'.
+  // Pattern matches scripts/seed-tenant.ts (RESEARCH.md Pitfall 5).
+  const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
+    email: parsed.data.email,
+    email_confirm: true,
+    user_metadata: { name: parsed.data.name },
+    app_metadata: {
+      tenant_id: claims.tenant_id,
+      intended_actor: 'staff',
+    },
+  })
 
-  if (inviteError) {
-    throw new Error(`Invite dispatch failed: ${inviteError.message}`)
+  if (createError || !created?.user) {
+    // Roll back the staff row to avoid an orphaned record blocking re-invite.
+    await supabase.from('staff').delete().eq('id', staff.id)
+    throw new Error(`Auth user creation failed: ${createError?.message ?? 'no user returned'}`)
+  }
+
+  // Step 3: generate an invite link that lets the staff member set a password.
+  // Supabase dispatches the email via the configured SMTP provider (Resend per
+  // CLAUDE.md). The action_link is also returned for in-band display when SMTP
+  // is unavailable (e.g., dev).
+  const { data: link, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'invite',
+    email: parsed.data.email,
+  })
+
+  if (linkError) {
+    // Auth user exists at this point — don't roll back; just surface the error.
+    throw new Error(`Invite link dispatch failed: ${linkError.message}`)
   }
 
   await logAuditEvent({ action: 'invite', entity_type: 'staff', entity_id: staff.id })
-  return staff
+
+  return {
+    staff,
+    auth_user_id: created.user.id,
+    invite_link: link?.properties?.action_link ?? null,
+  }
 }
 
 export async function updateStaff(input: unknown): Promise<{ id: string }> {
