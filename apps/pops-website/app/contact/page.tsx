@@ -84,7 +84,7 @@ export default function ContactPage() {
                     <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-400">
                       Email
                     </p>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       <a
                         href={`mailto:${company.emails.info}`}
                         className="block text-pops-yellow-500 hover:text-pops-yellow-300 transition-colors"
@@ -93,9 +93,10 @@ export default function ContactPage() {
                       </a>
                       <a
                         href={`mailto:${company.emails.invoices}`}
-                        className="block text-pops-yellow-500 hover:text-pops-yellow-300 transition-colors"
+                        className="block text-xs text-ink-400 hover:text-ink-200 transition-colors"
                       >
-                        {company.emails.invoices}
+                        {company.emails.invoices}{" "}
+                        <span className="text-ink-500">(billing only)</span>
                       </a>
                     </div>
                   </div>
