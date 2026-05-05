@@ -1,6 +1,6 @@
 {
   "currentPhase": "DEVELOPMENT",
-  "tasksCompleted": 17,
+  "tasksCompleted": 21,
   "tasksFailed": 0,
   "tasksDeferred": 0,
   "anchor": ".planning/STATE.md (Phase 1 Plan 06 — code complete; Wave-1 module APIs all built including Phase 3 migrations + scanning wrappers)",
@@ -27,7 +27,18 @@
     "package.json — server-only + @react-pdf/renderer + qrcode + @types/qrcode deps",
     "supabase/migrations/0015 — app.validate_employee_pin (5-strikes-then-15-min lockout)",
     "supabase/migrations/0016 — app.record_scan_event (only writer of jobs.production_status)",
-    "supabase/migrations/0017 — packet_dirty BEFORE UPDATE trigger on jobs"
+    "supabase/migrations/0017 — packet_dirty BEFORE UPDATE trigger on jobs",
+    "src/shared/ui/badge.tsx — 5 semantic badge variants for status/priority/hold UI",
+    "src/app/(office)/layout.tsx — header + nav shell for office pages",
+    "src/app/(office)/jobs/_components/job-form-fields.tsx — shared CRUD field set used by new + edit forms"
+  ],
+  "ui_surfaces_built": [
+    {"route": "/jobs", "surface": "Jobs list with q/intake/stage/hold filters + table"},
+    {"route": "/jobs/new", "surface": "Create form with companies picker → createJob (useActionState)"},
+    {"route": "/jobs/[id]", "surface": "Read-only detail + Print packet + Edit + manual-entry code display"},
+    {"route": "/jobs/[id]/edit", "surface": "Edit form (production_status excluded) → updateJob"},
+    {"route": "/jobs/[id]/packet", "surface": "PDF stream (preexisting from RARV 18)"},
+    {"route": "/my", "surface": "Portal placeholder (renamed from /jobs to clear office namespace)"}
   ],
   "audit_fixes_applied": [
     {
@@ -55,16 +66,17 @@
   "session_metrics": {
     "tests_total": 161,
     "tests_added_this_session": 113,
-    "atomic_commits_this_session": 19,
-    "files_created": 45,
+    "atomic_commits_this_session": 21,
+    "files_created": 59,
     "lessons_compounded": "see .loki/memory/timeline.json"
   },
   "next_session_pickup": [
     "1. Resolve Plan 06 human-action checklist (Supabase Dashboard JWT/Hook + Resend DNS + Upstash + Sentry); apply migrations 0015/0016/0017 against live DB; sign off Phase 1",
     "2. Run supabase gen types typescript --local to regen Database with app schema; remove cast-through-unknown in jobs.ts + scanning/{pin,scan-event,workstation-lifecycle}.ts",
-    "3. pgTAP coverage for new migrations — tenant-mismatch / lockout / cross-tenant scan / packet_dirty trigger fire conditions (pattern in supabase/tests/rls/test_function_authorization.sql)",
+    "3. pgTAP coverage for new migrations — tenant-mismatch / lockout / cross-tenant scan / packet_dirty trigger fire conditions",
     "4. /gsd-plan-phase for Phase 2 to formalize the module work + create plan artifacts",
-    "5. UI surfaces: /(office)/jobs/[id]/edit form; /(office)/jobs/new; /(scan)/* PWA pages; /(portal)/jobs/[id] timeline view",
-    "6. Decide on legacy popsindustrial.com aliases — currently still attached to prod deployment as redirects"
+    "5. Remaining UI surfaces: dashboard glow-up (counts + recent jobs); companies CRUD pages; /(scan)/* PWA pages; /(portal)/my [job-id] timeline view; settings (workstations + staff + shop_settings)",
+    "6. Playwright E2E coverage for jobs CRUD flow (create → list → detail → edit → packet print)",
+    "7. Decide on legacy popsindustrial.com aliases — currently still attached to prod deployment as redirects"
   ]
 }
