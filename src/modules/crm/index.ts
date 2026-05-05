@@ -6,3 +6,9 @@ export type { CreateCompanyInput, UpdateCompanyInput } from './actions/companies
 
 export { listCompanies, getCompanyById } from './queries/companies'
 export type { ListCompaniesParams, CompanyListItem } from './queries/companies'
+
+export { createContact, updateContact, archiveContact } from './actions/contacts'
+export type { CreateContactInput, UpdateContactInput } from './actions/contacts'
+
+export { listContacts, getContactById } from './queries/contacts'
+export type { ListContactsParams, ContactListItem } from './queries/contacts'
