@@ -19,7 +19,7 @@ Replace paper-based job tracking with a QR scan loop that gives shop owners live
 **Infrastructure & scaffolding**
 - [ ] Next.js 16 App Router repo initialized with TypeScript strict, Tailwind v4, shadcn/ui, pnpm
 - [ ] Supabase project wired (Postgres + Auth + Realtime + Storage)
-- [ ] Vercel project configured with `app.popsindustrial.com` + `track.popsindustrial.com` domains
+- [ ] Vercel project configured with `app.popscoating.com` + `track.popscoating.com` domains
 - [ ] Multi-tenant schema foundation: `tenants` table, `tenant_id` on every business table, RLS policies using `app.tenant_id()` helper
 - [ ] Auth: Supabase Auth with `@supabase/ssr` cookie storage; JWT `app_metadata.tenant_id` claim; three audiences (office, shop/workstation, customer)
 - [ ] Sentry + Resend + Upstash Redis wired and verified
@@ -80,7 +80,7 @@ Replace paper-based job tracking with a QR scan loop that gives shop owners live
 - Pops Industrial Coatings is a powder coating shop currently running on paper travelers, phone calls, and spreadsheets. Lost jobs on the floor, no customer visibility, no timing data.
 - The strategic wedge: once customers expect live QR tracking, switching vendors means losing it. The portal is a retention moat.
 - Three audiences in Wave 1: **office staff** (CRM + job intake), **shop staff** (scanner only, PIN-based, glove-friendly UI), **customers** (magic-link portal, read-only).
-- Two domains: `app.popsindustrial.com` (internal) + `track.popsindustrial.com` (customer portal).
+- Two domains: `app.popscoating.com` (internal) + `track.popscoating.com` (customer portal).
 - Hardware target: iPad Safari on workstation tablets — glove-friendly, high-contrast, WiFi-degradation resilient.
 - EXECUTION.md estimates Wave 1 at ~9-11 weeks with parallel agent dispatch (vs 12-13 solo).
 - GSD scope: **Wave 1 only** (Weeks 1-13). Re-plan Wave 2 after Wave 1 ships.

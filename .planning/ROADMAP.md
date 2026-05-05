@@ -23,10 +23,10 @@
 **Depends on**: Nothing (first phase)
 **Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04, INFRA-05, INFRA-06, INFRA-07, AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05
 **Success Criteria** (what must be TRUE):
-  1. A developer can run `pnpm install && pnpm dev` and reach a working Next.js 16 app at `app.popsindustrial.com` and `track.popsindustrial.com` via local env — TypeScript strict passes, Tailwind v4 renders, shadcn/ui components mount
-  2. An office staff user can sign in with email/password on `app.popsindustrial.com` and their 30-day session survives a page reload; `supabase.auth.getUser()` returns a valid user with `tenant_id` and `audience=office` in `app_metadata`
+  1. A developer can run `pnpm install && pnpm dev` and reach a working Next.js 16 app at `app.popscoating.com` and `track.popscoating.com` via local env — TypeScript strict passes, Tailwind v4 renders, shadcn/ui components mount
+  2. An office staff user can sign in with email/password on `app.popscoating.com` and their 30-day session survives a page reload; `supabase.auth.getUser()` returns a valid user with `tenant_id` and `audience=office` in `app_metadata`
   3. A workstation tablet can be enrolled via admin QR ceremony and then authenticates with a 1-hour session; attempting to authenticate on the office domain with workstation credentials is rejected
-  4. A customer can receive a magic link and reach `track.popsindustrial.com` scoped only to their company's data; office credentials do not work on the portal domain
+  4. A customer can receive a magic link and reach `track.popscoating.com` scoped only to their company's data; office credentials do not work on the portal domain
   5. Any SQL query from the `authenticated` role that omits `tenant_id` returns zero rows from any business table — cross-tenant data cannot leak even without application-level filtering
 **Plans**: 6 plans
   - [x] 01-01-PLAN.md — Repo scaffold: Next.js 16 + Tailwind v4 + shadcn/ui + ESLint module-boundary + service-role gating + i18n + folder structure (INFRA-01, INFRA-07 partial)
@@ -67,7 +67,7 @@
 **Depends on**: Phase 3
 **Requirements**: PORTAL-01, PORTAL-02, PORTAL-03, PORTAL-04, OPS-01, OPS-02, OPS-03
 **Success Criteria** (what must be TRUE):
-  1. A customer receives a magic link by email, opens `track.popsindustrial.com`, and sees only their own company's jobs; attempting to view a job from a different company returns a 404 or permission error
+  1. A customer receives a magic link by email, opens `track.popscoating.com`, and sees only their own company's jobs; attempting to view a job from a different company returns a 404 or permission error
   2. A customer can open any of their jobs and see a visual progress tracker with the current stage highlighted and a full scan timeline (employee name, stage, timestamp, photo if any)
   3. A customer can update their display name and email address in account settings; the change takes effect immediately on next page load
   4. Inviting a new office staff member, deactivating a staff account, or changing a role generates an immutable audit log entry tagged with `tenant_id` and the acting user's ID; the entry cannot be deleted or modified via the `authenticated` role

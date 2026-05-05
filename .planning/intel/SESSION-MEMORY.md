@@ -28,8 +28,8 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 | Auth Hook registration | Supabase Dashboard → Authentication → Hooks → Custom Access Token → `app.custom_access_token_hook` |
 | Upstash credentials | Vercel Marketplace → Upstash; env: `UPSTASH_REDIS_REST_URL` + token |
 | Sentry DSN | Sentry project; `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` on Vercel + `.env.local` |
-| Vercel domains | `app.popsindustrial.com` + `track.popsindustrial.com` (remove stale `popscoating.com` if present) |
-| Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (registrar). |
+| Vercel domains | `app.popscoating.com` + `track.popscoating.com` (remove stale `popscoating.com` if present) |
+| Resend DNS | DKIM / SPF / MX for `popscoating.com` (registrar). |
 
 After push/sync and the **two Supabase Dashboard** steps (JWT + Auth Hook), Phase 1 **Task 5** (success criteria walkthrough) can run for Phase 1 sign-off.
 
@@ -48,7 +48,7 @@ After push/sync and the **two Supabase Dashboard** steps (JWT + Auth Hook), Phas
 - **Config:** `typedRoutes` moved out of `experimental` in `next.config.ts` for Next 16 compatibility.
 - **Infra checks:** Supabase project active; migrations count matched expectations in session; Vercel production env vars partially populated (session noted gaps for Upstash/Sentry).
 - **GitHub:** `RESEND_API_KEY` and `SUPABASE_PROJECT_REF` (or equivalent) set via `gh secret` in session — verify in repo **Settings → Secrets** without pasting values into docs.
-- **Still manual (Plan 06):** Supabase Dashboard — JWT expiry **3600s**; register **Custom Access Token Hook** → `app.custom_access_token_hook`. Vercel — attach **app.*/track.*** hostnames for `popsindustrial.com` (replace any stale `popscoating.com` references). Resend — complete DNS (DKIM/SPF/MX) for sending domain. Upstash — provision via Vercel Marketplace and set Redis REST URL + token in env.
+- **Still manual (Plan 06):** Supabase Dashboard — JWT expiry **3600s**; register **Custom Access Token Hook** → `app.custom_access_token_hook`. Vercel — attach **app.*/track.*** hostnames for `popscoating.com` (replace any stale `popscoating.com` references). Resend — complete DNS (DKIM/SPF/MX) for sending domain. Upstash — provision via Vercel Marketplace and set Redis REST URL + token in env.
 
 ### Phase gating (ralph / Phase 02)
 

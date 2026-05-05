@@ -8,18 +8,18 @@
 ### Infrastructure & Scaffold
 
 - [x] **INFRA-01**: Next.js 16 App Router repo initialized with TypeScript strict, Tailwind v4, shadcn/ui, and pnpm as package manager
-- [ ] **INFRA-02**: Supabase project created and connected; Vercel project configured with `app.popsindustrial.com` (office) and `track.popsindustrial.com` (portal) domains
+- [ ] **INFRA-02**: Supabase project created and connected; Vercel project configured with `app.popscoating.com` (office) and `track.popscoating.com` (portal) domains
 - [x] **INFRA-03**: `tenants` table exists; every business table has `tenant_id uuid not null references public.tenants(id)`; `app.tenant_id()` SECURITY DEFINER helper reads JWT `app_metadata.tenant_id`; RLS policies use `tenant_id = app.tenant_id()`
-- [x] **INFRA-04**: Resend configured with SPF/DKIM/DMARC for `popsindustrial.com`; Upstash Redis wired for rate limiting (`@upstash/ratelimit` sliding-window); Sentry initialized and tagging every event with `tenant_id`
+- [x] **INFRA-04**: Resend configured with SPF/DKIM/DMARC for `popscoating.com`; Upstash Redis wired for rate limiting (`@upstash/ratelimit` sliding-window); Sentry initialized and tagging every event with `tenant_id`
 - [x] **INFRA-05**: `src/proxy.ts` (renamed from middleware.ts in Next.js 16) handles multi-domain routing: `app.*` routes to `(office)`, `track.*` routes to `(portal)`
 - [x] **INFRA-06**: All required SQL SECURITY DEFINER helpers created: `app.tenant_id()`, `app.audience()`, `app.role()`, `app.staff_id()`, `app.workstation_id()`, `app.company_id()`, `app.set_updated_at()`
 - [x] **INFRA-07**: ESLint rules enforce module boundaries (`no-restricted-imports`, `madge --circular`) and service-role gating; CI pipeline runs type check, lint, and test on every PR
 
 ### Auth
 
-- [x] **AUTH-01**: Office staff can sign in with email and password; session uses `@supabase/ssr` httpOnly cookie scoped to `app.popsindustrial.com`; session TTL is 30 days; auth decisions always use `supabase.auth.getUser()` (never `getSession()`)
+- [x] **AUTH-01**: Office staff can sign in with email and password; session uses `@supabase/ssr` httpOnly cookie scoped to `app.popscoating.com`; session TTL is 30 days; auth decisions always use `supabase.auth.getUser()` (never `getSession()`)
 - [x] **AUTH-02**: Workstation tablet is enrolled as a synthetic Supabase user via admin-generated QR code ceremony; workstation session TTL is 1 hour (stolen-tablet mitigation); tablet re-authenticates silently
-- [x] **AUTH-03**: Customer portal uses magic-link auth scoped to `track.popsindustrial.com`; customer session is read-only and scoped to their company's jobs; session TTL is 30 days
+- [x] **AUTH-03**: Customer portal uses magic-link auth scoped to `track.popscoating.com`; customer session is read-only and scoped to their company's jobs; session TTL is 30 days
 - [ ] **AUTH-04**: JWT `app_metadata` carries `tenant_id`, `audience` (office/shop/customer), and `role`; `custom_access_token_hook` populates claims; hook must not write to any tables (Supabase deadlock constraint)
 - [x] **AUTH-05**: `requireOfficeStaff()`, `requireShopStaff()`, `requireCustomer()` helpers in `src/shared/auth-helpers/require.ts` enforce audience at the Server Action / route level; `getCurrentClaims()` in `claims.ts` reads JWT claims
 

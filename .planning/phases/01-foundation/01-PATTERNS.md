@@ -78,7 +78,7 @@ range** that executors must read before implementing each file.
 - File is named `proxy.ts` not `middleware.ts` (Next.js 16 rename)
 - Must call `supabase.auth.getUser()` — never `getSession()`
 - Rate limiting via `@upstash/ratelimit` runs before routing
-- Cookie scoping: never set `domain: '.popsindustrial.com'`; let `@supabase/ssr` use host-scoped defaults
+- Cookie scoping: never set `domain: '.popscoating.com'`; let `@supabase/ssr` use host-scoped defaults
 
 **Core pattern** (RESEARCH.md lines 302–354):
 ```typescript
@@ -117,10 +117,10 @@ export async function proxy(request: NextRequest) {
   if (user) {
     const audience = user.app_metadata?.audience
     if (isPortal && audience !== 'customer') {
-      return NextResponse.redirect(new URL('https://app.popsindustrial.com', request.url))
+      return NextResponse.redirect(new URL('https://app.popscoating.com', request.url))
     }
     if (isOffice && audience === 'customer') {
-      return NextResponse.redirect(new URL('https://track.popsindustrial.com', request.url))
+      return NextResponse.redirect(new URL('https://track.popscoating.com', request.url))
     }
   }
 
@@ -401,7 +401,7 @@ export async function createWorkstation({name, default_stage, location}: {
     .update({ auth_user_id: authData.user.id }).eq('id', ws.id)
 
   return { workstation: ws,
-           enrollment_url: `https://app.popsindustrial.com/scan/enroll?token=${device_token}` }
+           enrollment_url: `https://app.popscoating.com/scan/enroll?token=${device_token}` }
 }
 ```
 
@@ -763,7 +763,7 @@ Deep imports (`@/modules/auth/actions/sign-in`) are forbidden by ESLint.
 | `tailwind.config.ts` | CSS-first `@theme {}` in `globals.css` | CLAUDE.md; RESEARCH.md §Anti-Patterns |
 | `ALTER ROLE supabase_auth_admin` | Never modify this role | CLAUDE.md; RESEARCH.md Pitfall 4 |
 | Direct `UPDATE production_status` | Only via `app.record_scan_event()` | CLAUDE.md; DESIGN.md §4.3 Module 3 |
-| `domain: '.popsindustrial.com'` in cookie options | Host-scoped default (no domain) | RESEARCH.md Pitfall 2 |
+| `domain: '.popscoating.com'` in cookie options | Host-scoped default (no domain) | RESEARCH.md Pitfall 2 |
 | Creating triggers before both `staff` AND `customer_users` exist | Create both tables first, then function, then both triggers | RESEARCH.md Pitfall 3; DESIGN.md §3.3 |
 | `npm install` or `yarn add` | `pnpm install` / `pnpm add` | CLAUDE.md |
 
