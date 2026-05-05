@@ -82,7 +82,7 @@ type Stat = {
 const STATS: Stat[] = [
   { label: "Founded",     detail: "50+ years serving Florida",   count: { value: 1972, from: 1900, grouping: false } },
   { label: "Generations", detail: "Family-owned & operated",     count: { value: 4, from: 0, suffix: "th Gen" } },
-  { label: "Specialties", detail: "Coating, blasting & more",    count: { value: 5, from: 0, suffix: " Services" } },
+  { label: "Quote Turnaround", detail: "Most projects, same business day", text: "24 hours" },
   { label: "Location",    detail: "Serving all of Polk County",  text: "Lakeland, FL" },
 ];
 
@@ -106,9 +106,9 @@ export default function HomePage() {
         <Hero
           eyebrow="FAMILY OWNED · LAKELAND, FL · SINCE 1972"
           heading="Four generations of industrial finishing — done right the first time."
-          lede="Powder coating, abrasive blasting, and wet paint for aerospace, defense, and heavy equipment."
+          lede="Powder coating, abrasive blasting, and wet paint for aerospace, defense, and heavy equipment. Quote in 24 hours."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          secondaryCta={{ label: "See our work", href: "/industrial-coatings-services" }}
+          secondaryCta={{ label: "Call 863.644.7473", href: "tel:+18636447473" }}
           backgroundImage="/images/slide-01.jpg"
           shimmerEyebrow
         />
@@ -122,7 +122,7 @@ export default function HomePage() {
                   key={label}
                   className={`px-3 py-5 text-center sm:px-6 sm:py-6 md:py-8 ${STAT_CELL_CLASSES[i]}`}
                 >
-                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-600">
                     {label}
                   </dt>
                   <dd className="mt-1 font-display text-xl leading-tight tracking-tight text-ink-900 sm:text-2xl md:text-3xl">
@@ -139,10 +139,12 @@ export default function HomePage() {
                     ) : (
                       text
                     )}
+                    {detail && (
+                      <span className="mt-1 block font-text text-[11px] font-normal leading-snug tracking-normal text-ink-500 sm:text-xs">
+                        {detail}
+                      </span>
+                    )}
                   </dd>
-                  {detail && (
-                    <p className="mt-1 font-text text-[11px] leading-snug text-ink-400 sm:text-xs">{detail}</p>
-                  )}
                 </div>
               ))}
             </dl>
