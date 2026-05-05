@@ -4,6 +4,17 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### Website / CRO (2026-05-05)
+
+- **CRO Quick Wins shipped to popsindustrial.com (audit §9, items 1–9).** Phone-first conversion architecture across the marketing site:
+  - Header phone number now visible from `sm:` breakpoint (was `lg:`) — surfaces the primary call CTA on tablets and most laptops; icon-only fallback retains 44×44 tap target on phones.
+  - Homepage hero: secondary CTA swapped from "See our work" to `tel:` link "Call 863.644.7473"; lede now ends with "Quote in 24 hours."; weak "5 Services" stat replaced with "24 hours / Quote Turnaround" differentiator.
+  - Quote form (`/request-a-quote`): submit copy "Submit Request" → "Get my 24-hour quote"; new "Need it fast? Call …" callout above the form; success state now shows phone fallback so the confirmation page isn't a dead end.
+  - `?service=<slug>` deep-link prefill: all five service-detail page CTAs (hero + inline) now route to `/request-a-quote?service=<slug>`. Server-side `searchParams` resolution via new `SLUG_TO_SERVICE` map in `app/request-a-quote/schema.ts` → `prefillService` prop on `QuoteForm` → `react-hook-form` `defaultValues`. Avoids `useSearchParams` Suspense dance.
+  - Contact page: `invoices@` demoted to small/gray with "(billing only)" qualifier so new prospects aren't choosing between two equally-weighted emails.
+- Item #10 of the Quick Wins list (populate `SPECS_READY = true` in `components/marketing/capacity-specs.tsx` with real cure-oven / max-weight / blast-booth / throughput numbers) is non-code and tracked as a follow-up email to the client.
+- Build verified: 28 static + 1 dynamic route (`/request-a-quote` flips to `ƒ` because of the new `searchParams` read — expected). Type-check clean.
+
 ### Documentation
 
 - Added this changelog and `.planning/intel/SESSION-MEMORY.md` for dated operational/session notes.
