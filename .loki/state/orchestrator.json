@@ -1,8 +1,8 @@
 {
   "currentPhase": "DEVELOPMENT",
-  "tasksCompleted": 12,
+  "tasksCompleted": 13,
   "tasksFailed": 0,
-  "tasksDeferred": 1,
+  "tasksDeferred": 0,
   "anchor": ".planning/STATE.md (Phase 1 Plan 06 — code complete; Phase 2 module APIs partially built; runtime correctness audited)",
   "blockers": [
     "Phase 1 Plan 06 Task 2 — human action: Supabase Dashboard JWT expiry (3600s) + Auth Hook registration; Vercel custom domains; Upstash creds; Sentry DSN; Resend DNS verification",
@@ -17,7 +17,8 @@
     {"module": "dashboard", "surfaces": ["getDashboardCounts", "getRecentJobs", "getActiveWorkstations"], "tests": 7},
     {"module": "portal", "surfaces": ["listMyJobs", "getMyJob", "re-export getCustomerVisibleTimeline"], "tests": 7},
     {"module": "scanning", "surfaces": ["claimWorkstation", "recordWorkstationHeartbeat", "releaseWorkstation"], "tests": 8, "scope_notes": "PIN + scan event wrappers deferred to Phase 3 migrations; uses .schema('app').rpc()"},
-    {"module": "settings", "surfaces": ["createWorkstation (preexisting)", "inviteStaff (createUser+generateLink)", "updateStaff", "deactivateStaff", "listStaff", "updateShopSettings (with lock invariant)"], "tests": 24}
+    {"module": "settings", "surfaces": ["createWorkstation (preexisting)", "inviteStaff (createUser+generateLink)", "updateStaff", "deactivateStaff", "listStaff", "updateShopSettings (with lock invariant)"], "tests": 24},
+    {"module": "packets", "surfaces": ["generatePacketPdf (lazy-loaded react-pdf renderer)", "regenerateQrSvg", "regenerateQrPngDataUrl", "PacketDocument component"], "tests": 15, "scope_notes": "QR error-correction H per DESIGN; last-8-char manual fallback; clears packet_dirty after render"}
   ],
   "shared_infra_added": [
     "src/shared/db/postgrest.ts — escapeForOr() helper for safe PostgREST .or() filter strings (6 tests)",
@@ -47,21 +48,19 @@
       "fix": "escapeForOr() helper percent-encodes , ( ) : metachars"
     }
   ],
-  "deferred": [
-    {"module": "packets", "reason": "Requires installing @react-pdf/renderer + qrcode deps and a designed PDF layout — heavier than RARV-cycle scope, needs UI/UX pass."}
-  ],
+  "deferred": [],
   "session_metrics": {
-    "tests_total": 119,
-    "tests_added_this_audit": 15,
-    "atomic_commits_this_audit": 3,
-    "files_created": 30,
+    "tests_total": 134,
+    "tests_added_this_session": 86,
+    "atomic_commits_this_session": 14,
+    "files_created": 35,
     "lessons_compounded": "see .loki/memory/timeline.json"
   },
   "next_session_pickup": [
     "1. Resolve Plan 06 human-action checklist (sign off Phase 1)",
     "2. Run supabase gen types typescript --local against Tenant 1 to regenerate Database with app schema; remove cast-through-unknown in jobs.ts + scanning",
-    "3. Build packets module (install deps, design PDF layout, implement generatePacketPdf)",
-    "4. Phase 2 plan via /gsd-plan-phase to formalize the module work just delivered",
-    "5. Phase 3 migrations: app.record_scan_event() + app.validate_employee_pin(); then scanning module wrappers"
+    "3. Phase 2 plan via /gsd-plan-phase to formalize the module work just delivered",
+    "4. Phase 3 migrations: app.record_scan_event() + app.validate_employee_pin(); then scanning module wrappers + packet_dirty trigger on job edit",
+    "5. Wire /(office)/jobs/[id]/packet route handler that calls generatePacketPdf and streams the buffer back as application/pdf"
   ]
 }
