@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 
 // Lightweight inline badge — avoids pulling another shadcn dep for a one-element widget.
 // Variants map to semantic states common in this app (statuses, priorities).
-type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'muted'
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'muted'
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   default: 'bg-primary/15 text-primary-foreground/90 ring-1 ring-primary/40',

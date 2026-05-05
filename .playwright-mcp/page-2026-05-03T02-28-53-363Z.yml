@@ -1,0 +1,298 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#content"
+  - generic [ref=e7]:
+    - heading "Home" [level=1] [ref=e9]
+    - generic [ref=e11]:
+      - region "Slides" [ref=e15]:
+        - generic [ref=e16]:
+          - group "1 / 3":
+            - img "slide-01"
+            - generic:
+              - generic:
+                - generic: Your Partners
+                - generic: For Success
+          - group "2 / 3":
+            - img "slide-02"
+            - generic:
+              - generic:
+                - generic: Exceeding Expectations
+                - generic: Technical Excellence
+          - group "3 / 3":
+            - img "Worker is remove paint by air pressure sand blasting"
+            - generic:
+              - generic:
+                - generic: Family Business
+                - generic: Since 1972
+          - group "1 / 3" [ref=e17]:
+            - img "slide-01" [ref=e18]
+            - generic [ref=e20]:
+              - generic [ref=e21]: Your Partners
+              - generic [ref=e22]: For Success
+          - group "2 / 3":
+            - img "slide-02"
+            - generic:
+              - generic:
+                - generic: Exceeding Expectations
+                - generic: Technical Excellence
+          - group "3 / 3":
+            - img "Worker is remove paint by air pressure sand blasting"
+            - generic:
+              - generic:
+                - generic: Family Business
+                - generic: Since 1972
+          - group "1 / 3":
+            - img "slide-01"
+            - generic:
+              - generic:
+                - generic: Your Partners
+                - generic: For Success
+          - group "2 / 3":
+            - img "slide-02"
+            - generic:
+              - generic:
+                - generic: Exceeding Expectations
+                - generic: Technical Excellence
+          - group "3 / 3":
+            - img "Worker is remove paint by air pressure sand blasting"
+            - generic:
+              - generic:
+                - generic: Family Business
+                - generic: Since 1972
+        - button "Previous slide" [ref=e23] [cursor=pointer]:
+          - img [ref=e24]
+        - button "Next slide" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+      - generic [ref=e30]:
+        - heading "Four generations of expertise in industrial coatings" [level=2] [ref=e33]
+        - generic [ref=e35]:
+          - list [ref=e36]:
+            - generic [ref=e37]:
+              - group [ref=e38]:
+                - link [ref=e43] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/large-capacity-powder-coating/
+              - group [ref=e44]:
+                - link [ref=e49] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/powder-coating/
+              - group [ref=e50]:
+                - link [ref=e55] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/abrasive-media-blasting/
+              - group [ref=e56]:
+                - link [ref=e61] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/complex-coating/
+              - group [ref=e62]:
+                - link [ref=e67] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/wet-paint-coatings/
+              - group "1 / 5" [ref=e68]:
+                - link [ref=e73] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/large-capacity-powder-coating/
+              - group "2 / 5" [ref=e74]:
+                - link [ref=e79] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/powder-coating/
+              - group "3 / 5" [ref=e80]:
+                - link [ref=e85] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/abrasive-media-blasting/
+              - group "4 / 5" [ref=e86]:
+                - link [ref=e91] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/complex-coating/
+              - group "5 / 5" [ref=e92]:
+                - link [ref=e97] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/wet-paint-coatings/
+              - group "1 / 5" [ref=e98]:
+                - link [ref=e103] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/large-capacity-powder-coating/
+              - group "2 / 5" [ref=e104]:
+                - link [ref=e109] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/powder-coating/
+              - group "3 / 5" [ref=e110]:
+                - link [ref=e115] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/abrasive-media-blasting/
+              - group "4 / 5" [ref=e116]:
+                - link [ref=e121] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/complex-coating/
+              - group "5 / 5" [ref=e122]:
+                - link [ref=e127] [cursor=pointer]:
+                  - /url: https://popsindustrial.com/industrial-coatings-services/wet-paint-coatings/
+          - button "Previous slide" [ref=e128] [cursor=pointer]:
+            - img [ref=e129]
+          - button "Next slide" [ref=e131] [cursor=pointer]:
+            - img [ref=e132]
+      - generic [ref=e134]:
+        - generic [ref=e136]:
+          - generic [ref=e137]:
+            - heading "Wet Paint" [level=2] [ref=e139]
+            - heading "Coating" [level=2] [ref=e141]
+            - paragraph [ref=e144]:
+              - text: Precision &
+              - text: expertise
+            - link "More" [ref=e146] [cursor=pointer]:
+              - /url: /industrial-coatings-services/wet-paint-coatings/
+              - generic [ref=e148]: More
+          - generic [ref=e149]:
+            - heading "Complex" [level=2] [ref=e151]
+            - heading "Coating" [level=2] [ref=e153]
+            - paragraph [ref=e156]: Meticulous baking, superior longevity
+            - link "More" [ref=e158] [cursor=pointer]:
+              - /url: /industrial-coatings-services/complex-coating/
+              - generic [ref=e160]: More
+          - generic [ref=e161]:
+            - heading "Abrasive Media" [level=2] [ref=e163]
+            - heading "Blasting" [level=2] [ref=e165]
+            - paragraph [ref=e168]: To rigorous industry standards
+            - link "More" [ref=e170] [cursor=pointer]:
+              - /url: /industrial-coatings-services/abrasive-media-blasting/
+              - generic [ref=e172]: More
+          - generic [ref=e173]:
+            - heading "Powder" [level=2] [ref=e175]
+            - heading "Coating" [level=2] [ref=e177]
+            - paragraph [ref=e180]: Elevate durability and appearance
+            - link "More" [ref=e182] [cursor=pointer]:
+              - /url: /industrial-coatings-services/powder-coating/
+              - generic [ref=e184]: More
+          - generic [ref=e185]:
+            - heading "Large Capacity" [level=2] [ref=e187]
+            - heading "Coating" [level=2] [ref=e189]
+            - paragraph [ref=e192]: Tailored for significant scale
+            - link "More" [ref=e194] [cursor=pointer]:
+              - /url: /industrial-coatings-services/large-capacity-powder-coating/
+              - generic [ref=e196]: More
+        - generic [ref=e198]:
+          - generic [ref=e199]:
+            - heading "Commitment" [level=2] [ref=e201]
+            - heading "It's a family thing" [level=2] [ref=e203]
+            - heading "Four generations of expertise in industrial coatings" [level=2] [ref=e205]
+            - generic [ref=e206]:
+              - paragraph [ref=e207]: With a rich history rooted in a deep understanding of the industry, Pop’s Industrial Coatings seamlessly blends tradition with a contemporary approach to applications, solidifying our position as a principal company in the industrial coating sector.
+              - paragraph [ref=e208]: Choose Pop’s Industrial Coatings for your next project. We don’t just meet expectations, we exceed them. Let us show you what commitment to precision and technical expertise looks like.
+            - link "About Us" [ref=e214] [cursor=pointer]:
+              - /url: /about-us/
+              - generic [ref=e216]: About Us
+          - generic [ref=e217]:
+            - generic [ref=e218]:
+              - generic [ref=e219]:
+                - heading "Our" [level=2] [ref=e221]
+                - heading "Facilities" [level=2] [ref=e223]
+                - paragraph [ref=e225]: In constant expansion to meet the demands of our customers, Pop’s facilities give us ample room for the largest projects.
+                - link "Facilities" [ref=e227] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment/
+                  - generic [ref=e229]: Facilities
+              - generic [ref=e230]:
+                - heading "Industry" [level=2] [ref=e232]
+                - heading "Standards" [level=2] [ref=e234]
+                - paragraph [ref=e236]: We adhere to strict industry specifications and best practices. Read about our certifications & the standards that guide us.
+                - link "Certifications" [ref=e238] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications/
+                  - generic [ref=e240]: Certifications
+            - generic [ref=e241]:
+              - generic [ref=e242]:
+                - heading "Our" [level=2] [ref=e244]
+                - heading "Equipment" [level=2] [ref=e246]
+                - paragraph [ref=e248]: State-of-the-art equipment and highly skilled personnel makes all the difference in your project’s success.
+                - link "Equipment" [ref=e250] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment/
+                  - generic [ref=e252]: Equipment
+              - generic [ref=e253]:
+                - heading "High Performance" [level=2] [ref=e255]
+                - heading "Solutions" [level=2] [ref=e257]
+                - paragraph [ref=e259]: We love questions about coatings. Don’t know the best product to meet your project’s requirements?
+                - link "Ask us!" [ref=e261] [cursor=pointer]:
+                  - /url: /request-a-quote/
+                  - generic [ref=e263]: Ask us!
+  - contentinfo [ref=e264]:
+    - generic [ref=e267]:
+      - generic [ref=e270]:
+        - paragraph [ref=e271]:
+          - strong [ref=e272]: Pop’s Industrial Coatings
+        - paragraph [ref=e273]:
+          - strong [ref=e274]: "Main Office:"
+          - text: 3805 Drane Field Road
+          - text: Lakeland, FL 33811
+        - paragraph [ref=e275]:
+          - strong [ref=e276]: "Shipping & Receiving:"
+          - text: 3515 Airport Road
+          - text: Lakeland, FL 33813
+        - paragraph [ref=e277]:
+          - strong [ref=e278]: Phone
+          - link "863.644.7473" [ref=e279] [cursor=pointer]:
+            - /url: tel:+18636447473
+        - paragraph [ref=e280]:
+          - strong [ref=e281]: Fax
+          - text: 863.644.5926
+        - paragraph [ref=e282]:
+          - strong [ref=e283]: Email
+          - link "info@popsindustrial.com" [ref=e284] [cursor=pointer]:
+            - /url: mailto:info@popsindustrial.com
+          - link "invoices@popsindustrial.com" [ref=e285] [cursor=pointer]:
+            - /url: mailto:invoices@popsindustrial.com
+      - generic [ref=e286]:
+        - generic [ref=e287]:
+          - heading "Doing business with Pop’s Industrial" [level=4] [ref=e289]
+          - list [ref=e291]:
+            - listitem [ref=e292]:
+              - link "Our Capabilities" [ref=e293] [cursor=pointer]:
+                - /url: /request-a-quote/facilities-equipment/
+                - img [ref=e295]
+                - generic [ref=e297]: Our Capabilities
+            - listitem [ref=e298]:
+              - link "Our Certifications" [ref=e299] [cursor=pointer]:
+                - /url: /request-a-quote/standards-specifications-certifications/
+                - img [ref=e301]
+                - generic [ref=e303]: Our Certifications
+            - listitem [ref=e304]:
+              - link "Request a Quote" [ref=e305] [cursor=pointer]:
+                - /url: /request-a-quote
+                - img [ref=e307]
+                - generic [ref=e309]: Request a Quote
+            - listitem [ref=e310]:
+              - link "Terms & Conditions" [ref=e311] [cursor=pointer]:
+                - /url: /request-a-quote/terms-conditions/
+                - img [ref=e313]
+                - generic [ref=e315]: Terms & Conditions
+          - link "Get a Quote" [ref=e317] [cursor=pointer]:
+            - /url: /request-a-quote
+            - generic [ref=e319]: Get a Quote
+        - generic [ref=e320]:
+          - heading "Services" [level=4] [ref=e322]
+          - list [ref=e324]:
+            - listitem [ref=e325]:
+              - link "Wet Paint Coatings" [ref=e326] [cursor=pointer]:
+                - /url: /industrial-coatings-services/wet-paint-coatings/
+                - img [ref=e328]
+                - generic [ref=e330]: Wet Paint Coatings
+            - listitem [ref=e331]:
+              - link "Complex Coating" [ref=e332] [cursor=pointer]:
+                - /url: /industrial-coatings-services/complex-coating/
+                - img [ref=e334]
+                - generic [ref=e336]: Complex Coating
+            - listitem [ref=e337]:
+              - link "Abrasive Media Blasting" [ref=e338] [cursor=pointer]:
+                - /url: /industrial-coatings-services/abrasive-media-blasting/
+                - img [ref=e340]
+                - generic [ref=e342]: Abrasive Media Blasting
+            - listitem [ref=e343]:
+              - link "Powder Coating" [ref=e344] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating/
+                - img [ref=e346]
+                - generic [ref=e348]: Powder Coating
+            - listitem [ref=e349]:
+              - link "Large Capacity Powder Coating" [ref=e350] [cursor=pointer]:
+                - /url: /industrial-coatings-services/large-capacity-powder-coating/
+                - img [ref=e352]
+                - generic [ref=e354]: Large Capacity Powder Coating
+        - generic [ref=e355]:
+          - heading "Visiting Us" [level=4] [ref=e357]
+          - generic [ref=e358]:
+            - paragraph [ref=e359]:
+              - text: Monday – Friday
+              - text: 8am to 4pm
+            - paragraph [ref=e360]:
+              - text: Saturday & Sunday
+              - text: Closed
+          - paragraph [ref=e362]:
+            - strong [ref=e363]: "Shipping & Receiving:"
+          - iframe [ref=e365]:
+            - link "Open in Maps (opens in new tab)" [ref=f1e4] [cursor=pointer]:
+              - /url: about:invalid#zClosurez
+              - text: Open in Maps
+              - img [ref=f1e6]
+  - generic [ref=e366]: desktop

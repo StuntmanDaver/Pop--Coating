@@ -1,0 +1,35 @@
+- generic [ref=e3]:
+  - paragraph [ref=e4]: Dev Preview
+  - heading "Form primitives" [level=1] [ref=e5]
+  - generic [ref=e6]:
+    - region "Default" [ref=e7]:
+      - heading "Default" [level=2] [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: Full name
+          - textbox "Full name" [ref=e12]:
+            - /placeholder: Jane Doe
+        - generic [ref=e13]:
+          - generic [ref=e14]: Email
+          - textbox "Email" [ref=e15]:
+            - /placeholder: you@example.com
+        - generic [ref=e16]:
+          - generic [ref=e17]: Message
+          - textbox "Message" [ref=e18]:
+            - /placeholder: Tell us about your project
+    - region "Error state (aria-invalid)" [ref=e19]:
+      - heading "Error state (aria-invalid)" [level=2] [ref=e20]
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Email *
+          - textbox "Email *" [ref=e24]: not-an-email
+          - paragraph [ref=e25]: Enter a valid email address.
+        - generic [ref=e26]:
+          - generic [ref=e27]: Project details *
+          - textbox "Project details *" [ref=e28]
+          - paragraph [ref=e29]: Project details are required.
+    - region "Disabled" [ref=e30]:
+      - heading "Disabled" [level=2] [ref=e31]
+      - generic [ref=e33]:
+        - generic [ref=e34]: Read-only field
+        - textbox "Read-only field" [disabled] [ref=e35]: Locked

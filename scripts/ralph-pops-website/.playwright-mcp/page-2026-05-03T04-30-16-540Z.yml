@@ -1,0 +1,75 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - heading "Footer preview" [level=1] [ref=e4]
+    - paragraph [ref=e5]: Internal preview of the global <Footer /> component (US-013). Three columns, mobile stacks vertically, addresses use semantic <address> elements, GET A QUOTE primary CTA in column 1.
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - heading "Doing business with Pop's Industrial" [level=2] [ref=e10]
+        - generic [ref=e11]:
+          - img "Pop's Industrial Coatings" [ref=e12]
+          - generic [ref=e13]:
+            - text: POP'S INDUSTRIAL
+            - text: COATINGS
+        - navigation "Doing business with Pop's Industrial" [ref=e14]:
+          - list [ref=e15]:
+            - listitem [ref=e16]:
+              - link "Our Capabilities" [ref=e17] [cursor=pointer]:
+                - /url: /request-a-quote/facilities-equipment
+            - listitem [ref=e18]:
+              - link "Our Certifications" [ref=e19] [cursor=pointer]:
+                - /url: /request-a-quote/standards-specifications-certifications
+            - listitem [ref=e20]:
+              - link "Request a Quote" [ref=e21] [cursor=pointer]:
+                - /url: /request-a-quote
+            - listitem [ref=e22]:
+              - link "Terms & Conditions" [ref=e23] [cursor=pointer]:
+                - /url: /request-a-quote/terms-conditions
+        - link "GET A QUOTE" [ref=e25] [cursor=pointer]:
+          - /url: /request-a-quote
+      - generic [ref=e26]:
+        - heading "Services" [level=2] [ref=e27]
+        - navigation "Services" [ref=e28]:
+          - list [ref=e29]:
+            - listitem [ref=e30]:
+              - link "Wet Paint Coatings" [ref=e31] [cursor=pointer]:
+                - /url: /industrial-coatings-services/wet-paint-coatings
+            - listitem [ref=e32]:
+              - link "Complex Coating" [ref=e33] [cursor=pointer]:
+                - /url: /industrial-coatings-services/complex-coating
+            - listitem [ref=e34]:
+              - link "Abrasive Media Blasting" [ref=e35] [cursor=pointer]:
+                - /url: /industrial-coatings-services/abrasive-media-blasting
+            - listitem [ref=e36]:
+              - link "Powder Coating" [ref=e37] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating
+            - listitem [ref=e38]:
+              - link "Large Capacity Powder Coating" [ref=e39] [cursor=pointer]:
+                - /url: /industrial-coatings-services/large-capacity-powder-coating
+      - generic [ref=e40]:
+        - heading "Visiting Us" [level=2] [ref=e41]
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - paragraph [ref=e44]: Main Office
+            - generic [ref=e45]:
+              - text: 3805 Drane Field Road
+              - text: Lakeland, FL 33811
+          - generic [ref=e46]:
+            - paragraph [ref=e47]: Shipping & Receiving
+            - generic [ref=e48]:
+              - text: 3515 Airport Road
+              - text: Lakeland, FL 33811
+          - list [ref=e49]:
+            - listitem [ref=e50]:
+              - text: "Phone:"
+              - link "863.644.7473" [ref=e51] [cursor=pointer]:
+                - /url: tel:+18636447473
+            - listitem [ref=e52]: "Fax: 863.644.5926"
+            - listitem [ref=e53]:
+              - link "info@popsindustrial.com" [ref=e54] [cursor=pointer]:
+                - /url: mailto:info@popsindustrial.com
+            - listitem [ref=e55]:
+              - link "invoices@popsindustrial.com" [ref=e56] [cursor=pointer]:
+                - /url: mailto:invoices@popsindustrial.com
+          - paragraph [ref=e57]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+    - paragraph [ref=e59]: © 2026 Pop's Industrial Coatings. All rights reserved.

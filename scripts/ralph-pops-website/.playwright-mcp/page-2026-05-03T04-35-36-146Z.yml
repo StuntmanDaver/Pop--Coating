@@ -1,0 +1,48 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - heading "Header preview" [level=1] [ref=e11]
+      - paragraph [ref=e12]: Internal preview of the global <Header /> component (US-014). Sticky on scroll, skip-to-content link is the first focusable element, single HOME link mirrors the live site.
+    - generic [ref=e13]:
+      - paragraph [ref=e14]: Scroll filler so you can verify the sticky behavior.
+      - generic [ref=e15]:
+        - paragraph [ref=e16]: Filler paragraph 1.
+        - paragraph [ref=e17]: Filler paragraph 2.
+        - paragraph [ref=e18]: Filler paragraph 3.
+        - paragraph [ref=e19]: Filler paragraph 4.
+        - paragraph [ref=e20]: Filler paragraph 5.
+        - paragraph [ref=e21]: Filler paragraph 6.
+        - paragraph [ref=e22]: Filler paragraph 7.
+        - paragraph [ref=e23]: Filler paragraph 8.
+        - paragraph [ref=e24]: Filler paragraph 9.
+        - paragraph [ref=e25]: Filler paragraph 10.
+        - paragraph [ref=e26]: Filler paragraph 11.
+        - paragraph [ref=e27]: Filler paragraph 12.
+        - paragraph [ref=e28]: Filler paragraph 13.
+        - paragraph [ref=e29]: Filler paragraph 14.
+        - paragraph [ref=e30]: Filler paragraph 15.
+        - paragraph [ref=e31]: Filler paragraph 16.
+        - paragraph [ref=e32]: Filler paragraph 17.
+        - paragraph [ref=e33]: Filler paragraph 18.
+        - paragraph [ref=e34]: Filler paragraph 19.
+        - paragraph [ref=e35]: Filler paragraph 20.
+        - paragraph [ref=e36]: Filler paragraph 21.
+        - paragraph [ref=e37]: Filler paragraph 22.
+        - paragraph [ref=e38]: Filler paragraph 23.
+        - paragraph [ref=e39]: Filler paragraph 24.
+        - paragraph [ref=e40]: Filler paragraph 25.
+        - paragraph [ref=e41]: Filler paragraph 26.
+        - paragraph [ref=e42]: Filler paragraph 27.
+        - paragraph [ref=e43]: Filler paragraph 28.
+        - paragraph [ref=e44]: Filler paragraph 29.
+        - paragraph [ref=e45]: Filler paragraph 30.

@@ -1,0 +1,113 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Standards, Specifications & Certifications" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: QUALITY ASSURANCE
+        - heading "Standards, Specifications & Certifications" [level=1] [ref=e14]
+        - paragraph [ref=e15]: Pop's Industrial Coatings adheres to strict industry specifications and best practices to achieve the utmost in quality workmanship.
+        - link "Request a Quote" [ref=e17] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - img "SSPC Accredited Contractor logo" [ref=e23]
+        - paragraph [ref=e24]: SSPC CERTIFICATION
+        - heading "We Are AAMP QP-3 Certified" [level=2] [ref=e25]
+        - paragraph [ref=e26]: The QP 3 accreditation is an internationally recognized program that evaluates the practices of shop painting facilities in key areas of business.
+        - link "Download SSPC QP3 Certificate, expires 03/31/2027 — PDF download" [ref=e27] [cursor=pointer]:
+          - /url: /pdfs/SSPC-QP3-Pops-Coatings-Certificate-expires-3-31-27.pdf
+          - generic [ref=e28]: ↓
+          - generic [ref=e29]: Download SSPC QP 3 Certificate, Expiration Date 03/31/2027
+          - generic [ref=e30]: (PDF)
+      - generic [ref=e31]:
+        - img "Florida Department of Transportation logo" [ref=e33]
+        - paragraph [ref=e34]: FDOT APPROVAL
+        - heading "We Are FDOT Approved" [level=2] [ref=e35]
+        - paragraph [ref=e36]: Facility ID PA-FL-002
+        - link "Download FDOT Audit QCPIR inspection report dated 03/05/2025 — PDF download" [ref=e37] [cursor=pointer]:
+          - /url: /pdfs/2025-03-06-Pops-Industrial-Coatings-FDOT-Audit-QCPIR.pdf
+          - generic [ref=e38]: ↓
+          - generic [ref=e39]: Download Inspection Report Dated 03/05/2025
+          - generic [ref=e40]: (PDF)
+  - contentinfo [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e45]
+          - generic [ref=e46]:
+            - img "Pop's Industrial Coatings" [ref=e47]
+            - generic [ref=e48]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e49]:
+            - list [ref=e50]:
+              - listitem [ref=e51]:
+                - link "Our Capabilities" [ref=e52] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e53]:
+                - link "Our Certifications" [ref=e54] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e55]:
+                - link "Request a Quote" [ref=e56] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e57]:
+                - link "Terms & Conditions" [ref=e58] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e60] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e61]:
+          - heading "Services" [level=2] [ref=e62]
+          - navigation "Services" [ref=e63]:
+            - list [ref=e64]:
+              - listitem [ref=e65]:
+                - link "Wet Paint Coatings" [ref=e66] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e67]:
+                - link "Complex Coating" [ref=e68] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e69]:
+                - link "Abrasive Media Blasting" [ref=e70] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e71]:
+                - link "Powder Coating" [ref=e72] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e73]:
+                - link "Large Capacity Powder Coating" [ref=e74] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e75]:
+          - heading "Visiting Us" [level=2] [ref=e76]
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - paragraph [ref=e79]: Main Office
+              - generic [ref=e80]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e81]:
+              - paragraph [ref=e82]: Shipping & Receiving
+              - generic [ref=e83]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e84]:
+              - listitem [ref=e85]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e86] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e87]: "Fax: 863.644.5926"
+              - listitem [ref=e88]:
+                - link "info@popsindustrial.com" [ref=e89] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e90]:
+                - link "invoices@popsindustrial.com" [ref=e91] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e92]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e94]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e95]

@@ -1,24 +1,7 @@
 import Link from 'next/link'
-import { listJobs } from '@/modules/jobs'
+import { listJobs, PRODUCTION_LABEL, PRIORITY_VARIANT } from '@/modules/jobs'
 import type { ListJobsParams } from '@/modules/jobs'
 import { Badge } from '@/shared/ui/badge'
-
-const PRIORITY_VARIANT: Record<string, 'default' | 'warning' | 'danger' | 'muted'> = {
-  rush: 'danger',
-  high: 'warning',
-  normal: 'default',
-  low: 'muted',
-}
-
-const PRODUCTION_LABEL: Record<string, string> = {
-  received: 'Received',
-  prep: 'Prep',
-  coating: 'Coating',
-  curing: 'Curing',
-  qc: 'QC',
-  completed: 'Completed',
-  picked_up: 'Picked up',
-}
 
 interface PageProps {
   searchParams: Promise<{
@@ -91,7 +74,7 @@ export default async function JobsListPage({ searchParams }: PageProps) {
       {jobs.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-16 text-center">
           <p className="text-sm text-muted-foreground">
-            No jobs yet. <Link href="/jobs/new" className="text-primary underline-offset-4 hover:underline">Create the first one</Link>.
+            No jobs yet. <Link href="/jobs/new" className="text-link underline-offset-4 hover:underline">Create the first one</Link>.
           </p>
         </div>
       ) : (
@@ -112,7 +95,7 @@ export default async function JobsListPage({ searchParams }: PageProps) {
               {jobs.map((job) => (
                 <tr key={job.id} className="hover:bg-muted/5">
                   <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">
-                    <Link href={`/jobs/${job.id}`} className="text-primary underline-offset-4 hover:underline">
+                    <Link href={`/jobs/${job.id}`} className="text-link underline-offset-4 hover:underline">
                       {job.job_number}
                     </Link>
                   </td>

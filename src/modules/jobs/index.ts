@@ -7,3 +7,5 @@ export type { CreateJobInput, UpdateJobInput } from './actions/jobs'
 
 export { listJobs, getJobById, getJobByPacketToken } from './queries/jobs'
 export type { ListJobsParams, JobListItem } from './queries/jobs'
+
+export { PRODUCTION_LABEL, INTAKE_LABEL, PRIORITY_VARIANT } from './labels'

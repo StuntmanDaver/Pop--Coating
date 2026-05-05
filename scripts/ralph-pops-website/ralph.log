@@ -1,0 +1,377 @@
+===============================================================
+  Ralph — popsindustrial.com Pops Website Rebuild
+  Tool: claude  |  Max iterations: 50
+  PRD:  /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/prd.json
+  Log:  /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/progress.txt
+===============================================================
+
+===============================================================
+  Ralph Iteration 1 of 50 (claude)
+===============================================================
+Iteration 1 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 2 of 50 (claude)
+===============================================================
+US-001 is complete. The build passes, type-check passes, and the key discovery (Turbopack monorepo middleware shadowing) is documented as a reusable pattern. The next iteration will pick up US-002: Tailwind v4 + design tokens.
+Iteration 2 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 3 of 50 (claude)
+===============================================================
+===============================================================
+  Ralph — popsindustrial.com Pops Website Rebuild
+  Tool: claude  |  Max iterations: 50
+  PRD:  /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/prd.json
+  Log:  /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/progress.txt
+===============================================================
+
+===============================================================
+  Ralph Iteration 1 of 50 (claude)
+===============================================================
+US-002 complete. Tailwind v4 + design tokens are wired into `apps/pops-website/app/globals.css` with the @theme block verbatim from design principles §10, postcss configured, and the `html` baseline + reduced-motion media query in place. Typecheck ✓, build ✓ (1886ms, 3/3 static pages).
+
+47 stories remain — next iteration will pick up US-003 (next/font Archivo Black + Inter).
+Iteration 1 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 2 of 50 (claude)
+===============================================================
+US-003 complete. Wired Archivo Black (display) + Inter (text) via `next/font/google` in `apps/pops-website/app/layout.tsx`. Variables `--font-display` / `--font-text` injected on `<html>`, body uses `font-text`, h1 uses `font-display`. Verified self-hosted from `/_next/static/media/*.woff2`. Typecheck ✓, build ✓, browser ✓. Committed as `1842dda`.
+
+3/49 stories now passing. 46 stories remain — the next iteration picks up at US-004 (copy scraped images/PDFs into `apps/pops-website/public/`).
+Iteration 2 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 3 of 50 (claude)
+===============================================================
+US-004 complete and committed (9f297bf). 198 static assets (194 images + 4 PDFs) plus `content/site-globals.json` and a multi-resolution `favicon.ico` are now in place. Typecheck and build pass. 4/49 stories done; next iteration will pick up US-005 (`content/company.ts`).
+Iteration 3 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 4 of 50 (claude)
+===============================================================
+US-005 complete. Created `apps/pops-website/content/company.ts` with the company facts as a `const` object (`as const`) and exported `type Company = typeof company`. Shipping ZIP locked at 33811 with a TODO referencing open question §12.1. Typecheck and build both pass.
+
+Phase A (US-001 → US-005) is now 5/5 complete. 44 stories remaining across phases B–F.
+Iteration 4 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 5 of 50 (claude)
+===============================================================
+Implemented US-006: Container (`max-w-[1280px]`, `px-4 sm:px-6 lg:px-8`) and Section (tone dark/light, `py-16 md:py-24`) as forwardRef'd components in `apps/pops-website/components/layout/`. Typecheck and build both pass. Committed as `98d5049`.
+
+43 stories remaining; next iteration picks up US-007 (EyebrowLabel).
+Iteration 5 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 6 of 50 (claude)
+===============================================================
+US-007 complete. Built `apps/pops-website/components/marketing/eyebrow.tsx` — `EyebrowLabel` with `tone?: "yellow" | "ink"` (default yellow → `text-pops-yellow-500`; ink → `text-ink-400`), styled `inline-block font-text text-xs font-semibold uppercase tracking-[0.04em]`, rendered as a semantic `<p>` via forwardRef. Typecheck ✓, build ✓. PRD updated to `passes: true`, progress log + Codebase Patterns section appended. 7/49 stories now passing.
+Iteration 6 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 7 of 50 (claude)
+===============================================================
+US-008 complete and committed. Built the Button component with 4 variants (primary/secondary/ghost/destructive), 2 sizes (default 44px / compact 36px), focus ring, disabled + loading states, and `asChild` Slot support. Browser verification confirmed every spec line — colors, height, radius, font, focus ring color (pops-yellow-300 over ink-800 offset), and width-preserved loading state.
+
+Stories remaining with `passes: false` (US-009 onward), so iteration continues.
+Iteration 7 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 8 of 50 (claude)
+===============================================================
+US-009 complete and committed as `15d0cd5`. The Card component (Card + 5 sub-components) is in place at `apps/pops-website/components/ui/card.tsx`, with all design contract values verified in browser:
+- Dark tone: `bg-ink-700` + `text-ink-100` + 1px `border-ink-600` (per design principles §5.3)
+- Light tone: `bg-paper` + `text-ink-800` + 1px `border-ink-200`
+- `interactive` prop wires `hover:shadow-3` lift (boxShadow value matches `--shadow-3` from §10)
+- CardTitle is `<h3>` Inter 700 18px (matches `--text-h4`)
+- Padding `p-6`, radius `rounded-sm` (= 2px), transition 200ms ease-out
+
+41 stories remain with `passes: false`. Next iteration will pick up US-010 (form input primitives).
+Iteration 8 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 9 of 50 (claude)
+===============================================================
+Committed as 239236d. US-010 complete: 10/49 stories now passing (Phase B at 5/11). Remaining stories with `passes: false` start at US-011 (FormField wrapper).
+Iteration 9 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 10 of 50 (claude)
+===============================================================
+Committed. 38 stories still have `passes: false`, so the next iteration will pick up US-012 (Checkbox component).
+
+US-011 done: created `apps/pops-website/components/forms/form-field.tsx` exporting `FormField`. It owns the Label + helper/error wiring and uses `React.cloneElement` (with `Children.only` + `isValidElement<P>` for strict-mode-safe narrowing) to inject `id`, `name`, `aria-invalid`, and `aria-describedby` onto the single input child without clobbering consumer-set values. Typecheck and build both pass.
+Iteration 10 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 11 of 50 (claude)
+===============================================================
+US-012 complete. Built the Checkbox component using `@radix-ui/react-checkbox` with the canonical Root + aria-hidden inner-box pattern: 44×44 tap target, 18×18 visible box, 2px border, rounded-sm, checked state in `pops-yellow-500` with an `ink-900` SVG checkmark, focus ring matching the rest of the form primitives. Verified in Playwright (Space toggles, computed styles match design tokens, screenshot saved). 12/49 stories now passing — 37 remaining.
+Iteration 11 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 12 of 50 (claude)
+===============================================================
+US-013 complete: Built `<Footer />` rendering 3 columns from `content/site-globals.json` + addresses/phone/emails/hours from `content/company.ts`, with logo + GET A QUOTE primary CTA in column 1. Scraped absolute URLs are stripped to relative paths via a `toRelative()` helper, every nav link gets a 44px tap target, semantic `<address>` elements wrap the addresses, and `<address>` italics are reset. Browser-verified at desktop (1280w, 3 equal columns) and mobile (375w, single column, no horizontal overflow). Typecheck ✓ build ✓ browser ✓. Committed as `3c355eb`. 36 stories remain.
+Iteration 12 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 13 of 50 (claude)
+===============================================================
+US-014 complete and committed. 14/49 stories passing. Next iteration will pick up US-015 (Hero component).
+Iteration 13 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 14 of 50 (claude)
+===============================================================
+US-015 committed. There are still 34 stories with `passes: false` (next is US-016 — Build ServiceTile component), so the next iteration will pick up.
+
+US-015 Hero component shipped:
+- `components/marketing/hero.tsx` — eyebrow → display h1 → optional lede → primary + optional secondary CTA, full-width section with `min-h-[480px] md:min-h-[560px]`, next/image fill background + `bg-ink-900/60` overlay, `useId` for collision-safe `aria-labelledby`
+- `app/dev/hero/page.tsx` — preview rendering both full and minimal Hero variants
+- Browser-verified at desktop 1280×800 and mobile 375×812; tab order skip-link → logo → HOME → primary CTA → secondary CTA per AC
+- Progress: 15/49 stories passing (Phase B 10/11 done)
+Iteration 14 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 15 of 50 (claude)
+===============================================================
+US-016 (ServiceTile) shipped: a card-wrapping-link tile with 16:10 next/image, "Service NN / Name" eyebrow, Inter-700 18px h3, 2-line lede via `line-clamp-2`, yellow arrow + "Learn more" footer, hover lift via `hover:shadow-3` + `motion-safe:group-hover:scale-[1.03]`, and a `/dev/service-tiles` preview rendering all five services. Typecheck, build, and Playwright browser verification all green; commit `641bc34` on `ralph/pops-website`.
+
+There are still 33 stories with `passes: false`, so the loop continues — next iteration will pick up US-017 (`/(home)` page).
+Iteration 15 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 16 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 16 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 17 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 17 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 18 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 18 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 19 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 19 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 20 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 20 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 21 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 21 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 22 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 22 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 23 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 23 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 24 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 24 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 25 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 25 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 26 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 26 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 27 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 27 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 28 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 28 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 29 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 29 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 30 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 30 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 31 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 31 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 32 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 32 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 33 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 33 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 34 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 34 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 35 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 35 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 36 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 36 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 37 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 37 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 38 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 38 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 39 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 39 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 40 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 40 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 41 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 41 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 42 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 42 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 43 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 43 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 44 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 44 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 45 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 45 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 46 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 46 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 47 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 47 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 48 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 48 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 49 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 49 complete. Continuing...
+
+===============================================================
+  Ralph Iteration 50 of 50 (claude)
+===============================================================
+You've hit your limit · resets 2:10am (America/New_York)
+Iteration 50 complete. Continuing...
+
+Ralph reached max iterations (50) without completing all stories.
+Check /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/progress.txt for status — likely a story is failing repeatedly and needs to be split.
+
+=================================================================
+  RESTART Sun May  3 06:41:31 EDT 2026 — quota reset run, cap=100
+=================================================================
+===============================================================
+  Ralph — popsindustrial.com Pops Website Rebuild
+  Tool: claude  |  Max iterations: 100
+  PRD:  /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/prd.json
+  Log:  /Users/davidk/Documents/Dev-Projects/App-Ideas/Pops--Coating/scripts/ralph-pops-website/progress.txt
+===============================================================
+
+===============================================================
+  Ralph Iteration 1 of 100 (claude)
+===============================================================
+Zero stories remaining with `passes: false`. The rebuild is complete.
+
+<promise>COMPLETE</promise>
+
+Ralph completed all marketing rebuild stories!
+Completed at iteration 1 of 100

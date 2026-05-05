@@ -1,0 +1,168 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Terms & Conditions" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: LEGAL
+        - heading "Terms & Conditions" [level=1] [ref=e14]
+        - paragraph [ref=e15]: General terms and conditions of sale for Pop's Painting Inc. and Pop's Industrial Coatings, Inc.
+        - link "Request a Quote" [ref=e17] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e20]:
+      - heading "Pop's Painting and Pop's Industrial Coatings" [level=2] [ref=e21]
+      - heading "General Terms and Conditions of Sale" [level=3] [ref=e22]
+      - link "Download Terms and Conditions of Sale as PDF — PDF download" [ref=e23] [cursor=pointer]:
+        - /url: /pdfs/2025-06-07-Pops-Terms-and-Conditions-of-Sale.pdf
+        - generic [ref=e24]: ↓
+        - generic [ref=e25]: Download as PDF
+        - generic [ref=e26]: (PDF)
+      - generic [ref=e27]:
+        - paragraph [ref=e28]:
+          - strong [ref=e29]: 1. Offer.
+          - text: These Terms and Conditions apply to all goods and/or services (“Products”) sold and/or performed by Pops Painting Inc and/or Pops Industrial Coatings, Inc. (“Seller”) and are incorporated into each and every quotation or other document (“Quotation”) issued by Seller. The Quotation constitutes Seller’s offer to the purchaser identified in the Quotation (“Purchaser”) to sell the Products identified in the Quotation and otherwise to enter into the agreement the Quotation describes, and the Quotation shall be the complete and exclusive statement of such offer and agreement.
+        - paragraph [ref=e30]:
+          - strong [ref=e31]: 2. Acceptance.
+          - text: A contract is formed when Purchaser accepts the Quotation by written acknowledgement or by the issuance to Seller of a purchase order or other acceptance document for the Products. Acceptance is expressly limited to these Terms and Conditions and the terms and conditions expressly referenced on the face of the Quotation. Notwithstanding any contrary provision in Purchaser’s purchase order or other acceptance document, delivery of Products or commencement of production by Seller shall not constitute acceptance of Purchaser’s terms and conditions to the extent any such terms or conditions are inconsistent with or in addition to the terms and conditions contained in the Quotation.
+        - paragraph [ref=e32]:
+          - strong [ref=e33]: 3. Adjustments.
+          - text: Seller reserves the right to equitably adjust the price and delivery terms of the Quotation in the event of, and as a condition to, any changes in the specifications or other requirements for Products, the scope of any work covered by the Quotation or any related purchase order, changes in cost or availability of raw materials, components or services, or the estimated annual volumes of Products.
+        - paragraph [ref=e34]:
+          - strong [ref=e35]: 4a. Shipping and Delivery.
+          - text: "All sales of Products are F.O.B. Seller’s facility unless otherwise specified in the Quotation. Responsibility of Seller shall cease upon collection and/or receipt of the Products by a common carrier or any Purchaser arranged collection at which point Purchaser will bear all risk of loss for the Products. Premium shipping expenses and/or other related expenses necessary to meet Purchaser’s accelerated delivery schedules shall be the responsibility of Purchaser. Deliveries of orders placed by Purchaser may be changed, deferred or canceled only upon specific agreement in writing by Seller and Seller may condition such agreement upon Purchaser’s assumption of liability and payment to Seller for: (a) all completed work at the order price; (b) a sum equal to the costs of work in process including costs accrued for labor and material, (c) any amount for which Seller is liable by reason of commitments made by Seller to its suppliers, and (d) any other loss, cost or expense of Seller as a result of such change, deferment or cancellation. Any Products, which are finish coated must be visually approved by Purchaser prior to pick up, or will be considered accepted as-is when signed by driver of common carrier or other Purchaser arranged collection."
+        - paragraph [ref=e36]:
+          - strong [ref=e37]: 4b. Storage.
+          - text: Unless otherwise expressly stated in the Quotation, any completed Products left at Seller’s facility over thirty (30) days from date of Seller’s invoice will be subject to storage fees up to but not limited to $250 per week.
+        - paragraph [ref=e38]:
+          - strong [ref=e39]: 5. Payment Terms.
+          - text: Unless otherwise expressly stated in the Quotation, all accounts are payable in U.S. currency thirty (30) days from the date of Seller’s invoice. If any payment owed to Seller is not paid when due, it shall bear interest at the lesser of 18% per annum (1.5% per month) or the maximum rate permitted by law, from the date on which it is due until it is paid. Credit and delivery of Products shall be subject to Seller’s approval. In the event Purchaser defaults under its payment terms or Seller otherwise deems itself insecure for any reason, Seller may, without notice, cancel all credit available to Purchaser, require that any invoices outstanding be immediately due and payable in full, and refuse to make any further credit advances. Purchaser is prohibited from and shall not setoff against or recoup from any invoiced amounts due or to become due from Purchaser or its affiliates any amounts due or to become due to Seller or its affiliates, whether arising under the Quotation, any related purchase order or under any other agreement.
+        - paragraph [ref=e40]:
+          - strong [ref=e41]: 6a. Prices.
+          - text: Unless otherwise expressly stated in the Quotation, prices for Products specified in the Quotation are firm for 10 days and do not include storage, handling, packaging or transportation charges or any applicable federal, state, local or foreign duties or taxes. Seller reserves the right to increase Product prices in the event of increases in its raw material or component costs or other costs or expenses arising after the date of the Quotation. No price reductions shall apply unless specifically agreed to in writing by Seller.
+        - paragraph [ref=e42]:
+          - strong [ref=e43]: 6b. Dunnage.
+          - text: Timber packaging/dunnage including crates, cases, pallets, skids, and or any other timber used as a shipping aid not provided by Purchaser prior to packing, will be billed to Purchaser.
+        - paragraph [ref=e44]:
+          - strong [ref=e45]: 7. Design.
+          - text: Seller is not design responsible for any Products and will not have any warranty, indemnification, or other liability or obligations for any actual or alleged defects, quality issues, intellectual property infringement or other nonconformities with respect to any Products to the extent related to or arising out of the design and/or specifications for such Products. While Seller may, from time to time, offer advice, recommendations and/or other suggestions as to the design, use and suitability of any Products, such advice, recommendations and/or other suggestions do not constitute any warranties with respect to any Products. Seller disclaims any such warranties and Buyer assumes full responsibility for accepting and/or using such advice, recommendations and/or other suggestions.
+        - paragraph [ref=e46]:
+          - strong [ref=e47]: 8. Warranty.
+          - text: Seller warrants that at the time of invoicing by the Seller the Products will be free from defects in material and workmanship and will conform to the specifications, designs and/or drawings that are a part of the Quotation for a period of twelve (12) months after date of invoice. Any claim for defective materials, defective manufacture, or any other claim with respect to the Products shall be presented to Seller by Purchaser in writing within fifteen (15) days from the date of receipt of the Products by Purchaser. Failure by Purchaser to provide Seller with written notice of any defect within such fifteen (15) day time period shall be deemed an absolute and unconditional waiver of Purchaser’s claim for such defects. Purchaser shall hold and make available for inspection and testing by Seller all Products claimed by Purchaser to be defective. Any claim for defective material or workmanship must be verified by Seller and, upon verification, Seller’s liability shall be limited to the replacement or repair, at Seller’s election, of such part of the Product in question as Seller may determine is defective. Purchaser shall provide Seller with immediate notice of and the opportunity to participate in any and all meetings or other communications between Purchaser and its customer concerning actual or alleged defects with respect to the Products.
+        - paragraph [ref=e48]:
+          - strong [ref=e49]: The foregoing warranties are exclusive and Seller makes no other warranty, express or implied, with respect to the Products including, without limitation, any warranties of merchantability or fitness for a particular purpose. Seller specifically, but not by way of limitation, disclaims any and all liability for the use or performance of the Products in the application(s) selected by Purchaser and Purchaser’s customers. Seller further disclaims any and all liability for Products that are further processed by Purchaser or any third party or in any way changed by Purchaser or any third party from the Products delivered by Seller. Seller further disclaims any warranties, expressly stated or implied, for application or coating performance whereas Seller applies coatings subsequent to galvanizing application. Seller likewise disclaims any and all liability for raw materials supplied for coatings with steel defects such as but not limited to pits, quench cracks, rollmarks, overlaps, pinchers, burs and/or poor weld quality.
+        - paragraph [ref=e50]:
+          - strong [ref=e51]: 9. Termination.
+          - text: In the event, either party fails to perform any of its obligations under the Quotation or any related purchase order and fails to cure such breach within ten (10) days after receipt of written notice from the other party specifying such breach, the nonbreaching party may at its option immediately terminate the Quotation and/or any related purchase orders. Upon any such termination by either party, (a) Seller shall be relieved of any further obligation to Purchaser (including, without limitation, any obligation with respect to production, delivery or transition of supply), (b) Purchaser shall be liable to Seller for the immediate payment of amounts then billed to date by Seller to Purchaser, (c) Purchaser shall purchase and pay Seller immediately for all raw materials, components, work in process and finished goods acquired or produced by Seller in connection with the Quotation and/or any related purchase orders, and (d) Purchaser shall immediately reimburse Seller for all claims of Seller and Seller’s subcontractors for unamortized investments involved in preparing to produce or provide or producing or providing Products and for all other loss, cost or expense of Seller as a result of the termination of the Quotation or any related purchase order.
+        - paragraph [ref=e52]:
+          - strong [ref=e53]: 10. Liability Limitation.
+          - text: In no event shall Seller’s liability arising out of or resulting from any Quotation or any related purchase order, including, without limitation, for the design, manufacture, delivery, sale, repair, replacement or use of any Product, exceed the amounts actually paid by Purchaser for the Products alleged to be the cause of any loss or damage, whether founded in contract, tort (including negligence), strict liability or otherwise. In no event shall Seller be liable to Purchaser for any special, indirect, exemplary, incidental, punitive, or consequential damages (including, without limitation, loss of anticipated profits, loss of use, loss of revenue and cost of capital) arising out of or relating to the Quotation, any related purchase order, or the Products. Any claim by Purchaser against Seller arising out of or relating to the Quotation, any related purchase order, or the Products cannot be filed, made or maintained, and shall be deemed waived, unless filed within six (6) months after Seller has provided the Products in question.
+        - paragraph [ref=e54]:
+          - strong [ref=e55]: 11. Proprietary Materials.
+          - text: Seller shall have and retain all rights, title, and interest, including all intellectual property rights, in and to all Products and associated materials, including, without limitation, all related reports, specifications, drawings, designs, computer programs and any other property, tangible or intangible, furnished by Seller in connection with or under the Quotation or any related purchase order (“Proprietary Materials”). No Proprietary Materials created by Seller in connection with or pursuant to the Quotation or any related purchase order shall be considered “works made for hire” as that term is used in connection with the U.S. Copyright Act.
+        - paragraph [ref=e56]:
+          - strong [ref=e57]: 12. Confidentiality.
+          - text: Purchaser shall maintain the confidentiality of all technical, business, financial, or other non-public information of Seller (“Confidential Information”) in the same manner in which it protects its own confidential information of like kind, but in no event shall Purchaser take less than reasonable precautions to prevent the unauthorized disclosure, publication, dissemination or use of the Confidential Information. Upon termination of the Quotation and all related purchase orders, Purchaser shall return the Confidential Information and shall not use the Confidential Information for its own, or any third party’s, benefit.
+        - paragraph [ref=e58]:
+          - strong [ref=e59]: 13. Assignment.
+          - text: The Quotation and/or all related purchase orders shall not be assigned in whole or in part by Purchaser without the prior written consent of Seller.
+        - paragraph [ref=e60]:
+          - strong [ref=e61]: 14. Compliance.
+          - text: Purchaser shall be solely responsible for compliance with any federal, state or local laws, rules regulations and ordinances or any industry standards that may be applicable to the Products.
+        - paragraph [ref=e62]:
+          - strong [ref=e63]: 15. Excusable Delay.
+          - text: Seller shall not be liable for any delay or failure to perform if such delay or failure to perform is caused by circumstances beyond its reasonable control, including without limitation acts of God or public authority, riots or other public disturbances, labor disputes of any kind, power failures, failure of Purchaser to provide required information, failure of Purchaser to provide adequate containers, or the change in cost or availability of raw materials, components or services based on market conditions, supplier actions or contract disputes. During any such delay or failure to perform by Seller, Seller’s obligations under the Quotation and any related purchase order shall be suspended and Seller shall not have any obligation to provide Purchaser with Products from other sources or to pay or reimburse Purchaser for any additional costs to Purchaser of obtaining substitute Products. Seller may, during any period of shortage due to any of the above circumstances allocate its available supply of Products among itself and its customers in any manner that Seller deems fair and reasonable in its sole discretion.
+        - paragraph [ref=e64]:
+          - strong [ref=e65]: 16. Waiver.
+          - text: Waiver by Seller of any of the terms or conditions of the Quotation shall be effective only if in writing and signed by Seller and shall not constitute a waiver of such terms as to any subsequent events or conditions, whether similar or dissimilar. No course of dealing or custom in the trade shall constitute a modification or waiver by Seller of any right.
+        - paragraph [ref=e66]:
+          - strong [ref=e67]: 17. Survival.
+          - text: These Terms and Conditions shall survive and continue in full force and effect following the expiration, cancellation or termination of a Quotation and any related purchase order.
+        - paragraph [ref=e68]:
+          - strong [ref=e69]: 18. Entire Agreement.
+          - text: The Quotation, including these Terms and Conditions and any other attachments, exhibits or supplements specifically referenced in the Quotation, constitutes the entire agreement between Seller and Purchaser with respect to the matters contained in the Quotation and supersedes all prior oral or written representations and agreements. Except as otherwise provided in these Terms and Conditions, the Quotation may only be modified by a written agreement signed by Seller.
+      - link "Download Terms and Conditions of Sale as PDF — PDF download" [ref=e71] [cursor=pointer]:
+        - /url: /pdfs/2025-06-07-Pops-Terms-and-Conditions-of-Sale.pdf
+        - generic [ref=e72]: ↓
+        - generic [ref=e73]: Download as PDF
+        - generic [ref=e74]: (PDF)
+  - contentinfo [ref=e75]:
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e79]
+          - generic [ref=e80]:
+            - img "Pop's Industrial Coatings" [ref=e81]
+            - generic [ref=e82]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e83]:
+            - list [ref=e84]:
+              - listitem [ref=e85]:
+                - link "Our Capabilities" [ref=e86] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e87]:
+                - link "Our Certifications" [ref=e88] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e89]:
+                - link "Request a Quote" [ref=e90] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e91]:
+                - link "Terms & Conditions" [ref=e92] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e94] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e95]:
+          - heading "Services" [level=2] [ref=e96]
+          - navigation "Services" [ref=e97]:
+            - list [ref=e98]:
+              - listitem [ref=e99]:
+                - link "Wet Paint Coatings" [ref=e100] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e101]:
+                - link "Complex Coating" [ref=e102] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e103]:
+                - link "Abrasive Media Blasting" [ref=e104] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e105]:
+                - link "Powder Coating" [ref=e106] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e107]:
+                - link "Large Capacity Powder Coating" [ref=e108] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e109]:
+          - heading "Visiting Us" [level=2] [ref=e110]
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - paragraph [ref=e113]: Main Office
+              - generic [ref=e114]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e115]:
+              - paragraph [ref=e116]: Shipping & Receiving
+              - generic [ref=e117]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e118]:
+              - listitem [ref=e119]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e120] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e121]: "Fax: 863.644.5926"
+              - listitem [ref=e122]:
+                - link "info@popsindustrial.com" [ref=e123] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e124]:
+                - link "invoices@popsindustrial.com" [ref=e125] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e126]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e128]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e129]

@@ -1,25 +1,8 @@
 import type { Route } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getJobById } from '@/modules/jobs'
+import { getJobById, PRODUCTION_LABEL, PRIORITY_VARIANT } from '@/modules/jobs'
 import { Badge } from '@/shared/ui/badge'
-
-const PRODUCTION_LABEL: Record<string, string> = {
-  received: 'Received',
-  prep: 'Prep',
-  coating: 'Coating',
-  curing: 'Curing',
-  qc: 'QC',
-  completed: 'Completed',
-  picked_up: 'Picked up',
-}
-
-const PRIORITY_VARIANT: Record<string, 'default' | 'warning' | 'danger' | 'muted'> = {
-  rush: 'danger',
-  high: 'warning',
-  normal: 'default',
-  low: 'muted',
-}
 
 interface PageProps {
   params: Promise<{ id: string }>

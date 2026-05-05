@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Abrasive Media Blasting" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: SAND BLASTING
+        - heading "Abrasive Media Blasting" [level=1] [ref=e14]
+        - paragraph [ref=e15]: Meticulous surface preparation to SSPC and NACE standards, ensuring optimal coating adhesion and long-term performance.
+        - link "Request a Quote" [ref=e17] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - paragraph [ref=e22]: TO SSPC/NACE STANDARDS
+        - heading "Sand Blasting to Industry Standards" [level=2] [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Our Abrasive Media Blasting services adhere strictly to the rigorous standards set by SSPC (Society for Protective Coatings) and NACE (National Association of Corrosion Engineers).
+          - paragraph [ref=e26]: Utilizing the necessary equipment and skilled professionals, we ensure that surfaces are meticulously prepared to achieve optimal coating adhesion.
+          - paragraph [ref=e27]: The process involves removing contaminants and creating a profile suitable for the application of protective coatings, ensuring longevity and performance in diverse environments.
+        - generic [ref=e28]:
+          - img "Abrasive media blasting at Pop's Industrial Coatings, Lakeland FL — surface preparation for industrial coating" [ref=e30]
+          - img "Industrial sandblasting work in progress at Pop's Lakeland facility" [ref=e32]
+          - img "Abrasive blasting to SSPC standards at Pop's Industrial Coatings" [ref=e34]
+          - img "Surface preparation through media blasting at Pop's Industrial Coatings, Lakeland FL" [ref=e36]
+          - img "Industrial abrasive blasting equipment at Pop's facility in Lakeland, FL" [ref=e38]
+          - img "Blasting to NACE standards for optimal coating adhesion at Pop's Industrial Coatings" [ref=e40]
+        - link "Get a Quote" [ref=e42] [cursor=pointer]:
+          - /url: /request-a-quote
+      - complementary "Our services" [ref=e43]:
+        - paragraph [ref=e44]: OUR SERVICES
+        - navigation [ref=e45]:
+          - list [ref=e46]:
+            - listitem [ref=e47]:
+              - generic [ref=e48]: Abrasive Media Blasting
+            - listitem [ref=e49]:
+              - link "Wet Paint Coatings" [ref=e50] [cursor=pointer]:
+                - /url: /industrial-coatings-services/wet-paint-coatings
+            - listitem [ref=e51]:
+              - link "Complex Coating" [ref=e52] [cursor=pointer]:
+                - /url: /industrial-coatings-services/complex-coating
+            - listitem [ref=e53]:
+              - link "Powder Coating" [ref=e54] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating
+            - listitem [ref=e55]:
+              - link "Large Capacity Powder Coating" [ref=e56] [cursor=pointer]:
+                - /url: /industrial-coatings-services/large-capacity-powder-coating
+  - contentinfo [ref=e57]:
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e61]
+          - generic [ref=e62]:
+            - img "Pop's Industrial Coatings" [ref=e63]
+            - generic [ref=e64]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e65]:
+            - list [ref=e66]:
+              - listitem [ref=e67]:
+                - link "Our Capabilities" [ref=e68] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e69]:
+                - link "Our Certifications" [ref=e70] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e71]:
+                - link "Request a Quote" [ref=e72] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e73]:
+                - link "Terms & Conditions" [ref=e74] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e76] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e77]:
+          - heading "Services" [level=2] [ref=e78]
+          - navigation "Services" [ref=e79]:
+            - list [ref=e80]:
+              - listitem [ref=e81]:
+                - link "Wet Paint Coatings" [ref=e82] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e83]:
+                - link "Complex Coating" [ref=e84] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e85]:
+                - link "Abrasive Media Blasting" [ref=e86] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e87]:
+                - link "Powder Coating" [ref=e88] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e89]:
+                - link "Large Capacity Powder Coating" [ref=e90] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e91]:
+          - heading "Visiting Us" [level=2] [ref=e92]
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - paragraph [ref=e95]: Main Office
+              - generic [ref=e96]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e97]:
+              - paragraph [ref=e98]: Shipping & Receiving
+              - generic [ref=e99]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e100]:
+              - listitem [ref=e101]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e102] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e103]: "Fax: 863.644.5926"
+              - listitem [ref=e104]:
+                - link "info@popsindustrial.com" [ref=e105] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e106]:
+                - link "invoices@popsindustrial.com" [ref=e107] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e108]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e110]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e116] [cursor=pointer]:
+    - img [ref=e117]
+  - alert [ref=e120]

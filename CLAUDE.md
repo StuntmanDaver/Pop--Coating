@@ -268,16 +268,45 @@ Architecture not yet mapped. Follow existing patterns found in the codebase.
 <!-- GSD:skills-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
-## GSD Workflow Enforcement
+## Workflow Enforcement
 
-Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
+Before using Edit, Write, or other file-changing tools, start work through one of the approved workflows below so planning artifacts and execution context stay in sync. Pick the workflow that fits the task; do not mix entry points mid-task without an explicit handoff.
 
-Use these entry points:
-- `/gsd-quick` for small fixes, doc updates, and ad-hoc tasks
-- `/gsd-debug` for investigation and bug fixing
-- `/gsd-execute-phase` for planned phase work
+### Approved workflows
 
-Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
+**GSD** — planning-first, doc-driven phase work (default for canonical-doc-touching changes)
+- `/gsd-quick` — small fixes, doc updates, ad-hoc tasks
+- `/gsd-debug` — investigation and bug fixing
+- `/gsd-execute-phase` — planned phase work tied to `.planning/`
+
+**Superpowers** — skill-driven workflow using `.claude/skills/`
+- Invoke via the `superpowers:using-superpowers` skill (auto-loaded each session) or any matching project skill (e.g., `impeccable`, `accessibility-audit`, `ui-ux-pro-max`)
+- Use for design, audit, or single-skill execution where a project skill cleanly covers the task
+
+**Loki Mode** — autonomous RARV loop (`/loki-mode`)
+- Use for bounded autonomous runs against a defined surface (one app or module at a time)
+- Requires a PRD pointer (path to `PRD.md` or a scoped spec) and `.loki/` initialized in the repo
+- Must respect the stack constraints and RLS rules in this file; Loki autonomy does **not** override canonical docs
+
+**Ralph** — autonomous harness in `scripts/ralph-*/` (e.g., `scripts/ralph-pops-website/`)
+- Use for long-running iterative loops on a single surface (e.g., the website rebuild)
+- One ralph instance per surface; throughput and rate-limit behavior tracked in memory
+
+### Selection guide
+
+| Task shape | Workflow |
+|---|---|
+| Touches `PRD.md`, `docs/DESIGN.md`, `docs/EXECUTION.md`, schema, or RLS | **GSD** |
+| Single skill cleanly covers it (audit, design pass, narrow refactor) | **Superpowers** |
+| Bounded autonomous build against a clear spec on one surface | **Loki Mode** |
+| Long iterative loop on a single app/module with operator review gates | **Ralph** |
+| Trivial doc/typo fix | Direct edit is fine; mention it in the response |
+
+### Hard rules (apply to every workflow)
+
+- Stack constraints, RLS rules, and the canonical docs (`PRD.md`, `docs/DESIGN.md`, `docs/EXECUTION.md`) override every workflow. If a workflow's autonomy guidance conflicts, the docs win.
+- Do not switch workflows mid-task to bypass a gate. If GSD blocks, fix the underlying issue or surface the conflict — do not relaunch under Loki/Ralph to skip it.
+- Direct repo edits outside any workflow are only allowed when the user explicitly asks to bypass.
 <!-- GSD:workflow-end -->
 
 <!-- GSD:profile-start -->
