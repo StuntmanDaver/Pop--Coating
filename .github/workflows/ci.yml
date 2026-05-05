@@ -100,9 +100,10 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
+          # `supabase branches get` dropped --format and now uses -o (json|env|toml|...).
           SUPABASE_DB_URL=$(supabase branches get \
             --project-ref "${{ vars.SUPABASE_PROJECT_REF }}" \
-            --format json | jq -r '.db_url')
+            -o json | jq -r '.db_url')
 
           if [ -z "$SUPABASE_DB_URL" ] || [ "$SUPABASE_DB_URL" = "null" ]; then
             echo "Error: Could not retrieve branch DB URL from supabase branches get"
