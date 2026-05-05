@@ -12,6 +12,17 @@ export const SERVICE_OPTIONS = [
 
 export type ServiceOption = (typeof SERVICE_OPTIONS)[number];
 
+// Maps service-detail page slugs to the radio-group options on the quote form.
+// "Large Capacity Powder Coating" has no dedicated option, so it preselects
+// "Powder Coating" (closest fit; the buyer can elaborate in projectDetails).
+export const SLUG_TO_SERVICE: Record<string, ServiceOption> = {
+  "wet-paint-coatings": "Wet Paint Coating",
+  "complex-coating": "Complex Painting",
+  "abrasive-media-blasting": "Abrasive Media Blasting",
+  "powder-coating": "Powder Coating",
+  "large-capacity-powder-coating": "Powder Coating",
+};
+
 // Per-file size cap matches the live site's data-maxsize="10" (10 MB).
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 // Total payload cap (files only). Resend caps total email size at ~40 MB; staying well under.

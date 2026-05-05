@@ -33,7 +33,11 @@ async function getRecaptchaToken(action: string): Promise<string> {
   });
 }
 
-export function QuoteForm() {
+type QuoteFormProps = {
+  prefillService?: ServiceOption;
+};
+
+export function QuoteForm({ prefillService }: QuoteFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,6 +50,7 @@ export function QuoteForm() {
     formState: { errors, isSubmitting },
   } = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteSchema),
+    defaultValues: prefillService ? { serviceRequested: prefillService } : undefined,
   });
 
   const selectedService = watch("serviceRequested");
@@ -97,6 +102,16 @@ export function QuoteForm() {
           Thank you for reaching out. We&apos;ll get back to you within one
           business day.
         </p>
+        <p className="mt-3 font-text text-sm text-ink-300">
+          Need to talk now? Call{" "}
+          <a
+            href="tel:+18636447473"
+            className="text-pops-yellow-500 underline-offset-2 hover:underline"
+          >
+            863.644.7473
+          </a>
+          .
+        </p>
         <button
           type="button"
           onClick={() => setSubmitted(false)}
@@ -116,6 +131,18 @@ export function QuoteForm() {
           strategy="lazyOnload"
         />
       )}
+
+      <div className="mb-6 rounded-sm border border-ink-700 bg-ink-800 p-4 font-text text-sm text-ink-200">
+        <span className="font-semibold text-ink-100">Need it fast?</span>{" "}
+        Call{" "}
+        <a
+          href="tel:+18636447473"
+          className="text-pops-yellow-500 underline-offset-2 hover:underline"
+        >
+          863.644.7473
+        </a>{" "}
+        — Mon–Fri 8am–4pm ET.
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
         {serverError && (
@@ -230,7 +257,7 @@ export function QuoteForm() {
         <div id="recaptcha-container" />
 
         <Button type="submit" variant="primary" isLoading={isSubmitting}>
-          Submit Request
+          Get my 24-hour quote
         </Button>
       </form>
     </>
