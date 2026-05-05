@@ -43,3 +43,5 @@ next-env.d.ts
 
 # sentry
 .sentryclirc
+# Sentry webpack/build-plugin auth token — file itself says "DO NOT commit"
+.env.sentry-build-plugin
