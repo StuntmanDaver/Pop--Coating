@@ -1,0 +1,106 @@
+# .github/workflows/website-a11y.yml
+#
+# Periodic accessibility regression gate for apps/pops-website.
+#
+# Runs `pnpm a11y-audit` against a fresh production build of the marketing
+# site. The script (apps/pops-website/scripts/axe-audit.ts) walks every
+# customer-facing route, scrolls each top-to-bottom to wake BlurFade
+# IntersectionObserver state, and runs the full WCAG 2.0 / 2.1 / 2.2 A + AA
+# rule set via @axe-core/playwright. Exit non-zero on any violation.
+#
+# Triggers:
+#   - Pull requests that touch apps/pops-website/** (path filter)
+#   - Direct pushes to main that touch apps/pops-website/** (tripwire so a
+#     bypassed gate still surfaces within minutes of landing)
+#
+# Mode: WARNING-ONLY (continue-on-error: true on the audit step).
+# Promote to blocking by flipping that flag to false once two cycles pass
+# without flake. Tracking note in CHANGELOG.md.
+
+name: website / a11y
+
+on:
+  pull_request:
+    paths:
+      - 'apps/pops-website/**'
+      - '.github/workflows/website-a11y.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/pops-website/**'
+      - '.github/workflows/website-a11y.yml'
+
+# Cancel in-progress runs of this workflow on the same ref when new commits
+# land — the latest commit is the one that matters.
+concurrency:
+  group: website-a11y-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  axe-audit:
+    name: WCAG A + AA axe sweep
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: apps/pops-website
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # The pnpm cache defaults to the repo-root pnpm-lock.yaml. This is
+          # a pnpm workspace so all members (apps/pops-website included)
+          # share the single root lockfile — no override needed.
+          cache: pnpm
+
+      - name: Install dependencies
+        # --frozen-lockfile to match the rest of CI; the audit script depends
+        # on @axe-core/playwright + playwright, both already in devDeps.
+        # Run from repo root so the workspace install resolves correctly,
+        # then subsequent steps inherit working-directory: apps/pops-website.
+        working-directory: ${{ github.workspace }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Chromium + system deps
+        # Only Chromium — the audit script doesn't exercise Firefox/WebKit.
+        # --with-deps installs the apt packages Playwright needs on Ubuntu.
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build website (production)
+        run: pnpm build
+
+      - name: Start production server
+        # Background the server and write its PID so the workflow can
+        # tear it down deterministically rather than relying on the runner.
+        run: |
+          pnpm start &
+          echo "$!" > .server.pid
+
+      - name: Wait for server to accept requests
+        # Poll the homepage for up to 60s. Exits 0 as soon as it returns 2xx.
+        run: npx --yes wait-on http://localhost:3001 -t 60000
+
+      - name: Run axe sweep
+        # WARNING-ONLY for now — surfaces new regressions in the workflow log
+        # without blocking unrelated PRs. Flip continue-on-error: false to
+        # promote to a blocking gate once we have two clean cycles.
+        continue-on-error: true
+        run: pnpm a11y-audit
+
+      - name: Stop production server
+        if: always()
+        run: |
+          if [ -f .server.pid ]; then
+            kill "$(cat .server.pid)" 2>/dev/null || true
+          fi
