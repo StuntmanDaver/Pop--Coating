@@ -242,7 +242,7 @@ export default function HomePage() {
                   We love questions about coatings — don&apos;t know the best product
                   for your project? Ask us.
                 </p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-6 flex flex-col gap-3 lg:flex-row">
                   <Button asChild variant="outline" size="compact">
                     <Link href="/request-a-quote/standards-specifications-certifications">
                       Our Certifications
