@@ -31,6 +31,14 @@ export default async function EditJobPage({ params }: PageProps) {
       <EditJobForm
         jobId={job.id}
         companies={companies.map((c) => ({ id: c.id, name: c.name }))}
+        currentIntakeStatus={job.intake_status}
+        // intake_status is only included in defaults when it's a value the form's
+        // <select> can safely write back. 'in_production' is excluded — the form's
+        // options are draft/scheduled/archived, and showing 'draft' selected for an
+        // in_production job would silently propose a downgrade. With undefined here,
+        // JobFormFields shows 'draft' as the visual default but the action layer
+        // only sends fields the user actually changed (any-key-with-undefined is
+        // dropped by Object.fromEntries(...).filter(([,v]) => v !== undefined)).
         defaults={{
           company_id: job.company_id,
           job_name: job.job_name,
@@ -43,9 +51,11 @@ export default async function EditJobPage({ params }: PageProps) {
           coating_type: job.coating_type,
           due_date: job.due_date,
           priority: job.priority as 'low' | 'normal' | 'high' | 'rush',
-          intake_status: ['draft', 'scheduled', 'archived'].includes(job.intake_status)
+          intake_status: (['draft', 'scheduled', 'archived'] as const).includes(
+            job.intake_status as 'draft' | 'scheduled' | 'archived'
+          )
             ? (job.intake_status as 'draft' | 'scheduled' | 'archived')
-            : 'draft',
+            : undefined,
           notes: job.notes,
         }}
       />
