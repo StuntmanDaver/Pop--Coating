@@ -28,10 +28,10 @@ export function ServiceRow({
         href={href}
         className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
       >
-        <div className="flex items-center gap-6 py-8 md:grid md:grid-cols-[3.5rem_1fr_180px] md:gap-8 md:py-10">
+        <div className="flex items-center gap-4 py-6 sm:gap-6 sm:py-8 md:grid md:grid-cols-[3.5rem_1fr_180px] md:gap-8 md:py-10">
           {/* Service number */}
           <span
-            className="shrink-0 font-display text-4xl leading-none text-pops-yellow-500/35 transition-colors duration-150 group-hover:text-pops-yellow-500/65 md:text-5xl"
+            className="shrink-0 font-display text-3xl leading-none text-pops-yellow-500/35 transition-colors duration-150 group-hover:text-pops-yellow-500/65 sm:text-4xl md:text-5xl"
             aria-hidden="true"
           >
             {number}
@@ -39,13 +39,13 @@ export function ServiceRow({
 
           {/* Content */}
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-xl tracking-tight text-ink-900 md:text-2xl">
+            <h3 className="font-display text-lg tracking-tight text-ink-900 sm:text-xl md:text-2xl">
               {name}
             </h3>
             <p className="mt-1.5 font-text text-sm leading-relaxed text-ink-500 md:text-base">
               {lede}
             </p>
-            <span className="mt-4 inline-flex items-center gap-1.5 font-text text-sm font-semibold text-pops-yellow-600 transition-colors duration-150 group-hover:text-pops-yellow-500">
+            <span className="mt-3 inline-flex items-center gap-1.5 font-text text-sm font-semibold text-pops-yellow-600 transition-colors duration-150 group-hover:text-pops-yellow-500 sm:mt-4">
               <span>Learn more</span>
               <span
                 aria-hidden="true"
