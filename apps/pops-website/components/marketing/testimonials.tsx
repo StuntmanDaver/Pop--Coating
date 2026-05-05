@@ -38,7 +38,7 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     quote:
-      "First class friendly. They told me that since the panel was aluminum, glass bead blasting would be best. The panel came out great.",
+      "The people here are first class friendly. They told me that since the panel was aluminum, glass bead blasting would be best. The panel came out great.",
     name: "Tunis Cooper",
     context: "Verified Google Review · Local Guide",
     when: "2025",
