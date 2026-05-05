@@ -4,6 +4,7 @@ import {
   AnimatePresence,
   motion,
   useInView,
+  useReducedMotion,
   type UseInViewOptions,
   type Variants,
 } from "motion/react";
@@ -38,12 +39,23 @@ export function BlurFade({
   const ref = useRef(null);
   const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
   const isInView = !inView || inViewResult;
+  const prefersReducedMotion = useReducedMotion();
 
   const defaultVariants: Variants = {
     hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
     visible: { y: -yOffset, opacity: 1, filter: "blur(0px)" },
   };
-  const combinedVariants = variant ?? defaultVariants;
+  // When the user has prefers-reduced-motion: reduce, snap straight to the
+  // visible state (no blur, no translate, no fade) and keep both variants
+  // identical so the motion.div has nothing to interpolate. Same JSX shape,
+  // so SSR/hydration stay consistent.
+  const staticVariants: Variants = {
+    hidden: { y: 0, opacity: 1, filter: "blur(0px)" },
+    visible: { y: 0, opacity: 1, filter: "blur(0px)" },
+  };
+  const combinedVariants = prefersReducedMotion
+    ? staticVariants
+    : (variant ?? defaultVariants);
 
   return (
     <AnimatePresence>
