@@ -18,16 +18,17 @@ type RpcResult = { data: unknown | null; error: { message: string } | null }
 const mockRpc = vi.fn<(fn: string, args?: unknown) => Promise<RpcResult>>(() =>
   Promise.resolve({ data: null, error: null })
 )
+const mockSchema = vi.fn((_name: string) => ({ rpc: mockRpc }))
 
 beforeEach(() => {
   vi.clearAllMocks()
   ;(requireShopStaff as ReturnType<typeof vi.fn>).mockResolvedValue({ id: 'shop-user' })
-  ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ rpc: mockRpc })
+  ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ schema: mockSchema })
   mockRpc.mockResolvedValue({ data: { ok: true, new_version: 1 }, error: null })
 })
 
 describe('claimWorkstation', () => {
-  it('calls claim_workstation RPC with snake_cased params', async () => {
+  it('routes through .schema("app") and calls claim_workstation with snake_cased params', async () => {
     const result = await claimWorkstation({
       workstation_id: WS_ID,
       employee_id: EMP_ID,
@@ -35,6 +36,7 @@ describe('claimWorkstation', () => {
     })
 
     expect(requireShopStaff).toHaveBeenCalled()
+    expect(mockSchema).toHaveBeenCalledWith('app')
     expect(mockRpc).toHaveBeenCalledWith('claim_workstation', {
       p_workstation_id: WS_ID,
       p_employee_id: EMP_ID,

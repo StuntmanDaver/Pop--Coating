@@ -22,6 +22,7 @@ type ErrResult = { error: { message: string } | null }
 const mockUpdateEq = vi.fn<() => Promise<ErrResult>>(() => Promise.resolve({ error: null }))
 const mockUpdate = vi.fn((_data: unknown) => ({ eq: mockUpdateEq }))
 const mockRpc = vi.fn((_fn: string) => Promise.resolve({ data: null as string | null, error: null as { message: string } | null }))
+const mockSchema = vi.fn((_name: string) => ({ rpc: mockRpc }))
 const mockFrom = vi.fn((_table: string) => ({ insert: mockInsert, update: mockUpdate }))
 
 beforeEach(() => {
@@ -33,7 +34,7 @@ beforeEach(() => {
     role: 'admin',
     staff_id: STAFF_ID,
   })
-  ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ from: mockFrom, rpc: mockRpc })
+  ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ from: mockFrom, schema: mockSchema })
 
   mockRpc.mockResolvedValue({ data: 'POPS-2026-00001', error: null })
   mockSingle.mockResolvedValue({
@@ -48,12 +49,13 @@ beforeEach(() => {
 })
 
 describe('createJob', () => {
-  it('calls next_job_number RPC then inserts with the returned number + a 16-char packet_token', async () => {
+  it('routes RPC through .schema("app") for next_job_number then inserts with returned number + 16-char packet_token', async () => {
     const result = await createJob({
       company_id: COMPANY_ID,
       job_name: 'Bumper coat',
     })
 
+    expect(mockSchema).toHaveBeenCalledWith('app')
     expect(mockRpc).toHaveBeenCalledWith('next_job_number')
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({

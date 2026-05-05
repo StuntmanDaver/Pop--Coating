@@ -11,7 +11,13 @@ enabled = true
 port = 54331
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
-schemas = ["public", "graphql_public"]
+# `app` is exposed so that SECURITY DEFINER RPCs (next_job_number, claim_workstation,
+# record_workstation_heartbeat, release_workstation, validate_employee_pin Phase-3,
+# record_scan_event Phase-3) are callable via supabase-js .schema('app').rpc(...).
+# Schema USAGE is granted in migration 0012; per-function EXECUTE grants are explicit.
+# Claim-reader functions (app.tenant_id, app.audience, etc.) only return the caller's
+# own JWT claims, so direct exposure is safe.
+schemas = ["public", "graphql_public", "app"]
 # Extra schemas to add to the search_path of every request.
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
