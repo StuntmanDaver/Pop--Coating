@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { company } from "../../content/company";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Container } from "./container";
+
+const PHONE_TEL_HREF = `tel:+1${company.phone.replace(/\D/g, "")}`;
 
 type HeaderProps = {
   className?: string;
@@ -65,6 +68,30 @@ export function Header({ className }: HeaderProps) {
 
         {/* CTA + mobile menu trigger */}
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {/* Phone — desktop shows label, mobile shows icon-only tap target */}
+          <a
+            href={PHONE_TEL_HREF}
+            aria-label={`Call ${company.name} at ${company.phone}`}
+            className="inline-flex min-h-11 items-center gap-2 rounded-sm px-2 py-2 font-text text-sm font-medium text-ink-700 outline-none transition-colors hover:text-ink-900 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:px-3"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 20 20"
+              fill="none"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <path
+                d="M4.5 3.5h2.8l1.4 3.5-1.8 1.1a10 10 0 0 0 5 5l1.1-1.8 3.5 1.4v2.8a1.7 1.7 0 0 1-1.7 1.7A12.5 12.5 0 0 1 2.8 5.2 1.7 1.7 0 0 1 4.5 3.5z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="hidden lg:inline">{company.phone}</span>
+          </a>
+
           <Button asChild variant="primary" size="compact" className="hidden sm:inline-flex">
             <Link href="/request-a-quote">Request a Quote</Link>
           </Button>
