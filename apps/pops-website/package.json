@@ -11,6 +11,7 @@
     "audit:alt": "npx tsx scripts/audit-alt.ts",
     "audit:headings": "npx tsx scripts/audit-headings.ts",
     "contrast-lint": "npx tsx scripts/contrast-lint.ts",
+    "a11y-audit": "npx tsx scripts/axe-audit.ts",
     "lighthouse": "pnpm dlx @lhci/cli autorun",
     "mobile-audit": "npx tsx scripts/mobile-audit.ts"
   },
