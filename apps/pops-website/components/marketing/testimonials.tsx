@@ -13,8 +13,14 @@ type Testimonial = {
   when: string;
 };
 
-// Sourced from Pops's verified Google reviews (4.7 / 68 reviews as of 2026-05).
-// Quotes lightly trimmed for length; meaning preserved verbatim.
+// Quotes sourced from Pops's verified Google reviews. Lightly trimmed for
+// length; meaning preserved.
+//
+// Aggregate rating shown in the section heading. Refresh quarterly from the
+// Google Business Profile (or wire to the Business Profile API later).
+// Last verified: 2026-05-04.
+const GOOGLE_RATING = { stars: 4.7, reviews: 68 } as const;
+
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
@@ -61,7 +67,7 @@ export function Testimonials() {
             id="testimonials-heading"
             className="mb-2 max-w-3xl font-display text-[26px] leading-tight tracking-tight text-ink-900 sm:text-[30px] md:text-[42px]"
           >
-            4.7 stars across 68 reviews
+            {GOOGLE_RATING.stars} stars across {GOOGLE_RATING.reviews} reviews
           </h2>
           <p className="mb-8 max-w-2xl font-text text-base leading-relaxed text-ink-600 sm:mb-12">
             Real words from people who&apos;ve trusted us with their parts —
