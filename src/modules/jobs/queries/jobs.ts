@@ -2,6 +2,7 @@ import 'server-only'
 import { z } from 'zod'
 import { createClient } from '@/shared/db/server'
 import { requireOfficeStaff } from '@/shared/auth-helpers/require'
+import { escapeForOr } from '@/shared/db/postgrest'
 
 const ListJobsParamsSchema = z.object({
   q: z.string().max(200).optional(),
@@ -49,7 +50,10 @@ export async function listJobs(params: unknown = {}): Promise<JobListItem[]> {
   if (parsed.intake_status) query = query.eq('intake_status', parsed.intake_status)
   if (parsed.production_status) query = query.eq('production_status', parsed.production_status)
   if (parsed.on_hold !== undefined) query = query.eq('on_hold', parsed.on_hold)
-  if (parsed.q) query = query.or(`job_number.ilike.%${parsed.q}%,job_name.ilike.%${parsed.q}%`)
+  if (parsed.q) {
+    const q = escapeForOr(parsed.q)
+    query = query.or(`job_number.ilike.%${q}%,job_name.ilike.%${q}%`)
+  }
 
   const { data, error } = await query
   if (error) throw new Error(`Job list failed: ${error.message}`)

@@ -2,6 +2,7 @@ import 'server-only'
 import { z } from 'zod'
 import { createClient } from '@/shared/db/server'
 import { requireOfficeStaff } from '@/shared/auth-helpers/require'
+import { escapeForOr } from '@/shared/db/postgrest'
 
 const ListContactsParamsSchema = z.object({
   company_id: z.string().uuid().optional(),
@@ -38,7 +39,10 @@ export async function listContacts(params: unknown = {}): Promise<ContactListIte
 
   if (parsed.company_id) query = query.eq('company_id', parsed.company_id)
   if (!parsed.include_archived) query = query.is('archived_at', null)
-  if (parsed.q) query = query.or(`first_name.ilike.%${parsed.q}%,last_name.ilike.%${parsed.q}%,email.ilike.%${parsed.q}%`)
+  if (parsed.q) {
+    const q = escapeForOr(parsed.q)
+    query = query.or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%`)
+  }
 
   const { data, error } = await query
   if (error) throw new Error(`Contact list failed: ${error.message}`)
