@@ -17,7 +17,7 @@ import { ServiceRow } from "../components/marketing/service-row";
 import { Testimonials } from "../components/marketing/testimonials";
 import { JsonLd } from "../components/seo/json-ld";
 import { Button } from "../components/ui/button";
-import { getOrgJsonLd } from "../lib/jsonld";
+import { getLocalBusinessJsonLd, getOrgJsonLd } from "../lib/jsonld";
 
 export const metadata: Metadata = {
   title: {
@@ -98,6 +98,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={getOrgJsonLd()} />
+      <JsonLd data={getLocalBusinessJsonLd()} />
       <Header />
       <main id="content">
 
