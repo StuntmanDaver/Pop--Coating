@@ -8,6 +8,7 @@ import { Header } from "../components/layout/header";
 import { BlurFade } from "../components/magicui/blur-fade";
 import { BorderBeam } from "../components/magicui/border-beam";
 import { NumberTicker } from "../components/magicui/number-ticker";
+import { CapacitySpecs } from "../components/marketing/capacity-specs";
 import { CertificationMarquee } from "../components/marketing/certification-marquee";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
@@ -175,6 +176,9 @@ export default function HomePage() {
 
         {/* ── Industries served ── */}
         <IndustriesGrid />
+
+        {/* ── Capacity specs (TODO: replace placeholder values) ── */}
+        <CapacitySpecs />
 
         {/* ── Commitment · Infrastructure · Standards ── */}
         <section
