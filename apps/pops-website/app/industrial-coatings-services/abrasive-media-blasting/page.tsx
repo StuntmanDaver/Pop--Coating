@@ -71,7 +71,7 @@ export default function AbrasiveMediaBlastingPage() {
           eyebrow="SAND BLASTING"
           heading="Abrasive Media Blasting"
           lede="Meticulous surface preparation to SSPC and NACE standards, ensuring optimal coating adhesion and long-term performance."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
+          primaryCta={{ label: "Request a Quote", href: "/request-a-quote?service=abrasive-media-blasting" }}
           backgroundImage="/images/abrasive-media-blasting.jpg"
         />
 
@@ -122,7 +122,7 @@ export default function AbrasiveMediaBlastingPage() {
 
                 <div className="mt-10">
                   <Button asChild variant="primary">
-                    <Link href="/request-a-quote">Get a Quote</Link>
+                    <Link href="/request-a-quote?service=abrasive-media-blasting">Get a Quote</Link>
                   </Button>
                 </div>
               </div>

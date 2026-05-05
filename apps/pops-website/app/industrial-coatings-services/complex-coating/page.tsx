@@ -44,7 +44,7 @@ export default function ComplexCoatingPage() {
           eyebrow="COMPLEX INDUSTRIAL"
           heading="Complex Coating"
           lede="Specialty tank lining, baked coatings, and plural component coatings for the most demanding industrial applications."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
+          primaryCta={{ label: "Request a Quote", href: "/request-a-quote?service=complex-coating" }}
           backgroundImage="/images/industrial-complex-coatings-1.jpg"
         />
 
@@ -99,7 +99,7 @@ export default function ComplexCoatingPage() {
 
                 <div className="mt-10">
                   <Button asChild variant="primary">
-                    <Link href="/request-a-quote">Get a Quote</Link>
+                    <Link href="/request-a-quote?service=complex-coating">Get a Quote</Link>
                   </Button>
                 </div>
               </div>

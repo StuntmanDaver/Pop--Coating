@@ -79,7 +79,7 @@ export default function PowderCoatingPage() {
           eyebrow="POWDER"
           heading="Powder Coating"
           lede="Electrostatic spray process delivering a tough, uniform finish with superior resistance to corrosion, impact, and chemicals."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
+          primaryCta={{ label: "Request a Quote", href: "/request-a-quote?service=powder-coating" }}
           backgroundImage="/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg"
         />
 
@@ -129,7 +129,7 @@ export default function PowderCoatingPage() {
 
                 <div className="mt-10">
                   <Button asChild variant="primary">
-                    <Link href="/request-a-quote">Get a Quote</Link>
+                    <Link href="/request-a-quote?service=powder-coating">Get a Quote</Link>
                   </Button>
                 </div>
               </div>

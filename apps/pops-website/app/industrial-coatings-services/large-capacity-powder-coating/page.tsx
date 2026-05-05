@@ -59,7 +59,7 @@ export default function LargeCapacityPowderCoatingPage() {
           eyebrow="LARGE CAPACITY"
           heading="Large Capacity Powder Coating"
           lede="Uniquely tailored for large scale projects — we efficiently handle significant size and volume without compromising quality."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
+          primaryCta={{ label: "Request a Quote", href: "/request-a-quote?service=large-capacity-powder-coating" }}
           backgroundImage="/images/large-capacity-powder-coating.jpg"
         />
 
@@ -109,7 +109,7 @@ export default function LargeCapacityPowderCoatingPage() {
 
                 <div className="mt-10">
                   <Button asChild variant="primary">
-                    <Link href="/request-a-quote">Get a Quote</Link>
+                    <Link href="/request-a-quote?service=large-capacity-powder-coating">Get a Quote</Link>
                   </Button>
                 </div>
               </div>

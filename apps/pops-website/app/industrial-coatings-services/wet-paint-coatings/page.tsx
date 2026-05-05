@@ -71,7 +71,7 @@ export default function WetPaintCoatingsPage() {
           eyebrow="INDUSTRIAL"
           heading="Wet Paint Coatings"
           lede="Precision and expertise for a seamless, durable finish on industrial equipment, machinery, and structural components."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
+          primaryCta={{ label: "Request a Quote", href: "/request-a-quote?service=wet-paint-coatings" }}
           backgroundImage="/images/industrial-painting-lakeland-fl-1024x683-1.jpg"
         />
 
@@ -122,7 +122,7 @@ export default function WetPaintCoatingsPage() {
 
                 <div className="mt-10">
                   <Button asChild variant="primary">
-                    <Link href="/request-a-quote">Get a Quote</Link>
+                    <Link href="/request-a-quote?service=wet-paint-coatings">Get a Quote</Link>
                   </Button>
                 </div>
               </div>
