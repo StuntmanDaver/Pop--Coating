@@ -1,21 +1,28 @@
-import { BlurFade } from "../magicui/blur-fade";
+import Link from "next/link";
+
 import { Container } from "../layout/container";
+import { BlurFade } from "../magicui/blur-fade";
+import { Button } from "../ui/button";
 import { EyebrowLabel } from "./eyebrow";
 
 type Spec = {
   label: string;
-  /** Headline value. TODO placeholders to be replaced with real numbers. */
+  /** Headline value. Only rendered when SPECS_READY is true. */
   value: string;
   detail: string;
 };
 
-// TODO(client): Replace placeholder values with real capacity specs from Pops.
-// Suggested sources:
+// Flip to `true` once the client provides real numbers below.
+// While false, the section renders a CTA card instead of the four-cell grid
+// — visitors never see "TODO" placeholders in production.
+const SPECS_READY = false;
+
+// TODO(client): Replace placeholder values with real capacity specs from Pops,
+// then set SPECS_READY = true above. Sources to gather:
 //   - Largest cure oven: usable interior dimensions (W × H × D) in feet.
 //   - Max part weight: rated load on the line / largest fixture.
 //   - Blast booth: usable footprint (W × D) and door clearance (H).
 //   - Throughput: typical parts per shift OR linear feet per shift.
-// Once filled, remove this comment block.
 const SPECS: Spec[] = [
   {
     label: "Largest Cure Oven",
@@ -64,30 +71,44 @@ export function CapacitySpecs() {
             Built for big work
           </h2>
           <p className="mb-8 max-w-2xl font-text text-base leading-relaxed text-ink-600 sm:mb-10">
-            If your part fits, we can finish it. Hard numbers below — get
-            anything outside this range on the phone with us anyway.
+            {SPECS_READY
+              ? "If your part fits, we can finish it. Hard numbers below — get anything outside this range on the phone with us anyway."
+              : "Aerospace components to oversized fab work. Send us dimensions, weight, and material, and we'll confirm fit and quote within 24 hours."}
           </p>
         </BlurFade>
 
         <BlurFade delay={0.12}>
-          <dl className="grid grid-cols-2 border border-ink-200 md:grid-cols-4">
-            {SPECS.map((spec, i) => (
-              <div
-                key={spec.label}
-                className={`px-4 py-6 text-center sm:px-6 sm:py-8 ${CELL_BORDERS[i]}`}
-              >
-                <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
-                  {spec.label}
-                </dt>
-                <dd className="mt-2 font-display text-xl leading-tight tracking-tight text-ink-900 sm:text-2xl md:text-[28px]">
-                  {spec.value}
-                </dd>
-                <p className="mt-1 font-text text-[11px] leading-snug text-ink-400 sm:text-xs">
-                  {spec.detail}
-                </p>
-              </div>
-            ))}
-          </dl>
+          {SPECS_READY ? (
+            <dl className="grid grid-cols-2 border border-ink-200 md:grid-cols-4">
+              {SPECS.map((spec, i) => (
+                <div
+                  key={spec.label}
+                  className={`px-4 py-6 text-center sm:px-6 sm:py-8 ${CELL_BORDERS[i]}`}
+                >
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                    {spec.label}
+                  </dt>
+                  <dd className="mt-2 font-display text-xl leading-tight tracking-tight text-ink-900 sm:text-2xl md:text-[28px]">
+                    {spec.value}
+                  </dd>
+                  <p className="mt-1 font-text text-[11px] leading-snug text-ink-400 sm:text-xs">
+                    {spec.detail}
+                  </p>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <div className="flex flex-col items-start gap-4 border border-ink-200 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
+              <p className="font-text text-base leading-relaxed text-ink-700 sm:text-lg">
+                Cure oven, max part weight, blast booth, throughput — sized to
+                your job, every time. Tell us what you have and we&apos;ll
+                confirm a fit.
+              </p>
+              <Button asChild variant="primary" className="shrink-0">
+                <Link href="/request-a-quote">Send your part details</Link>
+              </Button>
+            </div>
+          )}
         </BlurFade>
       </Container>
     </section>
