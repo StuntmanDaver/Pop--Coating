@@ -24,12 +24,27 @@ export interface JobListItem {
   job_number: string
   job_name: string
   company_id: string
+  company_name: string | null
   intake_status: string
   production_status: string | null
   on_hold: boolean
   due_date: string | null
   priority: string
   created_at: string
+}
+
+interface JobListRow {
+  id: string
+  job_number: string
+  job_name: string
+  company_id: string
+  intake_status: string
+  production_status: string | null
+  on_hold: boolean
+  due_date: string | null
+  priority: string
+  created_at: string
+  companies: { name: string } | null
 }
 
 export async function listJobs(params: unknown = {}): Promise<JobListItem[]> {
@@ -40,7 +55,7 @@ export async function listJobs(params: unknown = {}): Promise<JobListItem[]> {
   let query = supabase
     .from('jobs')
     .select(
-      'id, job_number, job_name, company_id, intake_status, production_status, on_hold, due_date, priority, created_at'
+      'id, job_number, job_name, company_id, intake_status, production_status, on_hold, due_date, priority, created_at, companies(name)'
     )
     .order('created_at', { ascending: false })
     .range(parsed.offset, parsed.offset + parsed.limit - 1)
@@ -55,9 +70,21 @@ export async function listJobs(params: unknown = {}): Promise<JobListItem[]> {
     query = query.or(`job_number.ilike.%${q}%,job_name.ilike.%${q}%`)
   }
 
-  const { data, error } = await query
+  const { data, error } = await query.returns<JobListRow[]>()
   if (error) throw new Error(`Job list failed: ${error.message}`)
-  return data ?? []
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    job_number: row.job_number,
+    job_name: row.job_name,
+    company_id: row.company_id,
+    company_name: row.companies?.name ?? null,
+    intake_status: row.intake_status,
+    production_status: row.production_status,
+    on_hold: row.on_hold,
+    due_date: row.due_date,
+    priority: row.priority,
+    created_at: row.created_at,
+  }))
 }
 
 const GetJobByIdSchema = z.object({ id: z.string().uuid() })
