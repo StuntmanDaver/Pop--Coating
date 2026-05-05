@@ -77,7 +77,7 @@ export default function FacilitiesEquipmentPage() {
         {/* Cross-link section */}
         <Section tone="dark" className="border-t border-ink-700">
           <Container>
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               <div>
                 <EyebrowLabel className="mb-3">CAPABILITIES</EyebrowLabel>
                 <h2 className="mb-3 font-display text-[22px] leading-[1.2] text-ink-100">

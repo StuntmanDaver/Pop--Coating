@@ -5,6 +5,10 @@ import Link from "next/link";
 import { Container } from "../components/layout/container";
 import { Footer } from "../components/layout/footer";
 import { Header } from "../components/layout/header";
+import { BlurFade } from "../components/magicui/blur-fade";
+import { BorderBeam } from "../components/magicui/border-beam";
+import { NumberTicker } from "../components/magicui/number-ticker";
+import { CertificationMarquee } from "../components/marketing/certification-marquee";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
 import { ServiceRow } from "../components/marketing/service-row";
@@ -63,11 +67,20 @@ const SERVICES = [
   },
 ];
 
-const STATS = [
-  { label: "Founded",      value: "1972",      detail: "50+ years serving Florida" },
-  { label: "Generations",  value: "4th Gen",   detail: "Family-owned & operated" },
-  { label: "Specialties",  value: "5 Services", detail: "Coating, blasting & more" },
-  { label: "Location",     value: "Lakeland, FL", detail: "Serving all of Polk County" },
+type Stat = {
+  label: string;
+  detail: string;
+  /** Animated numeric portion. Omit for static text-only stats. */
+  count?: { value: number; from: number; suffix?: string; grouping?: boolean };
+  /** Static value used when `count` is omitted. */
+  text?: string;
+};
+
+const STATS: Stat[] = [
+  { label: "Founded",     detail: "50+ years serving Florida",   count: { value: 1972, from: 1900, grouping: false } },
+  { label: "Generations", detail: "Family-owned & operated",     count: { value: 4, from: 0, suffix: "th Gen" } },
+  { label: "Specialties", detail: "Coating, blasting & more",    count: { value: 5, from: 0, suffix: " Services" } },
+  { label: "Location",    detail: "Serving all of Polk County",  text: "Lakeland, FL" },
 ];
 
 // Per-cell border classes for a 2-col (mobile) → 4-col (desktop) grid.
@@ -93,25 +106,38 @@ export default function HomePage() {
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           secondaryCta={{ label: "See our work", href: "/industrial-coatings-services" }}
           backgroundImage="/images/slide-01.jpg"
+          shimmerEyebrow
         />
 
         {/* ── Stats / Trust bar ── */}
         <div className="border-b border-ink-200 bg-canvas">
           <Container>
             <dl className="grid grid-cols-2 md:grid-cols-4">
-              {STATS.map(({ label, value, detail }, i) => (
+              {STATS.map(({ label, count, text, detail }, i) => (
                 <div
                   key={label}
-                  className={`px-6 py-6 text-center md:py-8 ${STAT_CELL_CLASSES[i]}`}
+                  className={`px-3 py-5 text-center sm:px-6 sm:py-6 md:py-8 ${STAT_CELL_CLASSES[i]}`}
                 >
                   <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
                     {label}
                   </dt>
-                  <dd className="mt-1 font-display text-2xl tracking-tight text-ink-900 md:text-3xl">
-                    {value}
+                  <dd className="mt-1 font-display text-xl leading-tight tracking-tight text-ink-900 sm:text-2xl md:text-3xl">
+                    {count ? (
+                      <>
+                        <NumberTicker
+                          value={count.value}
+                          startValue={count.from}
+                          delay={0.15 * i}
+                          useGrouping={count.grouping ?? true}
+                        />
+                        {count.suffix ? <span>{count.suffix}</span> : null}
+                      </>
+                    ) : (
+                      text
+                    )}
                   </dd>
                   {detail && (
-                    <p className="mt-0.5 font-text text-xs text-ink-400">{detail}</p>
+                    <p className="mt-1 font-text text-[11px] leading-snug text-ink-400 sm:text-xs">{detail}</p>
                   )}
                 </div>
               ))}
@@ -119,20 +145,27 @@ export default function HomePage() {
           </Container>
         </div>
 
+        {/* ── Certification rail ── */}
+        <CertificationMarquee />
+
         {/* ── Services — numbered rows ── */}
-        <section className="bg-canvas py-16 md:py-24" aria-labelledby="services-heading">
+        <section className="bg-canvas py-12 sm:py-16 md:py-24" aria-labelledby="services-heading">
           <Container>
-            <EyebrowLabel tone="dark" className="mb-4">OUR SERVICES</EyebrowLabel>
-            <h2
-              id="services-heading"
-              className="mb-12 font-display text-[30px] leading-tight tracking-tight text-ink-900 md:text-[42px]"
-            >
-              Four generations of expertise
-              <br className="hidden md:block" /> in industrial coatings
-            </h2>
+            <BlurFade>
+              <EyebrowLabel tone="dark" shimmer className="mb-3 sm:mb-4">OUR SERVICES</EyebrowLabel>
+              <h2
+                id="services-heading"
+                className="mb-8 font-display text-[26px] leading-tight tracking-tight text-ink-900 sm:mb-12 sm:text-[30px] md:text-[42px]"
+              >
+                Four generations of expertise
+                <br className="hidden md:block" /> in industrial coatings
+              </h2>
+            </BlurFade>
             <div>
-              {SERVICES.map((service) => (
-                <ServiceRow key={service.href} {...service} />
+              {SERVICES.map((service, i) => (
+                <BlurFade key={service.href} delay={0.08 * i} yOffset={4}>
+                  <ServiceRow {...service} />
+                </BlurFade>
               ))}
               <div className="border-t border-ink-200" aria-hidden="true" />
             </div>
@@ -141,13 +174,13 @@ export default function HomePage() {
 
         {/* ── Commitment · Infrastructure · Standards ── */}
         <section
-          className="border-t border-ink-200 bg-canvas py-16 md:py-24"
+          className="border-t border-ink-200 bg-canvas py-12 sm:py-16 md:py-24"
           aria-labelledby="commitment-heading"
         >
           <Container>
-            <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-10 sm:gap-12 md:grid-cols-3">
 
-              <div>
+              <BlurFade>
                 <EyebrowLabel tone="dark" className="mb-4">COMMITMENT</EyebrowLabel>
                 <h2
                   id="commitment-heading"
@@ -164,9 +197,9 @@ export default function HomePage() {
                   We don&apos;t just meet expectations — we exceed them. Let us show you
                   what commitment to precision and technical expertise looks like.
                 </p>
-              </div>
+              </BlurFade>
 
-              <div>
+              <BlurFade delay={0.12}>
                 <EyebrowLabel tone="dark" className="mb-4">INFRASTRUCTURE</EyebrowLabel>
                 <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900">
                   Our Facilities &amp; Equipment
@@ -184,9 +217,9 @@ export default function HomePage() {
                     <Link href="/request-a-quote/facilities-equipment">View Facilities</Link>
                   </Button>
                 </div>
-              </div>
+              </BlurFade>
 
-              <div>
+              <BlurFade delay={0.24}>
                 <EyebrowLabel tone="dark" className="mb-4">STANDARDS</EyebrowLabel>
                 <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900">
                   Industry Standards &amp; Certifications
@@ -209,7 +242,7 @@ export default function HomePage() {
                     <Link href="/request-a-quote">Ask us</Link>
                   </Button>
                 </div>
-              </div>
+              </BlurFade>
 
             </div>
           </Container>
@@ -218,7 +251,7 @@ export default function HomePage() {
         {/* ── Family photo ── */}
         <section
           aria-label="Four generations of the Pop's Industrial Coatings family"
-          className="relative min-h-[400px] overflow-hidden bg-ink-900 md:min-h-[500px]"
+          className="relative min-h-[320px] overflow-hidden bg-ink-900 sm:min-h-[400px] md:min-h-[500px]"
         >
           <Image
             src="/images/pops-4-generations.jpg"
@@ -229,37 +262,58 @@ export default function HomePage() {
           />
           <div aria-hidden="true" className="absolute inset-0 bg-ink-900/50" />
           <div className="absolute bottom-0 left-0 right-0">
-            <Container className="pb-12">
-              <Button asChild variant="primary">
+            <Container className="pb-8 sm:pb-12">
+              <Button asChild variant="primary" className="w-full sm:w-auto">
                 <Link href="/about-us">About Us</Link>
               </Button>
             </Container>
           </div>
         </section>
 
-        {/* ── CTA Banner — yellow ── */}
+        {/* ── CTA Banner — yellow card on dark, with traced border beam ── */}
         <section
-          className="bg-pops-yellow-500 py-16 md:py-20"
+          className="bg-ink-900 py-12 sm:py-16 md:py-20"
           aria-labelledby="cta-heading"
         >
           <Container>
-            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h2
-                  id="cta-heading"
-                  className="font-display text-[30px] leading-tight tracking-tight text-ink-900 md:text-[40px]"
-                >
-                  Ready to start your project?
-                </h2>
-                <p className="mt-3 max-w-xl font-text text-base leading-relaxed text-ink-800">
-                  From powder coating to abrasive blasting — get a quote within 24 hours.
-                </p>
+            <div className="relative overflow-hidden rounded-md bg-pops-yellow-500 px-6 py-10 sm:px-10 sm:py-12 md:px-14 md:py-14">
+              <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-8">
+                <div>
+                  <h2
+                    id="cta-heading"
+                    className="font-display text-[26px] leading-tight tracking-tight text-ink-900 sm:text-[30px] md:text-[40px]"
+                  >
+                    Ready to start your project?
+                  </h2>
+                  <p className="mt-3 max-w-xl font-text text-base leading-relaxed text-ink-800">
+                    From powder coating to abrasive blasting — get a quote within 24 hours.
+                  </p>
+                </div>
+                <div className="shrink-0">
+                  <Button asChild variant="dark" className="w-full sm:w-auto">
+                    <Link href="/request-a-quote">Request a Quote →</Link>
+                  </Button>
+                </div>
               </div>
-              <div className="shrink-0">
-                <Button asChild variant="dark">
-                  <Link href="/request-a-quote">Request a Quote →</Link>
-                </Button>
-              </div>
+
+              {/* Two beams traveling in tandem along the card's border, half a loop apart. */}
+              <BorderBeam
+                size={120}
+                pathRadius={8}
+                duration={9}
+                colorFrom="#1B1F27"
+                colorTo="#3F4654"
+                borderWidth={2}
+              />
+              <BorderBeam
+                size={120}
+                pathRadius={8}
+                duration={9}
+                delay={4.5}
+                colorFrom="#1B1F27"
+                colorTo="#3F4654"
+                borderWidth={2}
+              />
             </div>
           </Container>
         </section>

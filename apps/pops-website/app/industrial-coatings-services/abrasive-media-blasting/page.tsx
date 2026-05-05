@@ -77,7 +77,7 @@ export default function AbrasiveMediaBlastingPage() {
 
         <Section tone="dark">
           <Container>
-            <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_280px]">
+            <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[1fr_280px] lg:gap-16">
 
               {/* Main content */}
               <div>

@@ -32,7 +32,7 @@ export default function HistoryPage() {
 
         <Section tone="dark">
           <Container>
-            <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_320px]">
+            <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
               {/* Story body */}
               <div>
                 <EyebrowLabel className="mb-4">OUR STORY</EyebrowLabel>

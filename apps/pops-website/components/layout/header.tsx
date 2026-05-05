@@ -30,12 +30,12 @@ export function Header({ className }: HeaderProps) {
         Skip to content
       </a>
 
-      <Container className="flex items-center justify-between gap-6 py-3">
+      <Container className="flex items-center justify-between gap-3 py-3 sm:gap-6">
         {/* Logo */}
         <Link
           href="/"
           aria-label="Pop's Industrial Coatings — Home"
-          className="group inline-flex shrink-0 items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+          className="group inline-flex min-w-0 flex-1 items-center gap-2.5 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:flex-initial sm:gap-3"
         >
           <Image
             src="/images/Pops-no-border.png"
@@ -43,9 +43,9 @@ export function Header({ className }: HeaderProps) {
             width={55}
             height={40}
             priority
-            className="h-10 w-auto"
+            className="h-9 w-auto shrink-0 sm:h-10"
           />
-          <span className="font-display text-sm tracking-tight text-ink-900 sm:text-base">
+          <span className="min-w-0 truncate font-display text-[13px] leading-tight tracking-tight text-ink-900 sm:text-base">
             POP&apos;S INDUSTRIAL COATINGS
           </span>
         </Link>
@@ -64,7 +64,7 @@ export function Header({ className }: HeaderProps) {
         </nav>
 
         {/* CTA + mobile menu trigger */}
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Button asChild variant="primary" size="compact" className="hidden sm:inline-flex">
             <Link href="/request-a-quote">Request a Quote</Link>
           </Button>
