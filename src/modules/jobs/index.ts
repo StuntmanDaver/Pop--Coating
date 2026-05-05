@@ -1,5 +1,9 @@
-// Phase 2 module. Public API will export: createJob, getJob, listJobs, updateJob,
-// archiveJob, setJobOnHold, generateJobNumber — see docs/DESIGN.md §4.3 Module 3 (Jobs).
-// Note: production_status transitions are forbidden via direct UPDATE; use app.record_scan_event()
-// SECURITY DEFINER function (Phase 3 scanning module).
-export {}
+// Public API for the Jobs module.
+// docs/DESIGN.md §4.3 Module 3 (Jobs). Status transitions are owned by the scanning
+// module (record_scan_event); this surface intentionally never writes production_status.
+
+export { createJob, updateJob, setJobHold, archiveJob } from './actions/jobs'
+export type { CreateJobInput, UpdateJobInput } from './actions/jobs'
+
+export { listJobs, getJobById, getJobByPacketToken } from './queries/jobs'
+export type { ListJobsParams, JobListItem } from './queries/jobs'
