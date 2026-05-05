@@ -1,0 +1,21 @@
+{
+  "session_id": "loki-2026-05-05-01-29",
+  "rarv_cycles": [
+    {"n": 1, "module": "crm/companies", "commit": "054b4dd", "tests": 11},
+    {"n": 2, "module": "crm/contacts", "tests": 10, "lessons": ["Zod .default() fills partials — use .optional() + ?? in action body"]},
+    {"n": 3, "module": "crm/activities", "tests": 6},
+    {"n": 4, "module": "tags", "tests": 10},
+    {"n": 5, "module": "jobs", "tests": 11, "lessons": ["app schema RPCs not in generated types — narrow-cast the rpc call", "production_status REVOKE means schema must explicitly exclude it from update partials AND defense-in-depth strip at runtime"]},
+    {"n": 6, "module": "timeline", "tests": 5, "lessons": ["server-only package throws on import — vitest needs an alias to a no-op stub; Next.js still resolves the real one via react-server export condition"]},
+    {"n": 7, "module": "dashboard", "tests": 7, "lessons": ["Schema column names matter — workstations.last_activity_at not last_heartbeat_at"]},
+    {"n": 8, "module": "portal", "tests": 7},
+    {"n": 9, "module": "scanning (lifecycle only)", "tests": 8, "scope_notes": "PIN + record_scan_event wait for Phase 3 migrations"},
+    {"n": 10, "module": "settings (staff + shop_settings)", "tests": 15, "lessons": ["shop_settings lock invariant tested explicitly — timezone/currency/job_number_prefix cannot change after first job"]}
+  ],
+  "patterns": [
+    "Server Action template: 'use server' → Zod safeParse → require* guard → getCurrentClaims (if needed) → createClient → typed insert/update → logAuditEvent → return narrow row",
+    "Query template: import 'server-only' → Zod parse → require* guard → createClient → chained .from().select().eq().order().range() → throw on .error → return data ?? []",
+    "Test template: vi.mock the four shared deps (db/server, db/admin, auth-helpers, audit) → typed chain mock or makeChain helper for awaitable builders → use RFC4122 v4 UUIDs in fixtures",
+    "Module index.ts re-exports actions + queries + their input/output types"
+  ]
+}

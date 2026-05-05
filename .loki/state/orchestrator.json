@@ -1,10 +1,37 @@
 {
   "currentPhase": "DEVELOPMENT",
-  "tasksCompleted": 0,
+  "tasksCompleted": 9,
   "tasksFailed": 0,
-  "anchor": ".planning/STATE.md (Phase 1 Plan 06 — partial; Plans 1-5 complete)",
+  "tasksDeferred": 1,
+  "anchor": ".planning/STATE.md (Phase 1 Plan 06 — code complete; Phase 2 module APIs partially built)",
   "blockers": [
-    "Phase 1 Plan 06 Task 2 — human action: Supabase Dashboard JWT expiry + Auth Hook registration; Vercel domains; Upstash creds; Sentry DSN; Resend DNS"
+    "Phase 1 Plan 06 Task 2 — human action: Supabase Dashboard JWT expiry (3600s) + Auth Hook registration; Vercel custom domains; Upstash creds; Sentry DSN; Resend DNS verification",
+    "Phase 3 migrations not yet present — record_scan_event + validate_employee_pin RPCs missing; scanning module wrappers for those defer to Phase 3"
   ],
-  "rationale": "Tests + build green. Code-side Phase 1 work is complete. Human-action items block Phase 1 sign-off but do NOT block code work on Phase 2+ schema/modules. Decision: advance via GSD planning pattern."
+  "completed_modules": [
+    {"module": "crm", "surfaces": ["companies", "contacts", "activities"], "tests": 27},
+    {"module": "tags", "surfaces": ["tags CRUD", "polymorphic apply/remove", "list-for-entity"], "tests": 10},
+    {"module": "jobs", "surfaces": ["create (via next_job_number RPC)", "update (production_status excluded)", "setHold", "archive", "list", "getById", "getByPacketToken"], "tests": 11},
+    {"module": "timeline", "surfaces": ["getJobTimeline", "getCustomerVisibleTimeline", "getEmployeeScanHistory"], "tests": 5},
+    {"module": "dashboard", "surfaces": ["getDashboardCounts", "getRecentJobs", "getActiveWorkstations"], "tests": 7},
+    {"module": "portal", "surfaces": ["listMyJobs", "getMyJob", "re-export getCustomerVisibleTimeline"], "tests": 7},
+    {"module": "scanning", "surfaces": ["claimWorkstation", "recordWorkstationHeartbeat", "releaseWorkstation"], "tests": 8, "scope_notes": "PIN + scan event wrappers deferred to Phase 3 migrations"},
+    {"module": "settings", "surfaces": ["createWorkstation (preexisting)", "inviteStaff", "updateStaff", "deactivateStaff", "listStaff", "updateShopSettings (with lock invariant)"], "tests": 15}
+  ],
+  "deferred": [
+    {"module": "packets", "reason": "Requires installing @react-pdf/renderer + qrcode deps and a designed PDF layout — heavier than RARV-cycle scope, needs UI/UX pass."}
+  ],
+  "session_metrics": {
+    "tests_added": 71,
+    "tests_total": 104,
+    "files_created": 27,
+    "atomic_commits": 9,
+    "infra_changes": ["installed server-only", "vitest alias for server-only stub"]
+  },
+  "next_session_pickup": [
+    "1. Resolve Plan 06 human-action checklist (sign off Phase 1)",
+    "2. Build packets module (install deps, design PDF layout, implement generatePacketPdf)",
+    "3. Phase 2 plan via /gsd-plan-phase to formalize the module work just delivered",
+    "4. Phase 3 migrations: app.record_scan_event() + app.validate_employee_pin(); then scanning module wrappers"
+  ]
 }
