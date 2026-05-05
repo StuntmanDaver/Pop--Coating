@@ -85,15 +85,15 @@ export function CapacitySpecs() {
                   key={spec.label}
                   className={`px-4 py-6 text-center sm:px-6 sm:py-8 ${CELL_BORDERS[i]}`}
                 >
-                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-600">
                     {spec.label}
                   </dt>
                   <dd className="mt-2 font-display text-xl leading-tight tracking-tight text-ink-900 sm:text-2xl md:text-[28px]">
                     {spec.value}
+                    <span className="mt-1 block font-text text-[11px] font-normal leading-snug tracking-normal text-ink-500 sm:text-xs">
+                      {spec.detail}
+                    </span>
                   </dd>
-                  <p className="mt-1 font-text text-[11px] leading-snug text-ink-400 sm:text-xs">
-                    {spec.detail}
-                  </p>
                 </div>
               ))}
             </dl>
