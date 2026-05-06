@@ -4,6 +4,15 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### App / Scan PWA — Shop Floor UI (2026-05-06)
+
+- **`/scan/*` PWA fully shipped** (Loki brief 05, 5 commits, `e16bbae`–`0b9d902`). The QR scan loop — the core value proposition of the platform — is now a shippable touch-optimized PWA for enrolled iPads. 213 vitest tests passing (28 files); `pnpm build` green.
+- **Routes built:** `/scan` (EmployeePicker boot), `/scan/pin` (PIN + workstation claim), `/scan/station` (heartbeat + scan/manual overlays), `/scan/lookup` (stage picker + photo + confirm), `/scan/manifest.webmanifest` (PWA manifest route).
+- **Client components:** `EmployeePicker` (tile grid, filter at >12 employees), `PinPad` (4-digit auto-submit, masked, large touch targets), `Scanner` (`@zxing/browser` dynamic import, back-camera preference, permission-denied fallback), `ManualEntry` (8–16 char, uppercase normalization), `StagePicker` (7 stages, any-to-any, `aria-pressed`), `PhotoCapture` (canvas → JPEG 0.7, max 1024px; preview only — upload deferred), `HeartbeatProvider` (30s interval, auth-failure → session-expire redirect), `OfflineQueueFlusher` (IndexedDB queue, flushes on reconnect).
+- **State machine flow:** iPad boots → employee tile → PIN validates (`app.validate_employee_pin`) → workstation claimed (`app.claim_workstation`, optimistic concurrency with one retry) → session in `sessionStorage` → scan/manual → job lookup (`lookupJobByPacketToken`) → stage picker → `app.record_scan_event` → back to station. Switch User calls `releaseWorkstation` and clears session.
+- **Architectural learning — barrel server-only split:** The scanning module barrel (`src/modules/scanning/index.ts`) re-exported server-only query files. When client components import the barrel, Next.js bundles it and hits the `import 'server-only'` guard. Fix: `lookupJobByPacketToken` promoted from a plain query to a `'use server'` Server Action wrapper (`actions/lookup.ts`); `listShopEmployees` removed from barrel (server components import from the query path directly); `export type { ShopEmployeeTile }` kept in barrel (type exports are erased at compile time — safe). This pattern applies to any future module barrel that mixes server-only queries with server actions.
+- **Out of scope (deferred):** `/scan/enroll` device-enrollment flow; photo upload to Supabase Storage (stub); full service-worker background sync; pgTAP coverage for migrations 0015/0016.
+
 ### Repo / Full Push + Developer Handoff (2026-05-06)
 
 - **All local commits pushed to `github.com/StuntmanDaver/Pop--Coating` (`main`).** 16 commits that had accumulated locally since the last push are now on origin.
