@@ -13,6 +13,21 @@ All notable changes to this repository are documented here. The format is inspir
 - **Architectural learning — barrel server-only split:** The scanning module barrel (`src/modules/scanning/index.ts`) re-exported server-only query files. When client components import the barrel, Next.js bundles it and hits the `import 'server-only'` guard. Fix: `lookupJobByPacketToken` promoted from a plain query to a `'use server'` Server Action wrapper (`actions/lookup.ts`); `listShopEmployees` removed from barrel (server components import from the query path directly); `export type { ShopEmployeeTile }` kept in barrel (type exports are erased at compile time — safe). This pattern applies to any future module barrel that mixes server-only queries with server actions.
 - **Out of scope (deferred):** `/scan/enroll` device-enrollment flow; photo upload to Supabase Storage (stub); full service-worker background sync; pgTAP coverage for migrations 0015/0016.
 
+### App / Settings Admin UI + Scan Barrel Fix (2026-05-06)
+
+- **Settings admin section shipped** (Loki Brief 04, RARV cycle 19, commits `d8ed011`→`0a3aea8`). All three settings sub-pages live under `/(office)/settings/` with a tab navigation layout that highlights the active route using `usePathname`.
+  - **Staff** (`/settings/staff`) — server component lists all staff with Name / Email / Role / Status columns. `?include_inactive=true` query param toggles inactive rows into view. "Invite Staff" button links to invite form.
+  - **Staff invite** (`/settings/staff/invite`) — `useActionState(inviteStaffFromForm)` form (email/name/role/phone). On success without invite link → redirects to `?invited=true` (green "email sent" banner); on success with invite link → redirects to `?invite_link=…` (amber banner with `CopyLinkBox` for one-click copy).
+  - **Staff detail/edit** (`/settings/staff/[id]`) — inline edit form (name/role/phone) + separate deactivate section. Role select excludes `tenant_admin`. `?updated=true` success banner on save.
+  - **Workstations** (`/settings/workstations`) — server component with PostgREST embed `shop_employees!current_employee_id(display_name)`. Inactive rows at `opacity-60`. `<CreateWorkstationPanel>` inline at the bottom.
+  - **Create workstation panel** — `useActionState(createWorkstationFromForm)`. After success shows enrollment-URL amber box with `CopyLinkBox`. **Security invariant:** action returns only `enrollment_url` + `workstation.name` — `device_token` never sent to the browser.
+  - **Shop settings** (`/settings/shop`) — covers timezone, currency, job_number_prefix (locked after first job), `brand_color_hex` (color picker + text input synced), `pin_mode`, `default_due_days`, `tablet_inactivity_hours`. Lock invariant: `is_first_job_created = true` disables locked fields, shows inline `LockedBadge` and amber explanation banner. Locked fields re-read server-side in the action (disabled inputs don't submit with FormData).
+  - **Shared `CopyLinkBox`** (`settings/_components/copy-link-box.tsx`) — 'use client'; clipboard write + 2s "Copied!" feedback. Reused by staff invite banner and enrollment URL box.
+- **Scan barrel split** (commit `0b9d902`) — fixed a pre-existing Turbopack build failure where 'use client' scan components imported from `@/modules/scanning`, a barrel that re-exported server-only queries. `lookupJobByPacketToken` promoted to a `'use server'` action wrapper at `actions/lookup.ts`; `listShopEmployees` removed from barrel (import directly in Server Components); barrel `export type { … }` retained (erased at compile time, safe).
+- **`scanner.tsx` cleanup** — `decodeFromVideoDevice` returns `IScannerControls`; stored it in `controls` and call `controls?.stop()` in the `useEffect` cleanup (was calling non-existent `codeReader.reset()`).
+- **Scan component + query tests** (commit `acb87ca`) — 7 new test files covering `employees.test.ts` query plus 6 client components. Total: **213/213 vitest tests passing** (up from 161).
+- **`pnpm build` green** — 22 routes including all 5 settings routes and 4 scan routes.
+
 ### Repo / Full Push + Developer Handoff (2026-05-06)
 
 - **All local commits pushed to `github.com/StuntmanDaver/Pop--Coating` (`main`).** 16 commits that had accumulated locally since the last push are now on origin.
