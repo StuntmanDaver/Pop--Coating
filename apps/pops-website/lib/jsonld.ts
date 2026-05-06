@@ -11,8 +11,8 @@ export function getOrgJsonLd(): Record<string, unknown> {
         url: BASE_URL,
         logo: {
           "@type": "ImageObject",
-          "@id": `${BASE_URL}/images/pops-logo-circle.png`,
-          url: `${BASE_URL}/images/pops-logo-circle.png`,
+          "@id": `${BASE_URL}/images/pops-logo-header-footer.png`,
+          url: `${BASE_URL}/images/pops-logo-header-footer.png`,
           width: 1024,
           height: 682,
         },

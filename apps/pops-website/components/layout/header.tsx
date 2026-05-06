@@ -44,12 +44,12 @@ export function Header({ className }: HeaderProps) {
           className="group inline-flex shrink-0 items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <Image
-            src="/images/pops-logo-circle.png"
+            src="/images/pops-logo-header-footer.png"
             alt=""
-            width={1024}
+            width={682}
             height={1024}
             priority
-            className="h-10 w-auto"
+            className="h-11 w-auto max-h-11 sm:h-12 sm:max-h-12"
           />
           <span className="font-display text-sm tracking-tight text-ink-100 sm:text-base">
             POP&apos;S INDUSTRIAL COATINGS

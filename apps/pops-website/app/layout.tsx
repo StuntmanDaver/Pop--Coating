@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Pop's Industrial Coatings",
-    images: [{ url: "/images/pops-logo-circle.png", width: 1024, height: 1024, alt: "Pop's Industrial Coatings" }],
+    images: [{ url: "/images/pops-logo-header-footer.png", width: 682, height: 1024, alt: "Pop's Industrial Coatings" }],
   },
   twitter: {
     card: "summary_large_image",

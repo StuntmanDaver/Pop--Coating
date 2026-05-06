@@ -40,11 +40,11 @@ export function Footer() {
           <FooterColumn title={doingBusinessTitle} headingId="footer-col-business">
             <div className="mb-6 flex items-center gap-3 rounded-sm border border-pops-yellow-500/25 bg-[#0A0A0A] p-3 shadow-[0_0_32px_-10px_rgba(254,205,8,0.12)]">
               <Image
-                src="/images/pops-logo-circle.png"
+                src="/images/pops-logo-header-footer.png"
                 alt="Pop's Industrial Coatings"
-                width={1024}
+                width={682}
                 height={1024}
-                className="h-14 w-auto"
+                className="h-16 w-auto max-h-20 sm:h-20"
                 priority={false}
               />
               <span className="font-display text-base leading-tight tracking-tight text-ink-100">
