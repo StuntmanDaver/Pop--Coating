@@ -1,13 +1,9 @@
 import 'server-only'
 import { createClient } from '@/shared/db/server'
 import { requireShopStaff } from '@/shared/auth-helpers/require'
+import type { ShopEmployeeTile } from '../types'
 
-export interface ShopEmployeeTile {
-  id: string
-  display_name: string
-  avatar_url: string | null
-  is_active: boolean
-}
+export type { ShopEmployeeTile }
 
 export async function listShopEmployees(): Promise<ShopEmployeeTile[]> {
   await requireShopStaff()

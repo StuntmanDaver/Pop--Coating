@@ -23,6 +23,7 @@ export type { LookupJobByPacketTokenInput, ScannedJob } from './actions/lookup'
 
 // listShopEmployees is server-only — import from '@/modules/scanning/queries/employees'
 // directly in Server Components. It is NOT re-exported here to keep the barrel safe
-// for client component imports (server-only modules cannot cross the client bundle boundary).
-// Type-only export is safe: `export type` is erased at compile time, no runtime import generated.
-export type { ShopEmployeeTile } from './queries/employees'
+// for client component imports.
+// Type is sourced from the side-effect-free types.ts so Turbopack doesn't follow
+// the chain into server-only code (queries/employees has `import 'server-only'`).
+export type { ShopEmployeeTile } from './types'
