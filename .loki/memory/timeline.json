@@ -122,6 +122,22 @@
       ]
     },
     {
+      "n": 19,
+      "module": "settings-admin-ui",
+      "brief": "docs/briefs/loki/04-settings-admin.md",
+      "commits": ["d8ed011", "1ed71fa", "9df2fb3", "0a3aea8", "0b9d902"],
+      "tests": 52,
+      "scope_notes": "16 files in src/app/(office)/settings/ — tab nav layout, staff list/invite/edit/deactivate, workstations list+create panel with enrollment_url copy, shop settings with is_first_job_created lock invariant. scanner.tsx IScannerControls fix + scanning barrel split (lookupJobByPacketToken as Server Action, listShopEmployees removed from barrel). pnpm build green — 22 routes including all 5 settings routes.",
+      "lessons": [
+        "IScannerControls.stop() not BrowserQRCodeReader.reset() — decodeFromVideoDevice returns IScannerControls; store the return value and call controls?.stop() in the useEffect cleanup. The codeReader itself has no stop/reset surface in zxing-browser.",
+        "Server-only barrel pollution: a module index.ts that has ANY re-export from a file with `import 'server-only'` poisons the barrel for ALL client component imports, even 'use server' action files in the same barrel. Fix: route server-only queries through a 'use server' action wrapper, OR remove them from the barrel and import directly in Server Components.",
+        "disabled inputs do NOT submit with FormData — HTML spec. When a field must be locked server-side but its saved value needs to be preserved on submit, either: (a) read the locked value server-side from DB in the action (ignore FormData for locked fields), or (b) render a hidden input alongside the disabled visible one. Approach (a) is safer (prevents tamper).",
+        "CopyLinkBox: navigator.clipboard.writeText is only available in secure contexts (https/localhost). For iPad PWA on local network this works fine; no fallback needed for this use-case.",
+        "enrollment_url security: the createWorkstation action must only return enrollment_url + workstation.name in its state — never the device_token. The device_token is a one-time secret; the enrollment_url embeds it but is the intended shareable form.",
+        "useActionState(action, initialState) requires the action signature to be (prevState, formData) — the prev state is injected as first arg by React. When binding a staffId into a deactivate action, use .bind: `const bound = deactivateStaffAction.bind(null, staffId)` then pass bound to useActionState."
+      ]
+    },
+    {
       "n": 18,
       "module": "office/companies-ui",
       "commit": "8987da9",

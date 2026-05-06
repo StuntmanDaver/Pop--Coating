@@ -42,7 +42,12 @@
     {"route": "/companies", "surface": "Companies list with q + include_archived filters + table (cycle 18, brief 01, commit 8987da9)"},
     {"route": "/companies/new", "surface": "Create form with shipping/billing address groups → createCompany (useActionState)"},
     {"route": "/companies/[id]", "surface": "Detail with two-column layout (info + addresses) + inline contacts list via listContacts({company_id})"},
-    {"route": "/companies/[id]/edit", "surface": "Edit form with assignIfDefined partial-update pattern → updateCompany"}
+    {"route": "/companies/[id]/edit", "surface": "Edit form with assignIfDefined partial-update pattern → updateCompany"},
+    {"route": "/settings/staff", "surface": "Staff list with include_inactive toggle + table (Name/Email/Role/Status) + Invite button"},
+    {"route": "/settings/staff/invite", "surface": "Invite form (email/name/role/phone) → inviteStaff; ?invite_link= banner with CopyLinkBox on success"},
+    {"route": "/settings/staff/[id]", "surface": "Staff detail with edit form (name/role/phone) + deactivate section; ?invite_link= amber banner; ?updated= green banner"},
+    {"route": "/settings/workstations", "surface": "Workstation list (name/stage/location/last_activity/status + current employee embed) + CreateWorkstationPanel"},
+    {"route": "/settings/shop", "surface": "Shop settings form — timezone/currency/job_number_prefix locked after first job (is_first_job_created), brand_color_hex color picker, pin_mode, default_due_days, tablet_inactivity_hours"}
   ],
   "audit_fixes_applied": [
     {
@@ -68,9 +73,9 @@
   ],
   "deferred": [],
   "session_metrics": {
-    "tests_total": 161,
+    "tests_total": 213,
     "tests_added_this_session": 113,
-    "atomic_commits_this_session": 22,
+    "atomic_commits_this_session": 27,
     "files_created": 68,
     "lessons_compounded": "see .loki/memory/timeline.json"
   },
@@ -79,7 +84,7 @@
     "2. Run supabase gen types typescript --local to regen Database with app schema; remove cast-through-unknown in jobs.ts + scanning/{pin,scan-event,workstation-lifecycle}.ts",
     "3. pgTAP coverage for new migrations — tenant-mismatch / lockout / cross-tenant scan / packet_dirty trigger fire conditions",
     "4. /gsd-plan-phase for Phase 2 to formalize the module work + create plan artifacts",
-    "5. Remaining UI surfaces: dashboard glow-up (counts + recent jobs); /(scan)/* PWA pages; /(portal)/my list (placeholder shipped, full list pending); settings (workstations + staff + shop_settings); company archive/unarchive UI once an unarchive path lands. companies CRUD shipped cycle 18 (brief 01, 8987da9).",
+    "5. Remaining UI surfaces: dashboard glow-up (counts + recent jobs); /(scan)/* PWA pages (scan boots shipped); /(portal)/my list (placeholder shipped, full list pending); company archive/unarchive UI once an unarchive path lands. Settings admin (staff/workstations/shop) SHIPPED Brief 04.",
     "6. Playwright E2E coverage for jobs CRUD flow (create → list → detail → edit → packet print) — landed cycle 16 (brief 03, 40e94ea); add E2E coverage for companies CRUD + portal /my/[jobId] in a follow-up brief.",
     "7. Decide on legacy popsindustrial.com aliases — currently still attached to prod deployment as redirects",
     "8. RESOLVED 2026-05-06 — parallel-route conflict cleaned up via Loki brief-03 follow-up. Five untracked duplicate files deleted: (office)/page.tsx, (office)/sign-in/page.tsx, (portal)/page.tsx, (portal)/sign-in/page.tsx, (portal)/jobs/page.tsx. Backups at /tmp/pops-untracked-deletion-20260506-103053. pnpm build SUCCESS — 20 routes built clean. Architecture decision: keep the host-aware single-file pattern at app/page.tsx + app/sign-in/page.tsx (branches on host.startsWith('track.')) — App Router route groups can't host-split because they don't see request context."

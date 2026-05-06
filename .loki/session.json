@@ -1,11 +1,28 @@
 {
   "pid": null,
-  "startedAt": "2026-05-06T15:00:00Z",
+  "startedAt": "2026-05-06T10:40:00Z",
   "provider": "claude",
   "invokedVia": "skill",
-  "status": "running",
-  "scope": "src/app/(office)/settings/**",
-  "complexity": "standard",
-  "brief": "docs/briefs/loki/04-settings-admin.md",
-  "notes": "Batch B. Settings sub-nav + staff CRUD + workstations list+create + shop settings with lock invariant. No new shadcn primitives. Mirrors jobs/companies CRUD patterns."
+  "status": "complete",
+  "brief": "docs/briefs/loki/04-settings-admin.md (continuation; session resumed after context compaction)",
+  "complexity": "complex",
+  "commits": [
+    "e16bbae — foundation: listShopEmployees, scan layout, manifest, boot page",
+    "b38e4e2 — 8 client components (employee-picker, pin-pad, scanner, manual-entry, stage-picker, photo-capture, heartbeat-provider, offline-queue)",
+    "4fd751f — pages: pin entry, station dashboard, job lookup + confirm",
+    "acb87ca — tests: employees query + 6 component tests (213 total, 28 files)",
+    "0b9d902 — fix: barrel split — lookupJobByPacketToken Server Action, remove server-only exports"
+  ],
+  "outcome": {
+    "tests": 213,
+    "test_files": 28,
+    "build": "green",
+    "routes": ["/scan", "/scan/pin", "/scan/station", "/scan/lookup", "/scan/manifest.webmanifest"],
+    "lessons": [
+      "Scanning barrel cannot re-export server-only queries — client components import the barrel and hit server-only at bundle time",
+      "Fix: wrap query as 'use server' action; export type { T } from server-only is safe (erased at compile time)",
+      "@zxing/browser must be dynamically imported in useEffect (not top-level) to avoid SSR issues",
+      "lookupJobByPacketToken promoted from query to Server Action so station page (client) can call it"
+    ]
+  }
 }
