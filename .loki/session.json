@@ -1,11 +1,11 @@
 {
   "pid": null,
-  "startedAt": "2026-05-06T14:01:00Z",
+  "startedAt": "2026-05-06T15:00:00Z",
   "provider": "claude",
   "invokedVia": "skill",
   "status": "running",
-  "scope": "tests/e2e/* + playwright.config.ts + vitest.config.ts exclude — Playwright E2E for jobs CRUD",
+  "scope": "src/app/(office)/settings/**",
   "complexity": "standard",
-  "brief": "docs/briefs/loki/03-e2e-jobs-crud.md",
-  "notes": "Batch A safe-parallel. Touches tests/e2e/, playwright.config.ts, vitest.config.ts (exclude tests/e2e/**), .gitignore (artifact dirs). No src/** edits. No deps install (pre-flight by operator)."
+  "brief": "docs/briefs/loki/04-settings-admin.md",
+  "notes": "Batch B. Settings sub-nav + staff CRUD + workstations list+create + shop settings with lock invariant. No new shadcn primitives. Mirrors jobs/companies CRUD patterns."
 }

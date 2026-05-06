@@ -13,13 +13,13 @@ export function Scanner({ onScan, onClose }: ScannerProps) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let codeReader: import('@zxing/browser').BrowserQRCodeReader | null = null
+    let controls: import('@zxing/browser').IScannerControls | null = null
     let stopped = false
 
     async function start() {
       try {
         const { BrowserQRCodeReader } = await import('@zxing/browser')
-        codeReader = new BrowserQRCodeReader()
+        const codeReader = new BrowserQRCodeReader()
 
         const devices = await BrowserQRCodeReader.listVideoInputDevices()
         // Prefer back/environment camera on iPad
@@ -33,7 +33,7 @@ export function Scanner({ onScan, onClose }: ScannerProps) {
           return
         }
 
-        await codeReader.decodeFromVideoDevice(
+        controls = await codeReader.decodeFromVideoDevice(
           envCamera.deviceId,
           videoRef.current!,
           (result, err) => {
@@ -63,7 +63,7 @@ export function Scanner({ onScan, onClose }: ScannerProps) {
 
     return () => {
       stopped = true
-      codeReader?.reset()
+      controls?.stop()
     }
   }, [onScan])
 

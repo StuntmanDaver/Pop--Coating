@@ -1,7 +1,7 @@
 import { requireShopStaff } from '@/shared/auth-helpers/require'
 import { getCurrentClaims } from '@/shared/auth-helpers/claims'
 import { createClient } from '@/shared/db/server'
-import { listShopEmployees } from '@/modules/scanning'
+import { listShopEmployees } from '@/modules/scanning/queries/employees'
 import { EmployeePicker } from './_components/employee-picker'
 
 interface WorkstationRow {

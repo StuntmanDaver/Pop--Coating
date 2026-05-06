@@ -18,8 +18,11 @@ export type { ValidatePinInput, ValidatePinResult } from './actions/pin'
 export { recordScanEvent } from './actions/scan-event'
 export type { RecordScanEventInput, RecordScanEventResult } from './actions/scan-event'
 
-export { lookupJobByPacketToken } from './queries/lookup'
-export type { LookupJobByPacketTokenInput, ScannedJob } from './queries/lookup'
+export { lookupJobByPacketToken } from './actions/lookup'
+export type { LookupJobByPacketTokenInput, ScannedJob } from './actions/lookup'
 
-export { listShopEmployees } from './queries/employees'
+// listShopEmployees is server-only — import from '@/modules/scanning/queries/employees'
+// directly in Server Components. It is NOT re-exported here to keep the barrel safe
+// for client component imports (server-only modules cannot cross the client bundle boundary).
+// Type-only export is safe: `export type` is erased at compile time, no runtime import generated.
 export type { ShopEmployeeTile } from './queries/employees'
