@@ -5,9 +5,12 @@ import Link from "next/link";
 import { Container } from "../components/layout/container";
 import { Footer } from "../components/layout/footer";
 import { Header } from "../components/layout/header";
+import { CertificationMarquee } from "../components/marketing/certification-marquee";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
+import { IndustriesGrid } from "../components/marketing/industries-grid";
 import { ServiceRow } from "../components/marketing/service-row";
+import { Testimonials } from "../components/marketing/testimonials";
 import { JsonLd } from "../components/seo/json-ld";
 import { Button } from "../components/ui/button";
 import { getOrgJsonLd } from "../lib/jsonld";
@@ -119,6 +122,9 @@ export default function HomePage() {
           </Container>
         </div>
 
+        {/* ── Certification marquee ── */}
+        <CertificationMarquee />
+
         {/* ── Services — numbered rows ── */}
         <section className="bg-canvas py-16 md:py-24" aria-labelledby="services-heading">
           <Container>
@@ -138,6 +144,9 @@ export default function HomePage() {
             </div>
           </Container>
         </section>
+
+        {/* ── Industries we serve ── */}
+        <IndustriesGrid />
 
         {/* ── Commitment · Infrastructure · Standards ── */}
         <section
@@ -214,6 +223,9 @@ export default function HomePage() {
             </div>
           </Container>
         </section>
+
+        {/* ── Testimonials ── */}
+        <Testimonials />
 
         {/* ── Family photo ── */}
         <section
