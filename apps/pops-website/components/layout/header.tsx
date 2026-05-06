@@ -1,12 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { company } from "../../content/company";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Container } from "./container";
-
-const PHONE_TEL_HREF = `tel:+1${company.phone.replace(/\D/g, "")}`;
 
 type HeaderProps = {
   className?: string;
@@ -33,12 +30,12 @@ export function Header({ className }: HeaderProps) {
         Skip to content
       </a>
 
-      <Container className="flex items-center justify-between gap-3 py-3 sm:gap-6">
+      <Container className="flex items-center justify-between gap-6 py-3">
         {/* Logo */}
         <Link
           href="/"
           aria-label="Pop's Industrial Coatings — Home"
-          className="group inline-flex min-w-0 flex-1 items-center gap-2.5 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:flex-initial sm:gap-3"
+          className="group inline-flex shrink-0 items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
         >
           <Image
             src="/images/Pops-no-border.png"
@@ -46,9 +43,9 @@ export function Header({ className }: HeaderProps) {
             width={55}
             height={40}
             priority
-            className="h-9 w-auto shrink-0 sm:h-10"
+            className="h-10 w-auto"
           />
-          <span className="min-w-0 truncate font-display text-[13px] leading-tight tracking-tight text-ink-900 sm:text-base">
+          <span className="font-display text-sm tracking-tight text-ink-900 sm:text-base">
             POP&apos;S INDUSTRIAL COATINGS
           </span>
         </Link>
@@ -67,31 +64,7 @@ export function Header({ className }: HeaderProps) {
         </nav>
 
         {/* CTA + mobile menu trigger */}
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          {/* Phone — desktop shows label, mobile shows icon-only tap target */}
-          <a
-            href={PHONE_TEL_HREF}
-            aria-label={`Call ${company.name} at ${company.phone}`}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-sm px-2 py-2 font-text text-sm font-medium text-ink-700 outline-none transition-colors hover:text-ink-900 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:px-3"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 20 20"
-              fill="none"
-              aria-hidden="true"
-              className="shrink-0"
-            >
-              <path
-                d="M4.5 3.5h2.8l1.4 3.5-1.8 1.1a10 10 0 0 0 5 5l1.1-1.8 3.5 1.4v2.8a1.7 1.7 0 0 1-1.7 1.7A12.5 12.5 0 0 1 2.8 5.2 1.7 1.7 0 0 1 4.5 3.5z"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="hidden sm:inline">{company.phone}</span>
-          </a>
-
+        <div className="flex items-center gap-3">
           <Button asChild variant="primary" size="compact" className="hidden sm:inline-flex">
             <Link href="/request-a-quote">Request a Quote</Link>
           </Button>

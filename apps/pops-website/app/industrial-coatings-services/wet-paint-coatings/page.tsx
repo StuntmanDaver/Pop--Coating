@@ -71,13 +71,13 @@ export default function WetPaintCoatingsPage() {
           eyebrow="INDUSTRIAL"
           heading="Wet Paint Coatings"
           lede="Precision and expertise for a seamless, durable finish on industrial equipment, machinery, and structural components."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote?service=wet-paint-coatings" }}
+          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           backgroundImage="/images/industrial-painting-lakeland-fl-1024x683-1.jpg"
         />
 
         <Section tone="dark">
           <Container>
-            <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[1fr_280px] lg:gap-16">
+            <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_280px]">
 
               {/* Main content */}
               <div>
@@ -122,7 +122,7 @@ export default function WetPaintCoatingsPage() {
 
                 <div className="mt-10">
                   <Button asChild variant="primary">
-                    <Link href="/request-a-quote?service=wet-paint-coatings">Get a Quote</Link>
+                    <Link href="/request-a-quote">Get a Quote</Link>
                   </Button>
                 </div>
               </div>

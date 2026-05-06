@@ -28,12 +28,10 @@ export function ServiceRow({
         href={href}
         className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
       >
-        <div className="flex items-center gap-4 py-6 sm:gap-6 sm:py-8 md:grid md:grid-cols-[3.5rem_1fr_180px] md:gap-8 md:py-10">
-          {/* Service number — decorative numeral. Uses text-ink-400 so it
-              meets the WCAG large-text 3:1 threshold against bg-canvas; the
-              brand accent moves to a darker pops-yellow on row hover. */}
+        <div className="flex items-center gap-6 py-8 md:grid md:grid-cols-[3.5rem_1fr_180px] md:gap-8 md:py-10">
+          {/* Service number */}
           <span
-            className="shrink-0 font-display text-3xl leading-none text-ink-400 transition-colors duration-150 group-hover:text-pops-yellow-600 sm:text-4xl md:text-5xl"
+            className="shrink-0 font-display text-4xl leading-none text-pops-yellow-500/35 transition-colors duration-150 group-hover:text-pops-yellow-500/65 md:text-5xl"
             aria-hidden="true"
           >
             {number}
@@ -41,21 +39,17 @@ export function ServiceRow({
 
           {/* Content */}
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-lg tracking-tight text-ink-900 sm:text-xl md:text-2xl">
+            <h3 className="font-display text-xl tracking-tight text-ink-900 md:text-2xl">
               {name}
             </h3>
             <p className="mt-1.5 font-text text-sm leading-relaxed text-ink-500 md:text-base">
               {lede}
             </p>
-            {/* "Learn more" CTA — text uses text-ink-900 so it clears 4.5:1
-                against bg-canvas; the yellow brand accent stays as the arrow
-                glyph (aria-hidden, decorative). Hover lifts the whole label
-                to the darker yellow for a coherent affordance. */}
-            <span className="mt-3 inline-flex items-center gap-1.5 font-text text-sm font-semibold text-ink-900 transition-colors duration-150 group-hover:text-pops-yellow-600 sm:mt-4">
+            <span className="mt-4 inline-flex items-center gap-1.5 font-text text-sm font-semibold text-pops-yellow-600 transition-colors duration-150 group-hover:text-pops-yellow-500">
               <span>Learn more</span>
               <span
                 aria-hidden="true"
-                className="inline-block text-pops-yellow-600 transition-transform duration-150 group-hover:translate-x-0.5"
+                className="inline-block transition-transform duration-150 group-hover:translate-x-0.5"
               >
                 →
               </span>

@@ -29,7 +29,7 @@ export default function StandardsPage() {
 
         <Section tone="dark">
           <Container>
-            <div className="mx-auto max-w-[720px] space-y-12 sm:space-y-16">
+            <div className="mx-auto max-w-[720px] space-y-16">
 
               {/* SSPC */}
               <div>

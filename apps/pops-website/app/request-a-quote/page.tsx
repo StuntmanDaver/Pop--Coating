@@ -7,7 +7,6 @@ import { Section } from "../../components/layout/section";
 import { EyebrowLabel } from "../../components/marketing/eyebrow";
 import { Hero } from "../../components/marketing/hero";
 import { QuoteForm } from "./quote-form";
-import { SLUG_TO_SERVICE } from "./schema";
 
 export const metadata: Metadata = {
   title: "Request a Quote - Pop's Industrial Coatings",
@@ -15,15 +14,7 @@ export const metadata: Metadata = {
     "Request a quote for industrial painting, powder coating, or abrasive blasting services in Lakeland, FL. We'll get back to you within one business day.",
 };
 
-type RequestAQuotePageProps = {
-  searchParams: Promise<{ service?: string }>;
-};
-
-export default async function RequestAQuotePage({
-  searchParams,
-}: RequestAQuotePageProps) {
-  const { service } = await searchParams;
-  const prefillService = service ? SLUG_TO_SERVICE[service] : undefined;
+export default function RequestAQuotePage() {
   return (
     <>
       <Header />
@@ -46,7 +37,7 @@ export default async function RequestAQuotePage({
               <p className="mb-10 font-text text-base leading-relaxed text-ink-300">
                 Fields marked with <span className="text-pops-yellow-500">*</span> are required.
               </p>
-              <QuoteForm prefillService={prefillService} />
+              <QuoteForm />
             </div>
           </Container>
         </Section>

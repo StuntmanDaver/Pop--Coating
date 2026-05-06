@@ -36,7 +36,7 @@ export function Footer() {
   return (
     <footer className="bg-ink-900 text-ink-100">
       <Container>
-        <div className="grid grid-cols-1 gap-10 py-12 sm:gap-12 sm:py-14 md:grid-cols-3 md:gap-10 md:py-20">
+        <div className="grid grid-cols-1 gap-12 py-16 md:grid-cols-3 md:gap-10 md:py-20">
           <FooterColumn title={doingBusinessTitle} headingId="footer-col-business">
             <div className="mb-6 flex items-center gap-3">
               <Image
