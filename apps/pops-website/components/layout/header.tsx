@@ -64,7 +64,7 @@ export function Header({ className }: HeaderProps) {
     <header
       data-hidden={hidden ? "true" : "false"}
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-ink-200 bg-canvas/95 backdrop-blur",
+        "sticky top-0 z-50 w-full border-b border-ink-700 bg-ink-900/92 backdrop-blur",
         "transition-transform duration-200 ease-out will-change-transform",
         "data-[hidden=true]:-translate-y-full data-[hidden=true]:shadow-none",
         className,
@@ -92,7 +92,7 @@ export function Header({ className }: HeaderProps) {
             priority
             className="h-10 w-auto"
           />
-          <span className="font-display text-sm tracking-tight text-ink-900 sm:text-base">
+          <span className="font-display text-sm tracking-tight text-ink-100 sm:text-base">
             POP&apos;S INDUSTRIAL COATINGS
           </span>
         </Link>
@@ -103,7 +103,7 @@ export function Header({ className }: HeaderProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="inline-flex min-h-11 items-center rounded-sm px-3 py-2 font-text text-sm font-medium text-ink-600 outline-none transition-colors hover:text-ink-900 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+              className="inline-flex min-h-11 items-center rounded-sm px-3 py-2 font-text text-sm font-medium text-ink-300 outline-none transition-colors hover:text-pops-yellow-300 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
             >
               {link.label}
             </Link>
@@ -120,7 +120,7 @@ export function Header({ className }: HeaderProps) {
           <button
             type="button"
             aria-label="Open navigation menu"
-            className="inline-flex min-h-11 w-11 items-center justify-center rounded-sm text-ink-600 transition-colors hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 md:hidden"
+            className="inline-flex min-h-11 w-11 items-center justify-center rounded-sm text-ink-300 transition-colors hover:text-pops-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 md:hidden"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path

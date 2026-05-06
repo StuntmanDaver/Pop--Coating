@@ -15,8 +15,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       className={cn(
         "block w-full",
         "h-11 px-4",
-        "rounded-sm border bg-ink-700 text-ink-100",
-        "border-ink-600",
+        "rounded-sm border bg-ink-800/90 text-ink-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+        "border-ink-500",
         "font-text text-base placeholder:text-ink-400",
         "transition-[border-color,box-shadow] duration-150 ease-out",
         "outline-none",

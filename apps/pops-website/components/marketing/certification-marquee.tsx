@@ -41,7 +41,7 @@ export function CertificationMarquee() {
   return (
     <section
       aria-labelledby="cert-rail-heading"
-      className="border-t border-ink-200 bg-canvas py-10 sm:py-12"
+      className="border-t border-ink-700 bg-ink-900 py-10 sm:py-12"
     >
       <div className="mx-auto mb-6 max-w-[1280px] px-4 text-center sm:px-6 lg:px-8">
         <EyebrowLabel id="cert-rail-heading" tone="dark" shimmer>
@@ -74,7 +74,7 @@ export function CertificationMarquee() {
                 alt={cert.alt}
                 width={cert.width}
                 height={cert.height}
-                className="h-full w-auto object-contain opacity-80 grayscale transition-[opacity,filter] duration-300 hover:opacity-100 hover:grayscale-0"
+                className="h-full w-auto rounded-sm border border-ink-700 bg-ink-800/60 p-2 object-contain opacity-85 grayscale transition-[opacity,filter,border-color] duration-300 hover:border-pops-yellow-500/70 hover:opacity-100 hover:grayscale-0"
               />
             </div>
           ))}

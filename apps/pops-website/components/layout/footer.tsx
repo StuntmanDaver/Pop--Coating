@@ -34,13 +34,13 @@ export function Footer() {
   const [doingBusinessTitle, servicesTitle, visitingTitle] = columnTitles;
 
   return (
-    <footer className="bg-ink-900 text-ink-100">
+    <footer className="border-t border-ink-700 bg-ink-900 text-ink-100">
       <Container>
         <div className="grid grid-cols-1 gap-12 py-16 md:grid-cols-3 md:gap-10 md:py-20">
           <FooterColumn title={doingBusinessTitle} headingId="footer-col-business">
-            <div className="mb-6 flex items-center gap-3">
+            <div className="mb-6 flex items-center gap-3 rounded-sm border border-ink-700 bg-ink-800/60 p-3">
               <Image
-                src="/images/Pops-no-border.png"
+                src="/images/Pops_Logo-b780ec20-4bb3-4f58-99de-f306f81ad4a0.png"
                 alt="Pop's Industrial Coatings"
                 width={56}
                 height={56}

@@ -23,7 +23,7 @@ export function IndustriesGrid() {
   return (
     <section
       aria-labelledby="industries-heading"
-      className="border-t border-ink-200 bg-canvas py-12 sm:py-16 md:py-24"
+      className="border-t border-ink-700 bg-ink-900 py-12 sm:py-16 md:py-24"
     >
       <Container>
         <BlurFade>
@@ -32,7 +32,7 @@ export function IndustriesGrid() {
           </EyebrowLabel>
           <h2
             id="industries-heading"
-            className="mb-8 max-w-3xl font-display text-[26px] leading-tight tracking-tight text-ink-900 sm:mb-12 sm:text-[30px] md:text-[42px]"
+            className="mb-8 max-w-3xl font-display text-[26px] leading-tight tracking-tight text-ink-100 sm:mb-12 sm:text-[30px] md:text-[42px]"
           >
             Built for the work
             <br className="hidden md:block" /> Florida industry depends on
@@ -40,16 +40,16 @@ export function IndustriesGrid() {
         </BlurFade>
 
         <BlurFade delay={0.12}>
-          <ul className="grid grid-cols-2 gap-px bg-ink-200 sm:grid-cols-3 lg:grid-cols-6">
+          <ul className="grid grid-cols-2 gap-px bg-ink-700 sm:grid-cols-3 lg:grid-cols-6">
             {INDUSTRIES.map((industry) => (
               <li
                 key={industry.name}
-                className="flex h-full flex-col justify-between gap-3 bg-canvas p-5 sm:p-6"
+                className="flex h-full flex-col justify-between gap-3 bg-ink-800 p-5 sm:p-6"
               >
-                <h3 className="font-display text-[18px] leading-tight tracking-tight text-ink-900 sm:text-[20px]">
+                <h3 className="font-display text-[18px] leading-tight tracking-tight text-ink-100 sm:text-[20px]">
                   {industry.name}
                 </h3>
-                <p className="font-text text-xs leading-snug text-ink-500 sm:text-sm">
+                <p className="font-text text-xs leading-snug text-ink-300 sm:text-sm">
                   {industry.detail}
                 </p>
               </li>

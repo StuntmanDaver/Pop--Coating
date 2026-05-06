@@ -34,7 +34,7 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
 
               {/* Contact info */}
-              <div>
+              <div className="pops-panel rounded-sm p-6 sm:p-8">
                 <EyebrowLabel className="mb-4">CONTACT INFORMATION</EyebrowLabel>
                 <h2 className="mb-8 font-display text-[28px] leading-[1.2] text-ink-100">
                   {company.name}
@@ -114,7 +114,7 @@ export default function ContactPage() {
               </div>
 
               {/* Contact form */}
-              <div>
+              <div className="pops-panel rounded-sm p-6 sm:p-8">
                 <EyebrowLabel className="mb-4">SEND A MESSAGE</EyebrowLabel>
                 <h2 className="mb-2 font-display text-[28px] leading-[1.2] text-ink-100">
                   How can we help?

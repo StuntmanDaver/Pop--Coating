@@ -28,7 +28,7 @@ export default function CheckInPage() {
 
         <Section tone="dark">
           <Container>
-            <div className="mx-auto max-w-[640px]">
+            <div className="pops-panel mx-auto max-w-[640px] rounded-sm p-6 sm:p-8">
               <EyebrowLabel className="mb-4">I&apos;M CHECKING IN:</EyebrowLabel>
               <CheckInForm />
             </div>

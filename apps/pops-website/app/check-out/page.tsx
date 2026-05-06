@@ -28,7 +28,7 @@ export default function CheckOutPage() {
 
         <Section tone="dark">
           <Container>
-            <div className="mx-auto max-w-[640px]">
+            <div className="pops-panel mx-auto max-w-[640px] rounded-sm p-6 sm:p-8">
               <EyebrowLabel className="mb-4">I&apos;M CHECKING OUT:</EyebrowLabel>
               <p className="mb-6 font-text text-sm leading-relaxed text-ink-300">
                 Before you leave, please fill out the below form to Check Out!

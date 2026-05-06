@@ -29,7 +29,7 @@ export default function RequestAQuotePage() {
 
         <Section tone="dark">
           <Container>
-            <div className="mx-auto max-w-[720px]">
+            <div className="pops-panel mx-auto max-w-[720px] rounded-sm p-6 sm:p-8">
               <EyebrowLabel className="mb-4">YOUR PROJECT</EyebrowLabel>
               <h2 className="mb-2 font-display text-[28px] leading-[1.2] text-ink-100">
                 Tell us about your needs

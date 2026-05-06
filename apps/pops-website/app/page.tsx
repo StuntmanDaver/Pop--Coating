@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../components/layout/container";
@@ -104,7 +103,7 @@ export default function HomePage() {
             without using any border-radius. Stat values are gradient-clipped
             from amber-500 → yellow-500 to give the numerals a subtle metallic
             warmth that nods to the painted-finish brand. */}
-        <div className="pops-grad-dawn-light border-b border-ink-200">
+        <div className="border-b border-ink-700 bg-ink-900">
           <Container>
             <dl className="grid grid-cols-2 md:grid-cols-4">
               {STATS.map(({ label, value, detail }, i) => (
@@ -112,14 +111,14 @@ export default function HomePage() {
                   key={label}
                   className={`px-6 py-6 text-center md:py-8 ${STAT_CELL_CLASSES[i]}`}
                 >
-                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-500">
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-300">
                     {label}
                   </dt>
                   <dd className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
                     {value}
                   </dd>
                   {detail && (
-                    <p className="mt-0.5 font-text text-xs text-ink-500">{detail}</p>
+                    <p className="mt-0.5 font-text text-xs text-ink-300">{detail}</p>
                   )}
                 </div>
               ))}
@@ -131,12 +130,12 @@ export default function HomePage() {
         <CertificationMarquee />
 
         {/* ── Services — numbered rows ── */}
-        <section className="bg-canvas py-16 md:py-24" aria-labelledby="services-heading">
+        <section className="bg-ink-900 py-16 md:py-24" aria-labelledby="services-heading">
           <Container>
             <EyebrowLabel tone="dark" className="mb-4">OUR SERVICES</EyebrowLabel>
             <h2
               id="services-heading"
-              className="mb-12 font-display text-[30px] leading-tight tracking-tight text-ink-900 md:text-[42px]"
+              className="mb-12 font-display text-[30px] leading-tight tracking-tight text-ink-100 md:text-[42px]"
             >
               Four generations of expertise
               <br className="hidden md:block" /> in industrial coatings
@@ -145,7 +144,7 @@ export default function HomePage() {
               {SERVICES.map((service) => (
                 <ServiceRow key={service.href} {...service} />
               ))}
-              <div className="border-t border-ink-200" aria-hidden="true" />
+              <div className="border-t border-ink-700" aria-hidden="true" />
             </div>
           </Container>
         </section>
@@ -155,7 +154,7 @@ export default function HomePage() {
 
         {/* ── Commitment · Infrastructure · Standards ── */}
         <section
-          className="border-t border-ink-200 bg-canvas py-16 md:py-24"
+          className="border-t border-ink-700 bg-ink-800 py-16 md:py-24"
           aria-labelledby="commitment-heading"
         >
           <Container>
@@ -165,16 +164,16 @@ export default function HomePage() {
                 <EyebrowLabel tone="dark" className="mb-4">COMMITMENT</EyebrowLabel>
                 <h2
                   id="commitment-heading"
-                  className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900"
+                  className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-100"
                 >
                   It&apos;s a family thing
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-600">
+                <p className="font-text text-base leading-relaxed text-ink-300">
                   With a rich history rooted in a deep understanding of the industry,
                   Pop&apos;s Industrial Coatings blends tradition with a contemporary approach,
                   solidifying our position as a principal company in industrial finishing.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-600">
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-300">
                   We don&apos;t just meet expectations — we exceed them. Let us show you
                   what commitment to precision and technical expertise looks like.
                 </p>
@@ -182,14 +181,14 @@ export default function HomePage() {
 
               <div>
                 <EyebrowLabel tone="dark" className="mb-4">INFRASTRUCTURE</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900">
+                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-100">
                   Our Facilities &amp; Equipment
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-600">
+                <p className="font-text text-base leading-relaxed text-ink-300">
                   In constant expansion to meet the demands of our customers, Pop&apos;s
                   facilities give us ample room for the largest projects.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-600">
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-300">
                   State-of-the-art equipment and highly skilled personnel make all
                   the difference in your project&apos;s success.
                 </p>
@@ -202,14 +201,14 @@ export default function HomePage() {
 
               <div>
                 <EyebrowLabel tone="dark" className="mb-4">STANDARDS</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-900">
+                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-100">
                   Industry Standards &amp; Certifications
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-600">
+                <p className="font-text text-base leading-relaxed text-ink-300">
                   We adhere to strict industry specifications and best practices.
                   Read about our certifications and the standards that guide us.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-600">
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-300">
                   We love questions about coatings — don&apos;t know the best product
                   for your project? Ask us.
                 </p>
@@ -219,7 +218,7 @@ export default function HomePage() {
                       Our Certifications
                     </Link>
                   </Button>
-                  <Button asChild variant="ghost" size="compact">
+                  <Button asChild variant="secondary" size="compact">
                     <Link href="/request-a-quote">Ask us</Link>
                   </Button>
                 </div>

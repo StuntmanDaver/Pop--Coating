@@ -50,10 +50,14 @@ export function Hero({
         sizes="100vw"
         className="object-cover"
       />
-      {/* Directional overlay: heavy bottom-left (where content lives), light top-right */}
+      {/* Layered cinematic overlays for stronger premium contrast */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-br from-ink-900/85 via-ink-900/55 to-ink-900/20"
+        className="absolute inset-0 bg-gradient-to-br from-black/90 via-ink-900/70 to-ink-900/30"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(254,205,8,0.16),transparent_34%)]"
       />
       <div className="relative z-10 mx-auto flex min-h-[520px] w-full max-w-[1280px] flex-col justify-center px-6 py-16 md:min-h-[620px] md:py-28">
         <EyebrowLabel className="mb-6">{eyebrow}</EyebrowLabel>
@@ -63,6 +67,9 @@ export function Hero({
         >
           {heading}
         </h1>
+        <p className="mt-3 max-w-2xl font-text text-sm font-semibold uppercase tracking-[0.12em] text-pops-yellow-300">
+          Serving the Industry Since 1972
+        </p>
         {lede ? (
           <p className="mt-6 max-w-2xl font-text text-lg leading-relaxed text-ink-200 md:text-xl">
             {lede}

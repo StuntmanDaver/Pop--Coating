@@ -12,13 +12,13 @@ type EyebrowLabelProps = ComponentPropsWithoutRef<"p"> & {
 const TONE_CLASSES: Record<EyebrowTone, string> = {
   yellow: "text-pops-yellow-500",
   ink:    "text-ink-400",
-  dark:   "text-ink-600",
+  dark:   "text-ink-300",
 };
 
 const TONE_BASE_COLORS: Record<EyebrowTone, string> = {
   yellow: "#ca8a04",
   ink:    "#9ca3af",
-  dark:   "#4b5563",
+  dark:   "#cbd5e1",
 };
 
 export const EyebrowLabel = forwardRef<HTMLParagraphElement, EyebrowLabelProps>(
