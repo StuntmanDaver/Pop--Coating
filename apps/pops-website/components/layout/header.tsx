@@ -1,25 +1,72 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Container } from "./container";
 
-type HeaderProps = {
+interface HeaderProps {
   className?: string;
-};
+}
 
-const NAV_LINKS = [
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+const NAV_LINKS: ReadonlyArray<NavLink> = [
   { label: "Services", href: "/industrial-coatings-services" },
   { label: "About Us", href: "/about-us" },
   { label: "Contact",  href: "/contact" },
 ];
 
+/** Pixel threshold below which the header is always visible. */
+const REVEAL_THRESHOLD_PX = 80;
+
+/** Sticky site header.
+ *
+ * Hides on scroll-down past `REVEAL_THRESHOLD_PX`, reappears immediately on
+ * scroll-up — same pattern as Commvault and most modern marketing nav bars.
+ * The transform-based hide keeps the bar on the compositor and avoids layout
+ * thrash on scroll.
+ */
 export function Header({ className }: HeaderProps) {
+  const [hidden, setHidden] = useState(false);
+  const lastYRef = useRef<number>(0);
+
+  useEffect(() => {
+    const handleScroll = (): void => {
+      const y = window.scrollY;
+      const last = lastYRef.current;
+      const delta = y - last;
+
+      if (y < REVEAL_THRESHOLD_PX) {
+        setHidden(false);
+      } else if (delta > 4) {
+        setHidden(true);
+      } else if (delta < -4) {
+        setHidden(false);
+      }
+
+      lastYRef.current = y;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <header
+      data-hidden={hidden ? "true" : "false"}
       className={cn(
         "sticky top-0 z-50 w-full border-b border-ink-200 bg-canvas/95 backdrop-blur",
+        "transition-transform duration-200 ease-out will-change-transform",
+        "data-[hidden=true]:-translate-y-full data-[hidden=true]:shadow-none",
         className,
       )}
     >

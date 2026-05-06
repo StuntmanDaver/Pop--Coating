@@ -54,23 +54,27 @@ export function CertificationMarquee() {
         className="relative overflow-hidden"
         style={{
           maskImage:
-            "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+            "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
           WebkitMaskImage:
-            "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+            "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
         }}
       >
-        <Marquee pauseOnHover className="[--duration:32s] [--gap:3rem] py-2">
+        <Marquee
+          pauseOnHover
+          repeat={8}
+          className="[--duration:32s] [--gap:4rem] py-2"
+        >
           {CERTS.map((cert) => (
             <div
               key={cert.src}
-              className="flex h-16 shrink-0 items-center justify-center sm:h-20"
+              className="flex h-20 shrink-0 items-center justify-center sm:h-24"
             >
               <Image
                 src={cert.src}
                 alt={cert.alt}
                 width={cert.width}
                 height={cert.height}
-                className="h-full w-auto object-contain opacity-70 grayscale transition-[opacity,filter] duration-300 hover:opacity-100 hover:grayscale-0"
+                className="h-full w-auto object-contain opacity-80 grayscale transition-[opacity,filter] duration-300 hover:opacity-100 hover:grayscale-0"
               />
             </div>
           ))}

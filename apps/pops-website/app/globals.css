@@ -8,6 +8,15 @@
   --color-pops-yellow-600: #DEB101;
   --color-pops-tan-400:    #FFBC7D;
 
+  /* Warm-deep extensions — used inside gradients only.
+     They give yellow a "sunset" partner and a deep grounding tone, letting
+     us run radial-at-center-bottom "dawn" gradients without abandoning the
+     yellow-led identity. Not intended as flat fills. */
+  --color-pops-amber-300: #F4B860; /* warm light  — pairs with yellow-300 */
+  --color-pops-amber-500: #E8901C; /* warm rust   — sunset middle stop */
+  --color-pops-amber-700: #9C5712; /* deep amber  — hero/dark dome top */
+  --color-pops-ember-900: #2A1408; /* near-black warm brown — bottom of dark domes */
+
   /* Neutrals */
   --color-ink-50:  #F7F8FA;
   --color-ink-100: #ECEEF2;
@@ -46,6 +55,14 @@
   --radius-lg:   8px;
   --radius-full: 9999px;
 
+  /* Fluid display scale — clamp(min, fluid, max).
+     Use as: className="text-display-lg" or font-size: var(--text-display-lg). */
+  --text-display-xl: clamp(3rem,    5vw + 1rem, 5.625rem);
+  --text-display-lg: clamp(2.875rem, 5vw + 1rem, 5rem);
+  --text-display-md: clamp(2.75rem,  5vw + 1rem, 4.3125rem);
+  --text-display-sm: clamp(2.625rem, 5vw + 1rem, 3.5625rem);
+  --text-display-xs: clamp(2.5rem,   5vw + 1rem, 3rem);
+
   /* Elevation */
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.20);
   --shadow-2: 0 2px 4px rgb(0 0 0 / 0.18), 0 1px 2px rgb(0 0 0 / 0.16);
@@ -74,9 +91,14 @@
   to   { transform: translateX(0); }
 }
 
+/* Sweep peak across the text. The gradient is 300% wide; positions 0% and 100%
+   both show only the base color band — the white peak (gradient ~50%) is only
+   visible mid-cycle. Keeping bg-position in [0%, 100%] guarantees the gradient
+   stays behind the text at all times so it never goes transparent. */
 @keyframes shiny-text {
-  0%   { background-position: 0% center; }
-  100% { background-position: -200% center; }
+  0%   { background-position: 100% center; }
+  60%  { background-position: 0% center; }
+  100% { background-position: 0% center; }
 }
 
 @keyframes border-beam {
@@ -92,6 +114,76 @@
     color: transparent;
     -webkit-background-clip: text;
     background-clip: text;
+  }
+}
+
+/* ── Brand gradients ────────────────────────────────────────────────
+   Inspired by the Commvault treatment but tuned for Pops's warm palette.
+   The "dawn" radials at center-bottom create a soft, dome-like glow that
+   reads as a curved arc without using border-radius. Use them on full-bleed
+   sections; pair with rectangular cards at radius-lg (8px) inside.
+
+   Pattern guide:
+   - .pops-grad-sunset       linear, 147°, hero/promo strip on light surfaces
+   - .pops-grad-sunset-light linear, 121°, soft promo or CTA backgrounds
+   - .pops-grad-dawn-light   radial dome from yellow-100 → canvas
+   - .pops-grad-dawn-dark    radial dome from amber-700 → ember-900
+   - .pops-grad-hero         multi-stop diagonal sunset for dark heroes
+   - .pops-text-grad         background-clip:text gradient for stat numerals
+   - .pops-grad-ember-overlay translucent radial overlay for image sections
+*/
+
+.pops-grad-sunset {
+  background: linear-gradient(147deg,
+    var(--color-pops-amber-500),
+    var(--color-pops-yellow-500));
+}
+
+.pops-grad-sunset-light {
+  background: linear-gradient(120.97deg,
+    var(--color-pops-yellow-300),
+    var(--color-pops-tan-400));
+}
+
+.pops-grad-dawn-light {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 100%,
+      var(--color-pops-yellow-100) 0%,
+      transparent 65%),
+    var(--color-canvas);
+}
+
+.pops-grad-dawn-dark {
+  background: radial-gradient(ellipse 90% 80% at 50% 100%,
+    var(--color-pops-amber-700) 0%,
+    var(--color-pops-ember-900) 70%,
+    var(--color-ink-900) 100%);
+}
+
+.pops-grad-hero {
+  background: linear-gradient(112deg,
+    var(--color-ink-900)        22%,
+    var(--color-pops-amber-700) 62%,
+    var(--color-pops-tan-400)   94%);
+}
+
+/* Translucent radial — sit on top of an <Image> to add a dome of warmth
+   instead of a flat dark scrim. Combine with mix-blend or stack with a
+   solid scrim for legibility. */
+.pops-grad-ember-overlay {
+  background: radial-gradient(ellipse 80% 60% at 50% 100%,
+    rgb(232 144 28 / 0.30) 0%,
+    rgb(17 20 26 / 0.78)   65%);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .pops-text-grad {
+    background: linear-gradient(147deg,
+      var(--color-pops-amber-500),
+      var(--color-pops-yellow-500));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
   }
 }
 

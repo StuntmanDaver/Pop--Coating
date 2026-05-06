@@ -98,8 +98,13 @@ export default function HomePage() {
           backgroundImage="/images/slide-01.jpg"
         />
 
-        {/* ── Stats / Trust bar ── */}
-        <div className="border-b border-ink-200 bg-canvas">
+        {/* ── Stats / Trust bar ──
+            Dome-of-light: a soft yellow glow rises from the bottom edge,
+            so the bar reads as a warm arc lifting out of the dark hero
+            without using any border-radius. Stat values are gradient-clipped
+            from amber-500 → yellow-500 to give the numerals a subtle metallic
+            warmth that nods to the painted-finish brand. */}
+        <div className="pops-grad-dawn-light border-b border-ink-200">
           <Container>
             <dl className="grid grid-cols-2 md:grid-cols-4">
               {STATS.map(({ label, value, detail }, i) => (
@@ -107,14 +112,14 @@ export default function HomePage() {
                   key={label}
                   className={`px-6 py-6 text-center md:py-8 ${STAT_CELL_CLASSES[i]}`}
                 >
-                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-500">
                     {label}
                   </dt>
-                  <dd className="mt-1 font-display text-2xl tracking-tight text-ink-900 md:text-3xl">
+                  <dd className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
                     {value}
                   </dd>
                   {detail && (
-                    <p className="mt-0.5 font-text text-xs text-ink-400">{detail}</p>
+                    <p className="mt-0.5 font-text text-xs text-ink-500">{detail}</p>
                   )}
                 </div>
               ))}
@@ -227,7 +232,11 @@ export default function HomePage() {
         {/* ── Testimonials ── */}
         <Testimonials />
 
-        {/* ── Family photo ── */}
+        {/* ── Family photo ──
+            Replaces the flat `bg-ink-900/50` scrim with a radial-at-center-bottom
+            ember glow: warmth lifts up from the CTA edge into a near-black sky.
+            The image still shows; the dome adds depth and ties the section into
+            the warm-deep palette without requiring extra art. */}
         <section
           aria-label="Four generations of the Pop's Industrial Coatings family"
           className="relative min-h-[400px] overflow-hidden bg-ink-900 md:min-h-[500px]"
@@ -239,7 +248,10 @@ export default function HomePage() {
             sizes="100vw"
             className="object-cover object-center"
           />
-          <div aria-hidden="true" className="absolute inset-0 bg-ink-900/50" />
+          <div
+            aria-hidden="true"
+            className="pops-grad-ember-overlay absolute inset-0"
+          />
           <div className="absolute bottom-0 left-0 right-0">
             <Container className="pb-12">
               <Button asChild variant="primary">
@@ -249,9 +261,12 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── CTA Banner — yellow ── */}
+        {/* ── CTA Banner — yellow → tan sunset ──
+            Same yellow energy, but as a 121° gradient from yellow-300 to
+            tan-400 it reads as a painted finish rather than a flat block.
+            Subtle on-brand change: the yellow identity is preserved. */}
         <section
-          className="bg-pops-yellow-500 py-16 md:py-20"
+          className="pops-grad-sunset-light py-16 md:py-20"
           aria-labelledby="cta-heading"
         >
           <Container>
