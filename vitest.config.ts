@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, configDefaults } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 
@@ -12,5 +12,11 @@ export default defineConfig({
       'server-only': path.resolve(__dirname, './test/stubs/server-only.ts'),
     },
   },
-  test: { environment: 'jsdom', globals: true },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    // Spread vitest's defaults (which exclude node_modules, dist, etc.) and add
+    // tests/e2e — Playwright owns that root and the runners must not collide.
+    exclude: [...configDefaults.exclude, 'tests/e2e/**'],
+  },
 })

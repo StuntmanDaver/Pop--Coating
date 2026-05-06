@@ -1,10 +1,11 @@
 {
   "pid": null,
-  "startedAt": "2026-05-05T05:29:00Z",
+  "startedAt": "2026-05-06T14:01:00Z",
   "provider": "claude",
   "invokedVia": "skill",
   "status": "running",
-  "scope": "src/modules/* (excluding apps/pops-website)",
-  "complexity": "complex",
-  "notes": "Single Claude Code session — degraded from autonomy/run.sh harness. Canonical-doc-bound: PRD.md, docs/DESIGN.md, docs/EXECUTION.md, .planning/STATE.md."
+  "scope": "tests/e2e/* + playwright.config.ts + vitest.config.ts exclude — Playwright E2E for jobs CRUD",
+  "complexity": "standard",
+  "brief": "docs/briefs/loki/03-e2e-jobs-crud.md",
+  "notes": "Batch A safe-parallel. Touches tests/e2e/, playwright.config.ts, vitest.config.ts (exclude tests/e2e/**), .gitignore (artifact dirs). No src/** edits. No deps install (pre-flight by operator)."
 }
