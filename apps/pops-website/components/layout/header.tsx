@@ -1,8 +1,5 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -23,50 +20,12 @@ const NAV_LINKS: ReadonlyArray<NavLink> = [
   { label: "Contact",  href: "/contact" },
 ];
 
-/** Pixel threshold below which the header is always visible. */
-const REVEAL_THRESHOLD_PX = 80;
-
-/** Sticky site header.
- *
- * Hides on scroll-down past `REVEAL_THRESHOLD_PX`, reappears immediately on
- * scroll-up — same pattern as Commvault and most modern marketing nav bars.
- * The transform-based hide keeps the bar on the compositor and avoids layout
- * thrash on scroll.
- */
+/** Sticky site header — stays pinned to the top of the viewport while scrolling. */
 export function Header({ className }: HeaderProps) {
-  const [hidden, setHidden] = useState(false);
-  const lastYRef = useRef<number>(0);
-
-  useEffect(() => {
-    const handleScroll = (): void => {
-      const y = window.scrollY;
-      const last = lastYRef.current;
-      const delta = y - last;
-
-      if (y < REVEAL_THRESHOLD_PX) {
-        setHidden(false);
-      } else if (delta > 4) {
-        setHidden(true);
-      } else if (delta < -4) {
-        setHidden(false);
-      }
-
-      lastYRef.current = y;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
     <header
-      data-hidden={hidden ? "true" : "false"}
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-ink-700 bg-ink-900/92 backdrop-blur",
-        "transition-transform duration-200 ease-out will-change-transform",
-        "data-[hidden=true]:-translate-y-full data-[hidden=true]:shadow-none",
+        "sticky top-0 z-50 w-full border-b border-pops-yellow-500/25 bg-[#0a0a0a]/90 shadow-[0_1px_0_0_rgb(0_0_0/0.4)] backdrop-blur-md",
         className,
       )}
     >
@@ -82,13 +41,13 @@ export function Header({ className }: HeaderProps) {
         <Link
           href="/"
           aria-label="Pop's Industrial Coatings — Home"
-          className="group inline-flex shrink-0 items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+          className="group inline-flex shrink-0 items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <Image
-            src="/images/Pops-no-border.png"
+            src="/images/pops-logo-circle.png"
             alt=""
-            width={55}
-            height={40}
+            width={1024}
+            height={1024}
             priority
             className="h-10 w-auto"
           />
@@ -103,7 +62,7 @@ export function Header({ className }: HeaderProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="inline-flex min-h-11 items-center rounded-sm px-3 py-2 font-text text-sm font-medium text-ink-300 outline-none transition-colors hover:text-pops-yellow-300 focus-visible:ring-2 focus-visible:ring-pops-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+              className="inline-flex min-h-11 items-center rounded-sm px-3 py-2 font-text text-sm font-medium text-ink-200 outline-none transition-colors hover:text-pops-yellow-400 focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               {link.label}
             </Link>
@@ -120,7 +79,7 @@ export function Header({ className }: HeaderProps) {
           <button
             type="button"
             aria-label="Open navigation menu"
-            className="inline-flex min-h-11 w-11 items-center justify-center rounded-sm text-ink-300 transition-colors hover:text-pops-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-500 md:hidden"
+            className="inline-flex min-h-11 w-11 items-center justify-center rounded-sm text-ink-200 transition-colors hover:text-pops-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 md:hidden"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path

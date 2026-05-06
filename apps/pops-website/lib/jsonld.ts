@@ -11,10 +11,10 @@ export function getOrgJsonLd(): Record<string, unknown> {
         url: BASE_URL,
         logo: {
           "@type": "ImageObject",
-          "@id": `${BASE_URL}/images/Pops-no-border.png`,
-          url: `${BASE_URL}/images/Pops-no-border.png`,
-          width: 1469,
-          height: 1071,
+          "@id": `${BASE_URL}/images/pops-logo-circle.png`,
+          url: `${BASE_URL}/images/pops-logo-circle.png`,
+          width: 1024,
+          height: 682,
         },
       },
       {

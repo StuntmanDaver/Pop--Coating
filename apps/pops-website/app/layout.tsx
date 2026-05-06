@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Pop's Industrial Coatings",
-    images: [{ url: "/images/Pops-no-border.png", width: 800, height: 600, alt: "Pop's Industrial Coatings" }],
+    images: [{ url: "/images/pops-logo-circle.png", width: 1024, height: 1024, alt: "Pop's Industrial Coatings" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${text.variable}`}>
+    <html lang="en" className={`scroll-smooth ${display.variable} ${text.variable}`}>
       <body className="font-text" suppressHydrationWarning>{children}</body>
     </html>
   );

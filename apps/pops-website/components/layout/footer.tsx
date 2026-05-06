@@ -34,16 +34,16 @@ export function Footer() {
   const [doingBusinessTitle, servicesTitle, visitingTitle] = columnTitles;
 
   return (
-    <footer className="border-t border-ink-700 bg-ink-900 text-ink-100">
-      <Container>
+    <footer className="pops-section-gold-wash border-t border-pops-yellow-500/30 text-ink-100">
+      <Container className="relative z-10">
         <div className="grid grid-cols-1 gap-12 py-16 md:grid-cols-3 md:gap-10 md:py-20">
           <FooterColumn title={doingBusinessTitle} headingId="footer-col-business">
-            <div className="mb-6 flex items-center gap-3 rounded-sm border border-ink-700 bg-ink-800/60 p-3">
+            <div className="mb-6 flex items-center gap-3 rounded-sm border border-pops-yellow-500/25 bg-[#0A0A0A] p-3 shadow-[0_0_32px_-10px_rgba(254,205,8,0.12)]">
               <Image
-                src="/images/Pops_Logo-b780ec20-4bb3-4f58-99de-f306f81ad4a0.png"
+                src="/images/pops-logo-circle.png"
                 alt="Pop's Industrial Coatings"
-                width={56}
-                height={56}
+                width={1024}
+                height={1024}
                 className="h-14 w-auto"
                 priority={false}
               />
@@ -92,7 +92,7 @@ export function Footer() {
                   <span className="text-ink-400">Phone:&nbsp;</span>
                   <a
                     href="tel:+18636447473"
-                    className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+                    className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     {company.phone}
                   </a>
@@ -104,7 +104,7 @@ export function Footer() {
                 <li>
                   <a
                     href={`mailto:${company.emails.info}`}
-                    className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+                    className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     {company.emails.info}
                   </a>
@@ -112,7 +112,7 @@ export function Footer() {
                 <li>
                   <a
                     href={`mailto:${company.emails.invoices}`}
-                    className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+                    className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     {company.emails.invoices}
                   </a>
@@ -123,7 +123,7 @@ export function Footer() {
           </FooterColumn>
         </div>
 
-        <div className="border-t border-ink-700 py-6 font-text text-xs text-ink-400">
+        <div className="border-t border-pops-yellow-500/15 py-6 font-text text-xs text-ink-400">
           <p>
             &copy; {new Date().getFullYear()} {company.name}. All rights reserved.
           </p>
@@ -168,7 +168,7 @@ function FooterNav({ ariaLabelledBy, entries }: FooterNavProps) {
               <li key={`${entry.label}-${index}`}>
                 <Link
                   href={toRelative(entry.href)}
-                  className="inline-block min-h-11 rounded-sm py-2 text-ink-100 underline-offset-2 hover:text-pops-yellow-500 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+                  className="inline-block min-h-11 rounded-sm py-2 text-ink-100 underline-offset-2 hover:text-pops-yellow-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 >
                   {entry.label}
                 </Link>
