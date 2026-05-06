@@ -51,3 +51,6 @@ next-env.d.ts
 .sentryclirc
 # Sentry webpack/build-plugin auth token — file itself says "DO NOT commit"
 .env.sentry-build-plugin
+
+# Claude Code skill plugins — plugin-managed, not repo content (CLAUDE.md)
+.claude/skills/
