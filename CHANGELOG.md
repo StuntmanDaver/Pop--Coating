@@ -4,6 +4,19 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### Repo / Full Push + Developer Handoff (2026-05-06)
+
+- **All local commits pushed to `github.com/StuntmanDaver/Pop--Coating` (`main`).** 16 commits that had accumulated locally since the last push are now on origin.
+- **`.claude/skills/` untracked** — 1312 plugin-managed skill files were accidentally in git history. Removed from the index via `git rm -r --cached` and added `.claude/skills/` to `.gitignore` per CLAUDE.md. Files remain on disk; plugin updates will no longer create git noise.
+- **New commits landed:**
+  - `feat(settings)` — office settings UI: staff list, invite, edit pages; workstations list + create panel; shop profile form.
+  - `feat(scan)` — scan shell foundation: layout + PWA manifest + boot page + `listShopEmployees` query; client components: EmployeePicker, PinPad, Scanner, ManualEntry, StagePicker, PhotoCapture, HeartbeatProvider, OfflineQueue.
+  - `chore(sentry)` — Sentry example API route for error-monitoring smoke test.
+  - `docs(phases)` — Phase-1 foundation verification report (10/12 must-haves; two gaps are human-action infra steps).
+  - `chore(firecrawl)` — 200 scraped reference assets from old `popsindustrial.com` site (CSS, fonts, images, PDFs).
+- **Two-developer work split documented** (see session notes): Dev A owns shop-floor scan surfaces + offline mode + prod deploy; Dev B owns timeline/dashboard UI + customer portal completion + Wave 1 polish.
+- **Remaining human-action blockers** before live backend works: Supabase Cloud link + db push + JWT/hook config; Vercel domain attach; Upstash Redis provision; Resend DNS; Sentry DSN.
+
 ### App / Build Unblocked — Parallel-Route Cleanup (2026-05-06)
 
 - **`pnpm build` is green again.** The four parallel-route conflicts that blocked the production build since cycle 17 are resolved. Diagnosis: the offending files (`(office)/page.tsx`, `(office)/sign-in/page.tsx`, `(portal)/page.tsx`, `(portal)/sign-in/page.tsx`, `(portal)/jobs/page.tsx`) were an **earlier abandoned attempt to host-split via Next.js App Router route groups**. Route groups (`(parens)`) don't know about host context, so two groups can't both declare a page at the same URL — the build rejects it regardless of how `proxy.ts` rewrites. The tracked code already does the right thing: a single host-aware file per URL (`app/page.tsx`, `app/sign-in/page.tsx`) that branches on `host.startsWith('track.')` from `next/headers`. Every UI element and Server Action in the deleted files was either a duplicate or a strict subset of the tracked counterparts.
