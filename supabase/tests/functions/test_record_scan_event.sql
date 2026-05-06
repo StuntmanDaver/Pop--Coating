@@ -120,19 +120,18 @@ INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
    '2026-01-01 12:00:00+00'::timestamptz)
 ON CONFLICT (id) DO NOTHING;
 
+-- Tenant B company (required FK for the cross-tenant job)
+INSERT INTO companies (id, tenant_id, name) VALUES
+  ('rr004000-0000-0000-0000-000000000002'::uuid,
+   'rr000000-0000-0000-0000-000000000002'::uuid, 'Scan Test Co B')
+ON CONFLICT (id) DO NOTHING;
+
 -- Cross-tenant job (tenant B) — for access_denied cross-tenant test
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, production_status) VALUES
   ('rr006000-0000-0000-0000-000000000005'::uuid,
-   'rr000000-0000-0000-0000-000000000002'::uuid,  -- tenant B
-   -- Tenant B needs its own company
-   (SELECT id FROM (
-     INSERT INTO companies (id, tenant_id, name)
-       VALUES ('rr004000-0000-0000-0000-000000000002'::uuid,
-               'rr000000-0000-0000-0000-000000000002'::uuid, 'Scan Test Co B')
-       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name
-       RETURNING id
-   ) AS sub),
+   'rr000000-0000-0000-0000-000000000002'::uuid,
+   'rr004000-0000-0000-0000-000000000002'::uuid,
    'Scan Job E (cross-tenant)', 'rrscan005tok', 'RR-2026-00005',
    'in_production', 'received')
 ON CONFLICT (id) DO NOTHING;
