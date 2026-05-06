@@ -107,6 +107,34 @@
         "Office sign-in fixture: page.waitForURL('**/dashboard') is the right success signal \u2014 sign-in action redirects to '/' which the office shell forwards to '/dashboard' via requireOfficeStaff",
         "Brief-A 'safe parallel' files: tests/e2e/**, playwright.config.ts, vitest.config.ts (additive only), .gitignore (additive only) \u2014 no src/** writes keeps the brief composable with companies/portal briefs running concurrently"
       ]
+    },
+    {
+      "n": 17,
+      "module": "portal/job-detail-ui",
+      "commit": "206ade7",
+      "brief": "docs/briefs/loki/02-portal-job-detail.md",
+      "tests": 0,
+      "scope_notes": "Single Server Component at src/app/(portal)/my/[jobId]/page.tsx \u2014 getMyJob + getCustomerVisibleTimeline; tsc clean, 161/161 vitest pass, zero regressions",
+      "lessons": [
+        "Pre-existing parallel-route conflicts at /(office) vs /(portal) (both resolving '/', '/jobs', '/sign-in') block pnpm build but do NOT block strict child routes like /my/[jobId] \u2014 TypeScript + tests are the only verification gates that work until a host-split reconciliation brief lands",
+        "Customer-facing label rendering: import PRODUCTION_LABEL from '@/modules/jobs' (already on barrel) keeps office and portal status text consistent without duplicating the map; falling back to humanize(snake_case) is enough when a label is missing",
+        "TimelineEvent shape includes shop_employee_id / workstation_id / duration_seconds even on the customer query \u2014 query filters customer_visible=true server-side, but the type still surfaces the columns. UI must explicitly NOT render them; type system won't catch that omission, only review will."
+      ]
+    },
+    {
+      "n": 18,
+      "module": "office/companies-ui",
+      "commit": "8987da9",
+      "brief": "docs/briefs/loki/01-companies-crud.md",
+      "tests": 0,
+      "scope_notes": "9 files in src/app/(office)/companies/ \u2014 list / new / detail / edit + shared CompanyFormFields. UI-only; module API + 27 vitest tests already existed. tsc clean, 161/161 vitest pass, zero regressions. Build still blocked on pre-existing parallel-route conflicts (per pops_app_build.md memory).",
+      "lessons": [
+        "typedRoutes manifest is generated at Next build/dev time \u2014 newly created /(office)/companies/* routes are unknown to tsc until a build runs, so Link href={`/companies/${id}`} fails type-check on the FIRST tsc after creation. Two paths: (a) run pnpm dev/build once to regenerate, (b) cast `as Route` like jobs/[id] does. Cast is safer + faster in single-cycle Loki dispatches.",
+        "macOS `mv source1 source2 dest_dir/` SILENTLY overwrites when two sources share a basename. Lost (office)/page.tsx by stashing both (office)/page.tsx and (portal)/page.tsx to one dir. Reconstructed via mem-search obs #16016 which had the file's intent. Rule: stash with distinct names (mv X dest/X-renamed) or move one at a time.",
+        "createCompany / updateCompany surface a generic 'Invalid input' from Zod safeParse failures \u2014 form-layer error UX is degraded. Future improvement: surface field-level errors via FormState['fieldErrors']. Out of scope here per 'no module edits' constraint.",
+        "Zod `email: z.string().email().nullish()` rejects empty string but accepts null/undefined. The `stringOrNull` / `formDataString` helpers MUST convert '' \u2192 null (create) or undefined (update). Empty-string passthrough breaks creation.",
+        "archiveCompany is one-way (sets archived_at = now(); no unarchive method exists). Brief explicitly deferred building an archive button until an unarchive path lands. Don't ship destructive irreversible actions without an undo."
+      ]
     }
   ],
   "patterns": [
