@@ -4,6 +4,22 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### Repo / Post-Brief Cleanup — Lint Clean + Nav Links (2026-05-06)
+
+- **All 5 Wave-1 UI Loki briefs verified complete.** Pre-flight deps (@playwright/test, @zxing/browser, @zxing/library) were already installed from prior session — committed the pending `package.json`/`pnpm-lock.yaml` changes (`e1f0467`). Chromium binary installed (`pnpm exec playwright install chromium`). `main` pushed to origin so worktrees could branch off the right HEAD.
+- **Dispatch mechanism clarified:** `autonomy/run.sh` does not exist in this repo. Loki briefs are dispatched via the `/loki-mode` skill in separate Claude Code terminals — not a shell script.
+- **ESLint: 6 errors + 3 warnings fixed** in the scan PWA (commit `4a07c9f`). All issues were in `src/app/scan/` and `src/modules/packets/`:
+  - `react-hooks/set-state-in-effect` × 2 (`station/page.tsx`, `lookup/lookup-client.tsx`) — replaced `useState(null)` + effect-with-setState pattern with lazy state initializer (`useState(() => sessionStorage.getItem(...))`) + separate redirect-only effect. Eliminates cascading render.
+  - `@typescript-eslint/no-non-null-assertion` × 4 — `scanner.tsx`: added `if (!videoRef.current) return` guard before `decodeFromVideoDevice`; `offline-queue.tsx`: added `if (event.id === undefined) { resolve(); return }` guard in IndexedDB delete; `lookup/page.tsx` + `pin/page.tsx`: extracted `claims.workstation_id` to const + `if (!workstationId) notFound()` guard (TypeScript now narrows via `notFound()` returning `never`, consistent with existing `if (error || !job) notFound()` patterns).
+  - `@next/next/no-img-element` × 2 — `employee-picker.tsx` (external avatar URL; next/image requires domain allow-listing) + `photo-capture.tsx` (blob `objectURL`; next/image does not support object URLs) — suppressed with inline eslint-disable comment and rationale.
+  - `jsx-a11y/alt-text` × 1 — `PacketDocument.tsx` `<Image>` is from `@react-pdf/renderer`, not HTML; suppressed with inline comment.
+- **`pnpm lint` is now green** — no errors, no warnings.
+- **Nav links complete.** `/settings` link added to office NAV (Brief 04 post-merge operator task that was missed). Final nav: Dashboard → Jobs → Companies → Settings → Scan Station.
+- **Verification baseline (2026-05-06, commit `4a07c9f`):**
+  - `pnpm test --run` → **213/213 passing, 28 files**
+  - `pnpm build` → **green, Turbopack, 23 routes**
+  - `pnpm lint` → **clean**
+
 ### Infra / Turbopack Fix — Vercel Build Restored (2026-05-06)
 
 - **Turbopack root cause identified and fixed properly** (commit `63819b6`). The previous session's `--no-turbo` workaround was itself broken — `--no-turbo` is not a valid flag in Next.js 16 (`error: unknown option '--no-turbo'`), so every Vercel deployment had been failing immediately before the build even ran.
