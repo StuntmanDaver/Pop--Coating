@@ -20,3 +20,6 @@ export type { RecordScanEventInput, RecordScanEventResult } from './actions/scan
 
 export { lookupJobByPacketToken } from './queries/lookup'
 export type { LookupJobByPacketTokenInput, ScannedJob } from './queries/lookup'
+
+export { listShopEmployees } from './queries/employees'
+export type { ShopEmployeeTile } from './queries/employees'
