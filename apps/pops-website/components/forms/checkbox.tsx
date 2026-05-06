@@ -19,7 +19,7 @@ export const Checkbox = forwardRef<
         "group inline-flex h-11 w-11 items-center justify-center",
         "rounded-sm",
         "outline-none",
-        "focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800",
+        "focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}

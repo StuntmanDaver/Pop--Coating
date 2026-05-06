@@ -12,7 +12,7 @@ const buttonVariants = cva(
     "px-6 py-3",
     "transition-[transform,box-shadow,opacity] duration-150 ease-out",
     "outline-none",
-    "focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800",
+    "focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     "disabled:opacity-50 disabled:cursor-not-allowed",
     // Ensure children share width on loading by using a stable inline layout.
     "whitespace-nowrap select-none",
@@ -20,12 +20,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:     "bg-pops-yellow-500 text-ink-900 shadow-2 hover:-translate-y-0.5 hover:bg-pops-yellow-300 hover:shadow-3",
-        secondary:   "bg-transparent border border-ink-300 text-ink-100 hover:border-pops-yellow-500 hover:text-pops-yellow-300",
-        ghost:       "bg-transparent text-ink-300 hover:text-pops-yellow-300",
+        primary:
+          "bg-pops-yellow-500 text-black shadow-[0_0_32px_-6px_rgba(254,205,8,0.65)] hover:-translate-y-0.5 hover:bg-pops-yellow-300 hover:shadow-[0_0_40px_-4px_rgba(254,205,8,0.75)]",
+        secondary:
+          "bg-transparent border border-pops-yellow-500/45 text-white hover:border-pops-yellow-500 hover:bg-pops-yellow-500/10 hover:text-pops-yellow-300",
+        ghost:       "bg-transparent text-ink-200 hover:text-pops-yellow-400",
         destructive: "bg-danger-500 text-paper hover:bg-danger-500/90",
-        dark:        "bg-ink-900 text-pops-yellow-500 border border-ink-700 hover:bg-ink-800 hover:border-pops-yellow-500/60",
-        outline:     "bg-transparent border border-ink-500 text-ink-100 hover:border-pops-yellow-500 hover:text-pops-yellow-300",
+        dark:
+          "bg-black text-pops-yellow-500 border border-pops-yellow-500/50 hover:bg-[#0A0A0A] hover:border-pops-yellow-500 hover:text-pops-yellow-300",
+        outline:
+          "bg-transparent border border-white/25 text-white hover:border-pops-yellow-500 hover:text-pops-yellow-300 hover:shadow-[0_0_24px_-8px_rgba(254,205,8,0.35)]",
       },
       size: {
         default: "h-11",

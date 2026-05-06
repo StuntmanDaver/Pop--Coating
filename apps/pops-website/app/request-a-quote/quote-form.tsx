@@ -223,7 +223,7 @@ export function QuoteForm() {
             multiple
             accept={FILE_ACCEPT}
             aria-describedby="attachments-help"
-            className="block w-full font-text text-sm text-ink-100 file:mr-4 file:rounded-sm file:border file:border-ink-600 file:bg-ink-800 file:px-4 file:py-2 file:font-text file:text-sm file:font-semibold file:text-ink-100 hover:file:border-pops-yellow-500/70 hover:file:bg-ink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800"
+            className="block w-full font-text text-sm text-ink-100 file:mr-4 file:rounded-sm file:border file:border-pops-yellow-500/30 file:bg-[#0A0A0A] file:px-4 file:py-2 file:font-text file:text-sm file:font-semibold file:text-ink-100 hover:file:border-pops-yellow-500 hover:file:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           />
         </div>
 
@@ -285,7 +285,7 @@ function ServiceRadio({ option, register }: ServiceRadioProps) {
     <li>
       <label
         htmlFor={id}
-        className="flex min-h-11 cursor-pointer items-center gap-3 rounded-sm border border-ink-600 bg-ink-800 px-4 py-2 font-text text-sm text-ink-100 transition-colors hover:border-pops-yellow-500/50 has-[:checked]:border-pops-yellow-500 has-[:checked]:bg-ink-700 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-pops-yellow-300 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-ink-800"
+        className="flex min-h-11 cursor-pointer items-center gap-3 rounded-sm border border-white/15 bg-[#0A0A0A] px-4 py-2 font-text text-sm text-ink-100 transition-colors hover:border-pops-yellow-500/60 has-[:checked]:border-pops-yellow-500 has-[:checked]:bg-black has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-pops-yellow-400 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-black"
       >
         <input
           id={id}

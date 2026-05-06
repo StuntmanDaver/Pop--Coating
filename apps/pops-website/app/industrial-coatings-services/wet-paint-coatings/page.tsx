@@ -114,7 +114,7 @@ export default function WetPaintCoatingsPage() {
                         alt={photo.alt}
                         fill
                         sizes="(min-width: 640px) 25vw, 50vw"
-                        className="object-cover"
+                        className="object-contain object-center"
                       />
                     </div>
                   ))}

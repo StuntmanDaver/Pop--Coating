@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../components/layout/container";
@@ -51,9 +52,9 @@ const SERVICES = [
     number: "04",
     name: "Powder Coating",
     lede: "Elevate durability and appearance.",
-    image: "/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg",
+    image: "/images/powder-coat-gallery-toll-gantry.png",
     href: "/industrial-coatings-services/powder-coating",
-    alt: "Powder coating services at Pop's Industrial Coatings, Lakeland FL",
+    alt: "Large powder-coated highway toll gantry — Pop's Industrial Coatings, Lakeland FL",
   },
   {
     number: "05",
@@ -74,9 +75,9 @@ const STATS = [
 
 // Per-cell border classes for a 2-col (mobile) → 4-col (desktop) grid.
 const STAT_CELL_CLASSES = [
-  "border-r border-b border-ink-200 md:border-b-0",
-  "border-b border-ink-200 md:border-r md:border-b-0",
-  "border-r border-ink-200",
+  "border-r border-b border-pops-yellow-500/15 md:border-b-0",
+  "border-b border-pops-yellow-500/15 md:border-r md:border-b-0",
+  "border-r border-pops-yellow-500/15",
   "",
 ];
 
@@ -90,8 +91,8 @@ export default function HomePage() {
         {/* ── Hero ── */}
         <Hero
           eyebrow="FAMILY OWNED · LAKELAND, FL · SINCE 1972"
-          heading="Four generations of industrial finishing — done right the first time."
-          lede="Powder coating, abrasive blasting, and wet paint for aerospace, defense, and heavy equipment."
+          heading="Serving the industry since 1972."
+          lede="Powder Coating, Abrasive Blasting, Wet Paint, Complex Coatings, and Large Capacity Powder Coatings."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           secondaryCta={{ label: "See our work", href: "/industrial-coatings-services" }}
           backgroundImage="/images/slide-01.jpg"
@@ -103,48 +104,58 @@ export default function HomePage() {
             without using any border-radius. Stat values are gradient-clipped
             from amber-500 → yellow-500 to give the numerals a subtle metallic
             warmth that nods to the painted-finish brand. */}
-        <div className="border-b border-ink-700 bg-ink-900">
-          <Container>
-            <dl className="grid grid-cols-2 md:grid-cols-4">
-              {STATS.map(({ label, value, detail }, i) => (
-                <div
-                  key={label}
-                  className={`px-6 py-6 text-center md:py-8 ${STAT_CELL_CLASSES[i]}`}
-                >
-                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-300">
-                    {label}
-                  </dt>
-                  <dd className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
-                    {value}
-                  </dd>
-                  {detail && (
-                    <p className="mt-0.5 font-text text-xs text-ink-300">{detail}</p>
-                  )}
-                </div>
-              ))}
-            </dl>
-          </Container>
+        <div className="pops-section-gold-wash pops-section-edge-glow border-b border-pops-yellow-500/25">
+          <div className="relative z-10">
+            <div className="pops-section-divider w-full" aria-hidden="true" />
+            <Container>
+              <dl className="grid grid-cols-2 md:grid-cols-4">
+                {STATS.map(({ label, value, detail }, i) => (
+                  <div
+                    key={label}
+                    className={`px-6 py-7 text-center transition-colors duration-300 hover:bg-pops-yellow-500/[0.04] md:py-9 ${STAT_CELL_CLASSES[i]}`}
+                  >
+                    <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.1em] text-pops-yellow-500/90">
+                      {label}
+                    </dt>
+                    <dd className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
+                      {value}
+                    </dd>
+                    {detail && (
+                      <p className="mt-0.5 font-text text-xs text-ink-200">{detail}</p>
+                    )}
+                  </div>
+                ))}
+              </dl>
+            </Container>
+          </div>
         </div>
 
         {/* ── Certification marquee ── */}
         <CertificationMarquee />
 
         {/* ── Services — numbered rows ── */}
-        <section className="bg-ink-900 py-16 md:py-24" aria-labelledby="services-heading">
-          <Container>
-            <EyebrowLabel tone="dark" className="mb-4">OUR SERVICES</EyebrowLabel>
-            <h2
-              id="services-heading"
-              className="mb-12 font-display text-[30px] leading-tight tracking-tight text-ink-100 md:text-[42px]"
-            >
-              Four generations of expertise
-              <br className="hidden md:block" /> in industrial coatings
-            </h2>
-            <div>
+        <section
+          className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-20 md:py-28"
+          aria-labelledby="services-heading"
+        >
+          <Container className="relative z-10">
+            <div className="mb-12 border-l-4 border-pops-yellow-500 pl-6 md:mb-16 md:pl-8">
+              <EyebrowLabel tone="dark" className="mb-4">
+                OUR SERVICES
+              </EyebrowLabel>
+              <h2
+                id="services-heading"
+                className="font-display text-[30px] leading-[1.05] tracking-tight text-white md:text-[44px] lg:text-[48px]"
+              >
+                Four generations of expertise
+                <br className="hidden md:block" /> in industrial coatings
+              </h2>
+            </div>
+            <div className="rounded-sm ring-1 ring-pops-yellow-500/10">
               {SERVICES.map((service) => (
                 <ServiceRow key={service.href} {...service} />
               ))}
-              <div className="border-t border-ink-700" aria-hidden="true" />
+              <div className="border-t border-pops-yellow-500/15" aria-hidden="true" />
             </div>
           </Container>
         </section>
@@ -154,41 +165,41 @@ export default function HomePage() {
 
         {/* ── Commitment · Infrastructure · Standards ── */}
         <section
-          className="border-t border-ink-700 bg-ink-800 py-16 md:py-24"
+          className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-20 md:py-28"
           aria-labelledby="commitment-heading"
         >
-          <Container>
-            <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+          <Container className="relative z-10">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
 
-              <div>
+              <div className="pops-card-surface rounded-sm p-8">
                 <EyebrowLabel tone="dark" className="mb-4">COMMITMENT</EyebrowLabel>
                 <h2
                   id="commitment-heading"
-                  className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-100"
+                  className="mb-4 font-display text-[26px] leading-tight tracking-tight text-white"
                 >
                   It&apos;s a family thing
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-300">
+                <p className="font-text text-base leading-relaxed text-ink-200">
                   With a rich history rooted in a deep understanding of the industry,
                   Pop&apos;s Industrial Coatings blends tradition with a contemporary approach,
                   solidifying our position as a principal company in industrial finishing.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-300">
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-200">
                   We don&apos;t just meet expectations — we exceed them. Let us show you
                   what commitment to precision and technical expertise looks like.
                 </p>
               </div>
 
-              <div>
+              <div className="pops-card-surface rounded-sm p-8">
                 <EyebrowLabel tone="dark" className="mb-4">INFRASTRUCTURE</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-100">
+                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-white">
                   Our Facilities &amp; Equipment
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-300">
+                <p className="font-text text-base leading-relaxed text-ink-200">
                   In constant expansion to meet the demands of our customers, Pop&apos;s
                   facilities give us ample room for the largest projects.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-300">
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-200">
                   State-of-the-art equipment and highly skilled personnel make all
                   the difference in your project&apos;s success.
                 </p>
@@ -199,16 +210,16 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div>
+              <div className="pops-card-surface rounded-sm p-8">
                 <EyebrowLabel tone="dark" className="mb-4">STANDARDS</EyebrowLabel>
-                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-ink-100">
+                <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-white">
                   Industry Standards &amp; Certifications
                 </h2>
-                <p className="font-text text-base leading-relaxed text-ink-300">
+                <p className="font-text text-base leading-relaxed text-ink-200">
                   We adhere to strict industry specifications and best practices.
                   Read about our certifications and the standards that guide us.
                 </p>
-                <p className="mt-4 font-text text-base leading-relaxed text-ink-300">
+                <p className="mt-4 font-text text-base leading-relaxed text-ink-200">
                   We love questions about coatings — don&apos;t know the best product
                   for your project? Ask us.
                 </p>
@@ -231,28 +242,40 @@ export default function HomePage() {
         {/* ── Testimonials ── */}
         <Testimonials />
 
-        {/* ── Family photo ──
-            Replaces the flat `bg-ink-900/50` scrim with a radial-at-center-bottom
-            ember glow: warmth lifts up from the CTA edge into a near-black sky.
-            The image still shows; the dome adds depth and ties the section into
-            the warm-deep palette without requiring extra art. */}
+        {/* ── About strip — worker photo (blacked out) + CTA ── */}
         <section
-          aria-label="Four generations of the Pop's Industrial Coatings family"
-          className="relative min-h-[400px] overflow-hidden bg-ink-900 md:min-h-[500px]"
+          aria-label="About Pop's Industrial Coatings"
+          className="relative min-h-[380px] overflow-hidden border-t border-pops-yellow-500/25 md:min-h-[460px]"
         >
-          <Image
-            src="/images/pops-4-generations.jpg"
-            alt="Four generations of the Pop's Industrial Coatings family — founder Marcus Woods and the leadership team in Lakeland, FL"
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
+          <div className="absolute inset-0 z-0 bg-black">
+            <Image
+              src="/images/pops-about-worker.png"
+              alt="Industrial coating technician spray finishing a large part at Pop's Industrial Coatings, Lakeland FL"
+              fill
+              sizes="100vw"
+              className="object-contain object-center"
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[1] bg-black/55"
           />
           <div
             aria-hidden="true"
-            className="pops-grad-ember-overlay absolute inset-0"
+            className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/35 to-black/55"
           />
-          <div className="absolute bottom-0 left-0 right-0">
-            <Container className="pb-12">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_80%_70%_at_50%_100%,rgba(254,205,8,0.1),transparent_55%)]"
+          />
+          <div className="absolute bottom-0 left-0 right-0 z-10">
+            <Container className="pb-12 pt-20 md:pb-14 md:pt-28">
+              <EyebrowLabel tone="dark" className="mb-3">
+                ABOUT US
+              </EyebrowLabel>
+              <p className="mb-8 max-w-lg font-text text-base leading-relaxed text-ink-200 md:text-lg">
+                Four generations of industrial coating expertise — family owned and operated in Lakeland since 1972.
+              </p>
               <Button asChild variant="primary">
                 <Link href="/about-us">About Us</Link>
               </Button>
@@ -265,24 +288,28 @@ export default function HomePage() {
             tan-400 it reads as a painted finish rather than a flat block.
             Subtle on-brand change: the yellow identity is preserved. */}
         <section
-          className="pops-grad-sunset-light py-16 md:py-20"
+          className="pops-grad-sunset-light relative py-20 md:py-24"
           aria-labelledby="cta-heading"
         >
-          <Container>
-            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_100%_50%,rgba(0,0,0,0.08),transparent)]"
+          />
+          <Container className="relative">
+            <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between md:gap-12">
               <div>
                 <h2
                   id="cta-heading"
-                  className="font-display text-[30px] leading-tight tracking-tight text-ink-900 md:text-[40px]"
+                  className="font-display text-[32px] leading-[1.05] tracking-tight text-black md:text-[44px]"
                 >
                   Ready to start your project?
                 </h2>
-                <p className="mt-3 max-w-xl font-text text-base leading-relaxed text-ink-800">
+                <p className="mt-4 max-w-xl font-text text-base font-medium leading-relaxed text-black/80 md:text-lg">
                   From powder coating to abrasive blasting — get a quote within 24 hours.
                 </p>
               </div>
               <div className="shrink-0">
-                <Button asChild variant="dark">
+                <Button asChild variant="dark" className="min-h-12 px-8">
                   <Link href="/request-a-quote">Request a Quote →</Link>
                 </Button>
               </div>

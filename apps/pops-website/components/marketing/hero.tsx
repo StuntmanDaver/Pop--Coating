@@ -37,55 +37,80 @@ export function Hero({
     <section
       aria-labelledby={headingId}
       className={cn(
-        "relative isolate w-full overflow-hidden bg-ink-900",
-        "min-h-[520px] md:min-h-[620px]",
+        "relative isolate w-full overflow-hidden bg-black",
+        "min-h-[85vh] md:min-h-[min(92vh,960px)]",
         className,
       )}
     >
-      <Image
-        src={backgroundImage}
-        alt={backgroundAlt}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover"
-      />
-      {/* Layered cinematic overlays for stronger premium contrast */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-br from-black/90 via-ink-900/70 to-ink-900/30"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(254,205,8,0.16),transparent_34%)]"
-      />
-      <div className="relative z-10 mx-auto flex min-h-[520px] w-full max-w-[1280px] flex-col justify-center px-6 py-16 md:min-h-[620px] md:py-28">
-        <EyebrowLabel className="mb-6">{eyebrow}</EyebrowLabel>
-        <h1
-          id={headingId}
-          className="font-display text-[46px] leading-[1.0] tracking-tight text-paper md:text-[66px] lg:text-[78px]"
-        >
-          {heading}
-        </h1>
-        <p className="mt-3 max-w-2xl font-text text-sm font-semibold uppercase tracking-[0.12em] text-pops-yellow-300">
-          Serving the Industry Since 1972
-        </p>
-        {lede ? (
-          <p className="mt-6 max-w-2xl font-text text-lg leading-relaxed text-ink-200 md:text-xl">
-            {lede}
-          </p>
-        ) : null}
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <Button asChild variant="primary">
-            <Link href={primaryCta.href}>{primaryCta.label}</Link>
-          </Button>
-          {secondaryCta ? (
-            <Button asChild variant="secondary">
-              <Link href={secondaryCta.href}>{secondaryCta.label}</Link>
-            </Button>
-          ) : null}
+      {/* Photography — full frame visible (object-contain); letterboxing shows as black hero bg */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0">
+          <Image
+            src={backgroundImage}
+            alt={backgroundAlt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-center"
+          />
         </div>
       </div>
+
+      {/* Dramatic stack: crush midtones, gold rim light, vignette */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-b from-black via-black/75 to-black"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black/40"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(254,205,8,0.14),transparent_55%)] pops-hero-gold-halo"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_100%,rgba(254,205,8,0.08),transparent_50%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 ring-1 ring-inset ring-pops-yellow-500/10"
+      />
+
+      <div className="relative z-10 mx-auto flex min-h-[85vh] w-full max-w-[1280px] flex-col justify-start px-6 pb-16 pt-20 md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:px-8 lg:pt-28">
+        <div className="max-w-4xl">
+          <div className="mb-6 h-px w-16 bg-gradient-to-r from-pops-yellow-500 to-transparent md:mb-8 md:w-24" />
+          <EyebrowLabel className="mb-4 tracking-[0.14em] md:mb-5">{eyebrow}</EyebrowLabel>
+          <h1
+            id={headingId}
+            className="font-display text-[2.5rem] leading-[0.98] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[4.75rem]"
+          >
+            {heading}
+          </h1>
+          {lede ? (
+            <p className="mt-6 max-w-2xl font-text text-base leading-relaxed text-ink-100 md:mt-8 md:text-lg md:leading-relaxed">
+              {lede}
+            </p>
+          ) : null}
+          <div className="mt-10 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button asChild variant="primary" size="default" className="min-h-12 px-8 text-base">
+              <Link href={primaryCta.href}>{primaryCta.label}</Link>
+            </Button>
+            {secondaryCta ? (
+              <Button asChild variant="secondary" size="default" className="min-h-12 border-pops-yellow-500/50 px-8 text-base">
+                <Link href={secondaryCta.href}>{secondaryCta.label}</Link>
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom transition into next section */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[5] h-24 bg-gradient-to-t from-black to-transparent"
+      />
     </section>
   );
 }

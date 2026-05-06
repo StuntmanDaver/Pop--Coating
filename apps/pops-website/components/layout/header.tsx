@@ -36,22 +36,25 @@ export function Header({ className }: HeaderProps) {
         Skip to content
       </a>
 
-      <Container className="flex items-center justify-between gap-6 py-3">
+      <Container className="flex items-center justify-between gap-6 py-3 md:py-4">
         {/* Logo */}
         <Link
           href="/"
           aria-label="Pop's Industrial Coatings — Home"
-          className="group inline-flex shrink-0 items-center gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="group inline-flex shrink-0 items-center gap-5 overflow-visible rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black lg:gap-6"
         >
-          <Image
-            src="/images/pops-logo-header-footer.png"
-            alt=""
-            width={682}
-            height={1024}
-            priority
-            className="h-11 w-auto max-h-11 sm:h-12 sm:max-h-12"
-          />
-          <span className="font-display text-sm tracking-tight text-ink-100 sm:text-base">
+          {/* Logo hugging the left; scale is modest so paint does not overlap the wordmark */}
+          <span className="relative inline-block h-16 w-[calc(4rem*682/1024)] shrink-0 overflow-visible sm:h-[4.5rem] sm:w-[calc(4.5rem*682/1024)] md:h-[5rem] md:w-[calc(5rem*682/1024)] lg:h-[5.5rem] lg:w-[calc(5.5rem*682/1024)]">
+            <Image
+              src="/images/pops-logo-header-footer.png"
+              alt=""
+              fill
+              priority
+              sizes="140px"
+              className="object-contain object-left scale-[1.2] [transform-origin:0%_50%]"
+            />
+          </span>
+          <span className="relative z-10 shrink-0 font-display text-sm leading-tight tracking-tight text-ink-100 sm:text-base">
             POP&apos;S INDUSTRIAL COATINGS
           </span>
         </Link>

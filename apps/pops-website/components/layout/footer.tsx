@@ -38,20 +38,22 @@ export function Footer() {
       <Container className="relative z-10">
         <div className="grid grid-cols-1 gap-12 py-16 md:grid-cols-3 md:gap-10 md:py-20">
           <FooterColumn title={doingBusinessTitle} headingId="footer-col-business">
-            <div className="mb-6 flex items-center gap-3 rounded-sm border border-pops-yellow-500/25 bg-[#0A0A0A] p-3 shadow-[0_0_32px_-10px_rgba(254,205,8,0.12)]">
-              <Image
-                src="/images/pops-logo-header-footer.png"
-                alt="Pop's Industrial Coatings"
-                width={682}
-                height={1024}
-                className="h-16 w-auto max-h-20 sm:h-20"
-                priority={false}
-              />
-              <span className="font-display text-base leading-tight tracking-tight text-ink-100">
-                POP&apos;S INDUSTRIAL
-                <br />
-                COATINGS
-              </span>
+            <div className="mb-5">
+              <Link
+                href="/"
+                className="inline-block overflow-visible rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+              >
+                <span className="relative inline-block h-28 w-[calc(7rem*682/1024)] overflow-visible sm:h-32 sm:w-[calc(8rem*682/1024)] md:h-36 md:w-[calc(9rem*682/1024)]">
+                  <Image
+                    src="/images/pops-logo-header-footer.png"
+                    alt="Pop's Industrial Coatings"
+                    fill
+                    sizes="260px"
+                    className="object-contain object-left scale-[1.26] [transform-origin:0%_50%]"
+                    priority={false}
+                  />
+                </span>
+              </Link>
             </div>
             <FooterNav
               ariaLabelledBy="footer-col-business"

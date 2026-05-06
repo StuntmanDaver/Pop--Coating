@@ -47,9 +47,9 @@ const SPECS: Spec[] = [
 ];
 
 const CELL_BORDERS = [
-  "border-r border-b border-ink-700 md:border-b-0",
-  "border-b border-ink-700 md:border-r md:border-b-0",
-  "border-r border-ink-700",
+  "border-r border-b border-pops-yellow-500/15 md:border-b-0",
+  "border-b border-pops-yellow-500/15 md:border-r md:border-b-0",
+  "border-r border-pops-yellow-500/15",
   "",
 ];
 
@@ -57,9 +57,9 @@ export function CapacitySpecs() {
   return (
     <section
       aria-labelledby="capacity-heading"
-      className="border-t border-ink-700 bg-ink-900 py-12 sm:py-16 md:py-20"
+      className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-14 sm:py-16 md:py-20"
     >
-      <Container>
+      <Container className="relative z-10">
         <BlurFade>
           <EyebrowLabel tone="dark" shimmer className="mb-3 sm:mb-4">
             CAPACITY AT A GLANCE
@@ -79,7 +79,7 @@ export function CapacitySpecs() {
 
         <BlurFade delay={0.12}>
           {SPECS_READY ? (
-            <dl className="grid grid-cols-2 border border-ink-700 md:grid-cols-4">
+            <dl className="grid grid-cols-2 border border-pops-yellow-500/20 md:grid-cols-4">
               {SPECS.map((spec, i) => (
                 <div
                   key={spec.label}
@@ -98,7 +98,7 @@ export function CapacitySpecs() {
               ))}
             </dl>
           ) : (
-            <div className="flex flex-col items-start gap-4 rounded-sm border border-ink-700 bg-ink-800 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
+            <div className="flex flex-col items-start gap-4 rounded-sm border border-pops-yellow-500/25 bg-[#0A0A0A] p-6 shadow-[0_0_40px_-12px_rgba(254,205,8,0.12)] sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
               <p className="font-text text-base leading-relaxed text-ink-200 sm:text-lg">
                 Cure oven, max part weight, blast booth, throughput — sized to
                 your job, every time. Tell us what you have and we&apos;ll

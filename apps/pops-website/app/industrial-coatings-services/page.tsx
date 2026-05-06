@@ -45,9 +45,9 @@ const SERVICES = [
     number: "04",
     name: "Powder Coating",
     lede: "Electrostatic spray process of dry powder cured for a tough, uniform surface with resistance to corrosion, impact and chemicals.",
-    image: "/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg",
+    image: "/images/powder-coat-gallery-toll-gantry.png",
     href: "/industrial-coatings-services/powder-coating",
-    alt: "Powder coating services at Pop's Industrial Coatings, Lakeland FL",
+    alt: "Large powder-coated highway toll gantry — Pop's Industrial Coatings, Lakeland FL",
   },
   {
     number: "05",

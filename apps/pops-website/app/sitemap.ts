@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/request-a-quote/standards-specifications-certifications`, priority: 0.8, changeFrequency: "yearly" },
     { url: `${BASE_URL}/request-a-quote/terms-conditions`, priority: 0.8, changeFrequency: "yearly" },
     { url: `${BASE_URL}/contact`, priority: 0.7, changeFrequency: "yearly" },
+    { url: `${BASE_URL}/careers`, priority: 0.6, changeFrequency: "monthly" },
     { url: `${BASE_URL}/check-in`, priority: 0.5, changeFrequency: "yearly" },
     { url: `${BASE_URL}/check-out`, priority: 0.5, changeFrequency: "yearly" },
     { url: `${BASE_URL}/guest-safety-rules`, priority: 0.5, changeFrequency: "yearly" },

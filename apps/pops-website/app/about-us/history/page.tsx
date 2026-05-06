@@ -83,14 +83,14 @@ export default function HistoryPage() {
 
               {/* Founder photo */}
               <div className="flex flex-col items-start">
-                <div className="relative w-full max-w-[320px] overflow-hidden rounded-md">
+                <div className="relative w-full max-w-[320px] overflow-hidden rounded-md bg-ink-900">
                   <Image
                     src="/images/marcus-woods-pops-industrial-coatings.jpg"
                     alt="Marcus Woods, founder of Pop's Industrial Coatings"
                     width={320}
                     height={400}
                     sizes="320px"
-                    className="w-full object-cover"
+                    className="w-full object-contain object-center"
                   />
                 </div>
                 <p className="mt-3 font-text text-sm text-ink-300">

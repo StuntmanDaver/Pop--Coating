@@ -28,7 +28,7 @@ export function ServiceTile({
     <Card interactive className={cn("overflow-hidden p-0", className)}>
       <Link
         href={href}
-        className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800 rounded-sm"
+        className="group block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         <div className="relative aspect-[16/10] overflow-hidden bg-ink-800">
           <Image
@@ -36,7 +36,7 @@ export function ServiceTile({
             alt={alt}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.03]"
+            className="object-contain object-center transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.03]"
           />
         </div>
         <div className="p-6">

@@ -41,44 +41,46 @@ export function CertificationMarquee() {
   return (
     <section
       aria-labelledby="cert-rail-heading"
-      className="border-t border-ink-700 bg-ink-900 py-10 sm:py-12"
+      className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-12 sm:py-14"
     >
-      <div className="mx-auto mb-6 max-w-[1280px] px-4 text-center sm:px-6 lg:px-8">
-        <EyebrowLabel id="cert-rail-heading" tone="dark" shimmer>
-          Certifications &amp; Approvals
-        </EyebrowLabel>
-      </div>
+      <div className="relative z-10">
+        <div className="mx-auto mb-6 max-w-[1280px] px-4 text-center sm:px-6 lg:px-8">
+          <EyebrowLabel id="cert-rail-heading" tone="dark" shimmer>
+            Certifications &amp; Approvals
+          </EyebrowLabel>
+        </div>
 
-      {/* Edge fade so logos enter/exit gracefully */}
-      <div
-        className="relative overflow-hidden"
-        style={{
-          maskImage:
-            "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
-        }}
-      >
-        <Marquee
-          pauseOnHover
-          repeat={8}
-          className="[--duration:32s] [--gap:4rem] py-2"
+        {/* Edge fade so logos enter/exit gracefully */}
+        <div
+          className="relative overflow-hidden"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)",
+          }}
         >
-          {CERTS.map((cert) => (
-            <div
-              key={cert.src}
-              className="flex h-20 shrink-0 items-center justify-center sm:h-24"
-            >
-              <Image
-                src={cert.src}
-                alt={cert.alt}
-                width={cert.width}
-                height={cert.height}
-                className="h-full w-auto rounded-sm border border-ink-700 bg-ink-800/60 p-2 object-contain opacity-85 grayscale transition-[opacity,filter,border-color] duration-300 hover:border-pops-yellow-500/70 hover:opacity-100 hover:grayscale-0"
-              />
-            </div>
-          ))}
-        </Marquee>
+          <Marquee
+            pauseOnHover
+            repeat={8}
+            className="[--duration:32s] [--gap:4rem] py-2"
+          >
+            {CERTS.map((cert) => (
+              <div
+                key={cert.src}
+                className="flex h-20 shrink-0 items-center justify-center sm:h-24"
+              >
+                <Image
+                  src={cert.src}
+                  alt={cert.alt}
+                  width={cert.width}
+                  height={cert.height}
+                  className="h-full w-auto rounded-sm border border-pops-yellow-500/20 bg-black/80 p-2 object-contain opacity-90 grayscale transition-[opacity,filter,border-color,box-shadow] duration-300 hover:border-pops-yellow-500 hover:opacity-100 hover:grayscale-0 hover:shadow-[0_0_28px_-6px_rgba(254,205,8,0.35)]"
+                />
+              </div>
+            ))}
+          </Marquee>
+        </div>
       </div>
     </section>
   );

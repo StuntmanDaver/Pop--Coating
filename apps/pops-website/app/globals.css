@@ -8,14 +8,11 @@
   --color-pops-yellow-600: #DEB101;
   --color-pops-tan-400:    #FFBC7D;
 
-  /* Warm-deep extensions — used inside gradients only.
-     They give yellow a "sunset" partner and a deep grounding tone, letting
-     us run radial-at-center-bottom "dawn" gradients without abandoning the
-     yellow-led identity. Not intended as flat fills. */
-  --color-pops-amber-300: #F4B860; /* warm light  — pairs with yellow-300 */
-  --color-pops-amber-500: #E8901C; /* warm rust   — sunset middle stop */
-  --color-pops-amber-700: #9C5712; /* deep amber  — hero/dark dome top */
-  --color-pops-ember-900: #2A1408; /* near-black warm brown — bottom of dark domes */
+  /* Warm-deep extensions — gradients / overlays */
+  --color-pops-amber-300: #F4B860;
+  --color-pops-amber-500: #E8901C;
+  --color-pops-amber-700: #9C5712;
+  --color-pops-ember-900: #2A1408;
 
   /* Neutrals */
   --color-ink-50:  #F7F8FA;
@@ -30,13 +27,13 @@
   --color-ink-900: #11141A;
   --color-paper:   #FFFFFF;
 
-  /* Light canvas — warm near-white for light sections */
-  --color-canvas:  #0E1117;
-  --color-surface: #131821;
-  --color-surface-2: #1A202B;
-  --color-divider:  #2A3240;
-  --color-metal-1:  #202734;
-  --color-metal-2:  #0F131A;
+  /* Surfaces — true black base + subtle lift for alternating sections */
+  --color-canvas:     #000000;
+  --color-surface:    #000000;
+  --color-surface-2:  #0A0A0A;
+  --color-divider:    #2A3240;
+  --color-metal-1:    #141414;
+  --color-metal-2:    #000000;
 
   /* Semantic */
   --color-success-100: #D4E9D6;
@@ -60,31 +57,22 @@
   --radius-lg:   8px;
   --radius-full: 9999px;
 
-  /* Fluid display scale — clamp(min, fluid, max).
-     Use as: className="text-display-lg" or font-size: var(--text-display-lg). */
   --text-display-xl: clamp(3rem,    5vw + 1rem, 5.625rem);
   --text-display-lg: clamp(2.875rem, 5vw + 1rem, 5rem);
   --text-display-md: clamp(2.75rem,  5vw + 1rem, 4.3125rem);
   --text-display-sm: clamp(2.625rem, 5vw + 1rem, 3.5625rem);
   --text-display-xs: clamp(2.5rem,   5vw + 1rem, 3rem);
 
-  /* Elevation */
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.20);
   --shadow-2: 0 2px 4px rgb(0 0 0 / 0.18), 0 1px 2px rgb(0 0 0 / 0.16);
   --shadow-3: 0 8px 16px rgb(0 0 0 / 0.20), 0 2px 4px rgb(0 0 0 / 0.18);
   --shadow-4: 0 16px 32px rgb(0 0 0 / 0.24), 0 4px 8px rgb(0 0 0 / 0.20);
 
-  /* ── Animation utilities ── */
-  /* Marquee: speed controlled by [--duration:Xs] on the wrapper */
   --animate-marquee:         marquee var(--duration, 40s) linear infinite;
   --animate-marquee-reverse: marquee-reverse var(--duration, 40s) linear infinite;
-  /* Shiny text sweep */
   --animate-shiny-text:      shiny-text 8s ease-in-out infinite;
-  /* Border beam travel */
   --animate-border-beam:     border-beam calc(var(--duration, 8) * 1s) infinite linear;
 }
-
-/* ── Keyframes ─────────────────────────────────────────────────── */
 
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -96,10 +84,6 @@
   to   { transform: translateX(0); }
 }
 
-/* Sweep peak across the text. The gradient is 300% wide; positions 0% and 100%
-   both show only the base color band — the white peak (gradient ~50%) is only
-   visible mid-cycle. Keeping bg-position in [0%, 100%] guarantees the gradient
-   stays behind the text at all times so it never goes transparent. */
 @keyframes shiny-text {
   0%   { background-position: 100% center; }
   60%  { background-position: 0% center; }
@@ -110,10 +94,17 @@
   100% { offset-distance: 100%; }
 }
 
-/* ── Custom utility classes ─────────────────────────────────────── */
+/* Slow zoom on hero photography — luxury / cinematic */
+@keyframes pops-hero-drift {
+  0%, 100% { transform: scale(1.06) translate(0%, 0%); }
+  50%      { transform: scale(1.12) translate(-0.8%, -0.4%); }
+}
 
-/* bg-clip text mask for AnimatedShinyText.
-   Gated behind @supports so text stays readable in older browsers. */
+@keyframes pops-gold-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.9; }
+}
+
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .shiny-text-mask {
     color: transparent;
@@ -122,32 +113,18 @@
   }
 }
 
-/* ── Brand gradients ────────────────────────────────────────────────
-   Inspired by the Commvault treatment but tuned for Pops's warm palette.
-   The "dawn" radials at center-bottom create a soft, dome-like glow that
-   reads as a curved arc without using border-radius. Use them on full-bleed
-   sections; pair with rectangular cards at radius-lg (8px) inside.
-
-   Pattern guide:
-   - .pops-grad-sunset       linear, 147°, hero/promo strip on light surfaces
-   - .pops-grad-sunset-light linear, 121°, soft promo or CTA backgrounds
-   - .pops-grad-dawn-light   radial dome from yellow-100 → canvas
-   - .pops-grad-dawn-dark    radial dome from amber-700 → ember-900
-   - .pops-grad-hero         multi-stop diagonal sunset for dark heroes
-   - .pops-text-grad         background-clip:text gradient for stat numerals
-   - .pops-grad-ember-overlay translucent radial overlay for image sections
-*/
-
 .pops-grad-sunset {
   background: linear-gradient(147deg,
     var(--color-pops-amber-500),
     var(--color-pops-yellow-500));
 }
 
+/* High-energy CTA strip */
 .pops-grad-sunset-light {
-  background: linear-gradient(120.97deg,
-    var(--color-pops-yellow-300),
-    var(--color-pops-tan-400));
+  background: linear-gradient(118deg,
+    var(--color-pops-yellow-500) 0%,
+    var(--color-pops-yellow-300) 38%,
+    var(--color-pops-tan-400) 100%);
 }
 
 .pops-grad-dawn-light {
@@ -161,66 +138,140 @@
 .pops-grad-dawn-dark {
   background: radial-gradient(ellipse 90% 80% at 50% 100%,
     var(--color-pops-amber-700) 0%,
-    var(--color-pops-ember-900) 70%,
-    var(--color-ink-900) 100%);
+    var(--color-pops-ember-900) 55%,
+    #000000 100%);
 }
 
 .pops-grad-hero {
   background: linear-gradient(112deg,
-    var(--color-ink-900)        22%,
-    var(--color-pops-amber-700) 62%,
-    var(--color-pops-tan-400)   94%);
+    #000000        18%,
+    var(--color-pops-amber-700) 58%,
+    var(--color-pops-yellow-500) 92%);
 }
 
-/* Translucent radial — sit on top of an <Image> to add a dome of warmth
-   instead of a flat dark scrim. Combine with mix-blend or stack with a
-   solid scrim for legibility. */
 .pops-grad-ember-overlay {
-  background: radial-gradient(ellipse 80% 60% at 50% 100%,
-    rgb(232 144 28 / 0.30) 0%,
-    rgb(17 20 26 / 0.78)   65%);
+  background: radial-gradient(ellipse 85% 55% at 50% 100%,
+    rgb(254 205 8 / 0.22) 0%,
+    rgb(0 0 0 / 0.88)   62%);
+}
+
+/* Full-bleed section transitions */
+.pops-section-edge-glow {
+  box-shadow:
+    inset 0 1px 0 0 rgb(254 205 8 / 0.22),
+    inset 0 -1px 0 0 rgb(254 205 8 / 0.12);
+}
+
+.pops-section-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(254 205 8 / 0.55) 50%,
+    transparent
+  );
+}
+
+/**
+ * Full-band background — gold wash fading into #0A0A0A (Industries we serve).
+ * Use on sections/footers; keep content in a child with `relative z-10` when
+ * not using the shared Section component (which wraps children automatically).
+ */
+.pops-section-gold-wash {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #0a0a0a;
+}
+
+.pops-section-gold-wash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(180deg, rgba(254, 205, 8, 0.14) 0%, rgba(254, 205, 8, 0.07) 14%, rgba(254, 205, 8, 0.02) 32%, transparent 52%),
+    radial-gradient(ellipse 100% 75% at 50% -8%, rgba(254, 205, 8, 0.11), transparent 58%),
+    radial-gradient(ellipse 95% 60% at 0% -5%, rgba(254, 205, 8, 0.22), transparent 60%),
+    radial-gradient(ellipse 75% 50% at 100% 105%, rgba(254, 205, 8, 0.12), transparent 52%);
+}
+
+.pops-section-gold-wash::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(to right, transparent, rgb(254 205 8 / 0.45), transparent);
+}
+
+.pops-hero-ken-burns {
+  transform-origin: center center;
+  animation: pops-hero-drift 28s ease-in-out infinite;
+}
+
+.pops-hero-gold-halo {
+  animation: pops-gold-pulse 4.5s ease-in-out infinite;
 }
 
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .pops-text-grad {
-    background: linear-gradient(147deg,
-      var(--color-pops-amber-500),
-      var(--color-pops-yellow-500));
+    background: linear-gradient(125deg,
+      var(--color-pops-yellow-300),
+      var(--color-pops-yellow-500),
+      var(--color-pops-amber-500));
     -webkit-background-clip: text;
             background-clip: text;
     color: transparent;
   }
 }
 
-/* ── Base ───────────────────────────────────────────────────────── */
-
 html {
-  background: var(--color-canvas);
+  background: #0a0a0a;
   color: #F4F6FA;
 }
 
 body {
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.02), transparent 220px),
-    radial-gradient(circle at 100% 0%, rgb(254 205 8 / 0.07), transparent 32%),
-    var(--color-canvas);
+    linear-gradient(180deg, rgba(254, 205, 8, 0.07) 0%, rgba(254, 205, 8, 0.02) 12%, transparent 32%),
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgb(254 205 8 / 0.12), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 100% 50%, rgb(254 205 8 / 0.06), transparent 45%),
+    #0a0a0a;
   color: #F4F6FA;
 }
 
 ::selection {
-  background: rgb(254 205 8 / 0.32);
-  color: #0b0d11;
+  background: rgb(254 205 8 / 0.35);
+  color: #000000;
 }
 
 .pops-panel {
-  background: linear-gradient(175deg, var(--color-surface), var(--color-metal-2));
-  border: 1px solid var(--color-divider);
-  box-shadow: var(--shadow-2);
+  background: linear-gradient(165deg, #0a0a0a, #000000);
+  border: 1px solid rgb(254 205 8 / 0.18);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.5),
+    0 24px 48px rgb(0 0 0 / 0.45),
+    0 0 60px -20px rgb(254 205 8 / 0.15);
 }
 
 .pops-panel-soft {
-  background: linear-gradient(170deg, rgb(255 255 255 / 0.03), rgb(255 255 255 / 0.01));
-  border: 1px solid rgb(255 255 255 / 0.10);
+  background: linear-gradient(170deg, rgb(255 255 255 / 0.04), rgb(255 255 255 / 0.01));
+  border: 1px solid rgb(254 205 8 / 0.14);
+}
+
+.pops-card-surface {
+  background: #000000;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pops-card-surface:hover {
+  border-color: rgb(254 205 8 / 0.45);
+  box-shadow: 0 0 40px -12px rgb(254 205 8 / 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {
