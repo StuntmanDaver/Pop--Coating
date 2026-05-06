@@ -104,7 +104,7 @@ Phase 4 [----------] 0%  Portal & Ops
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
-| 260506-hm2 | pgTAP coverage for migrations 0015 validate_employee_pin 0016 record_scan_event 0017 jobs_packet_dirty_trigger | 2026-05-06 | pending | [260506-hm2-pgtap-coverage-for-migrations-0015-valid](.planning/quick/260506-hm2-pgtap-coverage-for-migrations-0015-valid/) |
+| 260506-hm2 | pgTAP coverage for migrations 0015 validate_employee_pin 0016 record_scan_event 0017 jobs_packet_dirty_trigger | 2026-05-06 | a6e7a2c | [260506-hm2-pgtap-coverage-for-migrations-0015-valid](.planning/quick/260506-hm2-pgtap-coverage-for-migrations-0015-valid/) |
 
 ---
 
