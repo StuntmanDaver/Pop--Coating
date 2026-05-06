@@ -19,11 +19,10 @@ export { recordScanEvent } from './actions/scan-event'
 export type { RecordScanEventInput, RecordScanEventResult } from './actions/scan-event'
 
 export { lookupJobByPacketToken } from './actions/lookup'
-export type { LookupJobByPacketTokenInput, ScannedJob } from './actions/lookup'
 
 // listShopEmployees is server-only — import from '@/modules/scanning/queries/employees'
 // directly in Server Components. It is NOT re-exported here to keep the barrel safe
 // for client component imports.
-// Type is sourced from the side-effect-free types.ts so Turbopack doesn't follow
-// the chain into server-only code (queries/employees has `import 'server-only'`).
-export type { ShopEmployeeTile } from './types'
+// All types live in the side-effect-free types.ts so Turbopack never follows a
+// re-export chain into server-only query files.
+export type { ShopEmployeeTile, LookupJobByPacketTokenInput, ScannedJob } from './types'

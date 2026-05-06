@@ -2,6 +2,7 @@ import 'server-only'
 import { z } from 'zod'
 import { createClient } from '@/shared/db/server'
 import { requireShopStaff } from '@/shared/auth-helpers/require'
+import type { LookupJobByPacketTokenInput, ScannedJob } from '../types'
 
 // Source: docs/DESIGN.md §4.3 Module 5 — lookupJobByPacketToken supports
 // last-8-char prefix matching for the manual-entry fallback (when the QR is
@@ -13,18 +14,6 @@ import { requireShopStaff } from '@/shared/auth-helpers/require'
 const LookupSchema = z.object({
   token_or_prefix: z.string().min(8).max(16),
 })
-
-export type LookupJobByPacketTokenInput = z.infer<typeof LookupSchema>
-
-export interface ScannedJob {
-  id: string
-  job_number: string
-  job_name: string
-  intake_status: string
-  production_status: string | null
-  on_hold: boolean
-  packet_token: string
-}
 
 export async function lookupJobByPacketToken(input: unknown): Promise<ScannedJob | null> {
   const parsed = LookupSchema.safeParse(input)
