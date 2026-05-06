@@ -4,6 +4,12 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### pops-website / Image Visibility — Facilities Page Fix (2026-05-06)
+
+- **Fixed portrait containers on Facilities & Equipment photo grid.** All four `aspect-[3/4]` containers were portrait; three of the four photos are landscape (1360×1020, 4:3). Landscape images in portrait containers were heavily cropped on the left and right edges. Changed all containers to `aspect-[4/3]` so facility photos display without clipping.
+- **Upgraded facility thumbnail srcs to full-resolution files** (`-1.jpg` originals instead of `-300x225` thumbnails) for sharper rendering in the 25vw grid columns.
+- **Wide logo image (`large-capacity-powder-coating-270x138-1.png`)** already uses `object-contain p-4`; switching its container from portrait `aspect-[3/4]` to landscape `aspect-[4/3]` reduces letterboxing and shows the logo at a better size.
+
 ### Repo / Post-Brief Cleanup — Lint Clean + Nav Links (2026-05-06)
 
 - **All 5 Wave-1 UI Loki briefs verified complete.** Pre-flight deps (@playwright/test, @zxing/browser, @zxing/library) were already installed from prior session — committed the pending `package.json`/`pnpm-lock.yaml` changes (`e1f0467`). Chromium binary installed (`pnpm exec playwright install chromium`). `main` pushed to origin so worktrees could branch off the right HEAD.
