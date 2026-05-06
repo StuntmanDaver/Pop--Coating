@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T15:10:27.812Z"
+last_updated: "2026-05-06T16:21:39.814Z"
 progress:
   total_phases: 4
   completed_phases: 1
@@ -100,11 +100,17 @@ Phase 4 [----------] 0%  Portal & Ops
 
 - Confirm Vercel deployment lives under the correct team; link locally with `vercel link` if URL needed from CLI.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260506-hm2 | pgTAP coverage for migrations 0015 validate_employee_pin 0016 record_scan_event 0017 jobs_packet_dirty_trigger | 2026-05-06 | pending | [260506-hm2-pgtap-coverage-for-migrations-0015-valid](.planning/quick/260506-hm2-pgtap-coverage-for-migrations-0015-valid/) |
+
 ---
 
 ## Session Continuity
 
-**Last updated:** 2026-05-03
+**Last updated:** 2026-05-06
 **Last action:** Documented 2026-05-03 session outcomes in `CHANGELOG.md` and `.planning/intel/SESSION-MEMORY.md` (Vercel URL discovery, Plan 06 automation recap, remaining manual checkpoints). Prior: 01-06-PLAN.md Tasks 1a+1b complete — pgTAP RLS test suite, seed + CI; PAUSED at Task 2 human-action checkpoint.
 **Next action:** Complete remaining Plan 06 manual steps (Supabase JWT=3600s + Auth Hook dashboard registration; Vercel domains for `popsindustrial.com` app/track hosts; Resend DNS; Upstash + Sentry env), then Tasks 3–5 sign-off. Push feature branch with explicit `git push origin <branch>` if not on `main`. See `SESSION-MEMORY.md` for the full checklist.
 
