@@ -74,6 +74,7 @@ export function PhotoCapture({ onCapture, onClear, capturedBlob }: PhotoCaptureP
   if (capturedBlob && previewUrl) {
     return (
       <div className="flex flex-col gap-3">
+        {/* eslint-disable-next-line @next/next/no-img-element -- blob object URL; next/image does not support object URLs */}
         <img
           src={previewUrl}
           alt="Captured photo preview"

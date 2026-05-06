@@ -28,5 +28,8 @@ export default async function LookupPage({ searchParams }: Props) {
 
   if (error || !job) notFound()
 
-  return <LookupClient job={job} workstationId={claims.workstation_id!} />
+  const workstationId = claims.workstation_id
+  if (!workstationId) notFound()
+
+  return <LookupClient job={job} workstationId={workstationId} />
 }

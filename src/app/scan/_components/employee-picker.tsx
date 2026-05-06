@@ -65,6 +65,7 @@ export function EmployeePicker({ employees, workstationVersion }: EmployeePicker
             aria-label={`Select ${employee.display_name}`}
           >
             {employee.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element -- external avatar URL; next/image requires domain allow-listing
               <img
                 src={employee.avatar_url}
                 alt=""

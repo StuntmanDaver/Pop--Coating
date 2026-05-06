@@ -33,9 +33,11 @@ export function Scanner({ onScan, onClose }: ScannerProps) {
           return
         }
 
+        if (!videoRef.current) return
+
         controls = await codeReader.decodeFromVideoDevice(
           envCamera.deviceId,
-          videoRef.current!,
+          videoRef.current,
           (result, err) => {
             if (stopped) return
             if (result) {

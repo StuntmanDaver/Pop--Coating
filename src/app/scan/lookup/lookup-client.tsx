@@ -30,16 +30,13 @@ export function LookupClient({ job, workstationId }: LookupClientProps) {
   const [notes, setNotes] = useState('')
   const [photoBlobState, setPhotoBlobState] = useState<Blob | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [employeeId, setEmployeeId] = useState<string | null>(null)
+  const [employeeId] = useState<string | null>(() =>
+    typeof window === 'undefined' ? null : sessionStorage.getItem('scan:employee_id')
+  )
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('scan:employee_id')
-    if (!stored) {
-      router.replace('/scan')
-      return
-    }
-    setEmployeeId(stored)
-  }, [router])
+    if (!employeeId) router.replace('/scan')
+  }, [employeeId, router])
 
   async function handleConfirm() {
     if (!selectedStage || !employeeId) return

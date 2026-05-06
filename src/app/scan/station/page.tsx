@@ -15,17 +15,13 @@ export default function StationPage() {
   const [isPending, startTransition] = useTransition()
   const [overlay, setOverlay] = useState<Overlay>(null)
   const [lookupError, setLookupError] = useState<string | null>(null)
-  const [employeeId, setEmployeeId] = useState<string | null>(null)
+  const [employeeId] = useState<string | null>(() =>
+    typeof window === 'undefined' ? null : sessionStorage.getItem('scan:employee_id')
+  )
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('scan:employee_id')
-    if (!stored) {
-      // No active session — return to boot screen
-      router.replace('/scan')
-      return
-    }
-    setEmployeeId(stored)
-  }, [router])
+    if (!employeeId) router.replace('/scan')
+  }, [employeeId, router])
 
   async function handleToken(token: string) {
     setLookupError(null)

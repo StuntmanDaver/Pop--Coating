@@ -212,6 +212,7 @@ export function PacketDocument({ job, tenant, qrPngDataUrl, generatedAt }: Packe
 
         <View style={styles.body}>
           <View style={styles.qrColumn}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image renders to PDF, not HTML */}
             <Image style={styles.qrImage} src={qrPngDataUrl} />
             <Text style={styles.tokenTail}>{tokenTail}</Text>
             <Text style={styles.tokenTailLabel}>manual entry code</Text>

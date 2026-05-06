@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation'
 import { requireShopStaff } from '@/shared/auth-helpers/require'
 import { getCurrentClaims } from '@/shared/auth-helpers/claims'
 import { PinClient } from './pin-client'
@@ -18,10 +19,13 @@ export default async function PinPage({ searchParams }: Props) {
     redirect('/scan')
   }
 
+  const workstationId = claims.workstation_id
+  if (!workstationId) notFound()
+
   return (
     <PinClient
       employeeId={employeeId}
-      workstationId={claims.workstation_id!}
+      workstationId={workstationId}
       workstationVersion={workstationVersion}
     />
   )

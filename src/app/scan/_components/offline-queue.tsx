@@ -52,8 +52,9 @@ async function flushQueue(): Promise<void> {
       await recordScanEvent(event.payload)
       // Remove from queue on success
       await new Promise<void>((resolve, reject) => {
+        if (event.id === undefined) { resolve(); return }
         const tx = db.transaction(STORE_NAME, 'readwrite')
-        const req = tx.objectStore(STORE_NAME).delete(event.id!)
+        const req = tx.objectStore(STORE_NAME).delete(event.id)
         req.onsuccess = () => resolve()
         req.onerror = () => reject(req.error)
       })
