@@ -5,6 +5,7 @@ import { signOutStaff } from '@/modules/auth/actions/sign-out'
 const NAV = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/jobs', label: 'Jobs' },
+  { href: '/companies', label: 'Companies' },
   { href: '/scan', label: 'Scan station' },
 ] as const
 
