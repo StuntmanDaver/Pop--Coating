@@ -1,32 +1,126 @@
 {
   "session_id": "loki-2026-05-05-01-29 + audit-cycle-2026-05-05-01-53",
   "rarv_cycles": [
-    {"n": 1, "module": "crm/companies", "commit": "054b4dd", "tests": 11},
-    {"n": 2, "module": "crm/contacts", "tests": 10, "lessons": ["Zod .default() fills partials — use .optional() + ?? in action body"]},
-    {"n": 3, "module": "crm/activities", "tests": 6},
-    {"n": 4, "module": "tags", "tests": 10},
-    {"n": 5, "module": "jobs", "tests": 11, "lessons": ["app schema RPCs not in generated types — narrow-cast the rpc call", "production_status REVOKE means schema must explicitly exclude it from update partials AND defense-in-depth strip at runtime"]},
-    {"n": 6, "module": "timeline", "tests": 5, "lessons": ["server-only package throws on import — vitest needs an alias to a no-op stub; Next.js still resolves the real one via react-server export condition"]},
-    {"n": 7, "module": "dashboard", "tests": 7, "lessons": ["Schema column names matter — workstations.last_activity_at not last_heartbeat_at"]},
-    {"n": 8, "module": "portal", "tests": 7},
-    {"n": 9, "module": "scanning (lifecycle only)", "tests": 8, "scope_notes": "PIN + record_scan_event wait for Phase 3 migrations"},
-    {"n": 10, "module": "settings (staff + shop_settings)", "tests": 15, "lessons": ["shop_settings lock invariant tested explicitly — timezone/currency/job_number_prefix cannot change after first job"]},
-    {"n": 12, "type": "audit-fix", "module": "rpc routing", "tests_modified": 19, "lessons": ["supabase.rpc(name) defaults to public schema regardless of where the function actually lives — must use .schema('app').rpc() AND expose 'app' in supabase/config.toml [api].schemas"]},
-    {"n": 13, "type": "audit-fix", "module": "settings/staff invite", "tests_added": 9, "lessons": ["auth.admin.inviteUserByEmail does NOT accept app_metadata. Use createUser({app_metadata: {...}}) then generateLink({type: 'invite'}). The link_auth_user_to_actor trigger requires app_metadata.tenant_id at INSERT time on auth.users — without it the trigger raises auth_user_created_without_tenant_id."]},
-    {"n": 15, "type": "audit-fix", "module": "shared/db/postgrest", "tests_added": 6, "lessons": ["PostgREST .or() with template-string concatenation is filter-injection prone. encodeURIComponent does NOT escape parens (RFC 3986 unreserved) — use explicit char map for ,():"]}
+    {
+      "n": 1,
+      "module": "crm/companies",
+      "commit": "054b4dd",
+      "tests": 11
+    },
+    {
+      "n": 2,
+      "module": "crm/contacts",
+      "tests": 10,
+      "lessons": [
+        "Zod .default() fills partials \u2014 use .optional() + ?? in action body"
+      ]
+    },
+    {
+      "n": 3,
+      "module": "crm/activities",
+      "tests": 6
+    },
+    {
+      "n": 4,
+      "module": "tags",
+      "tests": 10
+    },
+    {
+      "n": 5,
+      "module": "jobs",
+      "tests": 11,
+      "lessons": [
+        "app schema RPCs not in generated types \u2014 narrow-cast the rpc call",
+        "production_status REVOKE means schema must explicitly exclude it from update partials AND defense-in-depth strip at runtime"
+      ]
+    },
+    {
+      "n": 6,
+      "module": "timeline",
+      "tests": 5,
+      "lessons": [
+        "server-only package throws on import \u2014 vitest needs an alias to a no-op stub; Next.js still resolves the real one via react-server export condition"
+      ]
+    },
+    {
+      "n": 7,
+      "module": "dashboard",
+      "tests": 7,
+      "lessons": [
+        "Schema column names matter \u2014 workstations.last_activity_at not last_heartbeat_at"
+      ]
+    },
+    {
+      "n": 8,
+      "module": "portal",
+      "tests": 7
+    },
+    {
+      "n": 9,
+      "module": "scanning (lifecycle only)",
+      "tests": 8,
+      "scope_notes": "PIN + record_scan_event wait for Phase 3 migrations"
+    },
+    {
+      "n": 10,
+      "module": "settings (staff + shop_settings)",
+      "tests": 15,
+      "lessons": [
+        "shop_settings lock invariant tested explicitly \u2014 timezone/currency/job_number_prefix cannot change after first job"
+      ]
+    },
+    {
+      "n": 12,
+      "type": "audit-fix",
+      "module": "rpc routing",
+      "tests_modified": 19,
+      "lessons": [
+        "supabase.rpc(name) defaults to public schema regardless of where the function actually lives \u2014 must use .schema('app').rpc() AND expose 'app' in supabase/config.toml [api].schemas"
+      ]
+    },
+    {
+      "n": 13,
+      "type": "audit-fix",
+      "module": "settings/staff invite",
+      "tests_added": 9,
+      "lessons": [
+        "auth.admin.inviteUserByEmail does NOT accept app_metadata. Use createUser({app_metadata: {...}}) then generateLink({type: 'invite'}). The link_auth_user_to_actor trigger requires app_metadata.tenant_id at INSERT time on auth.users \u2014 without it the trigger raises auth_user_created_without_tenant_id."
+      ]
+    },
+    {
+      "n": 15,
+      "type": "audit-fix",
+      "module": "shared/db/postgrest",
+      "tests_added": 6,
+      "lessons": [
+        "PostgREST .or() with template-string concatenation is filter-injection prone. encodeURIComponent does NOT escape parens (RFC 3986 unreserved) \u2014 use explicit char map for ,():"
+      ]
+    },
+    {
+      "n": 16,
+      "module": "e2e/jobs-crud",
+      "commit": "40e94ea",
+      "tests": 5,
+      "scope_notes": "Playwright E2E (Chromium) \u2014 list/create/detail/edit/packet lifecycle in describe.serial; auth fixture with E2E_STAFF_EMAIL/PASSWORD env vars",
+      "lessons": [
+        "vitest exclude override loses defaults \u2014 must spread configDefaults.exclude before adding tests/e2e/** or zod's own tests in node_modules get collected (saw 2039-test run before fix)",
+        "Office sign-in fixture: page.waitForURL('**/dashboard') is the right success signal \u2014 sign-in action redirects to '/' which the office shell forwards to '/dashboard' via requireOfficeStaff",
+        "Brief-A 'safe parallel' files: tests/e2e/**, playwright.config.ts, vitest.config.ts (additive only), .gitignore (additive only) \u2014 no src/** writes keeps the brief composable with companies/portal briefs running concurrently"
+      ]
+    }
   ],
   "patterns": [
-    "Server Action template: 'use server' → Zod safeParse → require* guard → getCurrentClaims (if needed) → createClient → typed insert/update → logAuditEvent → return narrow row",
-    "Query template: import 'server-only' → Zod parse → require* guard → createClient → chained .from().select().eq().order().range() → throw on .error → return data ?? []",
-    "Test template: vi.mock the four shared deps (db/server, db/admin, auth-helpers, audit) → typed chain mock or makeChain helper for awaitable builders → use RFC4122 v4 UUIDs in fixtures",
+    "Server Action template: 'use server' \u2192 Zod safeParse \u2192 require* guard \u2192 getCurrentClaims (if needed) \u2192 createClient \u2192 typed insert/update \u2192 logAuditEvent \u2192 return narrow row",
+    "Query template: import 'server-only' \u2192 Zod parse \u2192 require* guard \u2192 createClient \u2192 chained .from().select().eq().order().range() \u2192 throw on .error \u2192 return data ?? []",
+    "Test template: vi.mock the four shared deps (db/server, db/admin, auth-helpers, audit) \u2192 typed chain mock or makeChain helper for awaitable builders \u2192 use RFC4122 v4 UUIDs in fixtures",
     "Module index.ts re-exports actions + queries + their input/output types",
-    "RPC routing template: createClient → (supabase as unknown as {schema: ...}).schema('app') → .rpc<TResult, TArgs>(fn, args). Generic type defaults TArgs=void must be specified explicitly when passing args.",
-    "Staff invite template: insert app row → admin.createUser({app_metadata: {tenant_id, intended_actor}}) → admin.generateLink({type: 'invite'}) → roll back app row only if createUser fails; never roll back if generateLink fails (auth user already exists).",
-    "User-input search template: Zod-validate q (max length) → escapeForOr(q) before embedding in .or() template strings"
+    "RPC routing template: createClient \u2192 (supabase as unknown as {schema: ...}).schema('app') \u2192 .rpc<TResult, TArgs>(fn, args). Generic type defaults TArgs=void must be specified explicitly when passing args.",
+    "Staff invite template: insert app row \u2192 admin.createUser({app_metadata: {tenant_id, intended_actor}}) \u2192 admin.generateLink({type: 'invite'}) \u2192 roll back app row only if createUser fails; never roll back if generateLink fails (auth user already exists).",
+    "User-input search template: Zod-validate q (max length) \u2192 escapeForOr(q) before embedding in .or() template strings"
   ],
   "anti_patterns_caught": [
-    "Mocked supabase.rpc/admin tests pass even when the real call path is wrong — assert the mockSchema('app') call shape AND the createUser app_metadata shape, not just that the wrapper returns the expected fixture.",
+    "Mocked supabase.rpc/admin tests pass even when the real call path is wrong \u2014 assert the mockSchema('app') call shape AND the createUser app_metadata shape, not just that the wrapper returns the expected fixture.",
     "Zod .default() inside a schema that's later .partial()'d for update inputs will silently include the default in patch payloads. Use .optional() and apply default in the action body.",
-    "Re-using a module's index.ts edit pattern without Read first — old comment text in scaffolds varies subtly (ATTACH/APPLY vs INVITE/CREATE etc.)."
+    "Re-using a module's index.ts edit pattern without Read first \u2014 old comment text in scaffolds varies subtly (ATTACH/APPLY vs INVITE/CREATE etc.)."
   ]
 }
