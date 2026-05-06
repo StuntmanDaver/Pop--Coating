@@ -82,6 +82,6 @@
     "5. Remaining UI surfaces: dashboard glow-up (counts + recent jobs); /(scan)/* PWA pages; /(portal)/my list (placeholder shipped, full list pending); settings (workstations + staff + shop_settings); company archive/unarchive UI once an unarchive path lands. companies CRUD shipped cycle 18 (brief 01, 8987da9).",
     "6. Playwright E2E coverage for jobs CRUD flow (create → list → detail → edit → packet print) — landed cycle 16 (brief 03, 40e94ea); add E2E coverage for companies CRUD + portal /my/[jobId] in a follow-up brief.",
     "7. Decide on legacy popsindustrial.com aliases — currently still attached to prod deployment as redirects",
-    "8. Parallel-route reconciliation brief — (office)/(portal)/root all duplicate page.tsx + sign-in resolution paths; pnpm build remains blocked. Decide host-split-only model OR collapse to universal pages with proxy.ts host detection. See pops_app_build.md memory."
+    "8. RESOLVED 2026-05-06 — parallel-route conflict cleaned up via Loki brief-03 follow-up. Five untracked duplicate files deleted: (office)/page.tsx, (office)/sign-in/page.tsx, (portal)/page.tsx, (portal)/sign-in/page.tsx, (portal)/jobs/page.tsx. Backups at /tmp/pops-untracked-deletion-20260506-103053. pnpm build SUCCESS — 20 routes built clean. Architecture decision: keep the host-aware single-file pattern at app/page.tsx + app/sign-in/page.tsx (branches on host.startsWith('track.')) — App Router route groups can't host-split because they don't see request context."
   ]
 }
