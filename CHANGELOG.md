@@ -4,6 +4,15 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### Infra / Turbopack Fix — Vercel Build Restored (2026-05-06)
+
+- **Turbopack root cause identified and fixed properly** (commit `63819b6`). The previous session's `--no-turbo` workaround was itself broken — `--no-turbo` is not a valid flag in Next.js 16 (`error: unknown option '--no-turbo'`), so every Vercel deployment had been failing immediately before the build even ran.
+- **Root cause:** `src/modules/scanning/actions/lookup.ts` had `export type { LookupJobByPacketTokenInput, ScannedJob } from '../queries/lookup'`. Turbopack follows `export type { }` re-exports across `'use server'` boundaries into the source module (`queries/lookup.ts`), which has `import 'server-only'` → `@/shared/db/server` → `next/headers`. Webpack does not follow this chain, so local builds were green while Vercel (Turbopack) failed.
+- **Fix:** Moved `LookupJobByPacketTokenInput` and `ScannedJob` to the side-effect-free `src/modules/scanning/types.ts` (same pattern as `ShopEmployeeTile`). Updated `queries/lookup.ts` to import types from `../types`; removed the cross-boundary re-export from `actions/lookup.ts`; barrel now sources both types from `./types` directly alongside `ShopEmployeeTile`.
+- **Vercel build command cleared** via API PATCH — `buildCommand` reset to `null` (Vercel default), removing the invalid `next build --no-turbo` override.
+- **Verified:** `pnpm build` passes with Turbopack (Next.js 16 default). New production deploy triggered on `main` (`63819b6`), building cleanly.
+- **Pattern extended:** Module barrels must source types from a side-effect-free `types.ts` — never via `export type { T } from './queries/some-server-only-file'`, even through a `'use server'` intermediary. Turbopack traces `export type` statically before any boundary enforcement.
+
 ### App / Scan PWA — Shop Floor UI (2026-05-06)
 
 - **`/scan/*` PWA fully shipped** (Loki brief 05, 5 commits, `e16bbae`–`0b9d902`). The QR scan loop — the core value proposition of the platform — is now a shippable touch-optimized PWA for enrolled iPads. 213 vitest tests passing (28 files); `pnpm build` green.
