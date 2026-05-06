@@ -4,6 +4,19 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### App / Office UI — Companies CRUD (2026-05-06)
+
+- **`/(office)/companies/*` shipped** (Loki brief 01, RARV cycle 18, commit `8987da9`). Mirrors the jobs CRUD pattern exactly so the two surfaces stay structurally identical and easy to reason about side-by-side. UI-only — the CRM module API and its 27 vitest tests already existed; this brief built the staff-facing pages on top.
+  - **List** (`/companies`) — server component with `q` (matches `name` via `.ilike`, single column so no `escapeForOr` needed) and `include_archived` checkbox filters. Empty state links to `/companies/new`. Native `<table>` with name / phone / email / status columns.
+  - **Create** (`/companies/new`) — server-component wrapper renders `<NewCompanyForm />`. Form uses `useActionState(createCompanyFromForm)` posting `FormData` keyed to match the Zod schema in `src/modules/crm/actions/companies.ts`, redirects to detail on success.
+  - **Detail** (`/companies/[id]`) — two-column layout: contact info + shipping/billing address cards on the left, inline contacts list (via `listContacts({ company_id })`) on the right. Empty state for "no contacts on file yet". `notFound()` guard for missing IDs. Edit button links to `/companies/[id]/edit`.
+  - **Edit** (`/companies/[id]/edit`) — partial-update via the `assignIfDefined` bridge pattern — only fields the user actually entered are sent to `updateCompany`. Same shared `<CompanyFormFields />` from the create form, defaults populated from `getCompanyById`.
+  - **Shared `CompanyFormFields`** under `_components/` — three sections (Customer details / Shipping address / Billing address / Notes) with field names matching the Zod schema 1:1 so a `FormData` round-trip reconstructs `CreateCompanyInput`/`UpdateCompanyInput` cleanly. State+ZIP rendered as a 2-column sub-grid for visual rhythm.
+- **Hard constraints respected:** no shadcn primitives added, no module edits, no nav-link change in `(office)/layout.tsx`, no `getSession()` calls, RLS via the `@/modules/crm` barrel only. `archiveCompany` deferred — it's one-way (no unarchive method) and shipping a destructive button without an undo violates the "no irreversible actions" hygiene.
+- **Verified** via `pnpm tsc --noEmit` (clean) and `pnpm test --run` (161/161, zero regressions). `pnpm build` remains blocked on pre-existing parallel-route conflicts in operator-WIP `(office)/page.tsx` + `(office)/sign-in/` + `(portal)/page.tsx` + `(portal)/sign-in/` + `(portal)/jobs/`; that block predates this brief and needs a dedicated reconciliation brief (see `next_session_pickup` item 8 in `.loki/state/orchestrator.json`).
+- **Compound learning** appended to `.loki/memory/timeline.json` cycle 18: typedRoutes manifest regen timing on newly created routes (cast `as Route` as the cheap fallback when the route isn't yet in the manifest); `mv source1 source2 dest_dir/` silently overwrites when sources share a basename (recovered the lost `(office)/page.tsx` via mem-search obs `#16016`); `email: z.string().email().nullish()` rejects empty string so `formDataString` must convert `""` to `null`/`undefined`.
+- Loki state synced: `tasksCompleted` 21 → 22, `atomic_commits_this_session` 21 → 22, `files_created` 59 → 68, four new entries in `ui_surfaces_built`. State commit `ff15b1b`.
+
 ### Website / Accessibility + Content (2026-05-05)
 
 - **Homepage gained four new sections** mapped from a competitive UX/UI audit (`nationalcoatingsinc.com`):
