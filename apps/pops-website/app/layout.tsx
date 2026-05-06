@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${display.variable} ${text.variable}`}>
-      <body className="font-text">{children}</body>
+      <body className="font-text" suppressHydrationWarning>{children}</body>
     </html>
   );
 }
