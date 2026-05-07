@@ -28,6 +28,8 @@ export default function ContactPage() {
           heading="Contact"
           lede="Reach us by phone, email, or the form below. We respond within one business day."
           primaryCta={{ label: "Call us: 863.644.7473", href: "tel:8636447473" }}
+          secondaryCta={{ label: "Request a quote", href: "/request-a-quote" }}
+          stackPrimaryActions
           backgroundImage="/images/slide-01.jpg"
         />
 

@@ -5,6 +5,7 @@ import { useId } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { EyebrowLabel } from "./eyebrow";
+import { HeroIntro } from "./hero-intro";
 
 type HeroCta = {
   label: string;
@@ -17,6 +18,13 @@ type HeroProps = {
   lede?: string;
   primaryCta: HeroCta;
   secondaryCta?: HeroCta;
+  /**
+   * When set with `secondaryCta`, keeps both actions in a vertical stack (including on large screens)
+   * and styles the second button like the first — e.g. Call + Request a quote on Contact.
+   */
+  stackPrimaryActions?: boolean;
+  /** When true, headline and CTAs ease in on first paint (home page). */
+  animateCopyOnLoad?: boolean;
   backgroundImage: string;
   backgroundAlt?: string;
   className?: string;
@@ -28,11 +36,57 @@ export function Hero({
   lede,
   primaryCta,
   secondaryCta,
+  stackPrimaryActions = false,
+  animateCopyOnLoad = false,
   backgroundImage,
   backgroundAlt = "",
   className,
 }: HeroProps) {
   const headingId = useId();
+
+  const copy = (
+    <>
+      <div className="mb-6 h-px w-16 bg-gradient-to-r from-pops-yellow-500 to-transparent md:mb-8 md:w-24" />
+      <EyebrowLabel className="mb-4 tracking-[0.14em] md:mb-5">{eyebrow}</EyebrowLabel>
+      <h1
+        id={headingId}
+        className="font-display text-[2.5rem] leading-[0.98] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[4.75rem]"
+      >
+        {heading}
+      </h1>
+      {lede ? (
+        <p className="mt-6 max-w-2xl font-text text-base leading-relaxed text-ink-100 md:mt-8 md:text-lg md:leading-relaxed">
+          {lede}
+        </p>
+      ) : null}
+      <div
+        className={cn(
+          "mt-10 flex flex-col gap-4 sm:mt-12",
+          stackPrimaryActions && secondaryCta
+            ? "items-stretch sm:max-w-md sm:items-stretch"
+            : "sm:flex-row sm:flex-wrap sm:items-center",
+        )}
+      >
+        <Button asChild variant="primary" size="default" className="min-h-12 px-8 text-base">
+          <Link href={primaryCta.href}>{primaryCta.label}</Link>
+        </Button>
+        {secondaryCta ? (
+          <Button
+            asChild
+            variant={stackPrimaryActions ? "primary" : "secondary"}
+            size="default"
+            className={cn(
+              "min-h-12 px-8 text-base",
+              !stackPrimaryActions && "border-pops-yellow-500/50",
+            )}
+          >
+            <Link href={secondaryCta.href}>{secondaryCta.label}</Link>
+          </Button>
+        ) : null}
+      </div>
+    </>
+  );
+
   return (
     <section
       aria-labelledby={headingId}
@@ -79,31 +133,7 @@ export function Hero({
       />
 
       <div className="relative z-10 mx-auto flex min-h-[85vh] w-full max-w-[1280px] flex-col justify-start px-6 pb-16 pt-20 md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:px-8 lg:pt-28">
-        <div className="max-w-4xl">
-          <div className="mb-6 h-px w-16 bg-gradient-to-r from-pops-yellow-500 to-transparent md:mb-8 md:w-24" />
-          <EyebrowLabel className="mb-4 tracking-[0.14em] md:mb-5">{eyebrow}</EyebrowLabel>
-          <h1
-            id={headingId}
-            className="font-display text-[2.5rem] leading-[0.98] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[4.75rem]"
-          >
-            {heading}
-          </h1>
-          {lede ? (
-            <p className="mt-6 max-w-2xl font-text text-base leading-relaxed text-ink-100 md:mt-8 md:text-lg md:leading-relaxed">
-              {lede}
-            </p>
-          ) : null}
-          <div className="mt-10 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center">
-            <Button asChild variant="primary" size="default" className="min-h-12 px-8 text-base">
-              <Link href={primaryCta.href}>{primaryCta.label}</Link>
-            </Button>
-            {secondaryCta ? (
-              <Button asChild variant="secondary" size="default" className="min-h-12 border-pops-yellow-500/50 px-8 text-base">
-                <Link href={secondaryCta.href}>{secondaryCta.label}</Link>
-              </Button>
-            ) : null}
-          </div>
-        </div>
+        {animateCopyOnLoad ? <HeroIntro>{copy}</HeroIntro> : <div className="max-w-4xl">{copy}</div>}
       </div>
 
       {/* Bottom transition into next section */}

@@ -95,6 +95,7 @@ export default function HomePage() {
           lede="Powder Coating, Abrasive Blasting, Wet Paint, Complex Coatings, and Large Capacity Powder Coatings."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           secondaryCta={{ label: "See our work", href: "/industrial-coatings-services" }}
+          animateCopyOnLoad
           backgroundImage="/images/slide-01.jpg"
         />
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, type Variants } from "motion/react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 type BlurFadeProps = {
   children: ReactNode;
@@ -27,6 +27,9 @@ type BlurFadeProps = {
  * or `whileInView` because both have a regression in motion v12 +
  * Next.js 16 (Turbopack) + React 19 where the in-view callback never
  * resolves and elements stay stuck at opacity 0.
+ *
+ * Mitigations: `useLayoutEffect` precheck (already in viewport → show now),
+ * plus a ~2.8s fail-safe so content never stays hidden if IO misbehaves.
  */
 export function BlurFade({
   children,
@@ -43,14 +46,30 @@ export function BlurFade({
   const [isInView, setIsInView] = useState(!inView);
   const prefersReducedMotion = useReducedMotion();
 
-  useEffect(() => {
+  /** If any part of the node overlaps the viewport (generous margin), treat as visible immediately. */
+  const precheckIntersectsViewport = (node: HTMLElement) => {
+    const r = node.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    return r.bottom > -80 && r.top < vh + 80 && r.right > -80 && r.left < vw + 80;
+  };
+
+  useLayoutEffect(() => {
     if (!inView) return;
     const node = ref.current;
     if (!node) return;
+    if (typeof window === "undefined") return;
+
     if (typeof IntersectionObserver === "undefined") {
       setIsInView(true);
       return;
     }
+
+    if (precheckIntersectsViewport(node)) {
+      setIsInView(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
@@ -61,7 +80,16 @@ export function BlurFade({
       { rootMargin: inViewMargin },
     );
     observer.observe(node);
-    return () => observer.disconnect();
+
+    const failSafe = window.setTimeout(() => {
+      setIsInView(true);
+      observer.disconnect();
+    }, 2800);
+
+    return () => {
+      window.clearTimeout(failSafe);
+      observer.disconnect();
+    };
   }, [inView, inViewMargin]);
 
   const defaultVariants: Variants = {
