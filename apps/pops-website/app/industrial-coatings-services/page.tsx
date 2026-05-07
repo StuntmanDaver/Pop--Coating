@@ -27,7 +27,7 @@ const SERVICES = [
   {
     name: "Complex Coating",
     lede: "We offer extensive technical knowledge and adept handling of complex coating systems to meet all unique challenges.",
-    image: "/images/industrial-complex-coatings-1.jpg",
+    image: "/images/complex-gallery-main.png",
     href: "/industrial-coatings-services/complex-coating",
     alt: "Complex industrial coating and baking services at Pop's Industrial Coatings",
   },

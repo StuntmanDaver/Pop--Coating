@@ -22,12 +22,15 @@ export function ServiceTile({
   className,
 }: ServiceTileProps) {
   return (
-    <Card interactive className={cn("overflow-hidden p-0", className)}>
+    <Card
+      interactive
+      className={cn("overflow-hidden border-transparent bg-transparent p-0 shadow-none", className)}
+    >
       <Link
         href={href}
         className="group block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
-        <div className="relative aspect-[16/10] overflow-hidden bg-ink-800">
+        <div className="relative aspect-[16/10] overflow-hidden">
           <Image
             src={image}
             alt={alt}
