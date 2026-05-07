@@ -1,4 +1,3 @@
-import { requireShopStaff } from '@/shared/auth-helpers/require'
 import { getCurrentClaims } from '@/shared/auth-helpers/claims'
 import { createClient } from '@/shared/db/server'
 import { listShopEmployees } from '@/modules/scanning/queries/employees'
@@ -12,25 +11,30 @@ interface WorkstationRow {
   physical_location: string | null
 }
 
-export default async function ScanPage() {
-  await requireShopStaff()
-  const claims = await getCurrentClaims()
+function NotEnrolled() {
+  return (
+    <main className="flex min-h-screen items-center justify-center p-8">
+      <div className="max-w-sm text-center">
+        <h1 className="mb-3 text-2xl font-bold">iPad Not Enrolled</h1>
+        <p className="text-zinc-400">
+          Visit <span className="font-mono text-zinc-300">/scan/enroll</span> with the
+          token from your shop admin to register this iPad.
+        </p>
+      </div>
+    </main>
+  )
+}
 
-  if (!claims.workstation_id) {
-    return (
-      <main className="flex min-h-screen items-center justify-center p-8">
-        <div className="max-w-sm text-center">
-          <h1 className="mb-3 text-2xl font-bold">iPad Not Enrolled</h1>
-          <p className="text-zinc-400">
-            Visit <span className="font-mono text-zinc-300">/scan/enroll</span> with the
-            token from your shop admin to register this iPad.
-          </p>
-        </div>
-      </main>
-    )
+export default async function ScanPage() {
+  const supabase = await createClient()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user || user.app_metadata?.audience !== 'staff_shop') {
+    return <NotEnrolled />
   }
 
-  const supabase = await createClient()
+  const claims = await getCurrentClaims()
+  if (!claims.workstation_id) return <NotEnrolled />
+
   const { data: workstation, error } = await supabase
     .from('workstations')
     .select('id, name, version, default_stage, physical_location')
