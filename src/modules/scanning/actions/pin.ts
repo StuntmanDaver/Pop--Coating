@@ -13,17 +13,6 @@ import { getCurrentClaims } from '@/shared/auth-helpers/claims'
 // function runs SECURITY DEFINER server-side, so the workstation JWT context
 // is enough.
 
-type AppSchemaRpc = {
-  rpc: <TResult, TArgs = void>(
-    fn: string,
-    args?: TArgs
-  ) => Promise<{ data: TResult | null; error: { message: string } | null }>
-}
-
-function appSchema(supabase: unknown): AppSchemaRpc {
-  return (supabase as { schema: (name: string) => AppSchemaRpc }).schema('app')
-}
-
 const ValidatePinSchema = z.object({
   employee_id: z.string().uuid(),
   pin: z.string().min(4).max(16),
@@ -38,13 +27,17 @@ export type ValidatePinResult =
   | { ok: false; reason: 'locked'; until: string }
   | { ok: false; reason: 'invalid_pin'; attempts_remaining: number }
 
-interface RawPinResult {
-  ok: boolean
-  reason?: string
-  employee_id?: string
-  until?: string
-  attempts_remaining?: number
-}
+const RawPinResultSchema = z.union([
+  z.object({ ok: z.literal(true), employee_id: z.string().uuid() }),
+  z.object({ ok: z.literal(false), reason: z.literal('tenant_mismatch') }),
+  z.object({ ok: z.literal(false), reason: z.literal('inactive') }),
+  z.object({ ok: z.literal(false), reason: z.literal('locked'), until: z.string() }),
+  z.object({
+    ok: z.literal(false),
+    reason: z.literal('invalid_pin'),
+    attempts_remaining: z.number().int().nonnegative().default(0),
+  }),
+])
 
 export async function validateEmployeePin(input: unknown): Promise<ValidatePinResult> {
   const parsed = ValidatePinSchema.safeParse(input)
@@ -54,10 +47,7 @@ export async function validateEmployeePin(input: unknown): Promise<ValidatePinRe
   const claims = await getCurrentClaims()
   const supabase = await createClient()
 
-  const { data, error } = await appSchema(supabase).rpc<
-    RawPinResult,
-    { p_tenant_id: string; p_employee_id: string; p_pin: string }
-  >('validate_employee_pin', {
+  const { data, error } = await supabase.schema('app').rpc('validate_employee_pin', {
     p_tenant_id: claims.tenant_id,
     p_employee_id: parsed.data.employee_id,
     p_pin: parsed.data.pin,
@@ -66,25 +56,10 @@ export async function validateEmployeePin(input: unknown): Promise<ValidatePinRe
   if (error) throw new Error(`PIN validation failed: ${error.message}`)
   if (!data) throw new Error('PIN validation returned no result')
 
-  if (data.ok && data.employee_id) {
-    return { ok: true, employee_id: data.employee_id }
+  const narrowed = RawPinResultSchema.safeParse(data)
+  if (!narrowed.success) {
+    throw new Error(`PIN validation returned unrecognized result: ${JSON.stringify(data)}`)
   }
-  if (!data.ok) {
-    switch (data.reason) {
-      case 'tenant_mismatch':
-        return { ok: false, reason: 'tenant_mismatch' }
-      case 'inactive':
-        return { ok: false, reason: 'inactive' }
-      case 'locked':
-        if (!data.until) throw new Error('PIN locked result missing until timestamp')
-        return { ok: false, reason: 'locked', until: data.until }
-      case 'invalid_pin':
-        return {
-          ok: false,
-          reason: 'invalid_pin',
-          attempts_remaining: data.attempts_remaining ?? 0,
-        }
-    }
-  }
-  throw new Error(`PIN validation returned unrecognized result: ${JSON.stringify(data)}`)
+
+  return narrowed.data
 }

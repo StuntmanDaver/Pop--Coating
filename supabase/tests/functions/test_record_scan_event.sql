@@ -29,62 +29,62 @@ SELECT plan(13);
 
 -- Tenant A (caller's tenant)
 INSERT INTO tenants (id, name, slug) VALUES
-  ('rr000000-0000-0000-0000-000000000001'::uuid, 'Scan Test Tenant A', 'scan-test-a')
+  ('dd000000-0000-0000-0000-000000000001'::uuid, 'Scan Test Tenant A', 'scan-test-a')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO shop_settings (tenant_id, tablet_inactivity_hours) VALUES
-  ('rr000000-0000-0000-0000-000000000001'::uuid, 4)
+  ('dd000000-0000-0000-0000-000000000001'::uuid, 4)
 ON CONFLICT (tenant_id) DO NOTHING;
 
 -- Tenant B (for cross-tenant test)
 INSERT INTO tenants (id, name, slug) VALUES
-  ('rr000000-0000-0000-0000-000000000002'::uuid, 'Scan Test Tenant B', 'scan-test-b')
+  ('dd000000-0000-0000-0000-000000000002'::uuid, 'Scan Test Tenant B', 'scan-test-b')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO shop_settings (tenant_id, tablet_inactivity_hours) VALUES
-  ('rr000000-0000-0000-0000-000000000002'::uuid, 4)
+  ('dd000000-0000-0000-0000-000000000002'::uuid, 4)
 ON CONFLICT (tenant_id) DO NOTHING;
 
 -- Staff (office role → audience staff_office, sufficient for record_scan_event)
 INSERT INTO staff (id, tenant_id, email, name, role) VALUES
-  ('rr001000-0000-0000-0000-000000000001'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
+  ('dd001000-0000-0000-0000-000000000001'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
    'scanner@scan-test.example', 'Scan Test Staff', 'admin')
 ON CONFLICT (id) DO NOTHING;
 
 -- Customer (for authorization rejection test)
 INSERT INTO companies (id, tenant_id, name) VALUES
-  ('rr004000-0000-0000-0000-000000000001'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid, 'Scan Test Co')
+  ('dd004000-0000-0000-0000-000000000001'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid, 'Scan Test Co')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO customer_users (id, tenant_id, company_id, email, name) VALUES
-  ('rr005000-0000-0000-0000-000000000001'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
-   'rr004000-0000-0000-0000-000000000001'::uuid,
+  ('dd005000-0000-0000-0000-000000000001'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
+   'dd004000-0000-0000-0000-000000000001'::uuid,
    'cust@scan-test.example', 'Scan Test Customer')
 ON CONFLICT (id) DO NOTHING;
 
 -- Shop employee (tenant A)
 INSERT INTO shop_employees (id, tenant_id, display_name, pin_hash) VALUES
-  ('rr002000-0000-0000-0000-000000000001'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
-   'Scanner Employee', crypt('0000', gen_salt('bf', 4)))
+  ('dd002000-0000-0000-0000-000000000001'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
+   'Scanner Employee', extensions.crypt('0000', extensions.gen_salt('bf', 4)))
 ON CONFLICT (id) DO NOTHING;
 
 -- Workstation (tenant A)
 INSERT INTO workstations (id, tenant_id, name, device_token) VALUES
-  ('rr003000-0000-0000-0000-000000000001'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
+  ('dd003000-0000-0000-0000-000000000001'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
    'Scan Workstation', 'rr-scan-ws-device-token-0001')
 ON CONFLICT (id) DO NOTHING;
 
 -- Job A: in_production, production_status=received — happy path transition to 'prep'
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, production_status) VALUES
-  ('rr006000-0000-0000-0000-000000000001'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
-   'rr004000-0000-0000-0000-000000000001'::uuid,
+  ('dd006000-0000-0000-0000-000000000001'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
+   'dd004000-0000-0000-0000-000000000001'::uuid,
    'Scan Job A', 'rrscan001tok', 'RR-2026-00001',
    'in_production', 'received')
 ON CONFLICT (id) DO NOTHING;
@@ -92,9 +92,9 @@ ON CONFLICT (id) DO NOTHING;
 -- Job B: scheduled (intake_status) — verifies promotion to in_production on scan
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, production_status) VALUES
-  ('rr006000-0000-0000-0000-000000000002'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
-   'rr004000-0000-0000-0000-000000000001'::uuid,
+  ('dd006000-0000-0000-0000-000000000002'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
+   'dd004000-0000-0000-0000-000000000001'::uuid,
    'Scan Job B', 'rrscan002tok', 'RR-2026-00002',
    'scheduled', NULL)
 ON CONFLICT (id) DO NOTHING;
@@ -102,9 +102,9 @@ ON CONFLICT (id) DO NOTHING;
 -- Job C: in_production, production_status=qc — for picked_up_at stamp test
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, production_status) VALUES
-  ('rr006000-0000-0000-0000-000000000003'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
-   'rr004000-0000-0000-0000-000000000001'::uuid,
+  ('dd006000-0000-0000-0000-000000000003'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
+   'dd004000-0000-0000-0000-000000000001'::uuid,
    'Scan Job C', 'rrscan003tok', 'RR-2026-00003',
    'in_production', 'qc')
 ON CONFLICT (id) DO NOTHING;
@@ -112,9 +112,9 @@ ON CONFLICT (id) DO NOTHING;
 -- Job D: already has picked_up_at set — verifies idempotency guard
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, production_status, picked_up_at) VALUES
-  ('rr006000-0000-0000-0000-000000000004'::uuid,
-   'rr000000-0000-0000-0000-000000000001'::uuid,
-   'rr004000-0000-0000-0000-000000000001'::uuid,
+  ('dd006000-0000-0000-0000-000000000004'::uuid,
+   'dd000000-0000-0000-0000-000000000001'::uuid,
+   'dd004000-0000-0000-0000-000000000001'::uuid,
    'Scan Job D', 'rrscan004tok', 'RR-2026-00004',
    'in_production', 'completed',
    '2026-01-01 12:00:00+00'::timestamptz)
@@ -122,16 +122,16 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Tenant B company (required FK for the cross-tenant job)
 INSERT INTO companies (id, tenant_id, name) VALUES
-  ('rr004000-0000-0000-0000-000000000002'::uuid,
-   'rr000000-0000-0000-0000-000000000002'::uuid, 'Scan Test Co B')
+  ('dd004000-0000-0000-0000-000000000002'::uuid,
+   'dd000000-0000-0000-0000-000000000002'::uuid, 'Scan Test Co B')
 ON CONFLICT (id) DO NOTHING;
 
 -- Cross-tenant job (tenant B) — for access_denied cross-tenant test
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, production_status) VALUES
-  ('rr006000-0000-0000-0000-000000000005'::uuid,
-   'rr000000-0000-0000-0000-000000000002'::uuid,
-   'rr004000-0000-0000-0000-000000000002'::uuid,
+  ('dd006000-0000-0000-0000-000000000005'::uuid,
+   'dd000000-0000-0000-0000-000000000002'::uuid,
+   'dd004000-0000-0000-0000-000000000002'::uuid,
    'Scan Job E (cross-tenant)', 'rrscan005tok', 'RR-2026-00005',
    'in_production', 'received')
 ON CONFLICT (id) DO NOTHING;
@@ -148,10 +148,10 @@ SELECT set_jwt_anon();
 
 SELECT throws_ok(
   $$SELECT app.record_scan_event(
-      'rr006000-0000-0000-0000-000000000001'::uuid,
+      'dd006000-0000-0000-0000-000000000001'::uuid,
       'prep',
-      'rr002000-0000-0000-0000-000000000001'::uuid,
-      'rr003000-0000-0000-0000-000000000001'::uuid
+      'dd002000-0000-0000-0000-000000000001'::uuid,
+      'dd003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
   'access_denied: scan requires staff session',
@@ -161,14 +161,14 @@ SELECT throws_ok(
 -- ============================================================
 -- Test 2: Customer JWT → access_denied
 -- ============================================================
-SELECT set_jwt_for_customer('rr005000-0000-0000-0000-000000000001'::uuid);
+SELECT set_jwt_for_customer('dd005000-0000-0000-0000-000000000001'::uuid);
 
 SELECT throws_ok(
   $$SELECT app.record_scan_event(
-      'rr006000-0000-0000-0000-000000000001'::uuid,
+      'dd006000-0000-0000-0000-000000000001'::uuid,
       'prep',
-      'rr002000-0000-0000-0000-000000000001'::uuid,
-      'rr003000-0000-0000-0000-000000000001'::uuid
+      'dd002000-0000-0000-0000-000000000001'::uuid,
+      'dd003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
   'access_denied: scan requires staff session',
@@ -176,17 +176,17 @@ SELECT throws_ok(
 );
 
 -- Switch to office staff for remaining tests
-SELECT set_jwt_for_staff('rr001000-0000-0000-0000-000000000001'::uuid);
+SELECT set_jwt_for_staff('dd001000-0000-0000-0000-000000000001'::uuid);
 
 -- ============================================================
 -- Test 3: Invalid to_status
 -- ============================================================
 SELECT throws_ok(
   $$SELECT app.record_scan_event(
-      'rr006000-0000-0000-0000-000000000001'::uuid,
+      'dd006000-0000-0000-0000-000000000001'::uuid,
       'invalid_stage',
-      'rr002000-0000-0000-0000-000000000001'::uuid,
-      'rr003000-0000-0000-0000-000000000001'::uuid
+      'dd002000-0000-0000-0000-000000000001'::uuid,
+      'dd003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
   NULL,
@@ -200,8 +200,8 @@ SELECT throws_ok(
   $$SELECT app.record_scan_event(
       '00000000-0000-0000-0000-000000000099'::uuid,
       'prep',
-      'rr002000-0000-0000-0000-000000000001'::uuid,
-      'rr003000-0000-0000-0000-000000000001'::uuid
+      'dd002000-0000-0000-0000-000000000001'::uuid,
+      'dd003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
   'job_not_found',
@@ -213,10 +213,10 @@ SELECT throws_ok(
 -- ============================================================
 SELECT throws_ok(
   $$SELECT app.record_scan_event(
-      'rr006000-0000-0000-0000-000000000005'::uuid,  -- tenant B's job
+      'dd006000-0000-0000-0000-000000000005'::uuid,  -- tenant B's job
       'prep',
-      'rr002000-0000-0000-0000-000000000001'::uuid,
-      'rr003000-0000-0000-0000-000000000001'::uuid
+      'dd002000-0000-0000-0000-000000000001'::uuid,
+      'dd003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
   'access_denied: cross-tenant scan blocked',
@@ -228,10 +228,10 @@ SELECT throws_ok(
 -- ============================================================
 SELECT throws_ok(
   $$SELECT app.record_scan_event(
-      'rr006000-0000-0000-0000-000000000001'::uuid,
+      'dd006000-0000-0000-0000-000000000001'::uuid,
       'prep',
       '00000000-0000-0000-0000-000000000099'::uuid,  -- nonexistent employee
-      'rr003000-0000-0000-0000-000000000001'::uuid
+      'dd003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
   'employee_not_found',
@@ -243,9 +243,9 @@ SELECT throws_ok(
 -- ============================================================
 SELECT throws_ok(
   $$SELECT app.record_scan_event(
-      'rr006000-0000-0000-0000-000000000001'::uuid,
+      'dd006000-0000-0000-0000-000000000001'::uuid,
       'prep',
-      'rr002000-0000-0000-0000-000000000001'::uuid,
+      'dd002000-0000-0000-0000-000000000001'::uuid,
       '00000000-0000-0000-0000-000000000099'::uuid  -- nonexistent workstation
     )$$,
   'P0001',
@@ -259,10 +259,10 @@ SELECT throws_ok(
 -- ============================================================
 SELECT isnt(
   app.record_scan_event(
-    'rr006000-0000-0000-0000-000000000001'::uuid,
+    'dd006000-0000-0000-0000-000000000001'::uuid,
     'prep',
-    'rr002000-0000-0000-0000-000000000001'::uuid,
-    'rr003000-0000-0000-0000-000000000001'::uuid
+    'dd002000-0000-0000-0000-000000000001'::uuid,
+    'dd003000-0000-0000-0000-000000000001'::uuid
   ),
   NULL,
   'record_scan_event: happy path returns non-null event UUID'
@@ -270,27 +270,27 @@ SELECT isnt(
 
 -- Additional side-effect calls (no assertions on these — verified via superuser reads below)
 -- Job B scan: scheduled → in_production intake promotion test
-PERFORM app.record_scan_event(
-  'rr006000-0000-0000-0000-000000000002'::uuid,
+SELECT app.record_scan_event(
+  'dd006000-0000-0000-0000-000000000002'::uuid,
   'received',
-  'rr002000-0000-0000-0000-000000000001'::uuid,
-  'rr003000-0000-0000-0000-000000000001'::uuid
+  'dd002000-0000-0000-0000-000000000001'::uuid,
+  'dd003000-0000-0000-0000-000000000001'::uuid
 );
 
 -- Job C scan: qc → picked_up (stamps picked_up_at)
-PERFORM app.record_scan_event(
-  'rr006000-0000-0000-0000-000000000003'::uuid,
+SELECT app.record_scan_event(
+  'dd006000-0000-0000-0000-000000000003'::uuid,
   'picked_up',
-  'rr002000-0000-0000-0000-000000000001'::uuid,
-  'rr003000-0000-0000-0000-000000000001'::uuid
+  'dd002000-0000-0000-0000-000000000001'::uuid,
+  'dd003000-0000-0000-0000-000000000001'::uuid
 );
 
 -- Job D scan: completed → picked_up with existing picked_up_at (idempotency test)
-PERFORM app.record_scan_event(
-  'rr006000-0000-0000-0000-000000000004'::uuid,
+SELECT app.record_scan_event(
+  'dd006000-0000-0000-0000-000000000004'::uuid,
   'picked_up',
-  'rr002000-0000-0000-0000-000000000001'::uuid,
-  'rr003000-0000-0000-0000-000000000001'::uuid
+  'dd002000-0000-0000-0000-000000000001'::uuid,
+  'dd003000-0000-0000-0000-000000000001'::uuid
 );
 
 -- Switch back to superuser to read side effects (bypasses RLS)
@@ -301,7 +301,7 @@ RESET ROLE;
 -- ============================================================
 SELECT is(
   (SELECT to_status FROM job_status_history
-   WHERE job_id = 'rr006000-0000-0000-0000-000000000001'::uuid
+   WHERE job_id = 'dd006000-0000-0000-0000-000000000001'::uuid
    ORDER BY scanned_at DESC LIMIT 1),
   'prep',
   'record_scan_event: job_status_history row records correct to_status'
@@ -312,7 +312,7 @@ SELECT is(
 -- ============================================================
 SELECT is(
   (SELECT production_status FROM jobs
-   WHERE id = 'rr006000-0000-0000-0000-000000000001'::uuid),
+   WHERE id = 'dd006000-0000-0000-0000-000000000001'::uuid),
   'prep',
   'record_scan_event: jobs.production_status updated after scan'
 );
@@ -322,7 +322,7 @@ SELECT is(
 -- ============================================================
 SELECT is(
   (SELECT intake_status FROM jobs
-   WHERE id = 'rr006000-0000-0000-0000-000000000002'::uuid),
+   WHERE id = 'dd006000-0000-0000-0000-000000000002'::uuid),
   'in_production',
   'record_scan_event: first scan promotes intake_status from scheduled to in_production'
 );
@@ -332,7 +332,7 @@ SELECT is(
 -- ============================================================
 SELECT isnt(
   (SELECT picked_up_at FROM jobs
-   WHERE id = 'rr006000-0000-0000-0000-000000000003'::uuid),
+   WHERE id = 'dd006000-0000-0000-0000-000000000003'::uuid),
   NULL,
   'record_scan_event: picked_up scan stamps picked_up_at'
 );
@@ -344,7 +344,7 @@ SELECT isnt(
 -- ============================================================
 SELECT is(
   (SELECT picked_up_at FROM jobs
-   WHERE id = 'rr006000-0000-0000-0000-000000000004'::uuid),
+   WHERE id = 'dd006000-0000-0000-0000-000000000004'::uuid),
   '2026-01-01 12:00:00+00'::timestamptz,
   'record_scan_event: picked_up_at not overwritten on subsequent picked_up scan'
 );

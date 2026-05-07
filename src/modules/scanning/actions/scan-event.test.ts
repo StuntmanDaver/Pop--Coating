@@ -53,17 +53,16 @@ describe('recordScanEvent', () => {
     expect(result).toEqual({ event_id: EVENT_ID, job_id: JOB_ID, to_status: 'coating' })
   })
 
-  it('passes nulls when notes + attachment_id omitted', async () => {
+  it('omits optional args when notes + attachment_id are absent', async () => {
     await recordScanEvent({
       job_id: JOB_ID,
       to_status: 'received',
       employee_id: EMP_ID,
       workstation_id: WS_ID,
     })
-    expect(mockRpc).toHaveBeenCalledWith('record_scan_event', expect.objectContaining({
-      p_notes: null,
-      p_attachment_id: null,
-    }))
+    const call = mockRpc.mock.calls[0]?.[1] as Record<string, unknown> | undefined
+    expect(call).not.toHaveProperty('p_notes')
+    expect(call).not.toHaveProperty('p_attachment_id')
   })
 
   it('rejects invalid to_status (catches before RPC call)', async () => {

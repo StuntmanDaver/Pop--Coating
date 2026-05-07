@@ -30,24 +30,24 @@ SELECT plan(10);
 -- ============================================================
 
 INSERT INTO tenants (id, name, slug) VALUES
-  ('tt000000-0000-0000-0000-000000000001'::uuid, 'Trigger Test Tenant', 'trigger-test')
+  ('7e000000-0000-0000-0000-000000000001'::uuid, 'Trigger Test Tenant', 'trigger-test')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO shop_settings (tenant_id, tablet_inactivity_hours) VALUES
-  ('tt000000-0000-0000-0000-000000000001'::uuid, 4)
+  ('7e000000-0000-0000-0000-000000000001'::uuid, 4)
 ON CONFLICT (tenant_id) DO NOTHING;
 
 INSERT INTO companies (id, tenant_id, name) VALUES
-  ('tt004000-0000-0000-0000-000000000001'::uuid,
-   'tt000000-0000-0000-0000-000000000001'::uuid, 'Trigger Test Co')
+  ('7e004000-0000-0000-0000-000000000001'::uuid,
+   '7e000000-0000-0000-0000-000000000001'::uuid, 'Trigger Test Co')
 ON CONFLICT (id) DO NOTHING;
 
 -- Job 1: main job for printed-field + loop-guard tests; starts packet_dirty=false
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, packet_dirty) VALUES
-  ('tt006000-0000-0000-0000-000000000001'::uuid,
-   'tt000000-0000-0000-0000-000000000001'::uuid,
-   'tt004000-0000-0000-0000-000000000001'::uuid,
+  ('7e006000-0000-0000-0000-000000000001'::uuid,
+   '7e000000-0000-0000-0000-000000000001'::uuid,
+   '7e004000-0000-0000-0000-000000000001'::uuid,
    'Original Job Name', 'tttrig001tok', 'TT-2026-00001',
    'draft', false)
 ON CONFLICT (id) DO NOTHING;
@@ -55,9 +55,9 @@ ON CONFLICT (id) DO NOTHING;
 -- Job 2: for non-printed-field and production_status tests; starts packet_dirty=false
 INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
                   intake_status, packet_dirty) VALUES
-  ('tt006000-0000-0000-0000-000000000002'::uuid,
-   'tt000000-0000-0000-0000-000000000001'::uuid,
-   'tt004000-0000-0000-0000-000000000001'::uuid,
+  ('7e006000-0000-0000-0000-000000000002'::uuid,
+   '7e000000-0000-0000-0000-000000000001'::uuid,
+   '7e004000-0000-0000-0000-000000000001'::uuid,
    'Non-Printed Job', 'tttrig002tok', 'TT-2026-00002',
    'draft', false)
 ON CONFLICT (id) DO NOTHING;
@@ -70,65 +70,65 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================
 
 -- ─── Test 1: job_name ──────────────────────────────────────
-UPDATE jobs SET job_name = 'New Job Name' WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET job_name = 'New Job Name' WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating job_name sets packet_dirty=true'
 );
 -- Reset via loop guard (only packet_dirty changes → trigger passes through)
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 
 -- ─── Test 2: color ────────────────────────────────────────
-UPDATE jobs SET color = 'Powder Blue' WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET color = 'Powder Blue' WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating color sets packet_dirty=true'
 );
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 
 -- ─── Test 3: coating_type ────────────────────────────────
-UPDATE jobs SET coating_type = 'epoxy' WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET coating_type = 'epoxy' WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating coating_type sets packet_dirty=true'
 );
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 
 -- ─── Test 4: part_count ──────────────────────────────────
-UPDATE jobs SET part_count = 42 WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET part_count = 42 WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating part_count sets packet_dirty=true'
 );
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 
 -- ─── Test 5: due_date ────────────────────────────────────
-UPDATE jobs SET due_date = '2026-12-31' WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET due_date = '2026-12-31' WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating due_date sets packet_dirty=true'
 );
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 
 -- ─── Test 6: priority ────────────────────────────────────
-UPDATE jobs SET priority = 'rush' WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET priority = 'rush' WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating priority sets packet_dirty=true'
 );
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 
 -- ─── Test 7: job_number ──────────────────────────────────
 UPDATE jobs SET job_number = 'TT-2026-00001-R'
-  WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+  WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating job_number sets packet_dirty=true'
 );
@@ -139,9 +139,9 @@ SELECT is(
 -- An UPDATE that changes ONLY packet_dirty must pass through
 -- unchanged (the packets module clears the flag this way).
 -- ============================================================
-UPDATE jobs SET packet_dirty = false WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid;
+UPDATE jobs SET packet_dirty = false WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000001'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000001'::uuid),
   false,
   'trigger: loop guard — only packet_dirty change passes through (stays false)'
 );
@@ -150,9 +150,9 @@ SELECT is(
 -- Test 9: Non-printed field update (notes) does NOT set packet_dirty
 -- Job 2 starts with packet_dirty=false; updating notes alone should not dirty it.
 -- ============================================================
-UPDATE jobs SET notes = 'some notes' WHERE id = 'tt006000-0000-0000-0000-000000000002'::uuid;
+UPDATE jobs SET notes = 'some notes' WHERE id = '7e006000-0000-0000-0000-000000000002'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000002'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000002'::uuid),
   false,
   'trigger: updating notes (non-printed field) does NOT set packet_dirty'
 );
@@ -163,9 +163,9 @@ SELECT is(
 -- are intentionally excluded from the printed-fields list.
 -- ============================================================
 UPDATE jobs SET production_status = 'received', intake_status = 'in_production'
-  WHERE id = 'tt006000-0000-0000-0000-000000000002'::uuid;
+  WHERE id = '7e006000-0000-0000-0000-000000000002'::uuid;
 SELECT is(
-  (SELECT packet_dirty FROM jobs WHERE id = 'tt006000-0000-0000-0000-000000000002'::uuid),
+  (SELECT packet_dirty FROM jobs WHERE id = '7e006000-0000-0000-0000-000000000002'::uuid),
   false,
   'trigger: production_status/intake_status update does NOT set packet_dirty'
 );

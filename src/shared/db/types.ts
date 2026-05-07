@@ -12,6 +12,59 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  app: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      audience: { Args: never; Returns: string }
+      can_user_access_attachment_path: {
+        Args: { p_path: string }
+        Returns: boolean
+      }
+      claim_workstation: {
+        Args: {
+          p_employee_id: string
+          p_expected_version: number
+          p_workstation_id: string
+        }
+        Returns: Json
+      }
+      company_id: { Args: never; Returns: string }
+      custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      next_job_number: { Args: never; Returns: string }
+      record_scan_event: {
+        Args: {
+          p_attachment_id?: string
+          p_employee_id: string
+          p_job_id: string
+          p_notes?: string
+          p_to_status: string
+          p_workstation_id: string
+        }
+        Returns: string
+      }
+      record_workstation_heartbeat: { Args: never; Returns: undefined }
+      release_workstation: { Args: never; Returns: undefined }
+      role: { Args: never; Returns: string }
+      staff_id: { Args: never; Returns: string }
+      tenant_id: { Args: never; Returns: string }
+      validate_employee_pin: {
+        Args: { p_employee_id: string; p_pin: string; p_tenant_id: string }
+        Returns: Json
+      }
+      workstation_id: { Args: never; Returns: string }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       activities: {
@@ -1131,6 +1184,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  app: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

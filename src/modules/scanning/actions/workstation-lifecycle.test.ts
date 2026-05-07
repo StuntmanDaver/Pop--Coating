@@ -24,7 +24,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   ;(requireShopStaff as ReturnType<typeof vi.fn>).mockResolvedValue({ id: 'shop-user' })
   ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ schema: mockSchema })
-  mockRpc.mockResolvedValue({ data: { ok: true, new_version: 1 }, error: null })
+  mockRpc.mockResolvedValue({ data: { ok: true, version: 1 }, error: null })
 })
 
 describe('claimWorkstation', () => {
@@ -42,8 +42,8 @@ describe('claimWorkstation', () => {
       p_employee_id: EMP_ID,
       p_expected_version: 0,
     })
-    expect(result.ok).toBe(true)
-    expect(result.new_version).toBe(1)
+    if (!result.ok) throw new Error('Expected workstation claim to succeed')
+    expect(result.version).toBe(1)
   })
 
   it('rejects bad UUIDs', async () => {

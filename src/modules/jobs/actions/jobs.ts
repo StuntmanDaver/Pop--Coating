@@ -81,17 +81,10 @@ export async function createJob(input: unknown): Promise<JobRow> {
 
   // Step 1: get atomic tenant-scoped job_number from server-side RPC.
   // app.next_job_number lives in the `app` schema. supabase.rpc() defaults to public,
-  // so we route via .schema('app') (sends Accept-Profile: app to PostgREST). The `app`
-  // schema is exposed in supabase/config.toml and granted USAGE in migration 0012.
-  // Database type only emits the public schema; cast .schema() through unknown.
-  const appSchema = (supabase as unknown as {
-    schema: (name: string) => {
-      rpc: (
-        fn: string
-      ) => Promise<{ data: string | null; error: { message: string } | null }>
-    }
-  }).schema('app')
-  const { data: jobNumber, error: numberError } = await appSchema.rpc('next_job_number')
+  // so we route via .schema('app') (sends Accept-Profile: app to PostgREST).
+  const { data: jobNumber, error: numberError } = await supabase
+    .schema('app')
+    .rpc('next_job_number')
   if (numberError || !jobNumber) {
     throw new Error(`Job number generation failed: ${numberError?.message ?? 'unknown'}`)
   }
@@ -102,7 +95,7 @@ export async function createJob(input: unknown): Promise<JobRow> {
     .from('jobs')
     .insert({
       tenant_id: claims.tenant_id,
-      job_number: jobNumber as string,
+      job_number: jobNumber,
       packet_token,
       company_id: parsed.data.company_id,
       contact_id: parsed.data.contact_id ?? null,
