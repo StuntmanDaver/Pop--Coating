@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../../../components/layout/container";
@@ -8,6 +7,7 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { PhotoGalleryLightbox } from "../../../components/marketing/photo-gallery-lightbox";
 import { JsonLd } from "../../../components/seo/json-ld";
 import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Serving Lakeland Polk County FL, Pop's provided complex coating services; corrosion resistant tank liners, baked coatings, multiple component coatings & more",
   openGraph: {
-    images: [{ url: "/images/industrial-complex-coatings-1.jpg" }],
+    images: [{ url: "/images/complex-gallery-1.png" }],
   },
 };
 
@@ -26,6 +26,41 @@ const OTHER_SERVICES = [
   { name: "Abrasive Media Blasting", href: "/industrial-coatings-services/abrasive-media-blasting" },
   { name: "Powder Coating", href: "/industrial-coatings-services/powder-coating" },
   { name: "Large Capacity Coatings", href: "/industrial-coatings-services/large-capacity-powder-coating" },
+];
+
+const GALLERY = [
+  {
+    src: "/images/complex-gallery-1.png",
+    alt: "Complex industrial coating project at Pop's Industrial Coatings, Lakeland FL",
+  },
+  {
+    src: "/images/complex-gallery-2.png",
+    alt: "Large primed industrial shaft assembly in process at Pop's coating facility",
+  },
+  {
+    src: "/images/complex-gallery-3.png",
+    alt: "Precision-coated industrial gearbox housings suspended for finishing",
+  },
+  {
+    src: "/images/complex-gallery-4.png",
+    alt: "Large coated industrial platform frame prepared for field use",
+  },
+  {
+    src: "/images/complex-gallery-5.png",
+    alt: "White-coated elevated industrial structure with platform roofing",
+  },
+  {
+    src: "/images/complex-gallery-6.png",
+    alt: "Large white coated industrial pressure vessel in shop bay",
+  },
+  {
+    src: "/images/complex-gallery-7.png",
+    alt: "Set of coated industrial fan housings staged for assembly",
+  },
+  {
+    src: "/images/complex-gallery-8.png",
+    alt: "Complex red-coated industrial modules loaded on flatbed trailer",
+  },
 ];
 
 export default function ComplexCoatingPage() {
@@ -45,7 +80,7 @@ export default function ComplexCoatingPage() {
           heading="Complex Coating"
           lede="Specialty tank lining, baked coatings, and plural component coatings for the most demanding industrial applications."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          backgroundImage="/images/industrial-complex-coatings-1.jpg"
+          backgroundImage="/images/complex-gallery-1.png"
         />
 
         <Section tone="dark">
@@ -59,14 +94,13 @@ export default function ComplexCoatingPage() {
                   Complex Industrial Projects
                 </h2>
 
-                <div className="mb-8 relative aspect-[16/9] overflow-hidden rounded-sm bg-ink-800 sm:aspect-[16/7]">
-                  <Image
-                    src="/images/industrial-complex-coatings-1.jpg"
-                    alt="Complex industrial coating project at Pop's Industrial Coatings, Lakeland FL"
-                    fill
-                    sizes="(min-width: 1024px) 60vw, 100vw"
-                    className="object-contain object-center"
-                    priority
+                <div className="mb-8">
+                  <PhotoGalleryLightbox
+                    className="grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                    itemClassName="aspect-[4/3] rounded-lg"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    imageClassName="object-cover"
+                    photos={GALLERY}
                   />
                 </div>
 

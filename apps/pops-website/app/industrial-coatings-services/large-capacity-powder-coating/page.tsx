@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../../../components/layout/container";
@@ -8,6 +7,7 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { PhotoGalleryLightbox } from "../../../components/marketing/photo-gallery-lightbox";
 import { JsonLd } from "../../../components/seo/json-ld";
 import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
@@ -30,16 +30,40 @@ const OTHER_SERVICES = [
 
 const GALLERY = [
   {
-    src: "/images/large-capacity-powder-coating.jpg",
-    alt: "Large capacity coatings oven at Pop's Industrial Coatings, Lakeland FL — accommodating oversized industrial components",
+    src: "/images/large-capacity-gallery-1.png",
+    alt: "Large white coated industrial component secured between support frames",
   },
   {
-    src: "/images/large-capacity-industrial-powder-coating-scaled.jpeg",
-    alt: "Large scale coatings work at Pop's Industrial Coatings facility in Lakeland, FL",
+    src: "/images/large-capacity-gallery-2.png",
+    alt: "Long white truss component coated and staged on transport rack",
   },
   {
-    src: "/images/large-capacity-industrial-powder-coating2-scaled.jpeg",
-    alt: "Oversized structural components receiving industrial coatings at Pop's Industrial Coatings",
+    src: "/images/large-capacity-gallery-3.png",
+    alt: "Bright yellow coated industrial structure hanging on the finishing line",
+  },
+  {
+    src: "/images/large-capacity-gallery-4.png",
+    alt: "White coated heavy steel component hanging for final finish",
+  },
+  {
+    src: "/images/large-capacity-gallery-5.png",
+    alt: "Large industrial beam section coated in gray and staged outdoors",
+  },
+  {
+    src: "/images/large-capacity-gallery-6.png",
+    alt: "White coated truss loaded on trailer ready for delivery",
+  },
+  {
+    src: "/images/large-capacity-gallery-7.png",
+    alt: "Multiple large coated truss assemblies secured on flatbed trailer",
+  },
+  {
+    src: "/images/large-capacity-gallery-8.png",
+    alt: "White coated industrial assembly suspended on conveyor outside booth",
+  },
+  {
+    src: "/images/large-capacity-gallery-9.png",
+    alt: "Long truss structures with metallic finish hanging in industrial booth",
   },
 ];
 
@@ -89,22 +113,19 @@ export default function LargeCapacityPowderCoatingPage() {
                   </p>
                 </div>
 
-                {/* Photo grid */}
-                <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {GALLERY.map((photo) => (
-                    <div
-                      key={photo.src}
-                      className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800"
-                    >
-                      <Image
-                        src={photo.src}
-                        alt={photo.alt}
-                        fill
-                        sizes="(min-width: 640px) 33vw, 100vw"
-                        className="object-contain object-center"
-                      />
-                    </div>
-                  ))}
+                {/* Photo gallery */}
+                <div className="mt-12">
+                  <div className="mb-4 flex items-end justify-between">
+                    <h3 className="font-display text-xl text-ink-100">Large Capacity Project Gallery</h3>
+                    <p className="font-text text-sm text-ink-300">Tap any photo to enlarge</p>
+                  </div>
+                  <PhotoGalleryLightbox
+                    photos={GALLERY}
+                    className="grid-cols-3 gap-5"
+                    itemClassName="rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-28px_rgba(250,179,0,0.6)]"
+                    imageClassName="object-contain"
+                    sizes="33vw"
+                  />
                 </div>
 
                 <div className="mt-10">

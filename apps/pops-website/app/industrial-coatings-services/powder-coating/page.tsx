@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../../../components/layout/container";
@@ -8,6 +7,7 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { PhotoGalleryLightbox } from "../../../components/marketing/photo-gallery-lightbox";
 import { JsonLd } from "../../../components/seo/json-ld";
 import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
@@ -30,28 +30,36 @@ const OTHER_SERVICES = [
 
 const GALLERY = [
   {
-    src: "/images/powder-coat-gallery-poles-before-after.png",
-    width: 576,
-    height: 1024,
-    alt: "Steel poles before powder coating (galvanized) and after a glossy black powder coat finish — Pop's Industrial Coatings, Lakeland FL",
+    src: "/images/powder-gallery-1.png",
+    alt: "Large cream powder-coated overhead gantry installed over a roadway",
   },
   {
-    src: "/images/powder-coat-gallery-toll-gantry.png",
-    width: 1024,
-    height: 768,
-    alt: "Large highway toll and ITS gantry with tan powder-coated steel structure — Pop's Industrial Coatings",
+    src: "/images/powder-gallery-4.png",
+    alt: "Black powder-coated truck wheels hanging in finishing line",
   },
   {
-    src: "/images/powder-coat-gallery-boat-transformation.png",
-    width: 576,
-    height: 1024,
-    alt: "Vessel structure before refinishing, after abrasive blasting, and finished in blue powder coat — Pop's Industrial Coatings",
+    src: "/images/powder-gallery-5.png",
+    alt: "Matte black powder-coated metal parts hanging for cure",
   },
   {
-    src: "/images/powder-coat-gallery-large-frame-cream.png",
-    width: 768,
-    height: 1024,
-    alt: "Large industrial truss powder coated in smooth off-white, suspended for curing — Pop's Industrial Coatings, Lakeland FL",
+    src: "/images/powder-gallery-6.png",
+    alt: "Bright yellow powder-coated industrial components on overhead line",
+  },
+  {
+    src: "/images/powder-gallery-7.png",
+    alt: "Color-gradient powder-coated decorative metal chair",
+  },
+  {
+    src: "/images/powder-gallery-8.png",
+    alt: "Bright orange powder-coated slats hanging on conveyor line",
+  },
+  {
+    src: "/images/powder-gallery-9.png",
+    alt: "Glossy green powder-coated industrial steel table frame",
+  },
+  {
+    src: "/images/powder-gallery-10.png",
+    alt: "White powder-coated industrial truss assembly staged outdoors at Pop's facility",
   },
 ] as const;
 
@@ -101,25 +109,19 @@ export default function PowderCoatingPage() {
                   </p>
                 </div>
 
-                {/* Photo grid — object-contain so tall before/after composites are fully visible */}
-                <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
-                  {GALLERY.map((photo) => (
-                    <figure
-                      key={photo.src}
-                      className="overflow-hidden rounded-sm border border-pops-yellow-500/20 bg-ink-900/50"
-                    >
-                      <div className="flex w-full items-center justify-center p-3 sm:p-4">
-                        <Image
-                          src={photo.src}
-                          alt={photo.alt}
-                          width={photo.width}
-                          height={photo.height}
-                          sizes="(min-width: 768px) 45vw, 100vw"
-                          className="h-auto w-full max-h-[min(90vh,56rem)] object-contain"
-                        />
-                      </div>
-                    </figure>
-                  ))}
+                {/* Photo gallery */}
+                <div className="mt-12">
+                  <div className="mb-4 flex items-end justify-between">
+                    <h3 className="font-display text-xl text-ink-100">Recent Powder Coating Work</h3>
+                    <p className="font-text text-sm text-ink-300">Tap any photo to enlarge</p>
+                  </div>
+                  <PhotoGalleryLightbox
+                    className="grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    photos={GALLERY}
+                    itemClassName="rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-28px_rgba(250,179,0,0.6)]"
+                    imageClassName="object-cover"
+                  />
                 </div>
 
                 <div className="mt-10">
