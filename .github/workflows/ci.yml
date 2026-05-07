@@ -116,7 +116,12 @@ jobs:
               --project-ref "$SUPABASE_PROJECT_REF" \
               -o json > /tmp/supabase-branch.json
 
-            SUPABASE_DB_URL="$(jq -r '.db_url // .POSTGRES_URL_NON_POOLING // .POSTGRES_URL // empty' /tmp/supabase-branch.json)"
+            # GitHub-hosted runners do not have IPv6 egress, while Supabase's
+            # direct branch host is IPv6-only. Use the session pooler for CI;
+            # the transaction pooler on 6543 can leak pgTAP plan state across
+            # test files, so switch the pooler URL to session mode on 5432.
+            SESSION_POOLER_URL="$(jq -r '.POSTGRES_URL // empty' /tmp/supabase-branch.json | sed -E 's/:6543\//:5432\//')"
+            SUPABASE_DB_URL="${SESSION_POOLER_URL:-$(jq -r '.db_url // .POSTGRES_URL_NON_POOLING // empty' /tmp/supabase-branch.json)}"
             BRANCH_STATUS="$(jq -r '.preview_project_status // .status // "connection-info-ready"' /tmp/supabase-branch.json)"
 
             if [ -n "$SUPABASE_DB_URL" ]; then
