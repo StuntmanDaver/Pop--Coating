@@ -16,3 +16,5 @@ export type {
 
 export { getCustomerVisibleTimeline } from '@/modules/timeline'
 export type { TimelineEvent } from '@/modules/timeline'
+
+export { PortalJobsList, PortalJobDetailView } from './components/portal-jobs'
