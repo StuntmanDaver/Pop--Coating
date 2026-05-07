@@ -4,3 +4,5 @@
 
 export { getDashboardCounts, getRecentJobs, getActiveWorkstations } from './queries/dashboard'
 export type { DashboardCounts, RecentJob, ActiveWorkstation } from './queries/dashboard'
+export { DashboardPage } from './components/dashboard-page'
+export { DashboardLoading } from './components/dashboard-loading'
