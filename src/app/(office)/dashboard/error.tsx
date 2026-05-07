@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import * as Sentry from '@sentry/nextjs'
+import { Button } from '@/shared/ui/button'
 
 export default function DashboardError({
   error,
@@ -16,18 +17,15 @@ export default function DashboardError({
 
   return (
     <div className="space-y-4">
-      <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
-      <div className="rounded-lg border border-dashed border-destructive/30 bg-destructive/5 p-8 text-center">
-        <p className="text-sm text-destructive">
-          Something went wrong loading the dashboard.
-        </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-4 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
+      <header>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Office operations</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Shop dashboard</h1>
+      </header>
+      <div className="rounded-md border border-dashed border-destructive/30 bg-destructive/5 p-8 text-center">
+        <p className="text-sm font-medium text-destructive">Something went wrong loading the dashboard.</p>
+        <Button type="button" variant="outline" className="mt-4" onClick={reset}>
           Try again
-        </button>
+        </Button>
       </div>
     </div>
   )
