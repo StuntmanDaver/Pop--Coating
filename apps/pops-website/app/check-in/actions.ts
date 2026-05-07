@@ -47,7 +47,7 @@ export async function submitCheckIn(
 
   try {
     await sendFormEmail({
-      to: company.emails.info,
+      to: company.emails.formSubmissions,
       subject: `Visitor check-in: ${fullName}${companyName ? ` from ${companyName}` : ""}`,
       html,
       replyTo: email,

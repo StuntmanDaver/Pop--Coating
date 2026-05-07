@@ -1,3 +1,6 @@
+/** General inquiries and every website form delivery (quote, contact, careers, visitor check-in/out). */
+const INFO_EMAIL = "info@popsindustrial.com" as const;
+
 export const company = {
   name: "Pop's Industrial Coatings",
   founded: 1972,
@@ -19,10 +22,15 @@ export const company = {
   phone: "863.644.7473",
   fax: "863.644.5926",
   emails: {
-    info: "info@popsindustrial.com",
+    info: INFO_EMAIL,
     invoices: "invoices@popsindustrial.com",
+    /** Resend `to` address for all web forms — same inbox as `info`. */
+    formSubmissions: INFO_EMAIL,
   },
-  hours: "Monday–Friday 8am–4pm. Saturday & Sunday closed.",
+  hours: {
+    weekdays: "Monday–Friday 8am–4pm",
+    weekendClosed: "Saturday & Sunday closed",
+  },
   tagline: "Four generations of expertise in industrial coatings",
   taglineSecondary: "Your partners for success",
   services: [
@@ -30,7 +38,7 @@ export const company = {
     "Complex Coating",
     "Abrasive Media Blasting",
     "Powder Coating",
-    "Large Capacity Powder Coating",
+    "Large Capacity Coatings",
   ],
 } as const;
 

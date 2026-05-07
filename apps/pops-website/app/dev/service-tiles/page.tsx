@@ -6,7 +6,6 @@ export const metadata = {
 
 const SERVICES = [
   {
-    number: "01",
     name: "Wet Paint Coatings",
     lede: "Industrial liquid coatings for steel, aluminum, and complex assemblies. Specialty primers and topcoats applied in temperature-controlled booths.",
     image: "/images/industrial-painting-lakeland-fl-1024x683-1.jpg",
@@ -14,7 +13,6 @@ const SERVICES = [
     alt: "Industrial painter applying wet paint coating to steel fabrication at Pop's Lakeland facility",
   },
   {
-    number: "02",
     name: "Complex Coating",
     lede: "Multi-stage finishes — blast, prime, intermediate, topcoat — coordinated through a single shop and a single owner. No outside subcontractors.",
     image: "/images/industrial-complex-coatings-1.jpg",
@@ -22,7 +20,6 @@ const SERVICES = [
     alt: "Complex multi-stage coating workflow at Pop's Industrial Coatings",
   },
   {
-    number: "03",
     name: "Abrasive Media Blasting",
     lede: "SSPC-SP surface preparation in-house. Garnet, aluminum oxide, and steel grit available for SP-5 white-metal through SP-7 brush blast.",
     image: "/images/abrasive-media-blasting.jpg",
@@ -30,7 +27,6 @@ const SERVICES = [
     alt: "Abrasive media blasting cabinet preparing steel for industrial coating",
   },
   {
-    number: "04",
     name: "Powder Coating",
     lede: "Electrostatic powder application with full-cure ovens. Durable, chip-resistant finishes for parts up to 25 ft long and 8 ft tall.",
     image: "/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg",
@@ -38,12 +34,11 @@ const SERVICES = [
     alt: "Powder-coated industrial parts cooling on rack after oven cure at Pop's Lakeland facility",
   },
   {
-    number: "05",
-    name: "Large Capacity Powder Coating",
+    name: "Large Capacity Coatings",
     lede: "Central Florida's largest powder oven — line capacity for utility poles, bridge components, and aerospace fixtures.",
     image: "/images/large-capacity-powder-coating.jpg",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
-    alt: "Large-capacity powder coating oven loaded with utility-pole steel components",
+    alt: "Large-capacity coatings oven loaded with utility-pole steel components",
   },
 ];
 
@@ -65,7 +60,7 @@ export default function ServiceTilePreviewPage() {
         <h2 className="font-text text-lg font-semibold">5-up service grid</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {SERVICES.map((s) => (
-            <ServiceTile key={s.number} {...s} />
+            <ServiceTile key={s.href} {...s} />
           ))}
         </div>
       </section>
@@ -74,7 +69,7 @@ export default function ServiceTilePreviewPage() {
         <h2 className="font-text text-lg font-semibold">2-up — tablet density</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {SERVICES.slice(0, 2).map((s) => (
-            <ServiceTile key={s.number} {...s} />
+            <ServiceTile key={s.href} {...s} />
           ))}
         </div>
       </section>

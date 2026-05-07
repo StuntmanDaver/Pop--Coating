@@ -25,7 +25,6 @@ export const metadata: Metadata = {
 
 const SERVICES = [
   {
-    number: "01",
     name: "Wet Paint Coatings",
     lede: "Precision & expertise for industrial wet paint applications.",
     image: "/images/industrial-painting-lakeland-fl-1024x683-1.jpg",
@@ -33,7 +32,6 @@ const SERVICES = [
     alt: "Industrial wet paint coating work at Pop's Industrial Coatings, Lakeland FL",
   },
   {
-    number: "02",
     name: "Complex Coating",
     lede: "Meticulous baking for superior longevity.",
     image: "/images/industrial-complex-coatings-1.jpg",
@@ -41,7 +39,6 @@ const SERVICES = [
     alt: "Complex industrial coating and baking services at Pop's Industrial Coatings",
   },
   {
-    number: "03",
     name: "Abrasive Media Blasting",
     lede: "To rigorous industry standards.",
     image: "/images/abrasive-media-blasting.jpg",
@@ -49,7 +46,6 @@ const SERVICES = [
     alt: "Abrasive media blasting at Pop's Industrial Coatings in Lakeland, FL",
   },
   {
-    number: "04",
     name: "Powder Coating",
     lede: "Elevate durability and appearance.",
     image: "/images/powder-coat-gallery-toll-gantry.png",
@@ -57,20 +53,19 @@ const SERVICES = [
     alt: "Large powder-coated highway toll gantry — Pop's Industrial Coatings, Lakeland FL",
   },
   {
-    number: "05",
-    name: "Large Capacity Powder Coating",
+    name: "Large Capacity Coatings",
     lede: "Tailored for significant scale.",
     image: "/images/large-capacity-powder-coating.jpg",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
-    alt: "Large capacity powder coating at Pop's Industrial Coatings",
+    alt: "Large capacity coatings at Pop's Industrial Coatings",
   },
 ];
 
 const STATS = [
   { label: "Founded",      value: "1972",      detail: "50+ years serving Florida" },
-  { label: "Generations",  value: "4th Gen",   detail: "Family-owned & operated" },
-  { label: "Specialties",  value: "5 Services", detail: "Coating, blasting & more" },
-  { label: "Location",     value: "Lakeland, FL", detail: "Serving all of Polk County" },
+  { label: "Generations",  value: "4th", detail: "Family-owned & operated" },
+  { label: "Specialties",  value: "5+\u00A0Services", detail: "Coating, blasting & more" },
+  { label: "Location",     value: "Lakeland,\u00A0FL", detail: "Serving all of Polk County" },
 ];
 
 // Per-cell border classes for a 2-col (mobile) → 4-col (desktop) grid.
@@ -90,9 +85,11 @@ export default function HomePage() {
 
         {/* ── Hero ── */}
         <Hero
-          eyebrow="FAMILY OWNED · LAKELAND, FL · SINCE 1972"
+          eyebrow={`FAMILY OWNED · LAKELAND,\u00A0FL · SINCE 1972`}
           heading="Serving the industry since 1972."
-          lede="Powder Coating, Abrasive Blasting, Wet Paint, Complex Coatings, and Large Capacity Powder Coatings."
+          headingClassName="whitespace-nowrap text-[clamp(1.625rem,3.2vw+1rem,4.5rem)]"
+          lede="Powder Coating, Abrasive Blasting, Wet Paint, Complex Coatings, and Large Capacity Coatings."
+          ledeClassName="max-w-none text-sm leading-snug text-ink-100 sm:text-base sm:leading-normal md:mt-8 md:whitespace-nowrap"
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           secondaryCta={{ label: "See our work", href: "/industrial-coatings-services" }}
           animateCopyOnLoad
@@ -118,7 +115,7 @@ export default function HomePage() {
                     <p className="font-text text-[10px] font-semibold uppercase tracking-[0.1em] text-pops-yellow-500/90">
                       {label}
                     </p>
-                    <p className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
+                    <p className="pops-text-grad mt-1 whitespace-nowrap font-display text-lg tracking-tight sm:text-2xl md:text-3xl">
                       {value}
                     </p>
                     {detail && (
@@ -134,13 +131,13 @@ export default function HomePage() {
         {/* ── Certification marquee ── */}
         <CertificationMarquee />
 
-        {/* ── Services — numbered rows ── */}
+        {/* ── Services rows ── */}
         <section
-          className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-20 md:py-28"
+          className="pops-section-gold-wash pops-section-gold-wash--no-top-rule py-20 md:py-28"
           aria-labelledby="services-heading"
         >
           <Container className="relative z-10">
-            <div className="mb-12 border-l-4 border-pops-yellow-500 pl-6 md:mb-16 md:pl-8">
+            <div className="mb-12 md:mb-16">
               <EyebrowLabel tone="dark" className="mb-4">
                 OUR SERVICES
               </EyebrowLabel>
@@ -152,11 +149,10 @@ export default function HomePage() {
                 <br className="hidden md:block" /> in industrial coatings
               </h2>
             </div>
-            <div className="rounded-sm ring-1 ring-pops-yellow-500/10">
+            <div className="flex flex-col gap-3 md:gap-4">
               {SERVICES.map((service) => (
                 <ServiceRow key={service.href} {...service} />
               ))}
-              <div className="border-t border-pops-yellow-500/15" aria-hidden="true" />
             </div>
           </Container>
         </section>

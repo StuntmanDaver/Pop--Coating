@@ -18,6 +18,8 @@ type HeroProps = {
   lede?: string;
   primaryCta: HeroCta;
   secondaryCta?: HeroCta;
+  /** Optional third action (e.g. Apply now on Contact), stacked under `secondaryCta` when `stackPrimaryActions`. */
+  tertiaryCta?: HeroCta;
   /**
    * When set with `secondaryCta`, keeps both actions in a vertical stack (including on large screens)
    * and styles the second button like the first — e.g. Call + Request a quote on Contact.
@@ -28,6 +30,10 @@ type HeroProps = {
   backgroundImage: string;
   backgroundAlt?: string;
   className?: string;
+  /** Merged onto the `<h1>` — use for e.g. `whitespace-nowrap` + fluid `text-[clamp(...)]` on the home hero. */
+  headingClassName?: string;
+  /** Merged onto the lede `<p>` when `lede` is set. */
+  ledeClassName?: string;
 };
 
 export function Hero({
@@ -36,11 +42,14 @@ export function Hero({
   lede,
   primaryCta,
   secondaryCta,
+  tertiaryCta,
   stackPrimaryActions = false,
   animateCopyOnLoad = false,
   backgroundImage,
   backgroundAlt = "",
   className,
+  headingClassName,
+  ledeClassName,
 }: HeroProps) {
   const headingId = useId();
 
@@ -50,19 +59,29 @@ export function Hero({
       <EyebrowLabel className="mb-4 tracking-[0.14em] md:mb-5">{eyebrow}</EyebrowLabel>
       <h1
         id={headingId}
-        className="font-display text-[2.5rem] leading-[0.98] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[4.75rem]"
+        className={cn(
+          "font-display leading-[0.98] tracking-tight text-white",
+          headingClassName ??
+            "text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.25rem] xl:text-[4.75rem]",
+        )}
       >
         {heading}
       </h1>
       {lede ? (
-        <p className="mt-6 max-w-2xl font-text text-base leading-relaxed text-ink-100 md:mt-8 md:text-lg md:leading-relaxed">
+        <p
+          className={cn(
+            "mt-6 font-text text-ink-100",
+            ledeClassName ??
+              "max-w-2xl text-base leading-relaxed md:mt-8 md:text-lg md:leading-relaxed",
+          )}
+        >
           {lede}
         </p>
       ) : null}
       <div
         className={cn(
           "mt-10 flex flex-col gap-4 sm:mt-12",
-          stackPrimaryActions && secondaryCta
+          stackPrimaryActions && (secondaryCta ?? tertiaryCta)
             ? "items-stretch sm:max-w-md sm:items-stretch"
             : "sm:flex-row sm:flex-wrap sm:items-center",
         )}
@@ -81,6 +100,19 @@ export function Hero({
             )}
           >
             <Link href={secondaryCta.href}>{secondaryCta.label}</Link>
+          </Button>
+        ) : null}
+        {tertiaryCta ? (
+          <Button
+            asChild
+            variant={stackPrimaryActions ? "primary" : "secondary"}
+            size="default"
+            className={cn(
+              "min-h-12 px-8 text-base",
+              !stackPrimaryActions && "border-pops-yellow-500/50",
+            )}
+          >
+            <Link href={tertiaryCta.href}>{tertiaryCta.label}</Link>
           </Button>
         ) : null}
       </div>

@@ -13,9 +13,9 @@ import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Large Capacity Powder Coating - Lakeland FL Polk County",
+  title: "Large Capacity Coatings - Lakeland FL Polk County",
   description:
-    "Pop's Industrial Coatings offer large scale powder coating processes that ensure uniform coverage & robust protection without compromising quality.",
+    "Pop's Industrial Coatings offers large scale coating processes that ensure uniform coverage and robust protection without compromising quality.",
   openGraph: {
     images: [{ url: "/images/large-capacity-powder-coating.jpg" }],
   },
@@ -31,15 +31,15 @@ const OTHER_SERVICES = [
 const GALLERY = [
   {
     src: "/images/large-capacity-powder-coating.jpg",
-    alt: "Large capacity powder coating oven at Pop's Industrial Coatings, Lakeland FL — accommodating oversized industrial components",
+    alt: "Large capacity coatings oven at Pop's Industrial Coatings, Lakeland FL — accommodating oversized industrial components",
   },
   {
     src: "/images/large-capacity-industrial-powder-coating-scaled.jpeg",
-    alt: "Large scale powder coating work at Pop's Industrial Coatings facility in Lakeland, FL",
+    alt: "Large scale coatings work at Pop's Industrial Coatings facility in Lakeland, FL",
   },
   {
     src: "/images/large-capacity-industrial-powder-coating2-scaled.jpeg",
-    alt: "Oversized structural components receiving powder coating at Pop's Industrial Coatings",
+    alt: "Oversized structural components receiving industrial coatings at Pop's Industrial Coatings",
   },
 ];
 
@@ -48,16 +48,16 @@ export default function LargeCapacityPowderCoatingPage() {
     <>
       <JsonLd
         data={getServiceJsonLd({
-          name: "Large Capacity Powder Coating",
+          name: "Large Capacity Coatings",
           description:
-            "Large-scale powder coating services in Lakeland, FL. Uniform coverage and robust protection for significant size and volume projects.",
+            "Large-scale coating services in Lakeland, FL. Uniform coverage and robust protection for significant size and volume projects.",
         })}
       />
       <Header />
       <main id="content">
         <Hero
           eyebrow="LARGE CAPACITY"
-          heading="Large Capacity Powder Coating"
+          heading="Large Capacity Coatings"
           lede="Uniquely tailored for large scale projects — we efficiently handle significant size and volume without compromising quality."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           backgroundImage="/images/large-capacity-powder-coating.jpg"
@@ -71,21 +71,21 @@ export default function LargeCapacityPowderCoatingPage() {
               <div>
                 <EyebrowLabel className="mb-3">LARGE CAPACITY</EyebrowLabel>
                 <h2 className="mb-6 font-display text-[28px] leading-[1.2] text-ink-100">
-                  Large Capacity Industrial Powder Coating
+                  Large capacity industrial coatings
                 </h2>
                 <div className="space-y-4 font-text text-base leading-relaxed text-ink-100">
                   <p>
-                    Our large capacity powder coating services are tailored for projects of significant
-                    scale. We efficiently handle large volumes while maintaining the same high standards
-                    of quality.
+                    Our large capacity coating services are tailored for projects of significant scale.
+                    We efficiently handle large volumes while maintaining the same high standards of
+                    quality.
                   </p>
                   <p>
-                    From structural members to oversized components, our large capacity powder coating
-                    process ensures uniform coverage, vibrant finishes, and robust protection.
+                    From structural members to oversized components, our large capacity coatings process
+                    ensures uniform coverage, vibrant finishes, and robust protection.
                   </p>
                   <p>
                     Trust us to deliver efficiency without compromising on the superior quality that
-                    defines our powder coating services.
+                    defines our coating services.
                   </p>
                 </div>
 
@@ -121,7 +121,7 @@ export default function LargeCapacityPowderCoatingPage() {
                   <ul className="space-y-1">
                     <li>
                       <span className="block py-2 font-text text-sm font-semibold text-ink-100">
-                        Large Capacity Powder Coating
+                        Large Capacity Coatings
                       </span>
                     </li>
                     {OTHER_SERVICES.map((service) => (

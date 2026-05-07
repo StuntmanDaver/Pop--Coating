@@ -42,7 +42,7 @@ export default function HeroPreviewPage() {
 
         <Hero
           eyebrow="Service · Powder Coating"
-          heading="Large-capacity powder coating built for production runs."
+          heading="Large-capacity coatings built for production runs."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           backgroundImage="/images/bg-main.jpg"
           backgroundAlt=""

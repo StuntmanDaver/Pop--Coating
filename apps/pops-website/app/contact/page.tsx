@@ -28,7 +28,8 @@ export default function ContactPage() {
           heading="Contact"
           lede="Reach us by phone, email, or the form below. We respond within one business day."
           primaryCta={{ label: "Call us: 863.644.7473", href: "tel:8636447473" }}
-          secondaryCta={{ label: "Request a quote", href: "/request-a-quote" }}
+          secondaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
+          tertiaryCta={{ label: "Apply now", href: "/careers" }}
           stackPrimaryActions
           backgroundImage="/images/slide-01.jpg"
         />
@@ -108,7 +109,10 @@ export default function ContactPage() {
                     <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-400">
                       Hours
                     </p>
-                    <span>{company.hours}</span>
+                    <div className="space-y-1">
+                      <p>{company.hours.weekdays}</p>
+                      <p>{company.hours.weekendClosed}</p>
+                    </div>
                   </div>
                 </div>
 

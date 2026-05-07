@@ -64,7 +64,7 @@ export default function FacilitiesEquipmentPage() {
               <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
                 <Image
                   src="/images/large-capacity-powder-coating-270x138-1.png"
-                  alt="Large capacity powder coating oven at Pop's Industrial Coatings"
+                  alt="Large capacity coatings oven at Pop's Industrial Coatings"
                   fill
                   sizes="(min-width: 640px) 25vw, 50vw"
                   className="object-contain p-4"

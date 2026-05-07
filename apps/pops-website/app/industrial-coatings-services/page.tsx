@@ -18,7 +18,6 @@ export const metadata: Metadata = {
 
 const SERVICES = [
   {
-    number: "01",
     name: "Wet Paint Coatings",
     lede: "Our wet paint coatings are applied with precision and expertise, providing a seamless and durable finish to a variety of surfaces.",
     image: "/images/industrial-painting-lakeland-fl-1024x683-1.jpg",
@@ -26,7 +25,6 @@ const SERVICES = [
     alt: "Industrial wet paint coating work at Pop's Industrial Coatings, Lakeland FL",
   },
   {
-    number: "02",
     name: "Complex Coating",
     lede: "We offer extensive technical knowledge and adept handling of complex coating systems to meet all unique challenges.",
     image: "/images/industrial-complex-coatings-1.jpg",
@@ -34,7 +32,6 @@ const SERVICES = [
     alt: "Complex industrial coating and baking services at Pop's Industrial Coatings",
   },
   {
-    number: "03",
     name: "Abrasive Media Blasting",
     lede: "Our skilled professionals and specialized equipment ensure optimal coating adhesion to rigorous SSPC and NACE standards.",
     image: "/images/abrasive-media-blasting.jpg",
@@ -42,7 +39,6 @@ const SERVICES = [
     alt: "Abrasive media blasting at Pop's Industrial Coatings in Lakeland, FL",
   },
   {
-    number: "04",
     name: "Powder Coating",
     lede: "Electrostatic spray process of dry powder cured for a tough, uniform surface with resistance to corrosion, impact and chemicals.",
     image: "/images/powder-coat-gallery-toll-gantry.png",
@@ -50,12 +46,11 @@ const SERVICES = [
     alt: "Large powder-coated highway toll gantry — Pop's Industrial Coatings, Lakeland FL",
   },
   {
-    number: "05",
-    name: "Large Capacity Powder Coating",
+    name: "Large Capacity Coatings",
     lede: "Uniquely tailored for large scale projects, we are skilled and equipped to take on both significant size and volume jobs.",
     image: "/images/large-capacity-powder-coating.jpg",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
-    alt: "Large capacity powder coating at Pop's Industrial Coatings — accommodating the biggest industrial projects",
+    alt: "Large capacity coatings at Pop's Industrial Coatings — accommodating the biggest industrial projects",
   },
 ];
 

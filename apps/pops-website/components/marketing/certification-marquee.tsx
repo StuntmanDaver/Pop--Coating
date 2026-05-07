@@ -1,34 +1,43 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { Marquee } from "../magicui/marquee";
 import { EyebrowLabel } from "./eyebrow";
 
+const STANDARDS_CERTS_PATH = "/request-a-quote/standards-specifications-certifications";
+
 type Cert = {
   src: string;
-  alt: string;
+  /** Shown to screen readers — logo is decorative inside the link. */
+  label: string;
   /** Intrinsic aspect (width / height) — keeps logo proportions inside the rail. */
   width: number;
   height: number;
+  /** In-page anchor on the standards & certifications page. */
+  hash: string;
 };
 
 const CERTS: Cert[] = [
   {
     src: "/images/sspc-accredited-contractor.png",
-    alt: "SSPC Accredited Contractor — AAMP QP-3",
+    label: "SSPC AAMP QP-3 certification — details and certificate",
     width: 200,
     height: 200,
+    hash: "sspc-qp3",
   },
   {
     src: "/images/fdot-logo-color-768x339-1.png",
-    alt: "Florida Department of Transportation Approved",
+    label: "FDOT approval — details and inspection report",
     width: 320,
     height: 141,
+    hash: "fdot-approval",
   },
   {
     src: "/images/lakeland-fl-certified-industrial-coatings.png",
-    alt: "Lakeland, FL Certified Industrial Coatings",
+    label: "Lakeland certified industrial coatings — local credentials",
     width: 240,
     height: 200,
+    hash: "lakeland-certified",
   },
 ];
 
@@ -70,13 +79,19 @@ export function CertificationMarquee() {
                 key={cert.src}
                 className="flex h-20 shrink-0 items-center justify-center sm:h-24"
               >
-                <Image
-                  src={cert.src}
-                  alt={cert.alt}
-                  width={cert.width}
-                  height={cert.height}
-                  className="h-full w-auto rounded-sm border border-pops-yellow-500/20 bg-black/80 p-2 object-contain opacity-90 grayscale transition-[opacity,filter,border-color,box-shadow] duration-300 hover:border-pops-yellow-500 hover:opacity-100 hover:grayscale-0 hover:shadow-[0_0_28px_-6px_rgba(254,205,8,0.35)]"
-                />
+                <Link
+                  href={`${STANDARDS_CERTS_PATH}#${cert.hash}`}
+                  aria-label={cert.label}
+                  className="block h-full rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+                >
+                  <Image
+                    src={cert.src}
+                    alt=""
+                    width={cert.width}
+                    height={cert.height}
+                    className="h-full w-auto rounded-sm border border-pops-yellow-500/20 bg-black/80 p-2 object-contain opacity-90 grayscale transition-[opacity,filter,border-color,box-shadow] duration-300 hover:border-pops-yellow-500 hover:opacity-100 hover:grayscale-0 hover:shadow-[0_0_28px_-6px_rgba(254,205,8,0.35)]"
+                  />
+                </Link>
               </div>
             ))}
           </Marquee>

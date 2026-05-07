@@ -3,10 +3,8 @@ import Link from "next/link";
 
 import { cn } from "../../lib/utils";
 import { Card } from "../ui/card";
-import { EyebrowLabel } from "./eyebrow";
 
 type ServiceTileProps = {
-  number: string;
   name: string;
   lede: string;
   image: string;
@@ -16,7 +14,6 @@ type ServiceTileProps = {
 };
 
 export function ServiceTile({
-  number,
   name,
   lede,
   image,
@@ -40,8 +37,7 @@ export function ServiceTile({
           />
         </div>
         <div className="p-6">
-          <EyebrowLabel>{`Service ${number} / ${name}`}</EyebrowLabel>
-          <h3 className="mt-2 font-text text-lg font-bold leading-tight tracking-tight">
+          <h3 className="font-text text-lg font-bold leading-tight tracking-tight text-pops-yellow-500">
             {name}
           </h3>
           <p className="mt-2 line-clamp-2 font-text text-sm leading-relaxed opacity-80">

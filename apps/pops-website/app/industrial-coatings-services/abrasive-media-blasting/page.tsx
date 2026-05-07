@@ -25,7 +25,7 @@ const OTHER_SERVICES = [
   { name: "Wet Paint Coatings", href: "/industrial-coatings-services/wet-paint-coatings" },
   { name: "Complex Coating", href: "/industrial-coatings-services/complex-coating" },
   { name: "Powder Coating", href: "/industrial-coatings-services/powder-coating" },
-  { name: "Large Capacity Powder Coating", href: "/industrial-coatings-services/large-capacity-powder-coating" },
+  { name: "Large Capacity Coatings", href: "/industrial-coatings-services/large-capacity-powder-coating" },
 ];
 
 const GALLERY = [

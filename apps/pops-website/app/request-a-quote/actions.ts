@@ -98,7 +98,7 @@ export async function submitQuote(
 
   try {
     await sendFormEmail({
-      to: company.emails.info,
+      to: company.emails.formSubmissions,
       subject: `New quote request from ${name}`,
       html,
       replyTo: email,

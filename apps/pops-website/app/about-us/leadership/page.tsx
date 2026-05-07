@@ -7,7 +7,6 @@ import { Footer } from "../../../components/layout/footer";
 import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
-import { Hero } from "../../../components/marketing/hero";
 import { Card } from "../../../components/ui/card";
 
 export const metadata: Metadata = {
@@ -63,32 +62,30 @@ export default function LeadershipPage() {
     <>
       <Header />
       <main id="content">
-        <Hero
-          eyebrow="MEET THE FAMILY"
-          heading="Leadership"
-          lede="Four generations of the Woods family — committed to Pop's legacy of solid coating services and technical knowledge. For us, excellence is a family tradition."
-          primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          backgroundImage="/images/pops-4-generations.jpg"
-          backgroundAlt="Four generations of the Pop's Industrial Coatings family"
-        />
-
-        <Section tone="dark">
+        <Section tone="dark" className="pt-10 pb-16 md:pt-14 md:pb-20">
           <Container>
-            <EyebrowLabel className="mb-4">THE WOODS FAMILY</EyebrowLabel>
-            <h2 className="mb-10 font-display text-[28px] leading-[1.2] text-ink-100">
-              Four generations of leadership
-            </h2>
+            <header className="mb-10 md:mb-14">
+              <EyebrowLabel className="mb-3">MEET THE FAMILY</EyebrowLabel>
+              <h1 className="font-display text-[28px] leading-[1.2] text-ink-100 md:text-[32px]">
+                Leadership
+              </h1>
+              <p className="mt-3 max-w-[720px] font-text text-base leading-relaxed text-ink-300">
+                Four generations of the Woods family — committed to Pop&apos;s legacy of solid
+                coating services and technical knowledge. For us, excellence is a family tradition.
+              </p>
+            </header>
 
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
               {LEADERS.map((leader) => (
                 <Card key={leader.slug} className="overflow-hidden p-0">
-                  <div className="relative aspect-[4/3] overflow-hidden bg-ink-800">
+                  <div className="flex justify-center px-6 pt-6">
                     <Image
                       src={`/images/${leader.slug}-woods-320x480-1.jpg`}
                       alt={leader.photoAlt}
-                      fill
-                      sizes="(min-width: 640px) 50vw, 100vw"
-                      className="object-contain object-top"
+                      width={320}
+                      height={480}
+                      sizes="240px"
+                      className="h-auto w-[240px] max-w-full sm:w-[260px]"
                     />
                   </div>
                   <div className="p-6">

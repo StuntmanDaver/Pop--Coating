@@ -120,7 +120,10 @@ export function Footer() {
                   </a>
                 </li>
               </ul>
-              <p className="text-ink-300">{company.hours}</p>
+              <div className="space-y-1 text-ink-300">
+                <p>{company.hours.weekdays}</p>
+                <p>{company.hours.weekendClosed}</p>
+              </div>
             </div>
           </FooterColumn>
         </div>

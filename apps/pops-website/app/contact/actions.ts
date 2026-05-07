@@ -42,7 +42,7 @@ export async function submitContact(
 
   try {
     await sendFormEmail({
-      to: company.emails.info,
+      to: company.emails.formSubmissions,
       subject: `Contact form from ${name}`,
       html,
       replyTo: email,

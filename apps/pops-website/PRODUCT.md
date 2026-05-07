@@ -30,7 +30,7 @@ brand — this is a marketing/lead-gen site where the design IS the product
 2. Complex Coating
 3. Abrasive Media Blasting
 4. Powder Coating
-5. Large Capacity Powder Coating
+5. Large Capacity Coatings
 
 ## Key Differentiators
 
