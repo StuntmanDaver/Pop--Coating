@@ -11,8 +11,8 @@ Production domain default is `popsindustrial.com`:
 
 - Supabase Authentication JWT expiry is set to `3600` seconds.
 - Supabase Custom Access Token Hook is registered to `app.custom_access_token_hook`.
-- Vercel project is linked under the intended team and production deploy is known.
-- Vercel domains include `app.popsindustrial.com` and `track.popsindustrial.com`; stale `popscoating.com` domains are removed.
+- Vercel project is linked under the intended team and production deploy is known. Current project: `stuntmandavers-projects/pops--coating`.
+- Vercel domains include `app.popsindustrial.com` and `track.popsindustrial.com`; stale `popscoating.com` domains are removed. Current blocker: CLI attach for both canonical aliases is blocked because they are already assigned to another Vercel project and need dashboard reassignment/removal before attachment.
 - Production env vars match the inventory below. Set values only in Vercel, GitHub Actions, Supabase Dashboard, or local `.env.local`; never paste values into docs or terminal output.
 - Resend DNS for `popsindustrial.com` passes DKIM, SPF, and MX verification.
 
@@ -68,6 +68,11 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Applied live Supabase migration `0018_security_and_hot_path_hardening.sql`.
 - Applied live Supabase migration `0019_pgtap_test_schema_usage.sql`.
 - Regenerated `src/shared/db/types.ts` from the linked Supabase schema.
+- Pushed `main` to `origin` through commit `a60e8bc`.
+- Confirmed GitHub Actions secret/variable names without printing values. Added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`; existing names include `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, and `RESEND_API_KEY`.
+- Confirmed Vercel project `stuntmandavers-projects/pops--coating`; latest production deployment is ready, but the project still reports a stale production URL under `app.popscoating.com`.
+- Confirmed Vercel production env names for Supabase, `RESEND_API_KEY`, Upstash Redis/QStash, and canonical app/portal hosts. `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible in the CLI inventory and remain dashboard/env gaps.
+- Attempted to attach `app.popsindustrial.com` and `track.popsindustrial.com`; both are blocked by alias conflicts because they are already assigned to another Vercel project. Do not force-move without confirming the current owning project in the dashboard.
 - Not run: Playwright E2E, because staff E2E credentials were not configured locally.
 - Passed: `supabase test db --linked` (9 files / 82 tests).
 
@@ -83,10 +88,10 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Supabase Dashboard: JWT expiry must be `3600` seconds.
 - Supabase Dashboard: Custom Access Token Hook must point to `app.custom_access_token_hook`.
 - Supabase Dashboard: Custom SMTP must use the verified Resend sender for `popsindustrial.com`.
-- Vercel Dashboard/CLI: production env vars from the inventory must be present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists.
-- Vercel Dashboard/CLI: `app.popsindustrial.com` and `track.popsindustrial.com` must be attached and certificate issuance must be complete.
+- Vercel Dashboard/CLI: production env vars from the inventory must be present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists. Remaining observed gaps: `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
+- Vercel Dashboard/CLI: `app.popsindustrial.com` and `track.popsindustrial.com` must be attached and certificate issuance must be complete. Current blocker: both aliases are already assigned elsewhere and require dashboard reassignment/removal before attachment to `pops--coating`.
 - Resend/DNS registrar: DKIM, SPF, and MX must verify for `popsindustrial.com`.
-- GitHub Actions settings: required CI secret/variable names from the inventory must exist without values stored in-repo.
+- GitHub Actions settings: required CI secret/variable names from the inventory were confirmed on 2026-05-08 without values stored in-repo. Staff/workstation E2E credential secrets remain optional and credential-gated.
 
 ## Sign-Off
 

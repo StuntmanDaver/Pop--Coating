@@ -22,9 +22,9 @@ Canonical production hosts:
 - [ ] Supabase Dashboard: register Custom Access Token Hook to `app.custom_access_token_hook`.
 - [ ] Supabase Dashboard: configure Custom SMTP through Resend.
 - [ ] Resend/DNS registrar: verify DKIM, SPF, and MX for `popsindustrial.com`.
-- [ ] Vercel Dashboard: confirm production project/team and attach `app.popsindustrial.com` and `track.popsindustrial.com`.
-- [ ] Vercel Dashboard: confirm production env vars match `docs/runbooks/phase-1-production-readiness.md` without storing values in-repo.
-- [ ] GitHub Actions: confirm required CI secret/variable names from `docs/runbooks/phase-1-production-readiness.md` without storing values in-repo.
+- [ ] Vercel Dashboard: move or remove the existing aliases for `app.popsindustrial.com` and `track.popsindustrial.com`, then attach them to the `pops--coating` project. CLI attach is blocked because both aliases are already assigned elsewhere.
+- [ ] Vercel Dashboard: set or confirm remaining production env gaps from `docs/runbooks/phase-1-production-readiness.md`. Supabase, Resend API, and Upstash env names were observed; `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible in the CLI inventory.
+- [x] GitHub Actions: required CI secret/variable names from `docs/runbooks/phase-1-production-readiness.md` were confirmed without storing values in-repo; `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` were added for E2E.
 - [x] Local/CI: Docker Desktop available; linked pgTAP passes locally.
 
 ## Parallel Agent Dispatches
