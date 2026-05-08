@@ -18,6 +18,10 @@
 /playwright-report/
 /playwright/.cache/
 /blob-report/
+/.playwright-mcp/
+
+# local screenshots / visual QA scratch artifacts
+/*.png
 
 # next.js
 /.next/
@@ -54,3 +58,5 @@ next-env.d.ts
 
 # Claude Code skill plugins — plugin-managed, not repo content (CLAUDE.md)
 .claude/skills/
+.agents/skills/
+.codex/
