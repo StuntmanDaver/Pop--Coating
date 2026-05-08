@@ -69,7 +69,7 @@ After branch push/sync and all human-only blockers in this table are complete or
 ### Phase 1 gate implementation pass
 
 - Normalized active planning/docs domain references from stale `popscoating.com` to canonical `popsindustrial.com`. Remaining `popscoating.com` mentions are warnings about stale domains or non-domain identifiers such as the `pops-coating` tenant slug/project id.
-- Automated app gates passed locally: `pnpm type-check`, `pnpm lint`, `pnpm test` (34 files / 241 tests), and `pnpm build`.
+- Automated app gates passed locally: `pnpm type-check`, `pnpm lint`, `pnpm test` (34 files / 242 tests), and `pnpm build`.
 - Applied `0018_security_and_hot_path_hardening.sql` to the linked Pops Supabase project with `supabase db push --linked --include-all --yes`; `supabase migration list --linked --debug` showed local and remote `0001` through `0018` aligned.
 - Applied `0019_pgtap_test_schema_usage.sql` and verified local and remote migrations through `0019`.
 - Applied `0020_security_definer_fail_closed.sql` and verified local and remote migrations through `0020`.
@@ -79,4 +79,4 @@ After branch push/sync and all human-only blockers in this table are complete or
 - Vercel project `stuntmandavers-projects/pops--coating` is linked and has ready production deployments, but canonical `app.popsindustrial.com` and `track.popsindustrial.com` cannot be attached until existing aliases are moved/removed from their current Vercel project. The production URL still shows stale `app.popscoating.com`.
 - Vercel CLI env inventory showed Supabase, Resend API, and Upstash Redis/QStash names; `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible and remain gaps.
 - `.env.local` contains most local service variables but does not include `SUPABASE_PROJECT_REF`, `RESEND_WEBHOOK_SECRET`, `E2E_STAFF_EMAIL`, or `E2E_STAFF_PASSWORD`; do not paste values into docs.
-- `scripts/seed-tenant.ts` now generates but does not print the recovery action link; owner setup needs an approved secure handoff path. The live Tenant 1 seed run still needs the owner's real email/name.
+- `scripts/seed-tenant.ts` now generates but does not print the recovery action link; owner setup needs an approved secure handoff path. The script also verifies/repairs seed Auth metadata for owner, customer, and workstation smoke users; domain ownership fails closed; packet QR remains `https://app.popsindustrial.com/scan?packet=<packet_token>`. The live Tenant 1 seed run still needs the owner's real email/name.
