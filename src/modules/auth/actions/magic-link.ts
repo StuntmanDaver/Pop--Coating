@@ -19,8 +19,14 @@ export async function requestCustomerMagicLink(input: unknown): Promise<MagicLin
   const ip = hdrs.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
 
   // Rate limit BUT always return success-shape regardless (anti-enumeration per DESIGN.md §5.5)
-  await magicLinkPerEmailLimiter.limit(parsed.data.email).catch(() => undefined)
-  await magicLinkPerIpLimiter.limit(ip).catch(() => undefined)
+  const [emailLimit, ipLimit] = await Promise.all([
+    magicLinkPerEmailLimiter.limit(parsed.data.email).catch(() => undefined),
+    magicLinkPerIpLimiter.limit(ip).catch(() => undefined),
+  ])
+
+  if (emailLimit?.success === false || ipLimit?.success === false) {
+    return { success: true }
+  }
 
   const supabase = await createClient()
   // shouldCreateUser: false — customer must be pre-provisioned (DESIGN.md §5.5)

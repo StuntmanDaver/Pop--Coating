@@ -8,9 +8,10 @@
     "start": "next start",
     "type-check": "tsc --noEmit",
     "lint": "eslint src && pnpm madge:check",
-    "madge:check": "[ -d src/modules ] && madge --circular src/modules || echo 'src/modules not yet created — skipping circular check'",
+    "madge:check": "out=$(madge --extensions ts,tsx --ts-config tsconfig.json --circular src/modules); echo \"$out\"; echo \"$out\" | grep -Eq 'Processed [1-9][0-9]* files'",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "seed:tenant": "tsx scripts/seed-tenant.ts"
   },
   "dependencies": {

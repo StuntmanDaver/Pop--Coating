@@ -79,6 +79,7 @@ describe('requestCustomerMagicLink', () => {
 
     // Anti-enumeration: must NOT leak rate-limit info
     expect(result).toEqual({ success: true })
+    expect(mockSignInWithOtp).not.toHaveBeenCalled()
   })
 
   it('returns success even when IP rate limit is exceeded (anti-enumeration)', async () => {
@@ -87,6 +88,7 @@ describe('requestCustomerMagicLink', () => {
     const result = await requestCustomerMagicLink({ email: 'customer@example.com' })
 
     expect(result).toEqual({ success: true })
+    expect(mockSignInWithOtp).not.toHaveBeenCalled()
   })
 
   it('returns error for invalid email format (invalid Zod input)', async () => {
