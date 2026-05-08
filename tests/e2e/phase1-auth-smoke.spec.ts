@@ -26,6 +26,33 @@ test.describe('Phase 1 auth smoke', () => {
   const staffCredentials = getStaffCredentials()
   const workstationCredentials = getWorkstationCredentials()
 
+  test('office host renders password sign-in instead of portal magic-link form', async ({
+    page,
+  }) => {
+    await page.goto('/sign-in')
+
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Sign in' }),
+      'Office host should render the staff sign-in page.'
+    ).toBeVisible()
+    await expect(
+      page.getByLabel('Password'),
+      'Office staff sign-in must expose the password field on the app host.'
+    ).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Sign In' }),
+      'Office staff sign-in must expose the password submit button on the app host.'
+    ).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Send magic link' }),
+      'Office host must not expose the customer magic-link submit path.'
+    ).toHaveCount(0)
+    await expect(
+      page.getByText('Enter your email to receive a magic sign-in link.'),
+      'Office host must not render portal-only magic-link instructions.'
+    ).toHaveCount(0)
+  })
+
   if (staffCredentials) {
     test('office staff sign-in reaches dashboard and survives reload', async ({ page }) => {
       await staffLogin(page, staffCredentials)
@@ -38,9 +65,26 @@ test.describe('Phase 1 auth smoke', () => {
 
   test('customer portal renders magic-link form on portal host', async ({ page }) => {
     await page.goto(new URL('/sign-in', portalBaseUrl()).toString())
-    await expect(page.getByRole('heading', { level: 1, name: 'Sign in' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Send magic link' })).toBeVisible()
-    await expect(page.getByText('Enter your email to receive a magic sign-in link.')).toBeVisible()
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Sign in' }),
+      'Portal host should render the customer magic-link sign-in page.'
+    ).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Send magic link' }),
+      'Portal host must expose only the customer magic-link submit path.'
+    ).toBeVisible()
+    await expect(
+      page.getByText('Enter your email to receive a magic sign-in link.'),
+      'Portal host should explain the customer magic-link flow.'
+    ).toBeVisible()
+    await expect(
+      page.getByLabel('Password'),
+      'Portal host must not expose the office password field.'
+    ).toHaveCount(0)
+    await expect(
+      page.getByRole('button', { name: 'Sign In' }),
+      'Portal host must not expose the office password submit path.'
+    ).toHaveCount(0)
   })
 
   if (shouldRunMagicLinkPostSmoke()) {
@@ -73,6 +117,10 @@ test.describe('Phase 1 auth smoke', () => {
           url: portalRoot,
         })
       )
+      expect(
+        copiedCookies.length,
+        'Staff sign-in should create host-scoped Supabase cookies before the portal boundary check runs.'
+      ).toBeGreaterThan(0)
 
       await page.context().addCookies(copiedCookies)
       await page.goto(portalRoot)

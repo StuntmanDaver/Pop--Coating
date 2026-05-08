@@ -2,9 +2,11 @@
 
 ## Domains
 
+Canonical production domain: `popsindustrial.com`.
+
 - `app.popsindustrial.com` points at Vercel and has a valid certificate.
 - `track.popsindustrial.com` points at Vercel and has a valid certificate.
-- Old or mistaken `popscoating.com` records are removed from the production Vercel project and DNS plan.
+- Stale or mistaken `popscoating.com` aliases and DNS records are removal-only; do not add them as active app, portal, or sender domains.
 
 ## Resend
 

@@ -20,7 +20,8 @@
 //   5. Create owner auth user with app_metadata already stamped
 //   6. Generate a recovery link for password setup without printing it
 //   7. Ensure smoke data: company, contact, customer user, shop employee,
-//      workstation synthetic auth user, and one scheduled job with packet token.
+//      customer auth user, workstation synthetic auth user, and one scheduled
+//      job with packet token.
 
 import { createClient } from '@supabase/supabase-js'
 import { randomBytes } from 'node:crypto'
@@ -200,7 +201,15 @@ async function main() {
   console.log(`  Recovery link generated for ${ownerEmail}`)
   console.log('  Recovery link value intentionally not printed; use an approved secure handoff path for owner setup.')
 
-  const { company, contact, customerUser, employee, workstation, job } = await ensureSmokeData()
+  const {
+    company,
+    contact,
+    customerUser,
+    customerAuthUser,
+    employee,
+    workstation,
+    job,
+  } = await ensureSmokeData()
 
   console.log('')
   console.log('Bootstrap complete.')
@@ -210,6 +219,7 @@ async function main() {
   console.log(`  Company:   ${company.id} (${company.name})`)
   console.log(`  Contact:   ${contact.id} (${contact.email ?? 'no email'})`)
   console.log(`  Customer:  ${customerUser.id} (${customerUser.email})`)
+  console.log(`  Customer auth user: ${customerAuthUser.id}`)
   console.log(`  Employee:  ${employee.id} (${employee.display_name}; smoke PIN 1234)`)
   console.log(`  Station:   ${workstation.id} (${workstation.name})`)
   console.log(`  Job:       ${job.id} (${job.job_number})`)
@@ -309,12 +319,18 @@ async function main() {
         name: 'Smoke Customer',
         is_active: true,
       }, { onConflict: 'tenant_id,email' })
-      .select('id, email')
+      .select('id, email, auth_user_id')
       .single()
 
     if (customerErr != null || customerUser == null) {
       throw new Error(`customer_users UPSERT failed: ${customerErr?.message ?? 'no data returned'}`)
     }
+
+    const customerAuthUser = await ensureSmokeCustomerAuthUser(
+      customerUser.id,
+      customerUser.email,
+      customerUser.auth_user_id
+    )
 
     const { data: existingEmployee, error: employeeLookupErr } = await supabase
       .from('shop_employees')
@@ -441,7 +457,73 @@ async function main() {
     }
 
     const job = existingJob ?? await createSmokeJob(packetToken, company.id, contact.id)
-    return { company, contact, customerUser, employee, workstation, job }
+    return { company, contact, customerUser, customerAuthUser, employee, workstation, job }
+  }
+
+  async function ensureSmokeCustomerAuthUser(
+    customerUserId: string,
+    email: string,
+    linkedAuthUserId: string | null
+  ) {
+    const existingCustomerAuthUser = await findAuthUserByEmail(email)
+
+    const customerAuthUser = existingCustomerAuthUser ?? await createSmokeCustomerAuthUser(email)
+
+    if (existingCustomerAuthUser != null) {
+      const { error: updateAuthErr } = await supabase.auth.admin.updateUserById(
+        existingCustomerAuthUser.id,
+        {
+          app_metadata: {
+            tenant_id: tenant.id,
+            audience: 'customer',
+            role: 'customer',
+            intended_actor: 'customer',
+          },
+        }
+      )
+
+      if (updateAuthErr != null) {
+        throw new Error(`customer auth user metadata update failed: ${updateAuthErr.message}`)
+      }
+    }
+
+    if (linkedAuthUserId != null && linkedAuthUserId !== customerAuthUser.id) {
+      throw new Error(
+        `customer_users auth_user_id mismatch: ${customerUserId} is linked to ${linkedAuthUserId}`
+      )
+    }
+
+    const { error: linkErr } = await supabase
+      .from('customer_users')
+      .update({ auth_user_id: customerAuthUser.id })
+      .eq('id', customerUserId)
+      .is('auth_user_id', null)
+
+    if (linkErr != null) {
+      throw new Error(`customer_users auth_user_id link failed: ${linkErr.message}`)
+    }
+
+    return customerAuthUser
+  }
+
+  async function createSmokeCustomerAuthUser(email: string) {
+    const { data, error } = await supabase.auth.admin.createUser({
+      email,
+      email_confirm: true,
+      user_metadata: { name: 'Smoke Customer' },
+      app_metadata: {
+        tenant_id: tenant.id,
+        audience: 'customer',
+        role: 'customer',
+        intended_actor: 'customer',
+      },
+    })
+
+    if (error != null || data?.user == null) {
+      throw new Error(`customer auth user failed: ${error?.message ?? 'no user returned'}`)
+    }
+
+    return data.user
   }
 
   async function createSmokeJob(packetToken: string, companyId: string, contactId: string) {

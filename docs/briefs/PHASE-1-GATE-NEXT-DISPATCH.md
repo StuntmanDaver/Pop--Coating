@@ -53,7 +53,7 @@ Goal: verify the Pops tenant seed path is production-ready and idempotent.
 Tasks:
 
 - Read `scripts/seed-tenant.ts`, `supabase/seed.sql`, and `.planning/phases/01-foundation/01-06-PLAN.md`.
-- Confirm the script creates or verifies tenant, domains, shop settings, staff, company, contact, customer user, shop employee, workstation, and seed job.
+- Confirm the script creates or verifies tenant, domains, shop settings, staff, company, contact, customer user, customer auth user, shop employee, workstation, and seed job.
 - Check that generated packet QR targets `https://app.popsindustrial.com/scan?packet=<packet_token>`.
 - Add or adjust tests only if a gap is found.
 - Return changed files and verification commands.
@@ -68,6 +68,7 @@ Tasks:
 
 - Inspect `.env.local.example`, `.github/workflows/ci.yml`, `docs/runbooks/phase-1-production-readiness.md`, and `docs/runbooks/dns-email-verification.md`.
 - Ensure every required env var is documented exactly once with safe descriptions in `docs/runbooks/phase-1-production-readiness.md`.
+- Ensure required env names are mirrored in `.env.local.example` when local or CI execution needs the name.
 - Ensure `popsindustrial.com` is canonical and stale `popscoating.com` is only mentioned as a domain to remove.
 - Do not print or store secret values.
 - Return changed files and any manual dashboard gaps.

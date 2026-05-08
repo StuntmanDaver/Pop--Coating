@@ -28,6 +28,10 @@ describe('seed-tenant script contract', () => {
     expect(source).toContain("const SMOKE_EMPLOYEE_NAME = 'Smoke Floor Worker'")
     expect(source).toContain("const SMOKE_WORKSTATION_NAME = 'Smoke Workstation'")
     expect(source).toContain("const SMOKE_JOB_NAME = 'Smoke Test Packet Job'")
+    expect(source).toContain('ensureSmokeCustomerAuthUser')
+    expect(source).toContain('auth.admin.createUser')
+    expect(source).toContain("intended_actor: 'customer'")
+    expect(source).toContain("audience: 'customer'")
   })
 
   it('keeps the generated packet QR on the canonical staff scanner host', () => {

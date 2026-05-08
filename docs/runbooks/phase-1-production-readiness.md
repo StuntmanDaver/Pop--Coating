@@ -23,6 +23,7 @@ This is the single source of truth for required Phase 1 env names and safe descr
 | Name | Required where | Safe description |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Vercel Production, local `.env.local`, GitHub Actions E2E secret | Public Supabase project URL used by browser, server, proxy, and smoke tests. |
+| `SUPABASE_URL` | Optional local `.env.local` seed/admin script alias | Server-only Supabase project URL alias for `pnpm seed:tenant`; if unset, the script uses `NEXT_PUBLIC_SUPABASE_URL`. |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Vercel Production, local `.env.local`, GitHub Actions E2E secret | Public Supabase anon key; RLS still gates data access. |
 | `SUPABASE_SERVICE_ROLE_KEY` | Vercel Production, local `.env.local` for admin scripts only | Sensitive Supabase service-role key for allowed audited admin paths. |
 | `SUPABASE_PROJECT_REF` | GitHub Actions variable, local `.env.local` for linked CLI checks | Supabase project reference ID. Non-secret, but keep repo-specific values out of docs. |
@@ -31,6 +32,7 @@ This is the single source of truth for required Phase 1 env names and safe descr
 | `UPSTASH_REDIS_REST_TOKEN` | Vercel Production, local `.env.local` when rate limits run locally | Sensitive Upstash Redis REST token. |
 | `SENTRY_DSN` | Vercel Production, local `.env.local` when server telemetry is tested | Server and edge Sentry DSN. |
 | `NEXT_PUBLIC_SENTRY_DSN` | Vercel Production, local `.env.local` when client telemetry is tested | Browser Sentry DSN. Public identifier, not an auth token. |
+| `NEXT_PUBLIC_VERCEL_ENV` | Vercel Production/Preview framework env, local `.env.local` when client telemetry is tested | Public deployment environment label for browser Sentry events; expected values are `production`, `preview`, or `development`. |
 | `SENTRY_AUTH_TOKEN` | Vercel Production build env, local `.env.local` only if source-map upload is tested | Sensitive Sentry build token for source-map upload. |
 | `RESEND_API_KEY` | Vercel Production, Supabase SMTP/dashboard setup, local `.env.local` when email is tested | Sensitive Resend credential for transactional email setup. |
 | `RESEND_WEBHOOK_SECRET` | Vercel Production, local `.env.local` when webhook verification is tested | Sensitive secret used to verify inbound Resend webhooks. |
@@ -81,7 +83,7 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 - Run `pnpm seed:tenant --tenant-name "Pops Industrial Coatings" --slug pops-coating --owner-email <owner-email> --owner-name <owner-name>` against the production Supabase project.
 - The script generates but does not print the recovery action link. Complete owner password setup through an approved secure handoff path, and never paste setup links into docs, tickets, or chat.
-- Confirm the script reports tenant, domain, company, contact, customer user, shop employee, workstation, and seed job identifiers.
+- Confirm the script reports tenant, domain, company, contact, customer user, customer auth user, shop employee, workstation, and seed job identifiers.
 - Confirm the packet QR target shape is `https://app.popsindustrial.com/scan?packet=<packet_token>`.
 
 ## Manual Dashboard Gaps
@@ -89,7 +91,7 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Supabase Dashboard: JWT expiry must be `3600` seconds.
 - Supabase Dashboard: Custom Access Token Hook must point to `app.custom_access_token_hook`.
 - Supabase Dashboard: Custom SMTP must use the verified Resend sender for `popsindustrial.com`.
-- Vercel Dashboard/CLI: production env vars from the inventory must be present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists. Remaining observed gaps: `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
+- Vercel Dashboard/CLI: production project env vars from the inventory must be present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists. Framework/system names such as `NEXT_PUBLIC_VERCEL_ENV` may be satisfied by Vercel automatic framework env exposure; confirm that behavior before relying on client Sentry environment labels. Remaining observed gaps: `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
 - Vercel Dashboard/CLI: `app.popsindustrial.com` and `track.popsindustrial.com` must be attached and certificate issuance must be complete. Current blocker: both aliases are already assigned elsewhere and require dashboard reassignment/removal before attachment to `pops--coating`.
 - Resend/DNS registrar: DKIM, SPF, and MX must verify for `popsindustrial.com`.
 - GitHub Actions settings: required CI secret/variable names from the inventory were confirmed on 2026-05-08 without values stored in-repo. Staff/workstation E2E credential secrets remain optional and credential-gated.
