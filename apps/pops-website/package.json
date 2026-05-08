@@ -7,12 +7,13 @@
     "build": "next build",
     "start": "next start --port 3001",
     "type-check": "tsc --noEmit",
-    "lint": "next lint && npx tsx scripts/audit-alt.ts && npx tsx scripts/audit-headings.ts",
-    "audit:alt": "npx tsx scripts/audit-alt.ts",
-    "audit:headings": "npx tsx scripts/audit-headings.ts",
-    "contrast-lint": "npx tsx scripts/contrast-lint.ts",
+    "lint": "eslint app components content lib scripts next.config.ts postcss.config.mjs && pnpm audit:alt && pnpm audit:headings",
+    "audit:alt": "pnpm exec tsx scripts/audit-alt.ts",
+    "audit:headings": "pnpm exec tsx scripts/audit-headings.ts",
+    "a11y-audit": "pnpm exec tsx scripts/axe-audit.ts",
+    "contrast-lint": "pnpm exec tsx scripts/contrast-lint.ts",
     "lighthouse": "pnpm dlx @lhci/cli autorun",
-    "mobile-audit": "npx tsx scripts/mobile-audit.ts"
+    "mobile-audit": "pnpm exec tsx scripts/mobile-audit.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -11,7 +11,7 @@ Canonical production hosts:
 
 - `pnpm type-check` passes.
 - `pnpm lint` passes, including `madge --circular src/modules`.
-- `pnpm test` passes: 33 files / 234 tests.
+- `pnpm test` passes: 34 files / 241 tests.
 - `pnpm build` passes.
 - Linked pgTAP is verified: `supabase test db --linked` passes 9 files / 87 tests after migration `0020_security_definer_fail_closed.sql`.
 - Playwright E2E is not verified locally because staff E2E credentials are not configured.

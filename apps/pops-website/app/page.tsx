@@ -109,24 +109,24 @@ export default function HomePage() {
           <div className="relative z-10">
             <div className="pops-section-divider w-full" aria-hidden="true" />
             <Container>
-              <dl className="grid grid-cols-2 md:grid-cols-4">
+              <div className="grid grid-cols-2 md:grid-cols-4">
                 {STATS.map(({ label, value, detail }, i) => (
                   <div
                     key={label}
                     className={`px-6 py-7 text-center transition-colors duration-300 hover:bg-pops-yellow-500/[0.04] md:py-9 ${STAT_CELL_CLASSES[i]}`}
                   >
-                    <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.1em] text-pops-yellow-500/90">
+                    <p className="font-text text-[10px] font-semibold uppercase tracking-[0.1em] text-pops-yellow-500/90">
                       {label}
-                    </dt>
-                    <dd className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
+                    </p>
+                    <p className="pops-text-grad mt-1 font-display text-2xl tracking-tight md:text-3xl">
                       {value}
-                    </dd>
+                    </p>
                     {detail && (
                       <p className="mt-0.5 font-text text-xs text-ink-200">{detail}</p>
                     )}
                   </div>
                 ))}
-              </dl>
+              </div>
             </Container>
           </div>
         </div>

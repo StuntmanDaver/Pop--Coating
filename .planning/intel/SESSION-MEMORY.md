@@ -69,7 +69,7 @@ After branch push/sync and all human-only blockers in this table are complete or
 ### Phase 1 gate implementation pass
 
 - Normalized active planning/docs domain references from stale `popscoating.com` to canonical `popsindustrial.com`. Remaining `popscoating.com` mentions are warnings about stale domains or non-domain identifiers such as the `pops-coating` tenant slug/project id.
-- Automated app gates passed locally: `pnpm type-check`, `pnpm lint`, `pnpm test` (33 files / 234 tests), and `pnpm build`.
+- Automated app gates passed locally: `pnpm type-check`, `pnpm lint`, `pnpm test` (34 files / 241 tests), and `pnpm build`.
 - Applied `0018_security_and_hot_path_hardening.sql` to the linked Pops Supabase project with `supabase db push --linked --include-all --yes`; `supabase migration list --linked --debug` showed local and remote `0001` through `0018` aligned.
 - Applied `0019_pgtap_test_schema_usage.sql` and verified local and remote migrations through `0019`.
 - Applied `0020_security_definer_fail_closed.sql` and verified local and remote migrations through `0020`.

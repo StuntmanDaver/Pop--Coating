@@ -89,7 +89,23 @@ jobs:
 
       - name: Wait for server to accept requests
         # Poll the homepage for up to 60s. Exits 0 as soon as it returns 2xx.
-        run: npx --yes wait-on http://localhost:3001 -t 60000
+        run: |
+          node -e "
+          const deadline = Date.now() + 60000;
+          const poll = () => fetch('http://localhost:3001')
+            .then((res) => {
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              process.exit(0);
+            })
+            .catch((err) => {
+              if (Date.now() > deadline) {
+                console.error('Timed out waiting for website:', err.message);
+                process.exit(1);
+              }
+              setTimeout(poll, 1000);
+            });
+          poll();
+          "
 
       - name: Run axe sweep
         # WARNING-ONLY for now — surfaces new regressions in the workflow log

@@ -60,14 +60,25 @@ export function BlurFade({
     if (!node) return;
     if (typeof window === "undefined") return;
 
+    let revealNow: number | undefined;
+    const revealOnNextTick = () => {
+      revealNow = window.setTimeout(() => {
+        setIsInView(true);
+      }, 0);
+    };
+
     if (typeof IntersectionObserver === "undefined") {
-      setIsInView(true);
-      return;
+      revealOnNextTick();
+      return () => {
+        if (revealNow !== undefined) window.clearTimeout(revealNow);
+      };
     }
 
     if (precheckIntersectsViewport(node)) {
-      setIsInView(true);
-      return;
+      revealOnNextTick();
+      return () => {
+        if (revealNow !== undefined) window.clearTimeout(revealNow);
+      };
     }
 
     const observer = new IntersectionObserver(

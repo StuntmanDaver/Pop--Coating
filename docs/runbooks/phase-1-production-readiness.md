@@ -62,14 +62,14 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 - Passed: `pnpm type-check`
 - Passed: `pnpm lint`
-- Passed: `pnpm test` (33 files / 234 tests)
+- Passed: `pnpm test` (34 files / 241 tests)
 - Passed: `pnpm build`
 - Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "customer portal renders"`
 - Applied live Supabase migration `0018_security_and_hot_path_hardening.sql`.
 - Applied live Supabase migration `0019_pgtap_test_schema_usage.sql`.
 - Applied live Supabase migration `0020_security_definer_fail_closed.sql`.
 - Regenerated `src/shared/db/types.ts` from the linked Supabase schema.
-- Pushed `main` to `origin` through commit `ff4f705`; the next security hardening commit will supersede this baseline after verification.
+- Pushed `main` to `origin` through commit `a34bb04`.
 - Confirmed GitHub Actions secret/variable names without printing values. Added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`; existing names include `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, and `RESEND_API_KEY`.
 - Confirmed Vercel project `stuntmandavers-projects/pops--coating`; latest production deployment is ready, but the project still reports a stale production URL under `app.popscoating.com`.
 - Confirmed Vercel production env names for Supabase, `RESEND_API_KEY`, Upstash Redis/QStash, and canonical app/portal hosts. `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible in the CLI inventory and remain dashboard/env gaps.

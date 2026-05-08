@@ -292,7 +292,7 @@ function ServiceRadio({ option, register }: ServiceRadioProps) {
           type="radio"
           value={option}
           {...register}
-          className="h-4 w-4 cursor-pointer accent-pops-yellow-500"
+          className="h-11 w-11 shrink-0 cursor-pointer accent-pops-yellow-500"
         />
         <span>{option}</span>
       </label>

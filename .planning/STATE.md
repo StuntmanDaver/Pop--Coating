@@ -124,5 +124,5 @@ Phase 4 [----------] 0%  Portal & Ops
 - Plan 06: checkpoint — Supabase Cloud schema through migration 0020 is applied, DB types are generated, and linked pgTAP passes; remaining gates are seed-tenant.ts run, hook Dashboard registration, JWT expiry, SMTP, Vercel alias reassignment/env gaps, and Phase 1 success walkthrough
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
-- vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 33 files / 234 tests
+- vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 34 files / 241 tests
 - **Vercel URL:** not in repo; use dashboard or `vercel link` after selecting the correct team — see `SESSION-MEMORY.md`
