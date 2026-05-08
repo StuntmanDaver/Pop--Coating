@@ -11,12 +11,12 @@ type Industry = {
 // FDOT certification, customer photos (toll road structures, trailers, steel
 // support beams), and Florida operating climate.
 const INDUSTRIES: Industry[] = [
-  { name: "Aerospace & Defense", detail: "Mission-critical specs" },
+  { name: "Water Tanks", detail: "Mission-critical specs" },
   { name: "Heavy Equipment", detail: "Frames, attachments, beds" },
   { name: "Transportation & Trailers", detail: "Trucks, trailers, fleets" },
   { name: "Infrastructure & DOT", detail: "FDOT-approved coatings" },
   { name: "Marine & Outdoor", detail: "Florida-grade durability" },
-  { name: "Manufacturing & Fabrication", detail: "OEM and job-shop work" },
+  { name: "Support Beams", detail: "Traffic lights, bridges, stadiums" },
 ];
 
 export function IndustriesGrid() {

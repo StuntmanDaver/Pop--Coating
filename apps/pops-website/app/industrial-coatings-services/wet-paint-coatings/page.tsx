@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../../../components/layout/container";
@@ -8,6 +7,7 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { PhotoGalleryLightbox } from "../../../components/marketing/photo-gallery-lightbox";
 import { JsonLd } from "../../../components/seo/json-ld";
 import { Button } from "../../../components/ui/button";
 import { getServiceJsonLd } from "../../../lib/jsonld";
@@ -30,28 +30,40 @@ const OTHER_SERVICES = [
 
 const GALLERY = [
   {
-    src: "/images/industrial-painting-lakeland-fl-1024x683-1.jpg",
-    alt: "Industrial wet paint coating being applied at Pop's Industrial Coatings, Lakeland FL",
-    width: 1024,
-    height: 683,
+    src: "/images/wet-paint-img-4100.png",
+    alt: "Blue-coated industrial tank transported on a trailer after wet paint application",
   },
   {
-    src: "/images/industrial-wet-painting-coatings.png",
-    alt: "Wet painting coatings on industrial components at Pop's Industrial Coatings",
-    width: 800,
-    height: 734,
+    src: "/images/wet-paint-img-5329.png",
+    alt: "Large blue industrial tank coated in Pop's Lakeland paint booth",
   },
   {
-    src: "/images/slide-02.jpg",
-    alt: "Industrial paint coating work in progress at Pop's facility in Lakeland, FL",
-    width: 1200,
-    height: 800,
+    src: "/images/wet-paint-img-7649.png",
+    alt: "White coated structural frames staged on a flatbed trailer",
   },
   {
-    src: "/images/teflon-coating.jpg",
-    alt: "Teflon coating application at Pop's Industrial Coatings, Lakeland FL",
-    width: 800,
-    height: 800,
+    src: "/images/wet-paint-img-7854.png",
+    alt: "Long white coated steel assembly loaded for transport",
+  },
+  {
+    src: "/images/wet-paint-img-8950.png",
+    alt: "Freshly coated yellow industrial motors lined up after painting",
+  },
+  {
+    src: "/images/wet-paint-img-9363.png",
+    alt: "White coated steel beams secured on a flatbed truck",
+  },
+  {
+    src: "/images/wet-paint-img-9372.png",
+    alt: "Freshly coated industrial assembly in white primer finish",
+  },
+  {
+    src: "/images/wet-paint-industrial-1.png",
+    alt: "Painter spray-applying industrial coating in a controlled environment",
+  },
+  {
+    src: "/images/wet-paint-industrial-2.png",
+    alt: "Technician applying paint coating across large steel beams",
   },
 ];
 
@@ -103,21 +115,12 @@ export default function WetPaintCoatingsPage() {
                 </div>
 
                 {/* Photo grid */}
-                <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                  {GALLERY.map((photo) => (
-                    <div
-                      key={photo.src}
-                      className="relative aspect-square overflow-hidden rounded-sm bg-ink-800"
-                    >
-                      <Image
-                        src={photo.src}
-                        alt={photo.alt}
-                        fill
-                        sizes="(min-width: 640px) 25vw, 50vw"
-                        className="object-contain object-center"
-                      />
-                    </div>
-                  ))}
+                <div className="mt-10">
+                  <PhotoGalleryLightbox
+                    className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+                    sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    photos={GALLERY}
+                  />
                 </div>
 
                 <div className="mt-10">

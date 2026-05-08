@@ -26,7 +26,7 @@ export default function ContactPage() {
         <Hero
           eyebrow="GET IN TOUCH"
           heading="Contact"
-          lede="Reach us by phone, email, or the form below. We respond within one business day."
+          lede="Reach us by phone, email, or the form below."
           primaryCta={{ label: "Call us: 863.644.7473", href: "tel:8636447473" }}
           secondaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           tertiaryCta={{ label: "Apply now", href: "/careers" }}

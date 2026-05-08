@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../../../components/layout/container";
@@ -8,6 +7,7 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { PhotoGalleryLightbox } from "../../../components/marketing/photo-gallery-lightbox";
 import { Button } from "../../../components/ui/button";
 
 export const metadata: Metadata = {
@@ -26,51 +26,35 @@ export default function FacilitiesEquipmentPage() {
           heading="Facilities & Equipment"
           lede="We have the equipment and facilities to handle any project, large or small."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          backgroundImage="/images/Pops-arial-photo.jpg"
-          backgroundAlt="Aerial view of Pop's Industrial Coatings facility in Lakeland, FL"
+          backgroundImage="/images/facilities-map-overview.png"
+          backgroundAlt="Aerial map view of Pop's Industrial Coatings facilities in Lakeland, FL"
         />
 
         {/* Photo grid */}
         <Section tone="dark" className="pb-0">
           <Container>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
-                <Image
-                  src="/images/Industrial-Powder-Coating-Service-Lakeland-FL-scaled-1.jpg"
-                  alt="Industrial powder coating service at Pop's Industrial Coatings, Lakeland FL"
-                  fill
-                  sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-contain object-center"
-                />
-              </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
-                <Image
-                  src="/images/pops-industrial-coatings-lakeland-fl-facility-01-1.jpg"
-                  alt="Pop's Industrial Coatings Lakeland FL facility — production floor view 1"
-                  fill
-                  sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-contain object-center"
-                />
-              </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
-                <Image
-                  src="/images/pops-industrial-coatings-lakeland-fl-facility-02-1.jpg"
-                  alt="Pop's Industrial Coatings Lakeland FL facility — production floor view 2"
-                  fill
-                  sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-contain object-center"
-                />
-              </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
-                <Image
-                  src="/images/large-capacity-powder-coating-270x138-1.png"
-                  alt="Large capacity coatings oven at Pop's Industrial Coatings"
-                  fill
-                  sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-contain p-4"
-                />
-              </div>
-            </div>
+            <PhotoGalleryLightbox
+              className="grid-cols-2 sm:grid-cols-4"
+              sizes="(min-width: 640px) 25vw, 50vw"
+              photos={[
+                {
+                  src: "/images/facilities-map-overview.png",
+                  alt: "Aerial map view of Pop's Industrial Coatings facilities in Lakeland, FL",
+                },
+                {
+                  src: "/images/pops-industrial-coatings-lakeland-fl-facility-01-1.jpg",
+                  alt: "Pop's Industrial Coatings Lakeland FL facility — production floor view 1",
+                },
+                {
+                  src: "/images/pops-industrial-coatings-lakeland-fl-facility-02-1.jpg",
+                  alt: "Pop's Industrial Coatings Lakeland FL facility — production floor view 2",
+                },
+                {
+                  src: "/images/large-capacity-powder-coating-270x138-1.png",
+                  alt: "Large capacity coatings oven at Pop's Industrial Coatings",
+                },
+              ]}
+            />
           </Container>
         </Section>
 

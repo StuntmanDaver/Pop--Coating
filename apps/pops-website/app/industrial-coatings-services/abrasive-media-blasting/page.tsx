@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "../../../components/layout/container";
@@ -8,6 +7,7 @@ import { Header } from "../../../components/layout/header";
 import { Section } from "../../../components/layout/section";
 import { EyebrowLabel } from "../../../components/marketing/eyebrow";
 import { Hero } from "../../../components/marketing/hero";
+import { PhotoGalleryLightbox } from "../../../components/marketing/photo-gallery-lightbox";
 import { JsonLd } from "../../../components/seo/json-ld";
 import { getServiceJsonLd } from "../../../lib/jsonld";
 import { Button } from "../../../components/ui/button";
@@ -29,6 +29,30 @@ const OTHER_SERVICES = [
 ];
 
 const GALLERY = [
+  {
+    src: "/images/abrasive-blasting-sandblasting-2.png",
+    alt: "Technician abrasive blasting a large industrial surface at Pop's Industrial Coatings",
+  },
+  {
+    src: "/images/abrasive-blasting-sandblasting-1.png",
+    alt: "Abrasive blasting inside large steel pipe sections for industrial surface prep",
+  },
+  {
+    src: "/images/abrasive-blasting-img-5365.png",
+    alt: "Long galvanized support poles prepared for industrial finishing at Pop's facility",
+  },
+  {
+    src: "/images/abrasive-blasting-trailer.png",
+    alt: "Industrial trailer component processed at Pop's coatings facility in Lakeland",
+  },
+  {
+    src: "/images/abrasive-blasting-img-3817.png",
+    alt: "Large fabricated steel hopper prepared for coating application",
+  },
+  {
+    src: "/images/abrasive-blasting-img-5414.png",
+    alt: "Large industrial tank vessel staged for blasting and coating preparation",
+  },
   {
     src: "/images/industrial-sandblasting-lakeland-fl-IMG_5019.jpg",
     alt: "Abrasive media blasting at Pop's Industrial Coatings, Lakeland FL — surface preparation for industrial coating",
@@ -91,21 +115,8 @@ export default function AbrasiveMediaBlastingPage() {
                 </div>
 
                 {/* Photo grid */}
-                <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {GALLERY.map((photo) => (
-                    <div
-                      key={photo.src}
-                      className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800"
-                    >
-                      <Image
-                        src={photo.src}
-                        alt={photo.alt}
-                        fill
-                        sizes="(min-width: 640px) 33vw, 50vw"
-                        className="object-contain object-center"
-                      />
-                    </div>
-                  ))}
+                <div className="mt-10">
+                  <PhotoGalleryLightbox photos={GALLERY} />
                 </div>
 
                 <div className="mt-10">

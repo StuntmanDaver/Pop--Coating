@@ -57,9 +57,7 @@ export function ContactForm() {
         className="rounded-sm border border-pops-yellow-500 bg-pops-yellow-500/10 p-6 text-center"
       >
         <p className="mb-2 font-display text-xl text-ink-100">Message sent!</p>
-        <p className="font-text text-sm text-ink-300">
-          Thank you for reaching out. We&apos;ll respond within one business day.
-        </p>
+        <p className="font-text text-sm text-ink-300">Thank you for reaching out.</p>
         <button
           type="button"
           onClick={() => setSubmitted(false)}

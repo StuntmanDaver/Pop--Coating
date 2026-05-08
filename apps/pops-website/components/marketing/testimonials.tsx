@@ -21,12 +21,6 @@ export function Testimonials() {
           >
             <span className="text-pops-yellow-500">{GOOGLE_RATING.stars}</span>{" "}
             <span className="text-pops-yellow-400/90">stars</span>
-            <span className="text-white">
-              {" "}
-              across{" "}
-              <span className="text-pops-yellow-500">{GOOGLE_RATING.reviews}</span>{" "}
-              reviews
-            </span>
           </h2>
           <p className="mb-8 max-w-2xl border-l-2 border-pops-yellow-500/40 pl-4 font-text text-base leading-relaxed text-ink-200 sm:mb-12 sm:pl-5">
             Real words from people who&apos;ve trusted us with their parts —

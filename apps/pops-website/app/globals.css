@@ -209,6 +209,11 @@
   background: linear-gradient(to right, transparent, rgb(254 205 8 / 0.45), transparent);
 }
 
+/* Opt out of the ::after top rule when a section should read borderless */
+.pops-section-gold-wash.pops-section-gold-wash--no-top-rule::after {
+  content: none;
+}
+
 .pops-hero-ken-burns {
   transform-origin: center center;
   animation: pops-hero-drift 28s ease-in-out infinite;
