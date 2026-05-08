@@ -32,7 +32,7 @@ export function EmployeePicker({ employees, workstationVersion }: EmployeePicker
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <p className="text-lg text-zinc-400">No employees found.</p>
-        <p className="text-sm text-zinc-500">Contact a manager to add employees.</p>
+        <p className="text-sm text-zinc-400">Contact a manager to add employees.</p>
       </div>
     )
   }
@@ -45,45 +45,44 @@ export function EmployeePicker({ employees, workstationVersion }: EmployeePicker
           placeholder="Filter employees…"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-lg text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
           aria-label="Filter employees"
         />
       )}
-      <div
+      <ul
         className="grid gap-3"
         style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(10rem, 1fr))' }}
-        role="list"
         aria-label="Employee list"
       >
         {visible.map((employee) => (
-          <button
-            key={employee.id}
-            type="button"
-            role="listitem"
-            onClick={() => handleSelect(employee)}
-            className="flex min-h-[6rem] flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-center transition-colors active:bg-zinc-700 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500"
-            aria-label={`Select ${employee.display_name}`}
-          >
-            {employee.avatar_url ? (
-              // eslint-disable-next-line @next/next/no-img-element -- external avatar URL; next/image requires domain allow-listing
-              <img
-                src={employee.avatar_url}
-                alt=""
-                aria-hidden="true"
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            ) : (
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-700 text-lg font-bold text-zinc-300"
-                aria-hidden="true"
-              >
-                {employee.display_name.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <span className="text-sm font-medium leading-tight">{employee.display_name}</span>
-          </button>
+          <li key={employee.id}>
+            <button
+              type="button"
+              onClick={() => handleSelect(employee)}
+              className="flex min-h-[6rem] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-700 bg-zinc-900 p-4 text-center transition-colors active:bg-zinc-700 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+              aria-label={`Select ${employee.display_name}`}
+            >
+              {employee.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element -- external avatar URL; next/image requires domain allow-listing
+                <img
+                  src={employee.avatar_url}
+                  alt=""
+                  aria-hidden="true"
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-700 text-lg font-bold text-zinc-300"
+                  aria-hidden="true"
+                >
+                  {employee.display_name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className="text-sm font-medium leading-tight">{employee.display_name}</span>
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   )
 }

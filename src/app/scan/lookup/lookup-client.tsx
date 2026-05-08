@@ -79,7 +79,7 @@ export function LookupClient({ job, workstationId }: LookupClientProps) {
           <button
             type="button"
             onClick={() => router.push('/scan/station')}
-            className="text-sm text-zinc-500 hover:text-zinc-300"
+            className="min-h-11 rounded-md px-3 text-sm text-zinc-400 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400"
             aria-label="Back to station"
           >
             ← Back
@@ -150,9 +150,9 @@ export function LookupClient({ job, workstationId }: LookupClientProps) {
             placeholder="Add notes about this stage…"
             maxLength={2000}
             rows={3}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500 disabled:opacity-50"
+            className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-50"
           />
-          <p className="mt-1 text-xs text-zinc-500">{notes.length}/2000</p>
+          <p className="mt-1 text-xs text-zinc-400">{notes.length}/2000</p>
         </section>
 
         {/* Error */}

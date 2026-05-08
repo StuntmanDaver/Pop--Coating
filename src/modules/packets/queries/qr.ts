@@ -11,18 +11,26 @@ const QR_OPTIONS = {
   width: 280,
 }
 
-/**
- * Render a packet token to an inline-displayable SVG string.
- *
- * The QR encodes the FULL token; manual fallback uses the last-8-char prefix
- * displayed below the code (per DESIGN.md). Module 5's lookupJobByPacketToken
- * accepts either form, scoped to the caller's tenant.
- */
-export async function regenerateQrSvg(packetToken: string): Promise<string> {
+const APP_HOST = process.env.NEXT_PUBLIC_APP_HOST ?? 'http://app.localhost:3000'
+
+export function getPacketScanUrl(packetToken: string): string {
   if (typeof packetToken !== 'string' || packetToken.length === 0) {
     throw new Error('packetToken required')
   }
-  return QRCode.toString(packetToken, { ...QR_OPTIONS, type: 'svg' })
+
+  const url = new URL('/scan', APP_HOST)
+  url.searchParams.set('packet', packetToken)
+  return url.toString()
+}
+
+/**
+ * Render a packet token to an inline-displayable SVG string.
+ *
+ * The QR encodes the authenticated scanner URL with the full packet token;
+ * manual fallback uses the last-8-char prefix displayed below the code.
+ */
+export async function regenerateQrSvg(packetToken: string): Promise<string> {
+  return QRCode.toString(getPacketScanUrl(packetToken), { ...QR_OPTIONS, type: 'svg' })
 }
 
 /**
@@ -30,8 +38,5 @@ export async function regenerateQrSvg(packetToken: string): Promise<string> {
  * which can embed PNG via <Image src="data:..."/> but not SVG natively.
  */
 export async function regenerateQrPngDataUrl(packetToken: string): Promise<string> {
-  if (typeof packetToken !== 'string' || packetToken.length === 0) {
-    throw new Error('packetToken required')
-  }
-  return QRCode.toDataURL(packetToken, QR_OPTIONS)
+  return QRCode.toDataURL(getPacketScanUrl(packetToken), QR_OPTIONS)
 }

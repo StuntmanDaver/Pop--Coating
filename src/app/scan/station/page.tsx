@@ -23,6 +23,17 @@ export default function StationPage() {
     if (!employeeId) router.replace('/scan')
   }, [employeeId, router])
 
+  useEffect(() => {
+    if (!overlay) return
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOverlay(null)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [overlay])
+
   async function handleToken(token: string) {
     setLookupError(null)
     setOverlay(null)
@@ -77,7 +88,7 @@ export default function StationPage() {
               type="button"
               onClick={handleSwitchUser}
               disabled={isPending}
-              className="text-sm text-zinc-500 hover:text-zinc-300 disabled:opacity-50"
+              className="min-h-11 rounded-md px-3 text-sm text-zinc-400 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-50"
             >
               Switch User
             </button>
@@ -85,7 +96,12 @@ export default function StationPage() {
         </header>
 
         {overlay === 'scanner' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Scan QR code"
+          >
             <div className="w-full max-w-sm rounded-2xl bg-zinc-900 p-6">
               <Scanner onScan={handleToken} onClose={() => setOverlay(null)} />
             </div>
@@ -93,9 +109,14 @@ export default function StationPage() {
         )}
 
         {overlay === 'manual' && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="manual-entry-title"
+          >
             <div className="w-full max-w-sm rounded-2xl bg-zinc-900 p-6">
-              <h2 className="mb-4 text-lg font-semibold">Enter Job Code</h2>
+              <h2 id="manual-entry-title" className="mb-4 text-lg font-semibold">Enter Job Code</h2>
               <ManualEntry
                 onSubmit={handleToken}
                 onClose={() => setOverlay(null)}
@@ -107,7 +128,7 @@ export default function StationPage() {
 
         <section className="flex flex-1 flex-col items-center justify-center gap-8 p-8">
           <div className="text-center">
-            <p className="text-sm uppercase tracking-widest text-zinc-500">Ready to Scan</p>
+            <p className="text-sm uppercase tracking-widest text-zinc-400">Ready to Scan</p>
           </div>
 
           {lookupError && (

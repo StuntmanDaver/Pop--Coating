@@ -3,12 +3,14 @@ import { z } from 'zod'
 import { createClient } from '@/shared/db/server'
 import { requireCustomer } from '@/shared/auth-helpers/require'
 import { getCurrentClaims } from '@/shared/auth-helpers/claims'
+import { escapeForOr } from '@/shared/db/postgrest'
 
 // Source: docs/DESIGN.md §4.3 Module 9 (Portal). Customer-facing read surface.
 // All queries are bounded by RLS to the customer's company_id; we add app-side
 // filters as defense-in-depth (filter on customer_visible where applicable).
 
 const ListMyJobsParamsSchema = z.object({
+  q: z.string().max(200).optional(),
   intake_status: z
     .enum(['draft', 'scheduled', 'in_production', 'archived'])
     .optional(),
@@ -49,6 +51,10 @@ export async function listMyJobs(params: unknown = {}): Promise<PortalJobListIte
     .range(parsed.offset, parsed.offset + parsed.limit - 1)
 
   if (parsed.intake_status) query = query.eq('intake_status', parsed.intake_status)
+  if (parsed.q) {
+    const q = escapeForOr(parsed.q)
+    query = query.or(`job_number.ilike.%${q}%,job_name.ilike.%${q}%`)
+  }
 
   const { data, error } = await query
   if (error) throw new Error(`Portal job list failed: ${error.message}`)

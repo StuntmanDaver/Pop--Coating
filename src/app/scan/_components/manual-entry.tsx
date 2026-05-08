@@ -51,7 +51,7 @@ export function ManualEntry({ onSubmit, onClose, disabled = false }: ManualEntry
           placeholder="8–16 characters"
           minLength={8}
           maxLength={16}
-          className="font-mono rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-4 text-xl text-white uppercase tracking-widest placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500 disabled:opacity-50"
+          className="font-mono rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-4 text-xl text-white uppercase tracking-widest placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-50"
           aria-describedby={validationError ? 'manual-error' : undefined}
         />
         {validationError && (

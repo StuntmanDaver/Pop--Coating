@@ -29,10 +29,10 @@ describe('EmployeePicker', () => {
     const employees = makeEmployees(3)
     render(<EmployeePicker employees={employees} workstationVersion={1} />)
 
-    // Tiles have role="listitem" set explicitly on the button element
-    expect(screen.getByRole('listitem', { name: /Select Employee 1/i })).toBeInTheDocument()
-    expect(screen.getByRole('listitem', { name: /Select Employee 2/i })).toBeInTheDocument()
-    expect(screen.getByRole('listitem', { name: /Select Employee 3/i })).toBeInTheDocument()
+    // Employee tiles keep native button semantics inside list items
+    expect(screen.getByRole('button', { name: /Select Employee 1/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Select Employee 2/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Select Employee 3/i })).toBeInTheDocument()
   })
 
   it('shows filter input when employee count exceeds 12', () => {
@@ -60,8 +60,8 @@ describe('EmployeePicker', () => {
     const filterInput = screen.getByRole('searchbox', { name: /Filter employees/i })
     fireEvent.change(filterInput, { target: { value: 'Alice' } })
 
-    expect(screen.getByRole('listitem', { name: /Select Alice Smith/i })).toBeInTheDocument()
-    expect(screen.queryByRole('listitem', { name: /Select Bob Jones/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Select Alice Smith/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Select Bob Jones/i })).not.toBeInTheDocument()
   })
 
   it('shows empty state when employees array is empty', () => {
@@ -77,7 +77,7 @@ describe('EmployeePicker', () => {
     ]
     render(<EmployeePicker employees={employees} workstationVersion={7} />)
 
-    fireEvent.click(screen.getByRole('listitem', { name: /Select Alice/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Select Alice/i }))
 
     expect(mockPush).toHaveBeenCalledWith('/scan/pin?emp=emp-abc&v=7')
   })

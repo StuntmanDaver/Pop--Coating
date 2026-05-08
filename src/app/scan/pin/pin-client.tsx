@@ -99,7 +99,7 @@ export function PinClient({ employeeId, workstationId, workstationVersion }: Pin
         type="button"
         onClick={() => router.push('/scan')}
         disabled={isPending}
-        className="text-sm text-zinc-500 hover:text-zinc-300 disabled:opacity-50"
+        className="min-h-11 rounded-md px-3 text-sm text-zinc-400 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-50"
       >
         Cancel — Back to Employee List
       </button>

@@ -38,7 +38,7 @@ export function StagePicker({ currentStage, onSelect, disabled = false }: StageP
             }`}
           >
             {isCurrent && (
-              <span className="absolute right-2 top-2 text-xs text-zinc-500 font-normal">current</span>
+              <span className="absolute right-2 top-2 text-xs text-zinc-400 font-normal">current</span>
             )}
             {stage.label}
           </button>

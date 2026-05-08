@@ -187,13 +187,13 @@ function Field({
   children: React.ReactNode
 }) {
   return (
-    <div className={className}>
-      <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <label className={`block ${className ?? ''}`}>
+      <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
         {required ? <span className="ml-1 text-destructive">*</span> : null}
-      </label>
+      </span>
       {children}
-    </div>
+    </label>
   )
 }
 

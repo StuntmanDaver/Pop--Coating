@@ -62,7 +62,7 @@ export default async function ScanPage() {
               <p className="text-sm text-zinc-400">{workstation.physical_location}</p>
             )}
           </div>
-          <span className="text-xs text-zinc-500 uppercase tracking-widest">Scan Station</span>
+          <span className="text-xs text-zinc-400 uppercase tracking-widest">Scan Station</span>
         </div>
       </header>
       <section className="flex-1 p-6">

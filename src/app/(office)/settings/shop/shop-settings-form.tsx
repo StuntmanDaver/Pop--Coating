@@ -100,7 +100,7 @@ export function ShopSettingsForm({ settings }: { settings: ShopSettings }) {
                 id="brand_color_hex_picker"
                 name="brand_color_hex_picker"
                 type="color"
-                aria-hidden="true"
+                aria-label="Pick brand color"
                 defaultValue={settings.brand_color_hex ?? '#000000'}
                 onChange={(e) => {
                   const textInput = document.getElementById('brand_color_hex') as HTMLInputElement | null

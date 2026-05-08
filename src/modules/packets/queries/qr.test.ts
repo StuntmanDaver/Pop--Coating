@@ -1,7 +1,15 @@
 import { describe, it, expect } from 'vitest'
-import { regenerateQrSvg, regenerateQrPngDataUrl } from './qr'
+import { getPacketScanUrl, regenerateQrSvg, regenerateQrPngDataUrl } from './qr'
 
 const SAMPLE_TOKEN = 'abc123def456ghij'
+
+describe('getPacketScanUrl', () => {
+  it('builds scanner URL with packet token query param', () => {
+    expect(getPacketScanUrl(SAMPLE_TOKEN)).toBe(
+      'http://app.localhost:3000/scan?packet=abc123def456ghij'
+    )
+  })
+})
 
 describe('regenerateQrSvg', () => {
   it('returns an SVG string for a valid token', async () => {

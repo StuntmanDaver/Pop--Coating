@@ -7,6 +7,16 @@ interface ScannerProps {
   onClose: () => void
 }
 
+export function extractPacketToken(rawText: string): string {
+  const text = rawText.trim()
+  try {
+    const url = new URL(text)
+    return url.searchParams.get('packet')?.trim() || text
+  } catch {
+    return text
+  }
+}
+
 export function Scanner({ onScan, onClose }: ScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [permissionDenied, setPermissionDenied] = useState(false)
@@ -42,9 +52,7 @@ export function Scanner({ onScan, onClose }: ScannerProps) {
             if (stopped) return
             if (result) {
               const text = result.getText()
-              // QR codes encode the full packet_token; extract it
-              const token = text.includes('/') ? text.split('/').pop() ?? text : text
-              onScan(token.trim())
+              onScan(extractPacketToken(text))
             }
             if (err && !(err instanceof Error && err.message.includes('NotFoundException'))) {
               // NotFoundException fires every frame when no QR found — ignore

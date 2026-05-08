@@ -17,7 +17,7 @@ type SingleResult = { data: unknown | null; error: { message: string } | null }
 
 function makeChain<T>(result: T) {
   const chain: Record<string, unknown> = {}
-  for (const m of ['select', 'eq', 'is', 'order', 'range', 'maybeSingle']) {
+  for (const m of ['select', 'eq', 'is', 'order', 'range', 'or', 'maybeSingle']) {
     chain[m] = vi.fn(() => chain)
   }
   chain.then = (resolve: (value: T) => void) => resolve(result)
@@ -70,6 +70,18 @@ describe('listMyJobs', () => {
 
     await listMyJobs({ limit: 10, offset: 20 })
     expect(chain.range).toHaveBeenCalledWith(20, 29)
+  })
+
+  it('searches job number and name with escaped PostgREST or-filter input', async () => {
+    const result: ListResult = { data: [], error: null }
+    const chain = makeChain(result)
+    ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ from: () => chain })
+
+    await listMyJobs({ q: 'A,job_name.eq.injected' })
+
+    expect(chain.or).toHaveBeenCalledWith(
+      'job_number.ilike.%A%2Cjob_name.eq.injected%,job_name.ilike.%A%2Cjob_name.eq.injected%'
+    )
   })
 
   it('throws on DB error', async () => {
