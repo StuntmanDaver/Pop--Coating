@@ -13,19 +13,20 @@
 //   Resend SMTP must already be configured in Supabase Auth settings (D-01).
 //
 // What this script does (per CONTEXT.md D-10/D-11):
-//   1. INSERT tenants row (auto-generated UUID, name, slug)
-//   2. INSERT shop_settings row (tenant_id)
-//   3. INSERT tenant_domains rows (app.popsindustrial.com + track.popsindustrial.com)
-//   4. INSERT staff row (role='admin', is_active=true, auth_user_id=NULL)
-//   5. Create owner auth user with app_metadata already stamped
+//   1. INSERT or verify tenants row (auto-generated UUID, name, slug)
+//   2. INSERT or verify shop_settings row (tenant_id)
+//   3. INSERT or verify tenant_domains rows (app.popsindustrial.com + track.popsindustrial.com)
+//   4. INSERT or verify staff row (role='admin', is_active=true)
+//   5. Create or verify owner auth user with app_metadata stamped
 //   6. Generate a recovery link for password setup without printing it
 //   7. Ensure smoke data: company, contact, customer user, shop employee,
 //      customer auth user, workstation synthetic auth user, and one scheduled
 //      job with packet token.
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type User } from '@supabase/supabase-js'
 import { randomBytes } from 'node:crypto'
 import { parseArgs } from 'node:util'
+import type { Database } from '../src/shared/db/types'
 
 const APP_HOST = 'app.popsindustrial.com'
 const PORTAL_HOST = 'track.popsindustrial.com'
@@ -36,6 +37,35 @@ const SMOKE_WORKSTATION_NAME = 'Smoke Workstation'
 const SMOKE_JOB_NAME = 'Smoke Test Packet Job'
 // bcrypt hash for PIN 1234. This is smoke data only; rotate in production UI.
 const SMOKE_PIN_HASH = '$2a$10$7EqJtq98hPqEX7fNZaFWoOhiVEjrYt8CGRcBvO1lZPZK4u6tH3g4m'
+
+type AuthUserSummary = {
+  id: string
+  email?: string
+  appMetadata: Record<string, unknown>
+}
+
+type TenantDomainAudience = 'staff' | 'customer'
+
+type ExistingTenant = {
+  id: string
+  name: string
+  slug: string
+}
+
+type ExistingWorkstation = {
+  id: string
+  auth_user_id: string | null
+  device_token: string
+  name: string
+}
+
+type ExistingSeedJob = {
+  id: string
+  job_number: string
+  packet_token: string
+  company_id: string
+  contact_id: string | null
+}
 
 async function main() {
   const { values } = parseArgs({
@@ -63,6 +93,11 @@ async function main() {
     process.exit(1)
   }
 
+  const tenantNameArg: string = tenantName
+  const slugArg: string = slug
+  const ownerEmailArg: string = ownerEmail
+  const ownerNameArg: string = ownerName
+
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -74,7 +109,7 @@ async function main() {
     process.exit(1)
   }
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+  const supabase = createClient<Database>(supabaseUrl, serviceRoleKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   })
 
@@ -82,22 +117,22 @@ async function main() {
   const { data: existing, error: existingErr } = await supabase
     .from('tenants')
     .select('id, name, slug')
-    .eq('slug', slug)
+    .eq('slug', slugArg)
     .maybeSingle()
 
   if (existingErr != null) {
     throw new Error(`tenants lookup failed: ${existingErr.message}`)
   }
 
-  console.log(`Bootstrapping tenant: ${tenantName} (slug: ${slug})`)
+  console.log(`Bootstrapping tenant: ${tenantNameArg} (slug: ${slugArg})`)
 
-  // ─── Step 1: Create tenants row ───────────────────────────────────────────
-  const tenant = existing ?? await createTenant()
+  // ─── Step 1: Create or verify tenants row ────────────────────────────────
+  const tenant = existing == null ? await createTenant() : await verifyTenant(existing)
 
   async function createTenant() {
     const { data, error } = await supabase
       .from('tenants')
-      .insert({ name: tenantName, slug })
+      .insert({ name: tenantNameArg, slug: slugArg })
       .select('id, name, slug')
       .single()
 
@@ -107,50 +142,102 @@ async function main() {
 
     return data
   }
+
+  async function verifyTenant(existingTenant: ExistingTenant) {
+    if (existingTenant.name === tenantNameArg) {
+      return existingTenant
+    }
+
+    const { data, error } = await supabase
+      .from('tenants')
+      .update({ name: tenantNameArg })
+      .eq('id', existingTenant.id)
+      .select('id, name, slug')
+      .single()
+
+    if (error != null || data == null) {
+      throw new Error(`tenants verification failed: ${error?.message ?? 'no data returned'}`)
+    }
+
+    return data
+  }
   console.log(`  Tenant ready: id=${tenant.id}`)
 
-  // ─── Step 2: Create shop_settings row ─────────────────────────────────────
-  const { error: sErr } = await supabase
+  // ─── Step 2: Create or verify shop_settings row ──────────────────────────
+  const { data: shopSettings, error: sErr } = await supabase
     .from('shop_settings')
     .upsert({ tenant_id: tenant.id }, { onConflict: 'tenant_id' })
+    .select('tenant_id')
+    .single()
 
-  if (sErr != null) {
-    throw new Error(`shop_settings INSERT failed: ${sErr.message}`)
+  if (sErr != null || shopSettings == null) {
+    throw new Error(`shop_settings verification failed: ${sErr?.message ?? 'no data returned'}`)
   }
-  console.log(`  shop_settings created for tenant ${tenant.id}`)
+  console.log(`  shop_settings ready for tenant ${tenant.id}`)
 
-  // ─── Step 3: Create tenant_domains rows ───────────────────────────────────
-  const { error: dErr } = await supabase
-    .from('tenant_domains')
-    .upsert([
-      { tenant_id: tenant.id, host: APP_HOST, audience: 'staff' },
-      { tenant_id: tenant.id, host: PORTAL_HOST, audience: 'customer' },
-    ], { onConflict: 'host' })
+  // ─── Step 3: Create or verify tenant_domains rows ────────────────────────
+  await ensureTenantDomain(APP_HOST, 'staff')
+  await ensureTenantDomain(PORTAL_HOST, 'customer')
+  console.log(`  tenant_domains ready (${APP_HOST}, ${PORTAL_HOST})`)
 
-  if (dErr != null) {
-    // Log but don't throw — domains can be added manually if DNS is not yet configured
-    console.warn(`  tenant_domains INSERT warning: ${dErr.message}`)
-  } else {
-    console.log(`  tenant_domains ready (${APP_HOST}, ${PORTAL_HOST})`)
+  async function ensureTenantDomain(host: string, audience: TenantDomainAudience) {
+    const { data: existingDomain, error: domainLookupErr } = await supabase
+      .from('tenant_domains')
+      .select('id, tenant_id, host, audience')
+      .eq('host', host)
+      .maybeSingle()
+
+    if (domainLookupErr != null) {
+      throw new Error(`tenant_domains lookup failed for ${host}: ${domainLookupErr.message}`)
+    }
+
+    if (existingDomain == null) {
+      const { error: insertErr } = await supabase
+        .from('tenant_domains')
+        .insert({ tenant_id: tenant.id, host, audience })
+
+      if (insertErr != null) {
+        throw new Error(`tenant_domains INSERT failed for ${host}: ${insertErr.message}`)
+      }
+      return
+    }
+
+    if (existingDomain.tenant_id !== tenant.id) {
+      throw new Error(
+        `tenant_domains verification failed: ${host} belongs to another tenant (${existingDomain.tenant_id})`
+      )
+    }
+
+    if (existingDomain.audience !== audience) {
+      const { error: updateErr } = await supabase
+        .from('tenant_domains')
+        .update({ audience })
+        .eq('id', existingDomain.id)
+
+      if (updateErr != null) {
+        throw new Error(`tenant_domains audience update failed for ${host}: ${updateErr.message}`)
+      }
+    }
   }
 
-  // ─── Step 4: Create staff row (auth_user_id NULL until invite accepted) ───
+  // ─── Step 4: Create or verify staff row ──────────────────────────────────
   const { data: staff, error: stErr } = await supabase
     .from('staff')
     .upsert({
       tenant_id:  tenant.id,
-      email:      ownerEmail,
-      name:       ownerName,
+      email:      ownerEmailArg,
+      name:       ownerNameArg,
       role:       'admin',
       is_active:  true,
     }, { onConflict: 'tenant_id,email' })
-    .select()
+    .select('id, tenant_id, auth_user_id, email, name, role, is_active')
     .single()
 
   if (stErr != null || staff == null) {
-    throw new Error(`staff INSERT failed: ${stErr?.message ?? 'no data returned'}`)
+    throw new Error(`staff verification failed: ${stErr?.message ?? 'no data returned'}`)
   }
-  console.log(`  Staff row ready: id=${staff.id}`)
+  const staffRow = staff
+  console.log(`  Staff row ready: id=${staffRow.id}`)
 
   // ─── Step 5: Create owner with app_metadata BAKED IN at creation ──────────
   // CRITICAL: The link_auth_user_to_actor trigger (migration 0010) fires
@@ -158,30 +245,40 @@ async function main() {
   // moment. inviteUserByEmail creates the user without app_metadata, so
   // the trigger raises 'auth_user_created_without_tenant_id'. We must use
   // createUser with app_metadata in the first call. (RESEARCH.md Pitfall 5)
-  const existingOwner = await findAuthUserByEmail(ownerEmail)
-  const { data: created, error: cErr } = existingOwner
-    ? { data: { user: existingOwner }, error: null }
-    : await supabase.auth.admin.createUser({
-        email:          ownerEmail,
-        email_confirm:  true,
-        user_metadata:  { name: ownerName },
-        app_metadata:   { tenant_id: tenant.id, intended_actor: 'staff' },
-      })
+  const existingOwner = await findAuthUserByEmail(ownerEmailArg)
+  const ownerAuthUser = existingOwner ?? await createOwnerAuthUser()
+  await ensureAuthUserAppMetadata(ownerAuthUser, {
+    tenant_id: tenant.id,
+    intended_actor: 'staff',
+  }, 'owner auth user')
 
-  if (cErr != null || created?.user == null) {
-    throw new Error(`createUser failed: ${cErr?.message ?? 'no user returned'}`)
-  }
-  const authUserId = created.user.id
-  console.log(`  Auth user ready: ${authUserId} (app_metadata stamped at creation)`)
+  const authUserId = ownerAuthUser.id
+  console.log(`  Auth user ready: ${authUserId} (app_metadata verified)`)
 
-  const { error: staffAuthErr } = await supabase
+  const { data: linkedStaff, error: staffAuthErr } = await supabase
     .from('staff')
     .update({ auth_user_id: authUserId })
-    .eq('id', staff.id)
-    .is('auth_user_id', null)
+    .eq('id', staffRow.id)
+    .select('id, auth_user_id')
+    .single()
 
-  if (staffAuthErr != null) {
-    throw new Error(`staff auth_user_id link failed: ${staffAuthErr.message}`)
+  if (staffAuthErr != null || linkedStaff?.auth_user_id !== authUserId) {
+    throw new Error(`staff auth_user_id verification failed: ${staffAuthErr?.message ?? 'link mismatch'}`)
+  }
+
+  async function createOwnerAuthUser() {
+    const { data, error } = await supabase.auth.admin.createUser({
+      email:          ownerEmailArg,
+      email_confirm:  true,
+      user_metadata:  { name: ownerNameArg },
+      app_metadata:   { tenant_id: tenant.id, intended_actor: 'staff' },
+    })
+
+    if (error != null || data?.user == null) {
+      throw new Error(`createUser failed: ${error?.message ?? 'no user returned'}`)
+    }
+
+    return toAuthUserSummary(data.user)
   }
 
   // ─── Step 6: Generate invite/recovery link ────────────────────────────────
@@ -189,7 +286,7 @@ async function main() {
   // generateLink does not send email; handle the link as a sensitive credential.
   const { data: link, error: lErr } = await supabase.auth.admin.generateLink({
     type:  'recovery',
-    email: ownerEmail,
+    email: ownerEmailArg,
   })
 
   if (lErr != null) {
@@ -198,7 +295,7 @@ async function main() {
   if (!link?.properties?.action_link) {
     throw new Error('generateLink failed: no action link returned')
   }
-  console.log(`  Recovery link generated for ${ownerEmail}`)
+  console.log(`  Recovery link generated for ${ownerEmailArg}`)
   console.log('  Recovery link value intentionally not printed; use an approved secure handoff path for owner setup.')
 
   const {
@@ -213,8 +310,8 @@ async function main() {
 
   console.log('')
   console.log('Bootstrap complete.')
-  console.log(`  Tenant:    ${tenantName} (${tenant.id})`)
-  console.log(`  Staff row: ${staff.id} (${ownerEmail})`)
+  console.log(`  Tenant:    ${tenantNameArg} (${tenant.id})`)
+  console.log(`  Staff row: ${staffRow.id} (${ownerEmailArg})`)
   console.log(`  Auth user: ${authUserId}`)
   console.log(`  Company:   ${company.id} (${company.name})`)
   console.log(`  Contact:   ${contact.id} (${contact.email ?? 'no email'})`)
@@ -319,22 +416,18 @@ async function main() {
         name: 'Smoke Customer',
         is_active: true,
       }, { onConflict: 'tenant_id,email' })
-      .select('id, email, auth_user_id')
+      .select('id, email, auth_user_id, company_id, contact_id, is_active')
       .single()
 
     if (customerErr != null || customerUser == null) {
-      throw new Error(`customer_users UPSERT failed: ${customerErr?.message ?? 'no data returned'}`)
+      throw new Error(`customer_users verification failed: ${customerErr?.message ?? 'no data returned'}`)
     }
 
-    const customerAuthUser = await ensureSmokeCustomerAuthUser(
-      customerUser.id,
-      customerUser.email,
-      customerUser.auth_user_id
-    )
+    const customerAuthUser = await ensureSmokeCustomerAuthUser(customerUser.id, customerUser.email)
 
     const { data: existingEmployee, error: employeeLookupErr } = await supabase
       .from('shop_employees')
-      .select('id, display_name')
+      .select('id, display_name, is_active')
       .eq('tenant_id', tenant.id)
       .eq('display_name', SMOKE_EMPLOYEE_NAME)
       .maybeSingle()
@@ -343,7 +436,9 @@ async function main() {
       throw new Error(`shop_employees lookup failed: ${employeeLookupErr.message}`)
     }
 
-    const employee = existingEmployee ?? await createSmokeEmployee()
+    const employee = existingEmployee == null
+      ? await createSmokeEmployee()
+      : await verifySmokeEmployee(existingEmployee.id)
 
     async function createSmokeEmployee() {
       const { data, error } = await supabase
@@ -354,7 +449,7 @@ async function main() {
           pin_hash: SMOKE_PIN_HASH,
           is_active: true,
         })
-        .select('id, display_name')
+        .select('id, display_name, is_active')
         .single()
 
       if (error != null || data == null) {
@@ -364,9 +459,27 @@ async function main() {
       return data
     }
 
+    async function verifySmokeEmployee(employeeId: string) {
+      const { data, error } = await supabase
+        .from('shop_employees')
+        .update({
+          pin_hash: SMOKE_PIN_HASH,
+          is_active: true,
+        })
+        .eq('id', employeeId)
+        .select('id, display_name, is_active')
+        .single()
+
+      if (error != null || data == null) {
+        throw new Error(`shop_employees verification failed: ${error?.message ?? 'no data returned'}`)
+      }
+
+      return data
+    }
+
     const { data: existingWorkstation, error: workstationLookupErr } = await supabase
       .from('workstations')
-      .select('id, name')
+      .select('id, auth_user_id, device_token, name')
       .eq('tenant_id', tenant.id)
       .eq('name', SMOKE_WORKSTATION_NAME)
       .maybeSingle()
@@ -375,50 +488,56 @@ async function main() {
       throw new Error(`workstations lookup failed: ${workstationLookupErr.message}`)
     }
 
-    const workstation = existingWorkstation ?? await createSmokeWorkstation()
+    const workstation = await ensureSmokeWorkstation(existingWorkstation)
 
-    async function createSmokeWorkstation() {
-      const deviceToken = randomBytes(36).toString('base64url')
-      const workstationEmail = `workstation-${slug}-smoke@workstations.${slug}.local`
+    async function ensureSmokeWorkstation(existingWorkstationRow: ExistingWorkstation | null) {
+      const workstationEmail = `workstation-${slugArg}-smoke@workstations.${slugArg}.local`
+      const deviceToken = existingWorkstationRow?.device_token ?? randomBytes(36).toString('base64url')
       const existingWorkstationAuthUser = await findAuthUserByEmail(workstationEmail)
       const workstationAuthUser = existingWorkstationAuthUser
         ?? await createSmokeWorkstationAuthUser(workstationEmail, deviceToken)
 
       if (existingWorkstationAuthUser != null) {
-        const { error: updateAuthErr } = await supabase.auth.admin.updateUserById(
-          existingWorkstationAuthUser.id,
-          {
-            password: deviceToken,
-            app_metadata: {
-              tenant_id: tenant.id,
-              audience: 'staff_shop',
-              role: 'shop',
-              intended_actor: 'workstation',
-            },
-          }
-        )
+        await updateWorkstationAuthUser(existingWorkstationAuthUser, deviceToken, existingWorkstationRow?.id)
+      }
 
-        if (updateAuthErr != null) {
-          throw new Error(`workstation auth user recovery failed: ${updateAuthErr.message}`)
+      if (existingWorkstationRow == null) {
+        const { data, error } = await supabase
+          .from('workstations')
+          .insert({
+            tenant_id: tenant.id,
+            auth_user_id: workstationAuthUser.id,
+            name: SMOKE_WORKSTATION_NAME,
+            default_stage: 'received',
+            physical_location: 'Smoke test bench',
+            device_token: deviceToken,
+            is_active: true,
+          })
+          .select('id, name')
+          .single()
+
+        if (error != null || data == null) {
+          throw new Error(`workstations INSERT failed: ${error?.message ?? 'no data returned'}`)
         }
+
+        await updateWorkstationAuthUser(workstationAuthUser, deviceToken, data.id)
+        return data
       }
 
       const { data, error } = await supabase
         .from('workstations')
-        .insert({
-          tenant_id: tenant.id,
+        .update({
           auth_user_id: workstationAuthUser.id,
-          name: SMOKE_WORKSTATION_NAME,
           default_stage: 'received',
           physical_location: 'Smoke test bench',
-          device_token: deviceToken,
           is_active: true,
         })
+        .eq('id', existingWorkstationRow.id)
         .select('id, name')
         .single()
 
       if (error != null || data == null) {
-        throw new Error(`workstations INSERT failed: ${error?.message ?? 'no data returned'}`)
+        throw new Error(`workstations verification failed: ${error?.message ?? 'no data returned'}`)
       }
 
       return data
@@ -441,13 +560,35 @@ async function main() {
         throw new Error(`workstation auth user failed: ${error?.message ?? 'no user returned'}`)
       }
 
-      return data.user
+      return toAuthUserSummary(data.user)
+    }
+
+    async function updateWorkstationAuthUser(
+      authUser: AuthUserSummary,
+      deviceToken: string,
+      workstationId: string | undefined
+    ) {
+      const { error } = await supabase.auth.admin.updateUserById(authUser.id, {
+        password: deviceToken,
+        app_metadata: {
+          ...authUser.appMetadata,
+          tenant_id: tenant.id,
+          audience: 'staff_shop',
+          role: 'shop',
+          intended_actor: 'workstation',
+          ...(workstationId == null ? {} : { workstation_id: workstationId }),
+        },
+      })
+
+      if (error != null) {
+        throw new Error(`workstation auth user recovery failed: ${error.message}`)
+      }
     }
 
     const packetToken = randomBytes(12).toString('base64url').slice(0, 16)
     const { data: existingJob, error: jobLookupErr } = await supabase
       .from('jobs')
-      .select('id, job_number, packet_token')
+      .select('id, job_number, packet_token, company_id, contact_id')
       .eq('tenant_id', tenant.id)
       .eq('job_name', SMOKE_JOB_NAME)
       .maybeSingle()
@@ -456,51 +597,35 @@ async function main() {
       throw new Error(`jobs lookup failed: ${jobLookupErr.message}`)
     }
 
-    const job = existingJob ?? await createSmokeJob(packetToken, company.id, contact.id)
+    const job = existingJob == null
+      ? await createSmokeJob(packetToken, company.id, contact.id)
+      : await verifySmokeJob(existingJob, company.id, contact.id)
+
     return { company, contact, customerUser, customerAuthUser, employee, workstation, job }
   }
 
-  async function ensureSmokeCustomerAuthUser(
-    customerUserId: string,
-    email: string,
-    linkedAuthUserId: string | null
-  ) {
+  async function ensureSmokeCustomerAuthUser(customerUserId: string, email: string) {
     const existingCustomerAuthUser = await findAuthUserByEmail(email)
-
     const customerAuthUser = existingCustomerAuthUser ?? await createSmokeCustomerAuthUser(email)
 
     if (existingCustomerAuthUser != null) {
-      const { error: updateAuthErr } = await supabase.auth.admin.updateUserById(
-        existingCustomerAuthUser.id,
-        {
-          app_metadata: {
-            tenant_id: tenant.id,
-            audience: 'customer',
-            role: 'customer',
-            intended_actor: 'customer',
-          },
-        }
-      )
-
-      if (updateAuthErr != null) {
-        throw new Error(`customer auth user metadata update failed: ${updateAuthErr.message}`)
-      }
+      await ensureAuthUserAppMetadata(existingCustomerAuthUser, {
+        tenant_id: tenant.id,
+        audience: 'customer',
+        role: 'customer',
+        intended_actor: 'customer',
+      }, 'customer auth user')
     }
 
-    if (linkedAuthUserId != null && linkedAuthUserId !== customerAuthUser.id) {
-      throw new Error(
-        `customer_users auth_user_id mismatch: ${customerUserId} is linked to ${linkedAuthUserId}`
-      )
-    }
-
-    const { error: linkErr } = await supabase
+    const { data: linkedCustomerUser, error: linkErr } = await supabase
       .from('customer_users')
       .update({ auth_user_id: customerAuthUser.id })
       .eq('id', customerUserId)
-      .is('auth_user_id', null)
+      .select('id, auth_user_id')
+      .single()
 
-    if (linkErr != null) {
-      throw new Error(`customer_users auth_user_id link failed: ${linkErr.message}`)
+    if (linkErr != null || linkedCustomerUser?.auth_user_id !== customerAuthUser.id) {
+      throw new Error(`customer_users auth_user_id verification failed: ${linkErr?.message ?? 'link mismatch'}`)
     }
 
     return customerAuthUser
@@ -523,7 +648,7 @@ async function main() {
       throw new Error(`customer auth user failed: ${error?.message ?? 'no user returned'}`)
     }
 
-    return data.user
+    return toAuthUserSummary(data.user)
   }
 
   async function createSmokeJob(packetToken: string, companyId: string, contactId: string) {
@@ -543,13 +668,44 @@ async function main() {
         priority: 'normal',
         intake_status: 'scheduled',
         notes: 'Created by scripts/seed-tenant.ts production-readiness smoke bootstrap.',
-        created_by_staff_id: staff.id,
+        created_by_staff_id: staffRow.id,
       })
       .select('id, job_number, packet_token')
       .single()
 
     if (error != null || data == null) {
       throw new Error(`jobs INSERT failed: ${error?.message ?? 'no data returned'}`)
+    }
+
+    return data
+  }
+
+  async function verifySmokeJob(existingJob: ExistingSeedJob, companyId: string, contactId: string) {
+    if (!/^[A-Za-z0-9_-]{16}$/.test(existingJob.packet_token)) {
+      throw new Error(`jobs verification failed: seed job ${existingJob.id} has an invalid packet_token`)
+    }
+
+    if (existingJob.company_id === companyId && existingJob.contact_id === contactId) {
+      return existingJob
+    }
+
+    const { data, error } = await supabase
+      .from('jobs')
+      .update({
+        company_id: companyId,
+        contact_id: contactId,
+        part_count: 1,
+        parts_received_count: 1,
+        priority: 'normal',
+        intake_status: 'scheduled',
+        created_by_staff_id: staffRow.id,
+      })
+      .eq('id', existingJob.id)
+      .select('id, job_number, packet_token')
+      .single()
+
+    if (error != null || data == null) {
+      throw new Error(`jobs verification failed: ${error?.message ?? 'no data returned'}`)
     }
 
     return data
@@ -584,7 +740,24 @@ async function main() {
     return `${settings.job_number_prefix}-${currentYear}-${String(nextSeq).padStart(5, '0')}`
   }
 
-  async function findAuthUserByEmail(email: string): Promise<{ id: string; email?: string } | null> {
+  async function ensureAuthUserAppMetadata(
+    authUser: AuthUserSummary,
+    metadata: Record<string, unknown>,
+    label: string
+  ) {
+    const { error } = await supabase.auth.admin.updateUserById(authUser.id, {
+      app_metadata: {
+        ...authUser.appMetadata,
+        ...metadata,
+      },
+    })
+
+    if (error != null) {
+      throw new Error(`${label} metadata verification failed: ${error.message}`)
+    }
+  }
+
+  async function findAuthUserByEmail(email: string): Promise<AuthUserSummary | null> {
     const perPage = 1000
     const normalizedEmail = email.toLowerCase()
 
@@ -596,7 +769,7 @@ async function main() {
 
       const match = data.users.find((user) => user.email?.toLowerCase() === normalizedEmail)
       if (match != null) {
-        return { id: match.id, email: match.email ?? undefined }
+        return toAuthUserSummary(match)
       }
 
       const reachedKnownLastPage = data.lastPage > 0 && page >= data.lastPage
@@ -606,6 +779,22 @@ async function main() {
       }
     }
   }
+}
+
+function toAuthUserSummary(user: User): AuthUserSummary {
+  return {
+    id: user.id,
+    email: user.email ?? undefined,
+    appMetadata: toRecord(user.app_metadata),
+  }
+}
+
+function toRecord(value: unknown): Record<string, unknown> {
+  if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+    return {}
+  }
+
+  return value as Record<string, unknown>
 }
 
 main().catch((err: unknown) => {

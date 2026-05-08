@@ -11,10 +11,12 @@ Canonical production hosts:
 
 - `pnpm type-check` passes.
 - `pnpm lint` passes, including `madge --circular src/modules`.
-- `pnpm test` passes: 34 files / 241 tests.
+- `pnpm test` passes: 34 files / 242 tests.
 - `pnpm build` passes.
 - Linked pgTAP is verified: `supabase test db --linked` passes 9 files / 87 tests after migration `0020_security_definer_fail_closed.sql`.
+- `supabase migration list --linked` verified local/remote alignment through `0020_security_definer_fail_closed.sql` on 2026-05-08.
 - Playwright E2E is not verified locally because staff E2E credentials are not configured.
+- No-secret Playwright host-form smoke passes: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"`.
 
 ## Human-Only Blockers
 
@@ -42,6 +44,7 @@ Tasks:
 - Run `supabase migration list --linked` and verify migrations through `0020_security_definer_fail_closed.sql` are applied.
 - Run `supabase test db --linked`.
 - Verify JWT expiry reports `3600` if the CLI can inspect it.
+- Note: local Supabase CLI `v2.90.0` does not expose `supabase inspect db config`; JWT expiry remains a Dashboard verification unless a newer CLI/API path is available.
 - Return exact commands run, pass/fail, and no secret values.
 
 ### P1-GATE-02 — Tenant 1 Seed Verification

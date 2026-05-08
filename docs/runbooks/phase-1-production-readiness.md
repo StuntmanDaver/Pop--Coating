@@ -64,9 +64,9 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 - Passed: `pnpm type-check`
 - Passed: `pnpm lint`
-- Passed: `pnpm test` (34 files / 241 tests)
+- Passed: `pnpm test` (34 files / 242 tests)
 - Passed: `pnpm build`
-- Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "customer portal renders"`
+- Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"` (2 no-secret host-form tests)
 - Applied live Supabase migration `0018_security_and_hot_path_hardening.sql`.
 - Applied live Supabase migration `0019_pgtap_test_schema_usage.sql`.
 - Applied live Supabase migration `0020_security_definer_fail_closed.sql`.
@@ -78,6 +78,8 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Attempted to attach `app.popsindustrial.com` and `track.popsindustrial.com`; both are blocked by alias conflicts because they are already assigned to another Vercel project. Do not force-move without confirming the current owning project in the dashboard.
 - Not run: Playwright E2E, because staff E2E credentials were not configured locally.
 - Passed: `supabase test db --linked` (9 files / 87 tests).
+- Verified: `supabase migration list --linked` shows local and remote migrations through `0020`.
+- Not available in local CLI `v2.90.0`: `supabase inspect db config`; JWT expiry remains a Supabase Dashboard verification.
 
 ## Seed And Smoke
 
@@ -85,6 +87,7 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - The script generates but does not print the recovery action link. Complete owner password setup through an approved secure handoff path, and never paste setup links into docs, tickets, or chat.
 - Confirm the script reports tenant, domain, company, contact, customer user, customer auth user, shop employee, workstation, and seed job identifiers.
 - Confirm the packet QR target shape is `https://app.popsindustrial.com/scan?packet=<packet_token>`.
+- The script is idempotency-hardened: existing canonical domains must belong to the same tenant, existing Auth users get required metadata repaired, and existing seed job packet tokens are validated before the QR target is printed.
 
 ## Manual Dashboard Gaps
 
