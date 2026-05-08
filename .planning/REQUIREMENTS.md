@@ -20,7 +20,7 @@
 - [x] **AUTH-01**: Office staff can sign in with email and password; session uses `@supabase/ssr` httpOnly cookie scoped to `app.popsindustrial.com`; session TTL is 30 days; auth decisions always use `supabase.auth.getUser()` (never `getSession()`)
 - [x] **AUTH-02**: Workstation tablet is enrolled as a synthetic Supabase user via admin-generated QR code ceremony; workstation session TTL is 1 hour (stolen-tablet mitigation); tablet re-authenticates silently
 - [x] **AUTH-03**: Customer portal uses magic-link auth scoped to `track.popsindustrial.com`; customer session is read-only and scoped to their company's jobs; session TTL is 30 days
-- [ ] **AUTH-04**: JWT `app_metadata` carries `tenant_id`, `audience` (office/shop/customer), and `role`; `custom_access_token_hook` populates claims; hook must not write to any tables (Supabase deadlock constraint)
+- [ ] **AUTH-04**: JWT `app_metadata` carries `tenant_id`, `audience` (`staff_office`/`staff_shop`/`customer`), and `role`; `custom_access_token_hook` populates claims; hook must not write to any tables (Supabase deadlock constraint)
 - [x] **AUTH-05**: `requireOfficeStaff()`, `requireShopStaff()`, `requireCustomer()` helpers in `src/shared/auth-helpers/require.ts` enforce audience at the Server Action / route level; `getCurrentClaims()` in `claims.ts` reads JWT claims
 
 ### CRM
@@ -63,7 +63,7 @@
 ### Observability & Ops
 
 - [ ] **OPS-01**: An audit log records sensitive operations: staff invites, deactivations, role changes, and other security-relevant actions; each entry is immutable and tagged with `tenant_id` and actor
-- [x] **OPS-02**: A comprehensive pgTAP RLS test suite covers: cross-tenant data isolation, audience isolation (office/shop/customer cannot access each other's routes), and authorization of SECURITY DEFINER functions
+- [x] **OPS-02**: A comprehensive pgTAP RLS test suite covers: cross-tenant data isolation, audience isolation (`staff_office`/`staff_shop`/`customer` cannot access each other's routes), and authorization of SECURITY DEFINER functions
 - [ ] **OPS-03**: Supabase PITR (point-in-time recovery) is enabled; weekly offsite backup to Backblaze B2 is configured and verified
 
 ---

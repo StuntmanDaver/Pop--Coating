@@ -9,7 +9,7 @@ dependency_graph:
   affects: [Phase 2+ development workflows, all PRs gated on pgTAP]
 tech_stack:
   added: [tsx, pgTAP, supabase-branches, fountainhead/action-wait-for-check, pnpm/action-setup]
-  patterns: [pgTAP BEGIN/ROLLBACK isolation, set_config JWT simulation, parseArgs CLI flags, updateUserById app_metadata guard]
+  patterns: [pgTAP BEGIN/ROLLBACK isolation, set_config JWT simulation, parseArgs CLI flags, createUser-with-app_metadata auth guard, idempotent seed verification]
 key_files:
   created:
     - supabase/tests/helpers/jwt_helpers.sql
@@ -25,27 +25,27 @@ key_files:
     - pnpm-lock.yaml
 decisions:
   - "pgTAP helpers use set_config(..., true) (transaction-local) so ROLLBACK fully resets JWT state"
-  - "seed-tenant.ts uses parseArgs with explicit string|undefined cast to satisfy TypeScript strict"
+  - "seed-tenant.ts uses parseArgs with string guards before client creation to satisfy TypeScript strict"
   - "ci.yml pgtap job has if: github.event_name == 'pull_request' (branch DBs only exist in PR context)"
   - "seed.sql inserts directly into auth.users (postgres superuser context in supabase db reset)"
 metrics:
-  duration: 8 minutes (automated tasks only; plan paused at Task 2 human-action checkpoint)
-  completed: 2026-05-02
-  tasks_completed: 2
+  duration: ongoing (automated gates complete; external dashboard and owner-seed inputs remain)
+  completed: pending Phase 1 sign-off
+  tasks_completed: 3
   tasks_total: 5
   files_created: 8
-  files_modified: 2
+  files_modified: 2+
 ---
 
 # Phase 1 Plan 06: pgTAP RLS Tests + Seed + CI Pipeline Summary
 
-**One-liner:** pgTAP 4-file RLS test suite with JWT helpers, supabase/seed.sql with fixed-UUID test tenant, scripts/seed-tenant.ts for live Tenant 1 bootstrap, and GitHub Actions CI with 4 merge gates including pgTAP against branch DB.
+**One-liner:** pgTAP RLS/function coverage with JWT helpers, supabase/seed.sql with fixed-UUID test tenant, an idempotent scripts/seed-tenant.ts for live Tenant 1 bootstrap, and GitHub Actions CI gates for type-check, lint/madge, Vitest, E2E smoke, and pgTAP branch DBs where available.
 
-## Status: PAUSED AT TASK 2 (Human-Action Checkpoint)
+## Status: BLOCKED ON HUMAN-ONLY PRODUCTION CHECKPOINTS
 
-Automated Tasks 1a and 1b are complete and committed. The plan is paused awaiting manual configuration of Supabase Cloud, Resend SMTP, Vercel custom domains, Sentry, and GitHub Actions secrets (Task 2).
+Automated code and database verification is current as of 2026-05-08. Migrations are applied to the linked Supabase project through `0020_security_definer_fail_closed.sql`; generated database types are in place; linked pgTAP passes 9 files / 87 tests; root CI on `main` is green.
 
-Tasks 3–5 (schema push, JWT expiry verification, Phase 1 success criteria walkthrough) depend on Task 2 completing first.
+Phase 1 sign-off remains blocked by human/dashboard work: Supabase JWT expiry, Custom Access Token Hook registration, custom SMTP/Resend DNS, Vercel alias reassignment/env gaps, and the live Tenant 1 seed run with the real owner email/name. JWT expiry is not inspectable with the locally installed Supabase CLI v2.90.0, so it remains a Dashboard verification unless a newer CLI/API path is available.
 
 ## Completed Tasks
 
@@ -66,14 +66,14 @@ Files created:
 **Commit:** `8aa7f15`
 
 Files created:
-- `scripts/seed-tenant.ts` — programmatic Tenant 1 bootstrap; creates tenants + shop_settings + tenant_domains + staff rows, calls `inviteUserByEmail`, then CRITICALLY calls `updateUserById(app_metadata: { tenant_id, intended_actor: 'staff' })` per RESEARCH.md Pitfall 5 so the `link_auth_user_to_actor` trigger (migration 0010) can link the auth.users row when the owner accepts the invite
+- `scripts/seed-tenant.ts` — programmatic Tenant 1 bootstrap; creates or verifies tenants, shop_settings, tenant_domains, staff, owner Auth user, smoke company/contact/customer/customer Auth user/shop employee/workstation/job data. It creates Auth users with required `app_metadata`, repairs metadata for existing smoke users, generates but does not print recovery links, fails closed if canonical domains belong to another tenant, and prints the scanner QR target as `https://app.popsindustrial.com/scan?packet=<packet_token>`.
 - `.github/workflows/ci.yml` — two-job pipeline: `type-check-lint-test` (type-check + lint+madge + vitest), `pgtap` (waits for Supabase Preview branch DB, then runs `supabase test db --db-url`); pgtap job runs only on PRs per D-07
 
 Files modified:
 - `package.json` — added `seed:tenant` script, `tsx` devDependency
 - `pnpm-lock.yaml` — lockfile updated for tsx
 
-**Verification:** `pnpm type-check && pnpm lint && pnpm test` all exit 0.
+**Verification:** current gates pass: `pnpm type-check`, `pnpm lint`, `pnpm test` (34 files / 242 tests), `pnpm build`, no-secret Playwright host-form smoke, `supabase migration list --linked` through `0020`, and `supabase test db --linked` (9 files / 87 tests).
 
 ## Deviations from Plan
 
@@ -81,8 +81,8 @@ Files modified:
 
 **1. [Rule 1 - Bug] TypeScript strict mode error in seed-tenant.ts**
 - **Found during:** Task 1b verification (`pnpm type-check`)
-- **Issue:** `parseArgs` with `strict: false` widens the inferred return type to `string | true | undefined`; `ownerName` passed to `inviteUserByEmail(ownerEmail, { data: { name: ownerName } })` failed with TS2345: `string | true` not assignable to `string`
-- **Fix:** Added explicit `as string | undefined` casts to all four `values[...]` extractions from `parseArgs`; added clarifying comment explaining the runtime-safe cast
+- **Issue:** `parseArgs` with `strict: false` widens the inferred return type to `string | true | undefined`; passing the owner values into the Auth admin call failed TS2345 because `string | true` is not assignable to `string`
+- **Fix:** Added explicit string guards for all four required CLI values before creating clients or calling Supabase APIs.
 - **Files modified:** `scripts/seed-tenant.ts`
 - **Commit:** included in `8aa7f15`
 
@@ -95,17 +95,17 @@ Files modified:
 ## Pending Tasks (Awaiting Human-Action Checkpoint)
 
 - **Task 2 [BLOCKING]:** Manual Supabase Dashboard + Vercel + Resend + Sentry + GitHub Actions configuration (see checkpoint details below)
-- **Task 3:** `supabase db push` to live project + `supabase gen types typescript` + `scripts/seed-tenant.ts` execution
-- **Task 4:** JWT expiry verification (`supabase inspect db config | grep jwt_expiry` must return 3600)
+- **Task 3:** live schema push and type generation are complete through migration `0020`; `scripts/seed-tenant.ts` execution still needs the real owner email/name and completed dashboard/DNS prerequisites.
+- **Task 4:** JWT expiry verification remains manual/dashboard-only with Supabase CLI v2.90.0 because `supabase inspect db config` is not available locally.
 - **Task 5:** Phase 1 success criteria walkthrough (5 criteria PASS/FAIL)
 
 ## AUTH-02 / [A1] RESOLVED
 
-JWT expiry verification is pending Task 2 (manual Dashboard configuration) and Task 4 (automated verification). Per RESEARCH.md A1 RESOLVED, Supabase JWT expiry is project-global; setting it to 3600s satisfies AUTH-02's stolen-tablet mitigation for workstations while office/customer 30-day sessions work via refresh-token rotation. Task 2 step A.7 sets the value; Task 4 verifies it via `supabase inspect db config | grep jwt_expiry`.
+JWT expiry verification is pending Task 2 (manual Dashboard configuration) and Task 4 (manual or future CLI/API verification). Per RESEARCH.md A1 RESOLVED, Supabase JWT expiry is project-global; setting it to 3600s satisfies AUTH-02's stolen-tablet mitigation for workstations while office/customer 30-day sessions work via refresh-token rotation. Task 2 step A.7 sets the value; Task 4 records the verified value once available.
 
 ## Known Stubs
 
-- `src/shared/db/types.ts` — still the placeholder Database type from Plan 04. Task 3 (post-Task 2 checkpoint) regenerates it via `supabase gen types typescript --project-id $SUPABASE_PROJECT_REF`. This is intentional: cannot run the generator without a live schema push.
+- No placeholder DB type remains for the current linked schema. `src/shared/db/types.ts` was regenerated after applying migrations through `0020`.
 
 ## Threat Flags
 
@@ -120,10 +120,15 @@ Tasks 1a and 1b verified:
 - FOUND: supabase/tests/rls/test_function_authorization.sql (6 assertions)
 - FOUND: supabase/tests/rls/test_auth_hook_invariants.sql (6 assertions)
 - FOUND: supabase/seed.sql (fixed UUID 00000000-0000-0000-0000-000000000001)
-- FOUND: scripts/seed-tenant.ts (contains inviteUserByEmail + intended_actor)
+- FOUND: scripts/seed-tenant.ts (creates/verifies owner, customer, and workstation Auth users with required app_metadata)
 - FOUND: .github/workflows/ci.yml (contains all 4 gates)
 - VERIFIED: pnpm type-check exits 0
 - VERIFIED: pnpm lint exits 0
-- VERIFIED: pnpm test passes (21 tests)
-- NOT VERIFIED: pgTAP tests against live DB (requires Task 2 + Task 3)
-- NOT VERIFIED: src/shared/db/types.ts real types (requires Task 3)
+- VERIFIED: pnpm test passes (34 files / 242 tests)
+- VERIFIED: pnpm build exits 0
+- VERIFIED: no-secret Playwright host-form smoke passes
+- VERIFIED: pgTAP tests against linked DB pass (9 files / 87 tests)
+- VERIFIED: src/shared/db/types.ts generated from linked schema through migration 0020
+- NOT VERIFIED: JWT expiry = 3600s Dashboard setting
+- NOT VERIFIED: production Custom Access Token Hook and SMTP/DNS Dashboard setup
+- NOT VERIFIED: live Tenant 1 seed run with real owner email/name

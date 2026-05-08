@@ -101,4 +101,4 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 ## Sign-Off
 
-Use `docs/runbooks/phase-1-success-walkthrough.md` for the no-secret success walkthrough. Phase 1 Task 5 can run only after the two Supabase Dashboard steps, branch push/sync, and the automated gate pass. Phase 2 planning stays blocked until Task 5 criteria pass.
+Use `docs/runbooks/phase-1-success-walkthrough.md` for the no-secret success walkthrough. Phase 1 Task 5 can run only after the Supabase Dashboard JWT/Auth Hook/SMTP checks, branch push/sync, and the automated gate pass. Phase 2 planning stays blocked until Task 5 criteria pass.
