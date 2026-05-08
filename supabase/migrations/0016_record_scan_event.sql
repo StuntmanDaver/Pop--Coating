@@ -34,18 +34,23 @@ CREATE OR REPLACE FUNCTION app.record_scan_event(
   p_notes TEXT DEFAULT NULL,
   p_attachment_id UUID DEFAULT NULL
 ) RETURNS UUID
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions AS $$
 DECLARE
   v_event_id UUID;
   v_from TEXT;
   v_tenant_id UUID;
   v_caller_tenant UUID := app.tenant_id();
   v_caller_audience TEXT := app.audience();
+  v_caller_workstation UUID := app.workstation_id();
   v_emp_tenant UUID;
-  v_ws_tenant UUID;
+  v_ws record;
 BEGIN
-  IF v_caller_audience NOT IN ('staff_office', 'staff_shop') THEN
-    RAISE EXCEPTION 'access_denied: scan requires staff session';
+  IF v_caller_audience IS DISTINCT FROM 'staff_shop' THEN
+    RAISE EXCEPTION 'access_denied: scan requires shop workstation session';
+  END IF;
+
+  IF v_caller_workstation IS NULL OR p_workstation_id != v_caller_workstation THEN
+    RAISE EXCEPTION 'access_denied: workstation attribution mismatch';
   END IF;
 
   -- Validate the to_status against the schema-defined production stages.
@@ -69,13 +74,17 @@ BEGIN
   END IF;
 
   SELECT tenant_id INTO v_emp_tenant FROM shop_employees WHERE id = p_employee_id;
-  SELECT tenant_id INTO v_ws_tenant FROM workstations WHERE id = p_workstation_id;
+  SELECT tenant_id, current_employee_id INTO v_ws FROM workstations WHERE id = p_workstation_id;
 
   IF v_emp_tenant IS NULL THEN RAISE EXCEPTION 'employee_not_found'; END IF;
-  IF v_ws_tenant IS NULL THEN RAISE EXCEPTION 'workstation_not_found'; END IF;
+  IF v_ws.tenant_id IS NULL THEN RAISE EXCEPTION 'workstation_not_found'; END IF;
 
-  IF v_emp_tenant != v_caller_tenant OR v_ws_tenant != v_caller_tenant THEN
+  IF v_emp_tenant != v_caller_tenant OR v_ws.tenant_id != v_caller_tenant THEN
     RAISE EXCEPTION 'access_denied: cross-tenant employee/workstation';
+  END IF;
+
+  IF v_ws.current_employee_id IS NULL OR v_ws.current_employee_id != p_employee_id THEN
+    RAISE EXCEPTION 'access_denied: employee not currently claimed on workstation';
   END IF;
 
   INSERT INTO job_status_history

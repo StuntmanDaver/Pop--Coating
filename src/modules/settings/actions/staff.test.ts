@@ -133,7 +133,7 @@ describe('inviteStaff', () => {
 
     await expect(
       inviteStaff({ email: 'p@acme.test', name: 'Pat', role: 'office' })
-    ).rejects.toThrow('Invite link dispatch failed: smtp send failed')
+    ).rejects.toThrow('Invite link generation failed: smtp send failed')
 
     expect(mockDelete).not.toHaveBeenCalled()
   })

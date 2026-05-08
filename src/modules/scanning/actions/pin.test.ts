@@ -3,13 +3,10 @@ import { validateEmployeePin } from './pin'
 
 vi.mock('@/shared/db/server', () => ({ createClient: vi.fn() }))
 vi.mock('@/shared/auth-helpers/require', () => ({ requireShopStaff: vi.fn() }))
-vi.mock('@/shared/auth-helpers/claims', () => ({ getCurrentClaims: vi.fn() }))
 
 import { createClient } from '@/shared/db/server'
 import { requireShopStaff } from '@/shared/auth-helpers/require'
-import { getCurrentClaims } from '@/shared/auth-helpers/claims'
 
-const TENANT_ID = '11111111-1111-4111-8111-111111111111'
 const EMP_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
 
 type RpcResult = { data: unknown | null; error: { message: string } | null }
@@ -21,25 +18,20 @@ const mockSchema = vi.fn((_name: string) => ({ rpc: mockRpc }))
 beforeEach(() => {
   vi.clearAllMocks()
   ;(requireShopStaff as ReturnType<typeof vi.fn>).mockResolvedValue({ id: 'shop-1' })
-  ;(getCurrentClaims as ReturnType<typeof vi.fn>).mockResolvedValue({
-    tenant_id: TENANT_ID,
-    audience: 'staff_shop',
-    role: 'shop',
-  })
   ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ schema: mockSchema })
 })
 
 describe('validateEmployeePin', () => {
-  it('routes through .schema("app") and passes p_tenant_id from claims', async () => {
+  it('routes through .schema("app") without caller-supplied tenant_id', async () => {
     mockRpc.mockResolvedValueOnce({ data: { ok: true, employee_id: EMP_ID }, error: null })
     const result = await validateEmployeePin({ employee_id: EMP_ID, pin: '1234' })
 
     expect(mockSchema).toHaveBeenCalledWith('app')
     expect(mockRpc).toHaveBeenCalledWith('validate_employee_pin', {
-      p_tenant_id: TENANT_ID,
       p_employee_id: EMP_ID,
       p_pin: '1234',
     })
+    expect(mockRpc.mock.calls[0]?.[1]).not.toHaveProperty('p_tenant_id')
     expect(result).toEqual({ ok: true, employee_id: EMP_ID })
   })
 

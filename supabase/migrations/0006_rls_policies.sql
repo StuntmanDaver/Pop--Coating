@@ -235,8 +235,6 @@ CREATE POLICY job_status_history_customer_select ON job_status_history FOR SELEC
 
 -- job_status_history INSERT is done via app.record_scan_event() SECURITY DEFINER (Plan 03)
 -- No direct INSERT policy for authenticated; the SECURITY DEFINER function handles tenant isolation
-CREATE POLICY job_status_history_shop_insert ON job_status_history FOR INSERT
-  WITH CHECK (tenant_id = app.tenant_id() AND app.audience() IN ('staff_office', 'staff_shop'));
 
 -- No UPDATE on job_status_history (history is immutable)
 

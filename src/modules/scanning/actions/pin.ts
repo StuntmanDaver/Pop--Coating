@@ -2,7 +2,6 @@
 import { z } from 'zod'
 import { createClient } from '@/shared/db/server'
 import { requireShopStaff } from '@/shared/auth-helpers/require'
-import { getCurrentClaims } from '@/shared/auth-helpers/claims'
 
 // Source: docs/DESIGN.md §4.3 Module 5 (Scanning) + migration 0015.
 // Wraps app.validate_employee_pin SECURITY DEFINER function. The function
@@ -51,14 +50,12 @@ export async function validateEmployeePin(input: unknown): Promise<ValidatePinRe
   if (!parsed.success) throw new Error('Invalid input')
 
   await requireShopStaff()
-  const claims = await getCurrentClaims()
   const supabase = await createClient()
 
   const { data, error } = await appSchema(supabase).rpc<
     RawPinResult,
-    { p_tenant_id: string; p_employee_id: string; p_pin: string }
+    { p_employee_id: string; p_pin: string }
   >('validate_employee_pin', {
-    p_tenant_id: claims.tenant_id,
     p_employee_id: parsed.data.employee_id,
     p_pin: parsed.data.pin,
   })

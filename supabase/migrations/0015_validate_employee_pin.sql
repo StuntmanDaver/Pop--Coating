@@ -2,9 +2,8 @@
 -- Source: docs/DESIGN.md §4.3 Module 5 (Scanning) — Critical PIN function.
 --
 -- SECURITY DEFINER required: function does writes (UPDATE shop_employees) that
--- shop_staff RLS would block. Tenant validation happens via the p_tenant_id
--- parameter, which the calling Server Action MUST set from the authenticated
--- user's JWT (app.tenant_id()) — never from user input.
+-- shop_staff RLS would block. Tenant validation is derived from the authenticated
+-- workstation JWT via app.tenant_id(); callers never provide tenant_id.
 --
 -- Lockout policy: 5 consecutive failed attempts → 15-minute lockout.
 -- pgcrypto crypt() / bcrypt comparison; pin_hash is bcrypt-hashed at write time.
@@ -17,15 +16,20 @@
 --   { ok: false, reason: 'invalid_pin', attempts_remaining: <0..4> }
 
 CREATE OR REPLACE FUNCTION app.validate_employee_pin(
-  p_tenant_id UUID,
   p_employee_id UUID,
   p_pin TEXT
 ) RETURNS jsonb
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions AS $$
 DECLARE
   v_emp record;
   v_now TIMESTAMPTZ := now();
+  v_caller_tenant UUID := app.tenant_id();
+  v_caller_audience TEXT := app.audience();
 BEGIN
+  IF v_caller_tenant IS NULL OR v_caller_audience != 'staff_shop' THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'tenant_mismatch');
+  END IF;
+
   SELECT id, pin_hash, failed_pin_attempts, locked_until, is_active, tenant_id
     INTO v_emp
     FROM shop_employees
@@ -38,7 +42,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'tenant_mismatch');
   END IF;
 
-  IF v_emp.tenant_id != p_tenant_id THEN
+  IF v_emp.tenant_id != v_caller_tenant THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'tenant_mismatch');
   END IF;
 
@@ -74,5 +78,5 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION app.validate_employee_pin(UUID, UUID, TEXT) TO authenticated;
-REVOKE EXECUTE ON FUNCTION app.validate_employee_pin(UUID, UUID, TEXT) FROM anon, public;
+GRANT EXECUTE ON FUNCTION app.validate_employee_pin(UUID, TEXT) TO authenticated;
+REVOKE EXECUTE ON FUNCTION app.validate_employee_pin(UUID, TEXT) FROM anon, public;

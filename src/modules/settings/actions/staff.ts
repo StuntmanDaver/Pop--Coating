@@ -93,9 +93,8 @@ export async function inviteStaff(input: unknown): Promise<StaffInviteResult> {
   }
 
   // Step 3: generate an invite link that lets the staff member set a password.
-  // Supabase dispatches the email via the configured SMTP provider (Resend per
-  // CLAUDE.md). The action_link is also returned for in-band display when SMTP
-  // is unavailable (e.g., dev).
+  // generateLink returns the link; it does not send email. Wave 1 displays the
+  // link in settings for the office admin to deliver manually.
   const { data: link, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
     type: 'invite',
     email: parsed.data.email,
@@ -103,7 +102,7 @@ export async function inviteStaff(input: unknown): Promise<StaffInviteResult> {
 
   if (linkError) {
     // Auth user exists at this point — don't roll back; just surface the error.
-    throw new Error(`Invite link dispatch failed: ${linkError.message}`)
+    throw new Error(`Invite link generation failed: ${linkError.message}`)
   }
 
   await logAuditEvent({ action: 'invite', entity_type: 'staff', entity_id: staff.id })
