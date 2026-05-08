@@ -101,7 +101,7 @@ export default function LargeCapacityPowderCoatingPage() {
                         alt={photo.alt}
                         fill
                         sizes="(min-width: 640px) 33vw, 100vw"
-                        className="object-cover"
+                        className="object-contain object-center"
                       />
                     </div>
                   ))}

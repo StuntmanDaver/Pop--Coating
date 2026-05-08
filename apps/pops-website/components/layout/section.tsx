@@ -7,9 +7,9 @@ type SectionProps = ComponentPropsWithoutRef<"section"> & {
 };
 
 const TONE_CLASSES: Record<SectionTone, string> = {
-  dark:   "bg-ink-800 text-ink-100",
-  light:  "bg-paper text-ink-800",
-  canvas: "bg-canvas text-ink-800",
+  dark:   "pops-section-gold-wash text-ink-100",
+  light:  "pops-section-gold-wash text-ink-100",
+  canvas: "pops-section-gold-wash text-ink-100",
 };
 
 export const Section = forwardRef<HTMLElement, SectionProps>(function Section(
@@ -19,7 +19,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(function Section(
   const base = `${TONE_CLASSES[tone]} py-16 md:py-24`;
   return (
     <section ref={ref} className={className ? `${base} ${className}` : base} {...rest}>
-      {children}
+      <div className="relative z-10">{children}</div>
     </section>
   );
 });

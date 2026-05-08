@@ -41,18 +41,6 @@ const GALLERY = [
     src: "/images/industrial-sandblasting-lakeland-fl-IMG_7484.jpg",
     alt: "Abrasive blasting to SSPC standards at Pop's Industrial Coatings",
   },
-  {
-    src: "/images/industrial-sandblasting-lakeland-fl-IMG_7485.jpg",
-    alt: "Surface preparation through media blasting at Pop's Industrial Coatings, Lakeland FL",
-  },
-  {
-    src: "/images/industrial-sandblasting-lakeland-fl-IMG_7486.jpg",
-    alt: "Industrial abrasive blasting equipment at Pop's facility in Lakeland, FL",
-  },
-  {
-    src: "/images/industrial-sandblasting-lakeland-fl-IMG_7487.jpg",
-    alt: "Blasting to NACE standards for optimal coating adhesion at Pop's Industrial Coatings",
-  },
 ];
 
 export default function AbrasiveMediaBlastingPage() {
@@ -114,7 +102,7 @@ export default function AbrasiveMediaBlastingPage() {
                         alt={photo.alt}
                         fill
                         sizes="(min-width: 640px) 33vw, 50vw"
-                        className="object-cover"
+                        className="object-contain object-center"
                       />
                     </div>
                   ))}

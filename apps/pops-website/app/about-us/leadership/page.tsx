@@ -88,7 +88,7 @@ export default function LeadershipPage() {
                       alt={leader.photoAlt}
                       fill
                       sizes="(min-width: 640px) 50vw, 100vw"
-                      className="object-cover object-top"
+                      className="object-contain object-top"
                     />
                   </div>
                   <div className="p-6">

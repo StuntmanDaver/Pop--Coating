@@ -48,6 +48,16 @@ export default function AboutUsPage() {
                 </p>
 
                 <h3 className="mt-8 mb-3 font-display text-[22px] leading-[1.2] text-ink-100">
+                  Large Capacity Ovens
+                </h3>
+                <p className="font-text text-base leading-relaxed text-ink-100">
+                  Size matters, especially when it comes to powder coating. Our large capacity ovens
+                  are designed to accommodate large pieces effortlessly. This means that your
+                  substantial components receive the same meticulous attention and precision finish
+                  as smaller items.
+                </p>
+
+                <h3 className="mt-8 mb-3 font-display text-[22px] leading-[1.2] text-ink-100">
                   Industrial Size Projects
                 </h3>
                 <p className="font-text text-base leading-relaxed text-ink-100">
@@ -79,15 +89,28 @@ export default function AboutUsPage() {
                   top-notch results.
                 </p>
 
-                <h3 className="mt-8 mb-3 font-display text-[22px] leading-[1.2] text-ink-100">
-                  Large Capacity Ovens
-                </h3>
-                <p className="font-text text-base leading-relaxed text-ink-100">
-                  Size matters, especially when it comes to powder coating. Our large capacity ovens
-                  are designed to accommodate large pieces effortlessly. This means that your
-                  substantial components receive the same meticulous attention and precision finish
-                  as smaller items.
-                </p>
+                <div className="relative mt-10 mb-10 aspect-[4/3] w-full overflow-hidden rounded-sm bg-ink-900 ring-1 ring-pops-yellow-500/20 lg:mb-12">
+                  <Image
+                    src="/images/pops-about-worker.png"
+                    alt="Industrial painter applying coating with spray equipment at Pop's Industrial Coatings, Lakeland FL"
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    className="object-contain object-center"
+                  />
+                  {/* Dark wash — keeps photo moody and on-brand with the dark UI */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-black/55"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/50"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 ring-1 ring-inset ring-black/40"
+                  />
+                </div>
 
                 <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                   <Button asChild variant="primary">
@@ -105,22 +128,22 @@ export default function AboutUsPage() {
         {/* Facility photos */}
         <Section tone="dark" className="border-t border-ink-700 pt-0 pb-0">
           <div className="grid grid-cols-1 sm:grid-cols-2">
-            <div className="relative aspect-[4/3] overflow-hidden">
+            <div className="relative aspect-[4/3] overflow-hidden bg-ink-900">
               <Image
                 src="/images/pops-industrial-coatings-lakeland-fl-facility-01.jpg"
                 alt="Interior of Pop's Industrial Coatings facility in Lakeland, FL — large-scale coating equipment"
                 fill
                 sizes="(min-width: 640px) 50vw, 100vw"
-                className="object-cover"
+                className="object-contain object-center"
               />
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden">
+            <div className="relative aspect-[4/3] overflow-hidden bg-ink-900">
               <Image
                 src="/images/pops-industrial-coatings-lakeland-fl-facility-02.jpg"
                 alt="Pop's Industrial Coatings Lakeland FL facility exterior and production floor"
                 fill
                 sizes="(min-width: 640px) 50vw, 100vw"
-                className="object-cover"
+                className="object-contain object-center"
               />
             </div>
           </div>

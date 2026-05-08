@@ -172,7 +172,7 @@ export default function GuestSafetyRulesPage() {
               <div className="border-t border-ink-600 pt-8">
                 <Link
                   href="/check-in"
-                  className="inline-block rounded-sm bg-pops-yellow-500 px-6 py-3 font-text text-sm font-semibold text-ink-900 transition-colors hover:bg-pops-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-800"
+                  className="inline-block rounded-sm bg-pops-yellow-500 px-6 py-3 font-text text-sm font-semibold text-black transition-colors hover:bg-pops-yellow-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 >
                   Proceed to Check In
                 </Link>

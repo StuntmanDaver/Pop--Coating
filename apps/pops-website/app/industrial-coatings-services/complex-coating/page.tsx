@@ -65,7 +65,7 @@ export default function ComplexCoatingPage() {
                     alt="Complex industrial coating project at Pop's Industrial Coatings, Lakeland FL"
                     fill
                     sizes="(min-width: 1024px) 60vw, 100vw"
-                    className="object-cover"
+                    className="object-contain object-center"
                     priority
                   />
                 </div>

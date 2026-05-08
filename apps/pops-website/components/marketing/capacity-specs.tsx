@@ -47,9 +47,9 @@ const SPECS: Spec[] = [
 ];
 
 const CELL_BORDERS = [
-  "border-r border-b border-ink-200 md:border-b-0",
-  "border-b border-ink-200 md:border-r md:border-b-0",
-  "border-r border-ink-200",
+  "border-r border-b border-pops-yellow-500/15 md:border-b-0",
+  "border-b border-pops-yellow-500/15 md:border-r md:border-b-0",
+  "border-r border-pops-yellow-500/15",
   "",
 ];
 
@@ -57,20 +57,20 @@ export function CapacitySpecs() {
   return (
     <section
       aria-labelledby="capacity-heading"
-      className="border-t border-ink-200 bg-canvas py-12 sm:py-16 md:py-20"
+      className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-14 sm:py-16 md:py-20"
     >
-      <Container>
+      <Container className="relative z-10">
         <BlurFade>
           <EyebrowLabel tone="dark" shimmer className="mb-3 sm:mb-4">
             CAPACITY AT A GLANCE
           </EyebrowLabel>
           <h2
             id="capacity-heading"
-            className="mb-2 max-w-3xl font-display text-[26px] leading-tight tracking-tight text-ink-900 sm:text-[30px] md:text-[42px]"
+            className="mb-2 max-w-3xl font-display text-[26px] leading-tight tracking-tight text-ink-100 sm:text-[30px] md:text-[42px]"
           >
             Built for big work
           </h2>
-          <p className="mb-8 max-w-2xl font-text text-base leading-relaxed text-ink-600 sm:mb-10">
+          <p className="mb-8 max-w-2xl font-text text-base leading-relaxed text-ink-300 sm:mb-10">
             {SPECS_READY
               ? "If your part fits, we can finish it. Hard numbers below — get anything outside this range on the phone with us anyway."
               : "Aerospace components to oversized fab work. Send us dimensions, weight, and material, and we'll confirm fit and quote within 24 hours."}
@@ -79,18 +79,18 @@ export function CapacitySpecs() {
 
         <BlurFade delay={0.12}>
           {SPECS_READY ? (
-            <dl className="grid grid-cols-2 border border-ink-200 md:grid-cols-4">
+            <dl className="grid grid-cols-2 border border-pops-yellow-500/20 md:grid-cols-4">
               {SPECS.map((spec, i) => (
                 <div
                   key={spec.label}
                   className={`px-4 py-6 text-center sm:px-6 sm:py-8 ${CELL_BORDERS[i]}`}
                 >
-                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-600">
+                  <dt className="font-text text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-300">
                     {spec.label}
                   </dt>
-                  <dd className="mt-2 font-display text-xl leading-tight tracking-tight text-ink-900 sm:text-2xl md:text-[28px]">
+                  <dd className="mt-2 font-display text-xl leading-tight tracking-tight text-ink-100 sm:text-2xl md:text-[28px]">
                     {spec.value}
-                    <span className="mt-1 block font-text text-[11px] font-normal leading-snug tracking-normal text-ink-500 sm:text-xs">
+                    <span className="mt-1 block font-text text-[11px] font-normal leading-snug tracking-normal text-ink-300 sm:text-xs">
                       {spec.detail}
                     </span>
                   </dd>
@@ -98,8 +98,8 @@ export function CapacitySpecs() {
               ))}
             </dl>
           ) : (
-            <div className="flex flex-col items-start gap-4 border border-ink-200 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
-              <p className="font-text text-base leading-relaxed text-ink-700 sm:text-lg">
+            <div className="flex flex-col items-start gap-4 rounded-sm border border-pops-yellow-500/25 bg-[#0A0A0A] p-6 shadow-[0_0_40px_-12px_rgba(254,205,8,0.12)] sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
+              <p className="font-text text-base leading-relaxed text-ink-200 sm:text-lg">
                 Cure oven, max part weight, blast booth, throughput — sized to
                 your job, every time. Tell us what you have and we&apos;ll
                 confirm a fit.

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Pop's Industrial offers electrostatic powder coating process for tough, uniform finish with superior resistance to corrosion, impact and chemicals.",
   openGraph: {
-    images: [{ url: "/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg" }],
+    images: [{ url: "/images/powder-coat-gallery-toll-gantry.png", width: 1024, height: 768 }],
   },
 };
 
@@ -30,38 +30,30 @@ const OTHER_SERVICES = [
 
 const GALLERY = [
   {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg",
-    alt: "Powder coating application at Pop's Industrial Coatings, Lakeland FL",
+    src: "/images/powder-coat-gallery-poles-before-after.png",
+    width: 576,
+    height: 1024,
+    alt: "Steel poles before powder coating (galvanized) and after a glossy black powder coat finish — Pop's Industrial Coatings, Lakeland FL",
   },
   {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_4029.jpg",
-    alt: "Industrial powder coating process at Pop's facility in Lakeland, FL",
+    src: "/images/powder-coat-gallery-toll-gantry.png",
+    width: 1024,
+    height: 768,
+    alt: "Large highway toll and ITS gantry with tan powder-coated steel structure — Pop's Industrial Coatings",
   },
   {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_4107.jpg",
-    alt: "Uniform powder coat finish on industrial components at Pop's Lakeland facility",
+    src: "/images/powder-coat-gallery-boat-transformation.png",
+    width: 576,
+    height: 1024,
+    alt: "Vessel structure before refinishing, after abrasive blasting, and finished in blue powder coat — Pop's Industrial Coatings",
   },
   {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_4181.jpg",
-    alt: "Powder coated industrial parts curing at Pop's Industrial Coatings",
+    src: "/images/powder-coat-gallery-large-frame-cream.png",
+    width: 768,
+    height: 1024,
+    alt: "Large industrial truss powder coated in smooth off-white, suspended for curing — Pop's Industrial Coatings, Lakeland FL",
   },
-  {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_4686.jpg",
-    alt: "Electrostatic powder coating being applied to industrial equipment at Pop's",
-  },
-  {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_4980.jpg",
-    alt: "Finished powder coating work at Pop's Industrial Coatings, Lakeland FL",
-  },
-  {
-    src: "/images/industrial-powder-coating-lakeland-fl-IMG_5315.jpg",
-    alt: "Industrial components with powder coat finish at Pop's facility",
-  },
-  {
-    src: "/images/industrial-powder-coating-lakeland-fl-Ameron-pole-products-25-1336-2-In-3-27-25.jpg",
-    alt: "Ameron pole products receiving powder coating at Pop's Industrial Coatings",
-  },
-];
+] as const;
 
 export default function PowderCoatingPage() {
   return (
@@ -80,7 +72,7 @@ export default function PowderCoatingPage() {
           heading="Powder Coating"
           lede="Electrostatic spray process delivering a tough, uniform finish with superior resistance to corrosion, impact, and chemicals."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          backgroundImage="/images/industrial-powder-coating-lakeland-fl-IMG_3687.jpg"
+          backgroundImage="/images/powder-coat-gallery-toll-gantry.png"
         />
 
         <Section tone="dark">
@@ -109,21 +101,24 @@ export default function PowderCoatingPage() {
                   </p>
                 </div>
 
-                {/* Photo grid */}
-                <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {/* Photo grid — object-contain so tall before/after composites are fully visible */}
+                <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
                   {GALLERY.map((photo) => (
-                    <div
+                    <figure
                       key={photo.src}
-                      className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800"
+                      className="overflow-hidden rounded-sm border border-pops-yellow-500/20 bg-ink-900/50"
                     >
-                      <Image
-                        src={photo.src}
-                        alt={photo.alt}
-                        fill
-                        sizes="(min-width: 640px) 25vw, 50vw"
-                        className="object-cover"
-                      />
-                    </div>
+                      <div className="flex w-full items-center justify-center p-3 sm:p-4">
+                        <Image
+                          src={photo.src}
+                          alt={photo.alt}
+                          width={photo.width}
+                          height={photo.height}
+                          sizes="(min-width: 768px) 45vw, 100vw"
+                          className="h-auto w-full max-h-[min(90vh,56rem)] object-contain"
+                        />
+                      </div>
+                    </figure>
                   ))}
                 </div>
 

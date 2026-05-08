@@ -34,31 +34,31 @@ export default function FacilitiesEquipmentPage() {
         <Section tone="dark" className="pb-0">
           <Container>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
                 <Image
                   src="/images/Industrial-Powder-Coating-Service-Lakeland-FL-scaled-1.jpg"
                   alt="Industrial powder coating service at Pop's Industrial Coatings, Lakeland FL"
                   fill
                   sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-cover object-center"
+                  className="object-contain object-center"
                 />
               </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
                 <Image
                   src="/images/pops-industrial-coatings-lakeland-fl-facility-01-1.jpg"
                   alt="Pop's Industrial Coatings Lakeland FL facility — production floor view 1"
                   fill
                   sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-cover"
+                  className="object-contain object-center"
                 />
               </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
                 <Image
                   src="/images/pops-industrial-coatings-lakeland-fl-facility-02-1.jpg"
                   alt="Pop's Industrial Coatings Lakeland FL facility — production floor view 2"
                   fill
                   sizes="(min-width: 640px) 25vw, 50vw"
-                  className="object-cover"
+                  className="object-contain object-center"
                 />
               </div>
               <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-800">
