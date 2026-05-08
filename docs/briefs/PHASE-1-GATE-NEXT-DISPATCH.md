@@ -13,7 +13,7 @@ Canonical production hosts:
 - `pnpm lint` passes, including `madge --circular src/modules`.
 - `pnpm test` passes: 33 files / 234 tests.
 - `pnpm build` passes.
-- pgTAP is not verified in the current local session because local Supabase is not running and linked pgTAP requires Docker Desktop.
+- Linked pgTAP is verified: `supabase test db --linked` passes 9 files / 82 tests.
 - Playwright E2E is not verified locally because staff E2E credentials are not configured.
 
 ## Human-Only Blockers
@@ -25,7 +25,7 @@ Canonical production hosts:
 - [ ] Vercel Dashboard: confirm production project/team and attach `app.popsindustrial.com` and `track.popsindustrial.com`.
 - [ ] Vercel Dashboard: confirm production env vars match `docs/runbooks/phase-1-production-readiness.md` without storing values in-repo.
 - [ ] GitHub Actions: confirm required CI secret/variable names from `docs/runbooks/phase-1-production-readiness.md` without storing values in-repo.
-- [ ] Local/CI: start Docker Desktop before running linked pgTAP locally.
+- [x] Local/CI: Docker Desktop available; linked pgTAP passes locally.
 
 ## Parallel Agent Dispatches
 
@@ -39,8 +39,8 @@ Tasks:
 
 - Source local env without printing secrets.
 - Confirm linked Supabase project ref.
-- Run `supabase migration list --linked` and verify migrations through `0018_security_and_hot_path_hardening.sql` are applied.
-- Run `supabase test db --linked` after Docker is available.
+- Run `supabase migration list --linked` and verify migrations through `0019_pgtap_test_schema_usage.sql` are applied.
+- Run `supabase test db --linked`.
 - Verify JWT expiry reports `3600` if the CLI can inspect it.
 - Return exact commands run, pass/fail, and no secret values.
 

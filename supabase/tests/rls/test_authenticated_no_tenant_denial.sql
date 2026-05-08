@@ -2,8 +2,12 @@
 -- Phase 1 success criterion 5 smoke: an authenticated request that omits
 -- tenant claims sees zero rows from tenant-scoped business tables.
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(16);
+SELECT extensions.plan(16);
 
 -- Fixture setup runs before SET ROLE so rows exist but RLS still decides what
 -- the authenticated caller can see.
@@ -156,22 +160,22 @@ VALUES (
 SET ROLE authenticated;
 SELECT set_jwt_anon();
 
-SELECT is((SELECT count(*)::int FROM tenants), 0, 'authenticated caller with no tenant claims cannot SELECT tenants');
-SELECT is((SELECT count(*)::int FROM shop_settings), 0, 'authenticated caller with no tenant claims cannot SELECT shop_settings');
-SELECT is((SELECT count(*)::int FROM tenant_domains), 0, 'authenticated caller with no tenant claims cannot SELECT tenant_domains');
-SELECT is((SELECT count(*)::int FROM staff), 0, 'authenticated caller with no tenant claims cannot SELECT staff');
-SELECT is((SELECT count(*)::int FROM shop_employees), 0, 'authenticated caller with no tenant claims cannot SELECT shop_employees');
-SELECT is((SELECT count(*)::int FROM workstations), 0, 'authenticated caller with no tenant claims cannot SELECT workstations');
-SELECT is((SELECT count(*)::int FROM customer_users), 0, 'authenticated caller with no tenant claims cannot SELECT customer_users');
-SELECT is((SELECT count(*)::int FROM companies), 0, 'authenticated caller with no tenant claims cannot SELECT companies');
-SELECT is((SELECT count(*)::int FROM contacts), 0, 'authenticated caller with no tenant claims cannot SELECT contacts');
-SELECT is((SELECT count(*)::int FROM activities), 0, 'authenticated caller with no tenant claims cannot SELECT activities');
-SELECT is((SELECT count(*)::int FROM tags), 0, 'authenticated caller with no tenant claims cannot SELECT tags');
-SELECT is((SELECT count(*)::int FROM tagged_entities), 0, 'authenticated caller with no tenant claims cannot SELECT tagged_entities');
-SELECT is((SELECT count(*)::int FROM jobs), 0, 'authenticated caller with no tenant claims cannot SELECT jobs');
-SELECT is((SELECT count(*)::int FROM job_status_history), 0, 'authenticated caller with no tenant claims cannot SELECT job_status_history');
-SELECT is((SELECT count(*)::int FROM attachments), 0, 'authenticated caller with no tenant claims cannot SELECT attachments');
-SELECT is((SELECT count(*)::int FROM audit_log), 0, 'authenticated caller with no tenant claims cannot SELECT audit_log');
+SELECT extensions.is((SELECT count(*)::int FROM tenants), 0, 'authenticated caller with no tenant claims cannot SELECT tenants');
+SELECT extensions.is((SELECT count(*)::int FROM shop_settings), 0, 'authenticated caller with no tenant claims cannot SELECT shop_settings');
+SELECT extensions.is((SELECT count(*)::int FROM tenant_domains), 0, 'authenticated caller with no tenant claims cannot SELECT tenant_domains');
+SELECT extensions.is((SELECT count(*)::int FROM staff), 0, 'authenticated caller with no tenant claims cannot SELECT staff');
+SELECT extensions.is((SELECT count(*)::int FROM shop_employees), 0, 'authenticated caller with no tenant claims cannot SELECT shop_employees');
+SELECT extensions.is((SELECT count(*)::int FROM workstations), 0, 'authenticated caller with no tenant claims cannot SELECT workstations');
+SELECT extensions.is((SELECT count(*)::int FROM customer_users), 0, 'authenticated caller with no tenant claims cannot SELECT customer_users');
+SELECT extensions.is((SELECT count(*)::int FROM companies), 0, 'authenticated caller with no tenant claims cannot SELECT companies');
+SELECT extensions.is((SELECT count(*)::int FROM contacts), 0, 'authenticated caller with no tenant claims cannot SELECT contacts');
+SELECT extensions.is((SELECT count(*)::int FROM activities), 0, 'authenticated caller with no tenant claims cannot SELECT activities');
+SELECT extensions.is((SELECT count(*)::int FROM tags), 0, 'authenticated caller with no tenant claims cannot SELECT tags');
+SELECT extensions.is((SELECT count(*)::int FROM tagged_entities), 0, 'authenticated caller with no tenant claims cannot SELECT tagged_entities');
+SELECT extensions.is((SELECT count(*)::int FROM jobs), 0, 'authenticated caller with no tenant claims cannot SELECT jobs');
+SELECT extensions.is((SELECT count(*)::int FROM job_status_history), 0, 'authenticated caller with no tenant claims cannot SELECT job_status_history');
+SELECT extensions.is((SELECT count(*)::int FROM attachments), 0, 'authenticated caller with no tenant claims cannot SELECT attachments');
+SELECT extensions.is((SELECT count(*)::int FROM audit_log), 0, 'authenticated caller with no tenant claims cannot SELECT audit_log');
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

@@ -11,8 +11,12 @@
 --   7. 5th consecutive failure triggers lockout (attempts_remaining:0)
 --   8. Expired lockout does not block correct PIN
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(8);
+SELECT extensions.plan(8);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -115,7 +119,7 @@ SELECT set_config(
 -- ============================================================
 -- Test 1: correct PIN returns {ok:true, employee_id}
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   app.validate_employee_pin('aa002000-0000-0000-0000-000000000001'::uuid,
     '1234'
   ),
@@ -126,7 +130,7 @@ SELECT is(
 -- ============================================================
 -- Test 2: nonexistent employee → tenant_mismatch (anti-enumeration)
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   app.validate_employee_pin('00000000-0000-0000-0000-000000000099'::uuid,  -- does not exist
     '1234'
   ) ->> 'reason',
@@ -137,7 +141,7 @@ SELECT is(
 -- ============================================================
 -- Test 3: cross-tenant employee → tenant_mismatch
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   app.validate_employee_pin(
     'aa002000-0000-0000-0000-000000000002'::uuid,  -- E2 belongs to tenant B
     '1234'
@@ -149,7 +153,7 @@ SELECT is(
 -- ============================================================
 -- Test 4: inactive employee → inactive
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   app.validate_employee_pin('aa002000-0000-0000-0000-000000000003'::uuid,
     '1234'
   ) ->> 'reason',
@@ -160,7 +164,7 @@ SELECT is(
 -- ============================================================
 -- Test 5: locked employee → locked
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   app.validate_employee_pin('aa002000-0000-0000-0000-000000000004'::uuid,
     '1234'
   ) ->> 'reason',
@@ -171,7 +175,7 @@ SELECT is(
 -- ============================================================
 -- Test 6: wrong PIN on fresh employee → invalid_pin, attempts_remaining=4
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   app.validate_employee_pin('aa002000-0000-0000-0000-000000000006'::uuid,
     'wrong'
   ),
@@ -182,7 +186,7 @@ SELECT is(
 -- ============================================================
 -- Test 7: 5th failure (4 prior) → attempts_remaining=0
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (app.validate_employee_pin('aa002000-0000-0000-0000-000000000005'::uuid,
     'wrong'
   ) ->> 'attempts_remaining')::int,
@@ -193,7 +197,7 @@ SELECT is(
 -- ============================================================
 -- Test 8: expired lockout (locked_until in past) → correct PIN succeeds
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (app.validate_employee_pin('aa002000-0000-0000-0000-000000000007'::uuid,
     '1234'
   ) ->> 'ok')::boolean,
@@ -201,5 +205,5 @@ SELECT is(
   'validate_employee_pin: expired lockout does not block correct PIN'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

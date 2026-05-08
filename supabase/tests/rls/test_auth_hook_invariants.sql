@@ -13,15 +13,19 @@
 --   5. supabase_auth_admin has EXECUTE grant on app.custom_access_token_hook
 --   6. app.custom_access_token_hook body contains no write statements (defense-in-depth)
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(6);
+SELECT extensions.plan(6);
 
 -- ============================================================
 -- Test 1: app.custom_access_token_hook is STABLE (provolatile = 's')
 -- CLAUDE.md hidden invariant: "hook STABLE invariant â€” app.custom_access_token_hook MUST be STABLE"
 -- Any write inside the hook causes a deadlock (Supabase Issue #29073).
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT provolatile::text
    FROM pg_proc
    WHERE proname = 'custom_access_token_hook'
@@ -45,7 +49,7 @@ SELECT skip(1, 'supabase_auth_admin BYPASSRLS is a Supabase platform invariant â
 -- (production_status) ON jobs FROM authenticated"
 -- Migration 0008_production_status_revoke.sql enforces this.
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   has_column_privilege('authenticated', 'jobs', 'production_status', 'UPDATE'),
   false,
   'authenticated role CANNOT UPDATE jobs.production_status (column-level REVOKE)'
@@ -57,7 +61,7 @@ SELECT is(
 -- (The RLS policy jobs_office_update still controls row-level access;
 --  this test is about column-level privilege specifically.)
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   has_column_privilege('authenticated', 'jobs', 'intake_status', 'UPDATE'),
   true,
   'authenticated role CAN UPDATE jobs.intake_status (REVOKE is scoped to production_status only)'
@@ -68,7 +72,7 @@ SELECT is(
 -- Migration 0007 sets: GRANT EXECUTE ON FUNCTION app.custom_access_token_hook TO supabase_auth_admin
 -- Without this grant, Supabase Auth cannot invoke the hook.
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   has_function_privilege(
     'supabase_auth_admin',
     'app.custom_access_token_hook(jsonb)',
@@ -84,7 +88,7 @@ SELECT is(
 -- this text scan provides additional assurance that no one has snuck in a
 -- INSERT/UPDATE/DELETE that might not have triggered the STABLE syntax error.
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT
     prosrc NOT LIKE '%INSERT INTO%' AND
     prosrc NOT LIKE '%UPDATE %' AND
@@ -96,5 +100,5 @@ SELECT is(
   'app.custom_access_token_hook body contains no INSERT/UPDATE/DELETE statements'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

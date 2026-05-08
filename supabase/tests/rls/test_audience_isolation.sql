@@ -21,8 +21,12 @@
 --  12. authenticated role: DELETE on jobs runs without error but deletes 0 rows
 --  13. authenticated role: row still exists after DELETE attempt (proves RLS blocked it)
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(13);
+SELECT extensions.plan(13);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -111,28 +115,28 @@ SET ROLE authenticated;
 SELECT set_jwt_for_customer('a1000004-0000-0000-0000-000000000001'::uuid);
 
 -- Test 1: Customer JWT cannot SELECT from staff table
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM staff WHERE tenant_id = 'a1000000-0000-0000-0000-000000000001'::uuid),
   0,
   'Customer JWT cannot SELECT from staff table'
 );
 
 -- Test 2: Customer JWT can SELECT their own company (company_id = app.company_id())
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM companies WHERE id = 'a1000002-0000-0000-0000-000000000001'::uuid),
   1,
   'Customer JWT can SELECT their own company'
 );
 
 -- Test 3: Customer JWT cannot SELECT another company in the same tenant
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM companies WHERE id = 'a1000002-0000-0000-0000-000000000002'::uuid),
   0,
   'Customer JWT cannot SELECT a different company in the same tenant'
 );
 
 -- Test 4: Customer JWT cannot SELECT contacts from a different company
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM contacts WHERE company_id = 'a1000002-0000-0000-0000-000000000002'::uuid),
   0,
   'Customer JWT cannot SELECT contacts from a different company'
@@ -140,7 +144,7 @@ SELECT is(
 
 -- Test 5: Customer JWT cannot SELECT from customer_users table
 -- (RLS on customer_users has no customer_select policy — staff_select only)
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM customer_users WHERE tenant_id = 'a1000000-0000-0000-0000-000000000001'::uuid),
   0,
   'Customer JWT cannot SELECT from customer_users table'
@@ -149,7 +153,7 @@ SELECT is(
 -- Test 6: Customer JWT cannot SELECT from jobs table for another company
 -- (No jobs seeded here — test verifies 0 rows returned, which is correct per
 --  jobs_customer_select policy: tenant_id + audience=customer + company_id=app.company_id())
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM jobs WHERE company_id = 'a1000002-0000-0000-0000-000000000002'::uuid),
   0,
   'Customer JWT cannot SELECT jobs from another company in the same tenant'
@@ -162,7 +166,7 @@ SELECT set_jwt_for_workstation('a1000005-0000-0000-0000-000000000001'::uuid);
 
 -- Test 7: Staff_shop (workstation) JWT cannot INSERT into companies
 -- (companies_office_insert policy requires audience = 'staff_office')
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$
     INSERT INTO companies (tenant_id, name)
     VALUES ('a1000000-0000-0000-0000-000000000001'::uuid, 'Shop Injection Attempt')
@@ -175,7 +179,7 @@ SELECT throws_ok(
 -- Test 8: Staff_shop JWT CAN SELECT jobs in their tenant
 -- (jobs_staff_select policy allows both staff_office and staff_shop)
 -- 2 jobs seeded (live + archived); shop sees both (staff has no archived_at filter)
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM jobs WHERE tenant_id = 'a1000000-0000-0000-0000-000000000001'::uuid),
   2,
   'Staff_shop JWT can SELECT from jobs table (2 rows — shop sees all jobs including archived)'
@@ -183,7 +187,7 @@ SELECT is(
 
 -- Test 9: Staff_shop JWT cannot INSERT into staff table
 -- (staff_office_insert requires staff_office audience)
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$
     INSERT INTO staff (tenant_id, email, name, role)
     VALUES ('a1000000-0000-0000-0000-000000000001'::uuid, 'inject@example.com', 'Injected', 'admin')
@@ -199,7 +203,7 @@ SELECT throws_ok(
 -- ============================================================
 SELECT set_jwt_for_customer('a1000004-0000-0000-0000-000000000001'::uuid);
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$INSERT INTO companies (tenant_id, name)
     VALUES ('a1000000-0000-0000-0000-000000000001'::uuid, 'Customer Injection Attempt')$$,
   NULL,
@@ -211,7 +215,7 @@ SELECT throws_ok(
 -- Test 11: Customer JWT cannot SELECT archived jobs
 -- jobs_customer_select policy: archived_at IS NULL — archived jobs are hidden from customers
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM jobs WHERE id = 'a1000006-0000-0000-0000-000000000002'::uuid),
   0,
   'Customer JWT cannot SELECT jobs with archived_at set (filtered by RLS policy)'
@@ -225,17 +229,17 @@ SELECT is(
 SELECT set_jwt_for_staff('a1000001-0000-0000-0000-000000000001'::uuid);
 
 -- Test 12: DELETE runs without error (RLS silently blocks it — no exception, just 0 rows)
-SELECT lives_ok(
+SELECT extensions.lives_ok(
   $$DELETE FROM jobs WHERE id = 'a1000006-0000-0000-0000-000000000001'::uuid$$,
   'authenticated role: DELETE on jobs runs without error (RLS silently blocks it)'
 );
 
 -- Test 13: Row still exists, proving RLS blocked the DELETE
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM jobs WHERE id = 'a1000006-0000-0000-0000-000000000001'::uuid),
   1,
   'authenticated role: job row still exists after DELETE attempt (RLS enforced — hard deletes forbidden)'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

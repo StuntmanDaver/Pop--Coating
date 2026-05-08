@@ -21,8 +21,12 @@
 --
 -- Runs entirely as superuser — no SET ROLE needed; trigger behavior is role-independent.
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(10);
+SELECT extensions.plan(10);
 
 -- ============================================================
 -- Fixture setup
@@ -71,7 +75,7 @@ ON CONFLICT (id) DO NOTHING;
 
 -- ─── Test 1: job_name ──────────────────────────────────────
 UPDATE jobs SET job_name = 'New Job Name' WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating job_name sets packet_dirty=true'
@@ -81,7 +85,7 @@ UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-0000000
 
 -- ─── Test 2: color ────────────────────────────────────────
 UPDATE jobs SET color = 'Powder Blue' WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating color sets packet_dirty=true'
@@ -90,7 +94,7 @@ UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-0000000
 
 -- ─── Test 3: coating_type ────────────────────────────────
 UPDATE jobs SET coating_type = 'epoxy' WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating coating_type sets packet_dirty=true'
@@ -99,7 +103,7 @@ UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-0000000
 
 -- ─── Test 4: part_count ──────────────────────────────────
 UPDATE jobs SET part_count = 42 WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating part_count sets packet_dirty=true'
@@ -108,7 +112,7 @@ UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-0000000
 
 -- ─── Test 5: due_date ────────────────────────────────────
 UPDATE jobs SET due_date = '2026-12-31' WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating due_date sets packet_dirty=true'
@@ -117,7 +121,7 @@ UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-0000000
 
 -- ─── Test 6: priority ────────────────────────────────────
 UPDATE jobs SET priority = 'rush' WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating priority sets packet_dirty=true'
@@ -127,7 +131,7 @@ UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-0000000
 -- ─── Test 7: job_number ──────────────────────────────────
 UPDATE jobs SET job_number = 'TT-2026-00001-R'
   WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   true,
   'trigger: updating job_number sets packet_dirty=true'
@@ -140,7 +144,7 @@ SELECT is(
 -- unchanged (the packets module clears the flag this way).
 -- ============================================================
 UPDATE jobs SET packet_dirty = false WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000001'::uuid),
   false,
   'trigger: loop guard — only packet_dirty change passes through (stays false)'
@@ -151,7 +155,7 @@ SELECT is(
 -- Job 2 starts with packet_dirty=false; updating notes alone should not dirty it.
 -- ============================================================
 UPDATE jobs SET notes = 'some notes' WHERE id = 'cc006000-0000-0000-0000-000000000002'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000002'::uuid),
   false,
   'trigger: updating notes (non-printed field) does NOT set packet_dirty'
@@ -164,11 +168,11 @@ SELECT is(
 -- ============================================================
 UPDATE jobs SET production_status = 'received', intake_status = 'in_production'
   WHERE id = 'cc006000-0000-0000-0000-000000000002'::uuid;
-SELECT is(
+SELECT extensions.is(
   (SELECT packet_dirty FROM jobs WHERE id = 'cc006000-0000-0000-0000-000000000002'::uuid),
   false,
   'trigger: production_status/intake_status update does NOT set packet_dirty'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

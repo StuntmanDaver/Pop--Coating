@@ -12,7 +12,11 @@
 -- pgTAP wrapper: plan(1) + pass() make this a valid TAP file.
 -- Functions are created without a surrounding ROLLBACK so they persist for the RLS test files.
 
-SELECT plan(1);
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
+SELECT extensions.plan(1);
 --
 -- Usage: Safe to call either before or after SET ROLE authenticated.
 -- The app.tenant_id(), app.audience(), etc. SECURITY DEFINER helpers
@@ -120,5 +124,5 @@ LANGUAGE sql AS $$
   SELECT set_config('request.jwt.claims', '{}', true);
 $$;
 
-SELECT pass('jwt helper functions installed');
-SELECT * FROM finish();
+SELECT extensions.pass('jwt helper functions installed');
+SELECT * FROM extensions.finish();

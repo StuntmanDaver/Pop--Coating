@@ -18,8 +18,12 @@
 --   7. Tenant B staff cannot SELECT Tenant A's companies (0 rows)
 --   8. Tenant A staff cannot INSERT into Tenant B's companies (raises)
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(8);
+SELECT extensions.plan(8);
 
 -- ============================================================
 -- Fixture setup (runs as superuser / service-role — bypasses RLS)
@@ -75,14 +79,14 @@ SET ROLE authenticated;
 SELECT set_jwt_for_staff('11111111-1111-1111-1111-111111111111'::uuid);
 
 -- Test 1: Tenant A staff cannot see Tenant B's companies
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM companies WHERE tenant_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid),
   0,
   'Tenant A staff cannot SELECT Tenant B companies'
 );
 
 -- Test 2: Tenant A staff CAN see their own company
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM companies WHERE id = 'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid),
   1,
   'Tenant A staff CAN SELECT their own company'
@@ -90,7 +94,7 @@ SELECT is(
 
 -- Test 3: Anonymous JWT cannot read any companies
 SELECT set_jwt_anon();
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM companies),
   0,
   'Anonymous JWT cannot SELECT any companies'
@@ -100,14 +104,14 @@ SELECT is(
 SELECT set_jwt_for_staff('11111111-1111-1111-1111-111111111111'::uuid);
 
 -- Test 4: Tenant A staff cannot see Tenant B's contacts
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM contacts WHERE tenant_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid),
   0,
   'Tenant A staff cannot SELECT Tenant B contacts'
 );
 
 -- Test 5: Tenant A staff cannot see Tenant B's staff rows
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM staff WHERE id = '22222222-2222-2222-2222-222222222222'::uuid),
   0,
   'Tenant A staff cannot SELECT Tenant B staff rows'
@@ -115,7 +119,7 @@ SELECT is(
 
 -- Test 6: Tenant A staff cannot see Tenant B's jobs (no jobs seeded for B, but RLS should
 -- return 0 for Tenant B's tenant_id filter even if rows exist in future)
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM jobs WHERE tenant_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid),
   0,
   'Tenant A staff cannot SELECT Tenant B jobs'
@@ -123,7 +127,7 @@ SELECT is(
 
 -- Test 7: Tenant B staff cannot see Tenant A's companies
 SELECT set_jwt_for_staff('22222222-2222-2222-2222-222222222222'::uuid);
-SELECT is(
+SELECT extensions.is(
   (SELECT count(*)::int FROM companies WHERE tenant_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid),
   0,
   'Tenant B staff cannot SELECT Tenant A companies'
@@ -132,7 +136,7 @@ SELECT is(
 -- Test 8: Tenant A staff cannot INSERT into Tenant B's companies
 -- (WITH CHECK enforces tenant_id = app.tenant_id() on INSERT policy)
 SELECT set_jwt_for_staff('11111111-1111-1111-1111-111111111111'::uuid);
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$
     INSERT INTO companies (tenant_id, name)
     VALUES ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, 'Injection Attempt')
@@ -142,5 +146,5 @@ SELECT throws_ok(
   'Tenant A staff cannot INSERT into Tenant B companies'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

@@ -19,8 +19,12 @@
 --     12. picked_up_at stamped when to_status='picked_up'
 --     13. picked_up_at NOT overwritten on subsequent 'picked_up' scan (idempotent)
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(13);
+SELECT extensions.plan(13);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -149,7 +153,7 @@ SET ROLE authenticated;
 -- ============================================================
 SELECT set_config('request.jwt.claims', '{}', true);
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       'bb006000-0000-0000-0000-000000000001'::uuid,
       'prep',
@@ -178,7 +182,7 @@ SELECT set_config(
   true
 );
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       'bb006000-0000-0000-0000-000000000001'::uuid,
       'prep',
@@ -208,7 +212,7 @@ SELECT set_config(
 -- ============================================================
 -- Test 3: Invalid to_status
 -- ============================================================
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       'bb006000-0000-0000-0000-000000000001'::uuid,
       'invalid_stage',
@@ -223,7 +227,7 @@ SELECT throws_ok(
 -- ============================================================
 -- Test 4: Job not found
 -- ============================================================
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       '00000000-0000-0000-0000-000000000099'::uuid,
       'prep',
@@ -238,7 +242,7 @@ SELECT throws_ok(
 -- ============================================================
 -- Test 5: Cross-tenant job → access_denied: cross-tenant scan blocked
 -- ============================================================
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       'bb006000-0000-0000-0000-000000000005'::uuid,  -- tenant B's job
       'prep',
@@ -253,7 +257,7 @@ SELECT throws_ok(
 -- ============================================================
 -- Test 6: Employee not found
 -- ============================================================
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       'bb006000-0000-0000-0000-000000000001'::uuid,
       'prep',
@@ -268,7 +272,7 @@ SELECT throws_ok(
 -- ============================================================
 -- Test 7: Workstation attribution mismatch
 -- ============================================================
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
       'bb006000-0000-0000-0000-000000000001'::uuid,
       'prep',
@@ -284,7 +288,7 @@ SELECT throws_ok(
 -- Test 8: Happy path — returns non-null UUID
 -- Advance Job A: received → prep
 -- ============================================================
-SELECT isnt(
+SELECT extensions.isnt(
   app.record_scan_event(
     'bb006000-0000-0000-0000-000000000001'::uuid,
     'prep',
@@ -321,12 +325,12 @@ SELECT app.record_scan_event(
 );
 
 -- Switch back to superuser to read side effects (bypasses RLS)
-RESET ROLE;
+SET ROLE postgres;
 
 -- ============================================================
 -- Test 9: job_status_history row has correct to_status for Job A
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT to_status FROM job_status_history
    WHERE job_id = 'bb006000-0000-0000-0000-000000000001'::uuid
    ORDER BY scanned_at DESC LIMIT 1),
@@ -337,7 +341,7 @@ SELECT is(
 -- ============================================================
 -- Test 10: jobs.production_status updated for Job A
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT production_status FROM jobs
    WHERE id = 'bb006000-0000-0000-0000-000000000001'::uuid),
   'prep',
@@ -347,7 +351,7 @@ SELECT is(
 -- ============================================================
 -- Test 11: intake_status promoted from scheduled → in_production (Job B)
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT intake_status FROM jobs
    WHERE id = 'bb006000-0000-0000-0000-000000000002'::uuid),
   'in_production',
@@ -357,7 +361,7 @@ SELECT is(
 -- ============================================================
 -- Test 12: picked_up_at stamped when to_status = picked_up (Job C)
 -- ============================================================
-SELECT isnt(
+SELECT extensions.isnt(
   (SELECT picked_up_at FROM jobs
    WHERE id = 'bb006000-0000-0000-0000-000000000003'::uuid),
   NULL,
@@ -369,12 +373,12 @@ SELECT isnt(
 -- Job D was inserted with picked_up_at = 2026-01-01 12:00:00+00;
 -- the subsequent picked_up scan must not change it.
 -- ============================================================
-SELECT is(
+SELECT extensions.is(
   (SELECT picked_up_at FROM jobs
    WHERE id = 'bb006000-0000-0000-0000-000000000004'::uuid),
   '2026-01-01 12:00:00+00'::timestamptz,
   'record_scan_event: picked_up_at not overwritten on subsequent picked_up scan'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

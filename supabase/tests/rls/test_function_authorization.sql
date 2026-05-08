@@ -15,8 +15,12 @@
 --   5. record_workstation_heartbeat: raises 'access_denied' if not staff_shop audience
 --   6. release_workstation: raises 'access_denied' if no workstation_id in JWT
 
+CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
+SET search_path = public, extensions;
+SET ROLE postgres;
+
 BEGIN;
-SELECT plan(7);
+SELECT extensions.plan(7);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -78,7 +82,7 @@ SET ROLE authenticated;
 -- ============================================================
 SELECT set_jwt_for_workstation('f0000002-0000-0000-0000-000000000001'::uuid);
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$
     SELECT app.claim_workstation(
       'f0000002-0000-0000-0000-000000000002'::uuid,  -- WS-B (not caller's workstation)
@@ -96,7 +100,7 @@ SELECT throws_ok(
 -- Version starts at 0; passing expected_version=99 simulates stale.
 -- claim_workstation returns ok:false on version mismatch — it does NOT throw.
 -- ============================================================
-SELECT lives_ok(
+SELECT extensions.lives_ok(
   $$SELECT app.claim_workstation(
       'f0000002-0000-0000-0000-000000000001'::uuid,
       'f0000003-0000-0000-0000-000000000001'::uuid,
@@ -107,7 +111,7 @@ SELECT lives_ok(
 
 -- Verify the stale-version call returned ok:false (not an exception, just a false result)
 -- Re-run without DO block to check the return value
-SELECT is(
+SELECT extensions.is(
   (SELECT (app.claim_workstation(
     'f0000002-0000-0000-0000-000000000001'::uuid,
     'f0000003-0000-0000-0000-000000000001'::uuid,
@@ -122,7 +126,7 @@ SELECT is(
 -- ============================================================
 SELECT set_jwt_for_customer('f0000005-0000-0000-0000-000000000001'::uuid);
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.next_job_number()$$,
   'P0001',
   'access_denied: only staff can generate job numbers',
@@ -134,7 +138,7 @@ SELECT throws_ok(
 -- ============================================================
 SELECT set_jwt_anon();
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.next_job_number()$$,
   'P0001',
   'tenant_id_missing: caller must have valid JWT',
@@ -147,7 +151,7 @@ SELECT throws_ok(
 -- ============================================================
 SELECT set_jwt_for_staff('f0000001-0000-0000-0000-000000000001'::uuid);
 
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.record_workstation_heartbeat()$$,
   'P0001',
   'access_denied: heartbeat requires shop session',
@@ -158,12 +162,12 @@ SELECT throws_ok(
 -- Test 6: release_workstation raises 'access_denied' if no workstation_id in JWT
 -- (Use office staff JWT — no workstation_id in app_metadata)
 -- ============================================================
-SELECT throws_ok(
+SELECT extensions.throws_ok(
   $$SELECT app.release_workstation()$$,
   'P0001',
   'access_denied: release requires shop session',
   'release_workstation: raises access_denied for non-shop audience'
 );
 
-SELECT * FROM finish();
+SELECT * FROM extensions.finish();
 ROLLBACK;

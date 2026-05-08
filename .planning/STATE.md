@@ -94,7 +94,7 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ### Blockers
 
-- **Plan 06 human-only gate:** Supabase JWT expiry, Custom Access Token Hook, Custom SMTP/Resend DNS, Vercel domains/env for `app.popsindustrial.com` and `track.popsindustrial.com`, GitHub Actions Supabase secret/variable, and Docker for linked pgTAP remain before Phase 1 sign-off — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
+- **Plan 06 human-only gate:** Supabase JWT expiry, Custom Access Token Hook, Custom SMTP/Resend DNS, Vercel domains/env for `app.popsindustrial.com` and `track.popsindustrial.com`, and GitHub Actions Supabase secret/variable remain before Phase 1 sign-off — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
 
 ### Todos Carried Forward
 
@@ -112,8 +112,8 @@ Phase 4 [----------] 0%  Portal & Ops
 ## Session Continuity
 
 **Last updated:** 2026-05-08
-**Last action:** Applied `0018_security_and_hot_path_hardening.sql` to the linked Pops Supabase project, regenerated `src/shared/db/types.ts`, and re-ran app gates. Production hosts remain `app.popsindustrial.com` and `track.popsindustrial.com`; pgTAP remains Docker-gated and E2E remains credential-gated.
-**Next action:** Complete the human-only blockers in `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md` (Supabase JWT/Auth Hook/SMTP, Vercel domains/env, Resend DNS, GitHub Actions Supabase secret/variable, Docker for linked pgTAP), collect owner email/name for `pnpm seed:tenant`, then run Phase 1 Task 5 sign-off.
+**Last action:** Applied `0019_pgtap_test_schema_usage.sql` to the linked Pops Supabase project and verified `supabase test db --linked` passes 9 files / 82 tests. Production hosts remain `app.popsindustrial.com` and `track.popsindustrial.com`; full Playwright E2E remains credential-gated.
+**Next action:** Complete the human-only blockers in `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md` (Supabase JWT/Auth Hook/SMTP, Vercel domains/env, Resend DNS, GitHub Actions Supabase secret/variable), collect owner email/name for `pnpm seed:tenant`, then run Phase 1 Task 5 sign-off.
 
 **Context for next session:**
 
@@ -121,7 +121,7 @@ Phase 4 [----------] 0%  Portal & Ops
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Plans 01-05 complete: Next.js scaffold, 10 SQL migrations, auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry, auth Server Actions + sign-in UI + module stubs
-- Plan 06: checkpoint — Supabase Cloud schema through migration 0018 is applied and DB types are generated; remaining gates are seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration, JWT expiry, SMTP, Vercel domains/env, and Phase 1 success walkthrough
+- Plan 06: checkpoint — Supabase Cloud schema through migration 0019 is applied, DB types are generated, and linked pgTAP passes; remaining gates are seed-tenant.ts run, hook Dashboard registration, JWT expiry, SMTP, Vercel domains/env, and Phase 1 success walkthrough
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
 - vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 33 files / 234 tests

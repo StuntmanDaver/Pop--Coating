@@ -66,9 +66,10 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Passed: `pnpm build`
 - Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "customer portal renders"`
 - Applied live Supabase migration `0018_security_and_hot_path_hardening.sql`.
+- Applied live Supabase migration `0019_pgtap_test_schema_usage.sql`.
 - Regenerated `src/shared/db/types.ts` from the linked Supabase schema.
 - Not run: Playwright E2E, because staff E2E credentials were not configured locally.
-- Blocked: pgTAP. Local `supabase test db` could not connect to `127.0.0.1:54332`; linked `supabase test db --linked` reached the remote database but Docker Desktop was not running.
+- Passed: `supabase test db --linked` (9 files / 82 tests).
 
 ## Seed And Smoke
 

@@ -18,7 +18,7 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 | `next.config.ts` | `typedRoutes` out of `experimental`; `disableLogger` removed. |
 | TypeScript types | Aligned with live schema once migrations applied (confirm on current `main`). |
 | GitHub Actions config | CI exists; previous session reported `RESEND_API_KEY` and `SUPABASE_PROJECT_REF` configured for Actions — re-verify current secret/variable names before sign-off. |
-| DB migrations | Live Supabase now has local migrations through `0018_security_and_hot_path_hardening.sql`; re-verify before sign-off. |
+| DB migrations | Live Supabase now has local migrations through `0019_pgtap_test_schema_usage.sql`; re-verify before sign-off. |
 
 ### Still requires manual action
 
@@ -33,7 +33,7 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 | Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (registrar). |
 | GitHub Actions Supabase config | Confirm `SUPABASE_ACCESS_TOKEN` secret and `SUPABASE_PROJECT_REF` variable without storing values in-repo |
 
-After branch push/sync and all human-only blockers in this table are complete or re-verified, Phase 1 **Task 5** (success criteria walkthrough) can run for Phase 1 sign-off. Linked pgTAP verification also needs Docker Desktop when run locally.
+After branch push/sync and all human-only blockers in this table are complete or re-verified, Phase 1 **Task 5** (success criteria walkthrough) can run for Phase 1 sign-off.
 
 ---
 
@@ -72,8 +72,8 @@ After branch push/sync and all human-only blockers in this table are complete or
 - Normalized active planning/docs domain references from stale `popscoating.com` to canonical `popsindustrial.com`. Remaining `popscoating.com` mentions are warnings about stale domains or non-domain identifiers such as the `pops-coating` tenant slug/project id.
 - Automated app gates passed locally: `pnpm type-check`, `pnpm lint`, `pnpm test` (33 files / 234 tests), and `pnpm build`.
 - Applied `0018_security_and_hot_path_hardening.sql` to the linked Pops Supabase project with `supabase db push --linked --include-all --yes`; `supabase migration list --linked --debug` showed local and remote `0001` through `0018` aligned.
+- Applied `0019_pgtap_test_schema_usage.sql` and verified local and remote migrations through `0019`.
 - Regenerated `src/shared/db/types.ts` from the linked schema with `supabase gen types typescript --linked > src/shared/db/types.ts`; `pnpm type-check`, `pnpm lint`, and `pnpm test` still pass afterward.
-- `supabase test db` without flags failed because no local Supabase database was listening on `127.0.0.1:54332`.
-- `supabase test db --linked` after sourcing `.env.local` reached the linked-project flow but failed because Docker Desktop was not running. pgTAP remains unverified in this session.
+- `supabase test db --linked` now passes: 9 files / 82 tests. The SQL test files set `SET ROLE postgres` for fixture setup, then switch to `authenticated` where RLS behavior is being asserted.
 - `.env.local` contains most local service variables but does not include `SUPABASE_PROJECT_REF`, `RESEND_WEBHOOK_SECRET`, `E2E_STAFF_EMAIL`, or `E2E_STAFF_PASSWORD`; do not paste values into docs.
 - `scripts/seed-tenant.ts` now generates but does not print the recovery action link; owner setup needs an approved secure handoff path. The live Tenant 1 seed run still needs the owner's real email/name.

@@ -63,7 +63,7 @@
 ### Observability & Ops
 
 - [ ] **OPS-01**: An audit log records sensitive operations: staff invites, deactivations, role changes, and other security-relevant actions; each entry is immutable and tagged with `tenant_id` and actor
-- [ ] **OPS-02**: A comprehensive pgTAP RLS test suite covers: cross-tenant data isolation, audience isolation (office/shop/customer cannot access each other's routes), and authorization of SECURITY DEFINER functions
+- [x] **OPS-02**: A comprehensive pgTAP RLS test suite covers: cross-tenant data isolation, audience isolation (office/shop/customer cannot access each other's routes), and authorization of SECURITY DEFINER functions
 - [ ] **OPS-03**: Supabase PITR (point-in-time recovery) is enabled; weekly offsite backup to Backblaze B2 is configured and verified
 
 ---
@@ -136,5 +136,5 @@
 | PORTAL-03 | Phase 4 | Pending |
 | PORTAL-04 | Phase 4 | Pending |
 | OPS-01 | Phase 4 | Pending |
-| OPS-02 | Phase 4 | Pending |
+| OPS-02 | Phase 4 | Complete |
 | OPS-03 | Phase 4 | Pending |
