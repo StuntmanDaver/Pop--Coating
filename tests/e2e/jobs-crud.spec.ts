@@ -24,6 +24,13 @@ const sharedState: JobState = {
   jobNumber: null,
 }
 
+function requireCreatedJobId(action: string): string {
+  const jobId = sharedState.id
+  expect(jobId, `Create test must succeed before ${action} can run`).toBeTruthy()
+  if (!jobId) throw new Error(`Create test must succeed before ${action} can run`)
+  return jobId
+}
+
 test.describe.serial('Jobs CRUD', () => {
   test('can view jobs list', async ({ authenticatedPage: page }) => {
     await page.goto('/jobs')
@@ -70,37 +77,37 @@ test.describe.serial('Jobs CRUD', () => {
   })
 
   test('can view job detail from the list', async ({ authenticatedPage: page }) => {
-    test.skip(!sharedState.id, 'Create test must succeed before list-to-detail can run')
+    const jobId = requireCreatedJobId('list-to-detail')
 
     await page.goto(`/jobs?q=${encodeURIComponent(sharedState.jobName)}`)
     const jobLink = page.getByRole('link', { name: sharedState.jobName }).first()
     await expect(jobLink).toBeVisible()
     await jobLink.click()
 
-    await page.waitForURL(`**/jobs/${sharedState.id}`)
+    await page.waitForURL(`**/jobs/${jobId}`)
     await expect(page.getByRole('heading', { level: 1, name: sharedState.jobName })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Print packet' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Edit' })).toBeVisible()
   })
 
   test('can edit a job', async ({ authenticatedPage: page }) => {
-    test.skip(!sharedState.id, 'Create test must succeed before edit can run')
+    const jobId = requireCreatedJobId('edit')
 
-    await page.goto(`/jobs/${sharedState.id}/edit`)
+    await page.goto(`/jobs/${jobId}/edit`)
     const newName = `${sharedState.jobName} (edited)`
     await page.locator('input[name="job_name"]').fill(newName)
     await page.getByRole('button', { name: 'Save changes' }).click()
 
-    await page.waitForURL(`**/jobs/${sharedState.id}`)
+    await page.waitForURL(`**/jobs/${jobId}`)
     await expect(page.getByRole('heading', { level: 1, name: newName })).toBeVisible()
 
     sharedState.jobName = newName
   })
 
   test('can access the packet PDF', async ({ authenticatedPage: page }) => {
-    test.skip(!sharedState.id, 'Create test must succeed before packet can run')
+    const jobId = requireCreatedJobId('packet')
 
-    const packetUrl = `/jobs/${sharedState.id}/packet`
+    const packetUrl = `/jobs/${jobId}/packet`
     const response = await page.request.get(packetUrl)
     expect(response.status(), 'Packet route should respond 200').toBe(200)
 

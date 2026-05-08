@@ -10,7 +10,7 @@
 - [x] **INFRA-01**: Next.js 16 App Router repo initialized with TypeScript strict, Tailwind v4, shadcn/ui, and pnpm as package manager
 - [ ] **INFRA-02**: Supabase project created and connected; Vercel project configured with `app.popsindustrial.com` (office) and `track.popsindustrial.com` (portal) domains
 - [x] **INFRA-03**: `tenants` table exists; every business table has `tenant_id uuid not null references public.tenants(id)`; `app.tenant_id()` SECURITY DEFINER helper reads JWT `app_metadata.tenant_id`; RLS policies use `tenant_id = app.tenant_id()`
-- [x] **INFRA-04**: Resend configured with SPF/DKIM/DMARC for `popsindustrial.com`; Upstash Redis wired for rate limiting (`@upstash/ratelimit` sliding-window); Sentry initialized and tagging every event with `tenant_id`
+- [ ] **INFRA-04**: Resend configured with SPF/DKIM/DMARC for `popsindustrial.com`; Upstash Redis wired for rate limiting (`@upstash/ratelimit` sliding-window); Sentry initialized and tagging every event with `tenant_id` — production DNS/env verification remains pending before Phase 1 sign-off
 - [x] **INFRA-05**: `src/proxy.ts` (renamed from middleware.ts in Next.js 16) handles multi-domain routing: `app.*` routes to `(office)`, `track.*` routes to `(portal)`
 - [x] **INFRA-06**: All required SQL SECURITY DEFINER helpers created: `app.tenant_id()`, `app.audience()`, `app.role()`, `app.staff_id()`, `app.workstation_id()`, `app.company_id()`, `app.set_updated_at()`
 - [x] **INFRA-07**: ESLint rules enforce module boundaries (`no-restricted-imports`, `madge --circular`) and service-role gating; CI pipeline runs type check, lint, and test on every PR
@@ -97,14 +97,14 @@
 
 ## Traceability
 
-*Updated: 2026-04-28 (roadmap creation — 4 phases, coarse granularity)*
+*Updated: 2026-05-08 (Phase 1 production-readiness gate status reconciliation)*
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 1 | Pending |
 | INFRA-03 | Phase 1 | Complete |
-| INFRA-04 | Phase 1 | Complete |
+| INFRA-04 | Phase 1 | Pending |
 | INFRA-05 | Phase 1 | Complete |
 | INFRA-06 | Phase 1 | Complete |
 | INFRA-07 | Phase 1 | Complete |

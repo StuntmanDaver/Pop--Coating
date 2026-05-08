@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-06T16:58:25.148Z"
+last_updated: "2026-05-08T00:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 0
@@ -35,7 +35,7 @@ Plan: 6 of 6
 **Progress:**
 
 [████████░░] 83%
-Phase 1 [████------] 50%  Foundation
+Phase 1 [████████░░] 83%  Foundation
 Phase 2 [----------] 0%  Core Data
 Phase 3 [----------] 0%  Shop Floor
 Phase 4 [----------] 0%  Portal & Ops
@@ -52,8 +52,8 @@ Phase 4 [----------] 0%  Portal & Ops
 |--------|-------|
 | Requirements mapped | 37/37 |
 | Phases defined | 4 |
-| Plans created | 0 |
-| Plans complete | 0 |
+| Plans created | 6 |
+| Plans complete | 5 |
 | Phases complete | 0 |
 
 ---
@@ -82,9 +82,9 @@ Phase 4 [----------] 0%  Portal & Ops
 - **link_auth_user_to_actor tenant scope** — always filter by tenant_id from raw_app_meta_data; raises if absent (except audience=staff_shop workstation bypass)
 - **Env-var-driven redirect targets in proxy.ts** — NEXT_PUBLIC_APP_HOST / NEXT_PUBLIC_PORTAL_HOST (defaults to localhost in dev); no hardcoded production domain literals in proxy logic
 - **Defense-in-depth rate limiting** — primary tier in proxy.ts (Upstash per-IP at edge); secondary tier in Server Actions (Plan 05, per-email + compound key)
-- **src/shared/db/types.ts is a placeholder** — replaced by `supabase gen types typescript --local` in Plan 06
+- **src/shared/db/types.ts is generated from Supabase schema** — Plan 06 replaced the placeholder; regenerate after migration changes and verify against the linked schema before sign-off
 - **vitest.config.ts Step 0 pattern** — vitest.config.ts must be created before any test file in TDD plans (W2 revision); established in Plan 05
-- **Placeholder DB types require any cast in workstation.ts** — removed when Plan 06 generates real types; documented with ESLint comment
+- **Generated DB type limitation** — Supabase generated types emit the public schema; any remaining cross-schema casts must stay narrowly justified in code comments
 - **Anti-enumeration for magic-link rate limits** — both email and IP limiter errors are swallowed via .catch(() => undefined); always returns { success: true }
 - **Server Action searchParams redirect pattern** — sign-in page uses searchParams redirect (not useFormState) because it is a Server Component; avoids unnecessary client component for Phase 1 auth
 
@@ -94,11 +94,12 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ### Blockers
 
-- **Plan 06 Task 2:** Human-action checkpoint (Supabase JWT + Auth Hook dashboard, Vercel domains, DNS, env secrets) — see `SESSION-MEMORY.md` and `01-06-PLAN.md`.
+- **Plan 06 human-only gate:** Supabase JWT expiry, Custom Access Token Hook, Custom SMTP/Resend DNS, Vercel domains/env for `app.popsindustrial.com` and `track.popsindustrial.com`, GitHub Actions Supabase secret/variable, and Docker for linked pgTAP remain before Phase 1 sign-off — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
 
 ### Todos Carried Forward
 
-- Confirm Vercel deployment lives under the correct team; link locally with `vercel link` if URL needed from CLI.
+- Confirm Vercel deployment lives under the correct team; attach `app.popsindustrial.com` and `track.popsindustrial.com`; remove stale `popscoating.com` hosts if present.
+- Verify Supabase JWT expiry/Auth Hook/SMTP, Resend DNS, Upstash/Sentry env, and GitHub Actions Supabase secret/variable without storing secret values in-repo.
 
 ### Quick Tasks Completed
 
@@ -110,9 +111,9 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ## Session Continuity
 
-**Last updated:** 2026-05-06
-**Last action:** Documented 2026-05-03 session outcomes in `CHANGELOG.md` and `.planning/intel/SESSION-MEMORY.md` (Vercel URL discovery, Plan 06 automation recap, remaining manual checkpoints). Prior: 01-06-PLAN.md Tasks 1a+1b complete — pgTAP RLS test suite, seed + CI; PAUSED at Task 2 human-action checkpoint.
-**Next action:** Complete remaining Plan 06 manual steps (Supabase JWT=3600s + Auth Hook dashboard registration; Vercel domains for `popsindustrial.com` app/track hosts; Resend DNS; Upstash + Sentry env), then Tasks 3–5 sign-off. Push feature branch with explicit `git push origin <branch>` if not on `main`. See `SESSION-MEMORY.md` for the full checklist.
+**Last updated:** 2026-05-08
+**Last action:** Applied `0018_security_and_hot_path_hardening.sql` to the linked Pops Supabase project, regenerated `src/shared/db/types.ts`, and re-ran app gates. Production hosts remain `app.popsindustrial.com` and `track.popsindustrial.com`; pgTAP remains Docker-gated and E2E remains credential-gated.
+**Next action:** Complete the human-only blockers in `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md` (Supabase JWT/Auth Hook/SMTP, Vercel domains/env, Resend DNS, GitHub Actions Supabase secret/variable, Docker for linked pgTAP), collect owner email/name for `pnpm seed:tenant`, then run Phase 1 Task 5 sign-off.
 
 **Context for next session:**
 
@@ -120,8 +121,8 @@ Phase 4 [----------] 0%  Portal & Ops
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Plans 01-05 complete: Next.js scaffold, 10 SQL migrations, auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry, auth Server Actions + sign-in UI + module stubs
-- Plan 06: checkpoint — Supabase Cloud + Vercel setup, seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration, supabase gen types (replaces placeholder types.ts)
+- Plan 06: checkpoint — Supabase Cloud schema through migration 0018 is applied and DB types are generated; remaining gates are seed-tenant.ts run, pgTAP RLS tests, hook Dashboard registration, JWT expiry, SMTP, Vercel domains/env, and Phase 1 success walkthrough
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
-- vitest.config.ts is in place; 21 unit tests for auth + settings pass
+- vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 33 files / 234 tests
 - **Vercel URL:** not in repo; use dashboard or `vercel link` after selecting the correct team — see `SESSION-MEMORY.md`

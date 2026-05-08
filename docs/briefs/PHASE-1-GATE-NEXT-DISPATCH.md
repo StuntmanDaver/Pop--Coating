@@ -11,7 +11,7 @@ Canonical production hosts:
 
 - `pnpm type-check` passes.
 - `pnpm lint` passes, including `madge --circular src/modules`.
-- `pnpm test` passes: 32 files / 230 tests.
+- `pnpm test` passes: 33 files / 234 tests.
 - `pnpm build` passes.
 - pgTAP is not verified in the current local session because local Supabase is not running and linked pgTAP requires Docker Desktop.
 - Playwright E2E is not verified locally because staff E2E credentials are not configured.
@@ -23,8 +23,8 @@ Canonical production hosts:
 - [ ] Supabase Dashboard: configure Custom SMTP through Resend.
 - [ ] Resend/DNS registrar: verify DKIM, SPF, and MX for `popsindustrial.com`.
 - [ ] Vercel Dashboard: confirm production project/team and attach `app.popsindustrial.com` and `track.popsindustrial.com`.
-- [ ] Vercel Dashboard: confirm production env vars, including Upstash, Sentry, Supabase, Resend, and `RESEND_WEBHOOK_SECRET`.
-- [ ] GitHub Actions: confirm `SUPABASE_ACCESS_TOKEN` secret and `SUPABASE_PROJECT_REF` variable without storing values in-repo.
+- [ ] Vercel Dashboard: confirm production env vars match `docs/runbooks/phase-1-production-readiness.md` without storing values in-repo.
+- [ ] GitHub Actions: confirm required CI secret/variable names from `docs/runbooks/phase-1-production-readiness.md` without storing values in-repo.
 - [ ] Local/CI: start Docker Desktop before running linked pgTAP locally.
 
 ## Parallel Agent Dispatches
@@ -67,7 +67,7 @@ Goal: make the production readiness checklist executable without exposing secret
 Tasks:
 
 - Inspect `.env.local.example`, `.github/workflows/ci.yml`, `docs/runbooks/phase-1-production-readiness.md`, and `docs/runbooks/dns-email-verification.md`.
-- Ensure every required env var is documented exactly once with safe descriptions.
+- Ensure every required env var is documented exactly once with safe descriptions in `docs/runbooks/phase-1-production-readiness.md`.
 - Ensure `popsindustrial.com` is canonical and stale `popscoating.com` is only mentioned as a domain to remove.
 - Do not print or store secret values.
 - Return changed files and any manual dashboard gaps.

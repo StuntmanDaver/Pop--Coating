@@ -18,7 +18,7 @@
 //   3. INSERT tenant_domains rows (app.popsindustrial.com + track.popsindustrial.com)
 //   4. INSERT staff row (role='admin', is_active=true, auth_user_id=NULL)
 //   5. Create owner auth user with app_metadata already stamped
-//   6. Generate a recovery link for password setup
+//   6. Generate a recovery link for password setup without printing it
 //   7. Ensure smoke data: company, contact, customer user, shop employee,
 //      workstation synthetic auth user, and one scheduled job with packet token.
 
@@ -157,12 +157,7 @@ async function main() {
   // moment. inviteUserByEmail creates the user without app_metadata, so
   // the trigger raises 'auth_user_created_without_tenant_id'. We must use
   // createUser with app_metadata in the first call. (RESEARCH.md Pitfall 5)
-  const { data: existingUsers, error: listErr } = await supabase.auth.admin.listUsers()
-  if (listErr != null) {
-    throw new Error(`listUsers failed: ${listErr.message}`)
-  }
-
-  const existingOwner = existingUsers.users.find((user) => user.email === ownerEmail)
+  const existingOwner = await findAuthUserByEmail(ownerEmail)
   const { data: created, error: cErr } = existingOwner
     ? { data: { user: existingOwner }, error: null }
     : await supabase.auth.admin.createUser({
@@ -190,8 +185,7 @@ async function main() {
 
   // ─── Step 6: Generate invite/recovery link ────────────────────────────────
   // The user exists; generate a recovery (password-set) link so they can sign in.
-  // generateLink does not send email; deliver this link manually or through a
-  // follow-up Resend integration.
+  // generateLink does not send email; handle the link as a sensitive credential.
   const { data: link, error: lErr } = await supabase.auth.admin.generateLink({
     type:  'recovery',
     email: ownerEmail,
@@ -200,8 +194,11 @@ async function main() {
   if (lErr != null) {
     throw new Error(`generateLink failed: ${lErr.message}`)
   }
+  if (!link?.properties?.action_link) {
+    throw new Error('generateLink failed: no action link returned')
+  }
   console.log(`  Recovery link generated for ${ownerEmail}`)
-  console.log(`  (action_link in console: ${link?.properties?.action_link ?? 'n/a'})`)
+  console.log('  Recovery link value intentionally not printed; use an approved secure handoff path for owner setup.')
 
   const { company, contact, customerUser, employee, workstation, job } = await ensureSmokeData()
 
@@ -219,7 +216,7 @@ async function main() {
   console.log(`  Packet QR: https://${APP_HOST}/scan?packet=${job.packet_token}`)
   console.log('')
   console.log('Next steps:')
-  console.log('  1. Owner checks email and clicks the invite link to set a password.')
+  console.log('  1. Complete owner password setup through an approved secure handoff path.')
   console.log('  2. On first sign-in, the link_auth_user_to_actor trigger links')
   console.log(`     auth.users.id=${authUserId} → staff.auth_user_id.`)
   console.log('  3. The custom_access_token_hook stamps tenant_id + audience=staff_office')
@@ -367,34 +364,34 @@ async function main() {
     async function createSmokeWorkstation() {
       const deviceToken = randomBytes(36).toString('base64url')
       const workstationEmail = `workstation-${slug}-smoke@workstations.${slug}.local`
-      const { data: users, error: usersErr } = await supabase.auth.admin.listUsers()
-      if (usersErr != null) {
-        throw new Error(`listUsers for workstation failed: ${usersErr.message}`)
-      }
+      const existingWorkstationAuthUser = await findAuthUserByEmail(workstationEmail)
+      const workstationAuthUser = existingWorkstationAuthUser
+        ?? await createSmokeWorkstationAuthUser(workstationEmail, deviceToken)
 
-      const existingAuthUser = users.users.find((user) => user.email === workstationEmail)
-      if (existingAuthUser) {
-        throw new Error(
-          `workstation auth user ${workstationEmail} already exists but no matching workstation row was found`
+      if (existingWorkstationAuthUser != null) {
+        const { error: updateAuthErr } = await supabase.auth.admin.updateUserById(
+          existingWorkstationAuthUser.id,
+          {
+            password: deviceToken,
+            app_metadata: {
+              tenant_id: tenant.id,
+              audience: 'staff_shop',
+              role: 'shop',
+              intended_actor: 'workstation',
+            },
+          }
         )
-      }
 
-      const { data: workstationAuth, error: wsAuthErr } = await supabase.auth.admin.createUser({
-        email: workstationEmail,
-        password: deviceToken,
-        email_confirm: true,
-        app_metadata: { tenant_id: tenant.id, intended_actor: 'workstation' },
-      })
-
-      if (wsAuthErr != null || workstationAuth?.user == null) {
-        throw new Error(`workstation auth user failed: ${wsAuthErr?.message ?? 'no user returned'}`)
+        if (updateAuthErr != null) {
+          throw new Error(`workstation auth user recovery failed: ${updateAuthErr.message}`)
+        }
       }
 
       const { data, error } = await supabase
         .from('workstations')
         .insert({
           tenant_id: tenant.id,
-          auth_user_id: workstationAuth.user.id,
+          auth_user_id: workstationAuthUser.id,
           name: SMOKE_WORKSTATION_NAME,
           default_stage: 'received',
           physical_location: 'Smoke test bench',
@@ -409,6 +406,26 @@ async function main() {
       }
 
       return data
+    }
+
+    async function createSmokeWorkstationAuthUser(email: string, deviceToken: string) {
+      const { data, error } = await supabase.auth.admin.createUser({
+        email,
+        password: deviceToken,
+        email_confirm: true,
+        app_metadata: {
+          tenant_id: tenant.id,
+          audience: 'staff_shop',
+          role: 'shop',
+          intended_actor: 'workstation',
+        },
+      })
+
+      if (error != null || data?.user == null) {
+        throw new Error(`workstation auth user failed: ${error?.message ?? 'no user returned'}`)
+      }
+
+      return data.user
     }
 
     const packetToken = randomBytes(12).toString('base64url').slice(0, 16)
@@ -483,6 +500,29 @@ async function main() {
     }
 
     return `${settings.job_number_prefix}-${currentYear}-${String(nextSeq).padStart(5, '0')}`
+  }
+
+  async function findAuthUserByEmail(email: string): Promise<{ id: string; email?: string } | null> {
+    const perPage = 1000
+    const normalizedEmail = email.toLowerCase()
+
+    for (let page = 1; ; page += 1) {
+      const { data, error } = await supabase.auth.admin.listUsers({ page, perPage })
+      if (error != null) {
+        throw new Error(`listUsers failed: ${error.message}`)
+      }
+
+      const match = data.users.find((user) => user.email?.toLowerCase() === normalizedEmail)
+      if (match != null) {
+        return { id: match.id, email: match.email ?? undefined }
+      }
+
+      const reachedKnownLastPage = data.lastPage > 0 && page >= data.lastPage
+      const reachedShortPage = data.users.length < perPage
+      if (reachedKnownLastPage || reachedShortPage) {
+        return null
+      }
+    }
   }
 }
 

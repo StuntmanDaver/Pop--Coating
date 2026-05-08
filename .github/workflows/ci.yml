@@ -11,12 +11,9 @@
 #
 # D-07: pgTAP job waits for Supabase Preview branch DB before running.
 #
-# Required GitHub secrets (set in repo Settings → Secrets and variables → Actions):
-#   SUPABASE_ACCESS_TOKEN — Supabase CLI token (Account → Access Tokens)
-# Required GitHub variables:
-#   SUPABASE_PROJECT_REF  — Supabase project reference ID (Project Settings → General)
-# Optional GitHub secrets for E2E:
-#   E2E_STAFF_EMAIL / E2E_STAFF_PASSWORD — staff test account credentials
+# GitHub Actions env requirements are documented once in
+# docs/runbooks/phase-1-production-readiness.md. Store values only in
+# repo Settings -> Secrets and variables -> Actions; never commit values here.
 
 name: CI
 
@@ -126,10 +123,15 @@ jobs:
     env:
       E2E_STAFF_EMAIL: ${{ secrets.E2E_STAFF_EMAIL }}
       E2E_STAFF_PASSWORD: ${{ secrets.E2E_STAFF_PASSWORD }}
+      E2E_WORKSTATION_EMAIL: ${{ secrets.E2E_WORKSTATION_EMAIL }}
+      E2E_WORKSTATION_PASSWORD: ${{ secrets.E2E_WORKSTATION_PASSWORD }}
+      E2E_CUSTOMER_EMAIL: ${{ secrets.E2E_CUSTOMER_EMAIL }}
+      E2E_RUN_MAGIC_LINK_POST: ${{ vars.E2E_RUN_MAGIC_LINK_POST }}
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       NEXT_PUBLIC_APP_HOST: http://localhost:3000
       NEXT_PUBLIC_PORTAL_HOST: http://track.localhost:3000
+      E2E_PORTAL_BASE_URL: http://track.localhost:3000
 
     steps:
       - name: Check E2E configuration

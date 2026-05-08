@@ -4,7 +4,7 @@
 
 - `app.popsindustrial.com` points at Vercel and has a valid certificate.
 - `track.popsindustrial.com` points at Vercel and has a valid certificate.
-- Old or mistaken `popscoating.com` records are not attached to the production Vercel project unless the user explicitly re-approves that domain.
+- Old or mistaken `popscoating.com` records are removed from the production Vercel project and DNS plan.
 
 ## Resend
 
