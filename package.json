@@ -8,7 +8,7 @@
     "start": "next start",
     "type-check": "tsc --noEmit",
     "lint": "eslint src && pnpm madge:check",
-    "madge:check": "out=$(madge --extensions ts,tsx --ts-config tsconfig.json --circular src/modules); echo \"$out\"; echo \"$out\" | grep -Eq 'Processed [1-9][0-9]* files'",
+    "madge:check": "out=$(madge --extensions ts,tsx --ts-config tsconfig.json --circular src/modules 2>&1); echo \"$out\"; printf '%s\\n' \"$out\" | grep -Eq 'Processed [1-9][0-9]* files' && printf '%s\\n' \"$out\" | grep -q 'No circular dependency found'",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",

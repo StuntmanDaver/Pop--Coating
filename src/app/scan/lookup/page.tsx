@@ -5,26 +5,29 @@ import { createClient } from '@/shared/db/server'
 import { LookupClient } from './lookup-client'
 
 interface Props {
-  searchParams: Promise<{ job?: string }>
+  searchParams: Promise<{ job?: string; packet?: string }>
 }
 
 export default async function LookupPage({ searchParams }: Props) {
   await requireShopStaff()
   const claims = await getCurrentClaims()
   const params = await searchParams
-  const jobId = params.job ?? ''
+  const jobId = params.job?.trim() ?? ''
+  const packetToken = params.packet?.trim() ?? ''
 
-  if (!jobId || !claims.workstation_id) {
+  if ((!jobId && !packetToken) || !claims.workstation_id) {
     const { redirect } = await import('next/navigation')
     redirect('/scan/station')
   }
 
   const supabase = await createClient()
-  const { data: job, error } = await supabase
+  let query = supabase
     .from('jobs')
     .select('id, job_number, job_name, production_status, intake_status, on_hold, hold_reason')
-    .eq('id', jobId)
-    .maybeSingle()
+
+  query = jobId ? query.eq('id', jobId) : query.eq('packet_token', packetToken)
+
+  const { data: job, error } = await query.maybeSingle()
 
   if (error || !job) notFound()
 

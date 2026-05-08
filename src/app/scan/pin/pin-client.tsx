@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import type { Route } from 'next'
 import { validateEmployeePin, claimWorkstation } from '@/modules/scanning'
 import { PinPad } from '../_components/pin-pad'
 
@@ -9,9 +10,21 @@ interface PinClientProps {
   employeeId: string
   workstationId: string
   workstationVersion: number
+  packetToken?: string
 }
 
-export function PinClient({ employeeId, workstationId, workstationVersion }: PinClientProps) {
+function routeWithOptionalPacket(path: '/scan' | '/scan/lookup', packetToken?: string): Route {
+  if (!packetToken) return path
+  const params = new URLSearchParams({ packet: packetToken })
+  return `${path}?${params.toString()}` as Route
+}
+
+export function PinClient({
+  employeeId,
+  workstationId,
+  workstationVersion,
+  packetToken,
+}: PinClientProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -84,7 +97,11 @@ export function PinClient({ employeeId, workstationId, workstationVersion }: Pin
     sessionStorage.setItem('scan:employee_id', employeeId)
 
     startTransition(() => {
-      router.push('/scan/station')
+      router.push(
+        packetToken
+          ? routeWithOptionalPacket('/scan/lookup', packetToken)
+          : '/scan/station',
+      )
     })
   }
 
@@ -97,7 +114,7 @@ export function PinClient({ employeeId, workstationId, workstationVersion }: Pin
       <PinPad onSubmit={handlePin} disabled={isPending} error={error} />
       <button
         type="button"
-        onClick={() => router.push('/scan')}
+        onClick={() => router.push(routeWithOptionalPacket('/scan', packetToken))}
         disabled={isPending}
         className="min-h-11 rounded-md px-3 text-sm text-zinc-400 hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-50"
       >

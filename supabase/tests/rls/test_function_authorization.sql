@@ -6,21 +6,25 @@
 -- record_workstation_heartbeat, release_workstation) and next_job_number.
 -- app.record_scan_event and app.validate_employee_pin are Phase 3 tests.
 --
--- Tests (7 total):
+-- Tests (11 total):
 --   1. claim_workstation: enforces caller workstation_id match (raises if mismatch)
 --   2. claim_workstation: stale version does NOT raise (lives_ok)
 --   2b. claim_workstation: stale version returns ok=false (is() on return value)
---   3. next_job_number: raises 'access_denied' for customer JWT audience
---   4. next_job_number: raises 'tenant_id_missing' if JWT has no tenant_id
---   5. record_workstation_heartbeat: raises 'access_denied' if not staff_shop audience
---   6. release_workstation: raises 'access_denied' if no workstation_id in JWT
+--   3. claim_workstation: raises 'tenant_id_missing' if JWT has no tenant_id
+--   4. record_workstation_heartbeat: raises 'tenant_id_missing' if JWT has no tenant_id
+--   5. release_workstation: raises 'tenant_id_missing' if JWT has no tenant_id
+--   6. staff_shop direct UPDATE on workstations affects zero rows
+--   7. next_job_number: raises 'access_denied' for customer JWT audience
+--   8. next_job_number: raises 'tenant_id_missing' if JWT has no tenant_id
+--   9. record_workstation_heartbeat: raises 'access_denied' if not staff_shop audience
+--   10. release_workstation: raises 'access_denied' if no workstation_id in JWT
 
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path = public, extensions;
 SET ROLE postgres;
 
 BEGIN;
-SELECT extensions.plan(7);
+SELECT extensions.plan(11);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -70,6 +74,23 @@ INSERT INTO customer_users (id, tenant_id, company_id, email, name) VALUES
    'f0000004-0000-0000-0000-000000000001'::uuid,
    'cust@func-auth.example', 'Func Auth Customer')
 ON CONFLICT (id) DO NOTHING;
+
+CREATE OR REPLACE FUNCTION pg_temp.try_direct_workstation_update(
+  p_workstation_id uuid,
+  p_last_activity_at timestamptz
+) RETURNS int
+LANGUAGE plpgsql SECURITY INVOKER SET search_path = public AS $$
+DECLARE
+  v_row_count int;
+BEGIN
+  UPDATE workstations
+    SET last_activity_at = p_last_activity_at
+    WHERE id = p_workstation_id;
+
+  GET DIAGNOSTICS v_row_count = ROW_COUNT;
+  RETURN v_row_count;
+END;
+$$;
 
 -- ============================================================
 -- Switch to authenticated role
@@ -122,7 +143,69 @@ SELECT extensions.is(
 );
 
 -- ============================================================
--- Test 3: next_job_number raises 'access_denied' for customer JWT
+-- Test 3: claim_workstation raises tenant_id_missing if JWT lacks tenant_id
+-- ============================================================
+SELECT set_config(
+  'request.jwt.claims',
+  jsonb_build_object(
+    'sub', 'f0000002-0000-0000-0000-000000000001',
+    'app_metadata', jsonb_build_object(
+      'audience', 'staff_shop',
+      'role', 'shop',
+      'workstation_id', 'f0000002-0000-0000-0000-000000000001'
+    )
+  )::text,
+  true
+);
+
+SELECT extensions.throws_ok(
+  $$SELECT app.claim_workstation(
+      'f0000002-0000-0000-0000-000000000001'::uuid,
+      'f0000003-0000-0000-0000-000000000001'::uuid,
+      0
+    )$$,
+  'P0001',
+  'tenant_id_missing: caller must have valid JWT',
+  'claim_workstation: raises tenant_id_missing when JWT has no tenant_id'
+);
+
+-- ============================================================
+-- Test 4: record_workstation_heartbeat raises tenant_id_missing if JWT lacks tenant_id
+-- ============================================================
+SELECT extensions.throws_ok(
+  $$SELECT app.record_workstation_heartbeat()$$,
+  'P0001',
+  'tenant_id_missing: caller must have valid JWT',
+  'record_workstation_heartbeat: raises tenant_id_missing when JWT has no tenant_id'
+);
+
+-- ============================================================
+-- Test 5: release_workstation raises tenant_id_missing if JWT lacks tenant_id
+-- ============================================================
+SELECT extensions.throws_ok(
+  $$SELECT app.release_workstation()$$,
+  'P0001',
+  'tenant_id_missing: caller must have valid JWT',
+  'release_workstation: raises tenant_id_missing when JWT has no tenant_id'
+);
+
+-- ============================================================
+-- Test 6: staff_shop cannot directly UPDATE workstations
+-- Scanner writes must go through SECURITY DEFINER wrappers.
+-- ============================================================
+SELECT set_jwt_for_workstation('f0000002-0000-0000-0000-000000000001'::uuid);
+
+SELECT extensions.is(
+  pg_temp.try_direct_workstation_update(
+    'f0000002-0000-0000-0000-000000000001'::uuid,
+    '2026-02-01 00:00:00+00'::timestamptz
+  ),
+  0,
+  'staff_shop direct UPDATE on workstations affects zero rows'
+);
+
+-- ============================================================
+-- Test 7: next_job_number raises 'access_denied' for customer JWT
 -- ============================================================
 SELECT set_jwt_for_customer('f0000005-0000-0000-0000-000000000001'::uuid);
 
@@ -134,7 +217,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 4: next_job_number raises 'tenant_id_missing' when JWT has no tenant_id
+-- Test 8: next_job_number raises 'tenant_id_missing' when JWT has no tenant_id
 -- ============================================================
 SELECT set_jwt_anon();
 
@@ -146,7 +229,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 5: record_workstation_heartbeat raises 'access_denied' if not staff_shop audience
+-- Test 9: record_workstation_heartbeat raises 'access_denied' if not staff_shop audience
 -- (Use office staff JWT — audience = 'staff_office', not 'staff_shop')
 -- ============================================================
 SELECT set_jwt_for_staff('f0000001-0000-0000-0000-000000000001'::uuid);
@@ -159,7 +242,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 6: release_workstation raises 'access_denied' if no workstation_id in JWT
+-- Test 10: release_workstation raises 'access_denied' if no workstation_id in JWT
 -- (Use office staff JWT — no workstation_id in app_metadata)
 -- ============================================================
 SELECT extensions.throws_ok(

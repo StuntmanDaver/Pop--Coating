@@ -1,30 +1,31 @@
 -- supabase/tests/functions/test_record_scan_event.sql
 -- Coverage for 0016_record_scan_event.sql
 --
--- Tests (13):
---   Authorization (2):
---     1. Anon JWT → access_denied: scan requires staff session
+-- Tests (14):
+--   Authorization (3):
+--     1. Anon JWT → tenant_id_missing
 --     2. Customer JWT → access_denied: scan requires staff session
+--     3. Staff_shop JWT missing tenant_id → tenant_id_missing
 --   Validation errors (5):
---     3. Invalid to_status → invalid_to_status: <value>
---     4. Job not found → job_not_found
---     5. Cross-tenant job → access_denied: cross-tenant scan blocked
---     6. Employee not found → employee_not_found
---     7. Workstation not found → workstation_not_found
+--     4. Invalid to_status → invalid_to_status: <value>
+--     5. Job not found → job_not_found
+--     6. Cross-tenant job → access_denied: cross-tenant scan blocked
+--     7. Employee not found → employee_not_found
+--     8. Workstation not found → workstation_not_found
 --   Happy path side effects (6):
---     8.  Returns non-null UUID event_id
---     9.  job_status_history row has correct to_status
---     10. jobs.production_status updated
---     11. intake_status 'scheduled' promoted to 'in_production' on first scan
---     12. picked_up_at stamped when to_status='picked_up'
---     13. picked_up_at NOT overwritten on subsequent 'picked_up' scan (idempotent)
+--     9.  Returns non-null UUID event_id
+--     10. job_status_history row has correct to_status
+--     11. jobs.production_status updated
+--     12. intake_status 'scheduled' promoted to 'in_production' on first scan
+--     13. picked_up_at stamped when to_status='picked_up'
+--     14. picked_up_at NOT overwritten on subsequent 'picked_up' scan (idempotent)
 
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path = public, extensions;
 SET ROLE postgres;
 
 BEGIN;
-SELECT extensions.plan(13);
+SELECT extensions.plan(14);
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -149,7 +150,7 @@ ON CONFLICT (id) DO NOTHING;
 SET ROLE authenticated;
 
 -- ============================================================
--- Test 1: Anon JWT → access_denied
+-- Test 1: Anon JWT → tenant_id_missing
 -- ============================================================
 SELECT set_config('request.jwt.claims', '{}', true);
 
@@ -161,8 +162,8 @@ SELECT extensions.throws_ok(
       'bb003000-0000-0000-0000-000000000001'::uuid
     )$$,
   'P0001',
-  'access_denied: scan requires shop workstation session',
-  'record_scan_event: anon JWT → access_denied'
+  'tenant_id_missing: caller must have valid JWT',
+  'record_scan_event: anon JWT → tenant_id_missing'
 );
 
 -- ============================================================
@@ -194,6 +195,34 @@ SELECT extensions.throws_ok(
   'record_scan_event: customer JWT → access_denied'
 );
 
+-- ============================================================
+-- Test 3: Staff_shop JWT without tenant_id → tenant_id_missing
+-- ============================================================
+SELECT set_config(
+  'request.jwt.claims',
+  jsonb_build_object(
+    'sub', 'bb003000-0000-0000-0000-000000000001',
+    'app_metadata', jsonb_build_object(
+      'audience', 'staff_shop',
+      'role', 'shop',
+      'workstation_id', 'bb003000-0000-0000-0000-000000000001'
+    )
+  )::text,
+  true
+);
+
+SELECT extensions.throws_ok(
+  $$SELECT app.record_scan_event(
+      'bb006000-0000-0000-0000-000000000001'::uuid,
+      'prep',
+      'bb002000-0000-0000-0000-000000000001'::uuid,
+      'bb003000-0000-0000-0000-000000000001'::uuid
+    )$$,
+  'P0001',
+  'tenant_id_missing: caller must have valid JWT',
+  'record_scan_event: staff_shop JWT without tenant_id → tenant_id_missing'
+);
+
 -- Switch to workstation JWT for remaining tests
 SELECT set_config(
   'request.jwt.claims',
@@ -210,7 +239,7 @@ SELECT set_config(
 );
 
 -- ============================================================
--- Test 3: Invalid to_status
+-- Test 4: Invalid to_status
 -- ============================================================
 SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
@@ -225,7 +254,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 4: Job not found
+-- Test 5: Job not found
 -- ============================================================
 SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
@@ -240,7 +269,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 5: Cross-tenant job → access_denied: cross-tenant scan blocked
+-- Test 6: Cross-tenant job → access_denied: cross-tenant scan blocked
 -- ============================================================
 SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
@@ -255,7 +284,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 6: Employee not found
+-- Test 7: Employee not found
 -- ============================================================
 SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
@@ -270,7 +299,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 7: Workstation attribution mismatch
+-- Test 8: Workstation attribution mismatch
 -- ============================================================
 SELECT extensions.throws_ok(
   $$SELECT app.record_scan_event(
@@ -285,7 +314,7 @@ SELECT extensions.throws_ok(
 );
 
 -- ============================================================
--- Test 8: Happy path — returns non-null UUID
+-- Test 9: Happy path — returns non-null UUID
 -- Advance Job A: received → prep
 -- ============================================================
 SELECT extensions.isnt(
@@ -328,7 +357,7 @@ SELECT app.record_scan_event(
 SET ROLE postgres;
 
 -- ============================================================
--- Test 9: job_status_history row has correct to_status for Job A
+-- Test 10: job_status_history row has correct to_status for Job A
 -- ============================================================
 SELECT extensions.is(
   (SELECT to_status FROM job_status_history
@@ -339,7 +368,7 @@ SELECT extensions.is(
 );
 
 -- ============================================================
--- Test 10: jobs.production_status updated for Job A
+-- Test 11: jobs.production_status updated for Job A
 -- ============================================================
 SELECT extensions.is(
   (SELECT production_status FROM jobs
@@ -349,7 +378,7 @@ SELECT extensions.is(
 );
 
 -- ============================================================
--- Test 11: intake_status promoted from scheduled → in_production (Job B)
+-- Test 12: intake_status promoted from scheduled → in_production (Job B)
 -- ============================================================
 SELECT extensions.is(
   (SELECT intake_status FROM jobs
@@ -359,7 +388,7 @@ SELECT extensions.is(
 );
 
 -- ============================================================
--- Test 12: picked_up_at stamped when to_status = picked_up (Job C)
+-- Test 13: picked_up_at stamped when to_status = picked_up (Job C)
 -- ============================================================
 SELECT extensions.isnt(
   (SELECT picked_up_at FROM jobs
@@ -369,7 +398,7 @@ SELECT extensions.isnt(
 );
 
 -- ============================================================
--- Test 13: picked_up_at NOT overwritten if already set (Job D)
+-- Test 14: picked_up_at NOT overwritten if already set (Job D)
 -- Job D was inserted with picked_up_at = 2026-01-01 12:00:00+00;
 -- the subsequent picked_up scan must not change it.
 -- ============================================================

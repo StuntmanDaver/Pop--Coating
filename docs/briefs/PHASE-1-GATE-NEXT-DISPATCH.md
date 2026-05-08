@@ -13,7 +13,7 @@ Canonical production hosts:
 - `pnpm lint` passes, including `madge --circular src/modules`.
 - `pnpm test` passes: 33 files / 234 tests.
 - `pnpm build` passes.
-- Linked pgTAP is verified: `supabase test db --linked` passes 9 files / 82 tests.
+- Linked pgTAP is verified: `supabase test db --linked` passes 9 files / 87 tests after migration `0020_security_definer_fail_closed.sql`.
 - Playwright E2E is not verified locally because staff E2E credentials are not configured.
 
 ## Human-Only Blockers
@@ -39,7 +39,7 @@ Tasks:
 
 - Source local env without printing secrets.
 - Confirm linked Supabase project ref.
-- Run `supabase migration list --linked` and verify migrations through `0019_pgtap_test_schema_usage.sql` are applied.
+- Run `supabase migration list --linked` and verify migrations through `0020_security_definer_fail_closed.sql` are applied.
 - Run `supabase test db --linked`.
 - Verify JWT expiry reports `3600` if the CLI can inspect it.
 - Return exact commands run, pass/fail, and no secret values.

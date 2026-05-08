@@ -82,6 +82,25 @@ describe('EmployeePicker', () => {
     expect(mockPush).toHaveBeenCalledWith('/scan/pin?emp=emp-abc&v=7')
   })
 
+  it('preserves packet deep-link token when tile is clicked', () => {
+    const employees: ShopEmployeeTile[] = [
+      { id: 'emp-abc', display_name: 'Alice', avatar_url: null, is_active: true },
+    ]
+    render(
+      <EmployeePicker
+        employees={employees}
+        workstationVersion={7}
+        packetToken="abc123def456ghij"
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /Select Alice/i }))
+
+    expect(mockPush).toHaveBeenCalledWith(
+      '/scan/pin?emp=emp-abc&v=7&packet=abc123def456ghij',
+    )
+  })
+
   it('shows avatar image when avatar_url is set', () => {
     const employees: ShopEmployeeTile[] = [
       { id: 'emp-1', display_name: 'Alice', avatar_url: 'https://example.com/alice.jpg', is_active: true },

@@ -8,9 +8,14 @@ import type { ShopEmployeeTile } from '@/modules/scanning'
 interface EmployeePickerProps {
   employees: ShopEmployeeTile[]
   workstationVersion: number
+  packetToken?: string
 }
 
-export function EmployeePicker({ employees, workstationVersion }: EmployeePickerProps) {
+export function EmployeePicker({
+  employees,
+  workstationVersion,
+  packetToken,
+}: EmployeePickerProps) {
   const router = useRouter()
   const [filter, setFilter] = useState('')
   const [, startTransition] = useTransition()
@@ -23,8 +28,14 @@ export function EmployeePicker({ employees, workstationVersion }: EmployeePicker
     : employees
 
   function handleSelect(employee: ShopEmployeeTile) {
+    const params = new URLSearchParams({
+      emp: employee.id,
+      v: String(workstationVersion),
+    })
+    if (packetToken) params.set('packet', packetToken)
+
     startTransition(() => {
-      router.push(`/scan/pin?emp=${employee.id}&v=${workstationVersion}` as Route)
+      router.push(`/scan/pin?${params.toString()}` as Route)
     })
   }
 

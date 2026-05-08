@@ -12,9 +12,15 @@ interface WorkstationRow {
   physical_location: string | null
 }
 
-export default async function ScanPage() {
+interface Props {
+  searchParams: Promise<{ packet?: string }>
+}
+
+export default async function ScanPage({ searchParams }: Props) {
   await requireShopStaff()
   const claims = await getCurrentClaims()
+  const params = await searchParams
+  const packetToken = params.packet?.trim() || undefined
 
   if (!claims.workstation_id) {
     return (
@@ -70,6 +76,7 @@ export default async function ScanPage() {
         <EmployeePicker
           employees={employees}
           workstationVersion={workstation.version}
+          packetToken={packetToken}
         />
       </section>
     </main>

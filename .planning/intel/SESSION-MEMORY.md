@@ -18,7 +18,7 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 | `next.config.ts` | `typedRoutes` out of `experimental`; `disableLogger` removed. |
 | TypeScript types | Aligned with live schema once migrations applied (confirm on current `main`). |
 | GitHub Actions config | Required CI secret/variable names were confirmed on 2026-05-08 without storing values in-repo. Added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for E2E. |
-| DB migrations | Live Supabase now has local migrations through `0019_pgtap_test_schema_usage.sql`; re-verify before sign-off. |
+| DB migrations | Live Supabase now has local migrations through `0020_security_definer_fail_closed.sql`; re-verify before sign-off. |
 
 ### Still requires manual action
 
@@ -72,8 +72,9 @@ After branch push/sync and all human-only blockers in this table are complete or
 - Automated app gates passed locally: `pnpm type-check`, `pnpm lint`, `pnpm test` (33 files / 234 tests), and `pnpm build`.
 - Applied `0018_security_and_hot_path_hardening.sql` to the linked Pops Supabase project with `supabase db push --linked --include-all --yes`; `supabase migration list --linked --debug` showed local and remote `0001` through `0018` aligned.
 - Applied `0019_pgtap_test_schema_usage.sql` and verified local and remote migrations through `0019`.
+- Applied `0020_security_definer_fail_closed.sql` and verified local and remote migrations through `0020`.
 - Regenerated `src/shared/db/types.ts` from the linked schema with `supabase gen types typescript --linked > src/shared/db/types.ts`; `pnpm type-check`, `pnpm lint`, and `pnpm test` still pass afterward.
-- `supabase test db --linked` now passes: 9 files / 82 tests. The SQL test files set `SET ROLE postgres` for fixture setup, then switch to `authenticated` where RLS behavior is being asserted.
+- `supabase test db --linked` now passes: 9 files / 87 tests. The SQL test files set `SET ROLE postgres` for fixture setup, then switch to `authenticated` where RLS behavior is being asserted.
 - GitHub Actions secret/variable names were confirmed without printing values; `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` were added for E2E.
 - Vercel project `stuntmandavers-projects/pops--coating` is linked and has ready production deployments, but canonical `app.popsindustrial.com` and `track.popsindustrial.com` cannot be attached until existing aliases are moved/removed from their current Vercel project. The production URL still shows stale `app.popscoating.com`.
 - Vercel CLI env inventory showed Supabase, Resend API, and Upstash Redis/QStash names; `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible and remain gaps.

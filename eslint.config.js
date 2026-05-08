@@ -10,6 +10,12 @@ const config = [
   ...nextPlugin,
   // Block 1: Module boundary — deep imports forbidden, must import from index.ts
   {
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    languageOptions: {
+      parser: tsParser,
+    },
     rules: {
       'no-restricted-imports': ['error', {
         patterns: [{
