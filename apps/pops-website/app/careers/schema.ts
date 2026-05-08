@@ -16,4 +16,5 @@ export const jobApplicationSchema = z.object({
     .min(20, "Tell us about your experience and availability (at least 20 characters)"),
 });
 
+export type JobApplicationFormInput = z.input<typeof jobApplicationSchema>;
 export type JobApplicationFormValues = z.infer<typeof jobApplicationSchema>;

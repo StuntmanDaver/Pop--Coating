@@ -10,14 +10,22 @@ import { Input } from "../../components/forms/input";
 import { Textarea } from "../../components/forms/textarea";
 import { Button } from "../../components/ui/button";
 import { submitJobApplication } from "./actions";
-import { jobApplicationSchema, type JobApplicationFormValues } from "./schema";
+import {
+  jobApplicationSchema,
+  type JobApplicationFormInput,
+  type JobApplicationFormValues,
+} from "./schema";
 
 const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 
+type RecaptchaApi = {
+  ready(callback: () => void): void;
+  execute(siteKey: string, options: { action: string }): Promise<string>;
+};
+
 async function getRecaptchaToken(action: string): Promise<string> {
   if (!SITE_KEY) return "";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const g = (window as any).grecaptcha;
+  const g = (window as Window & { grecaptcha?: RecaptchaApi }).grecaptcha;
   if (!g) return "";
   return new Promise<string>((resolve, reject) => {
     g.ready(() => g.execute(SITE_KEY, { action }).then(resolve, reject));
@@ -33,7 +41,7 @@ export function JobApplicationForm() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<JobApplicationFormValues>({
+  } = useForm<JobApplicationFormInput, unknown, JobApplicationFormValues>({
     resolver: zodResolver(jobApplicationSchema),
     defaultValues: {
       phone: "",
