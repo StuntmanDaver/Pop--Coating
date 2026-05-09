@@ -26,7 +26,7 @@ export function IndustriesGrid() {
       className="pops-section-gold-wash border-t border-pops-yellow-500/25 py-16 sm:py-20 md:py-28"
     >
       <Container className="relative z-10">
-        <BlurFade>
+        <BlurFade inView={false}>
           <EyebrowLabel tone="dark" shimmer className="mb-3 sm:mb-4">
             INDUSTRIES WE SERVE
           </EyebrowLabel>
@@ -40,7 +40,7 @@ export function IndustriesGrid() {
           </h2>
         </BlurFade>
 
-        <BlurFade delay={0.12}>
+        <BlurFade inView={false} delay={0.12}>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
             {INDUSTRIES.map((industry) => (
               <li
