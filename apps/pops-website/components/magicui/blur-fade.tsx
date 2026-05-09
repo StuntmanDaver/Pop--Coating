@@ -117,13 +117,16 @@ export function BlurFade({
     ? staticVariants
     : (variant ?? defaultVariants);
 
+  /** Mount animations (`inView={false}`): avoid SSR + first paint at opacity 0 before hydration. */
+  const mountAnimateOnly = !inView;
+
   return (
     <motion.div
       ref={ref}
-      initial="hidden"
+      initial={mountAnimateOnly ? false : "hidden"}
       animate={isInView ? "visible" : "hidden"}
       variants={combinedVariants}
-      transition={{ delay: 0.04 + delay, duration, ease: "easeOut" }}
+      transition={{ delay: mountAnimateOnly ? delay : 0.04 + delay, duration, ease: "easeOut" }}
       className={className}
     >
       {children}

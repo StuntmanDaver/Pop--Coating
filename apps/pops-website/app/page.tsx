@@ -87,7 +87,7 @@ export default function HomePage() {
         <Hero
           eyebrow={`FAMILY OWNED · LAKELAND,\u00A0FL · SINCE 1972`}
           heading="Serving the industry since 1972."
-          headingClassName="whitespace-nowrap text-[clamp(1.625rem,3.2vw+1rem,4.5rem)]"
+          headingClassName="text-balance text-[clamp(1.625rem,3.2vw+1rem,4.5rem)] md:whitespace-nowrap"
           lede="Powder Coating, Abrasive Blasting, Wet Paint, Complex Coatings, and Large Capacity Coatings."
           ledeClassName="max-w-none text-sm leading-snug text-ink-100 sm:text-base sm:leading-normal md:mt-8 md:whitespace-nowrap"
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
