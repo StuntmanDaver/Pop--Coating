@@ -59,6 +59,12 @@ After branch push/sync and all human-only blockers in this table are complete or
 
 ## 2026-05-08
 
+### Repo sync note
+
+- Worktree was clean on `main` before the requested memory/changelog update; no implementation files were pending.
+- This sync records the Phase 1 gate implementation context before pushing to GitHub: migrations are aligned through `0020`, local automated gates passed after type regeneration, and remaining blockers are manual infrastructure actions rather than code changes.
+- Push target remains `origin` → `https://github.com/StuntmanDaver/Pop--Coating.git`; keep using explicit branch pushes from `main` unless a future phase branch is created.
+
 ### QR packet automation decision
 
 - Preserve the simple shop-floor workflow as the product spine: front desk creates job → system generates job number, opaque packet token, QR, and printable packet → paper packet travels with parts → worker scans at workstation and records stage → customer portal updates automatically.

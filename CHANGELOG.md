@@ -4,6 +4,11 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### Repo / GitHub Sync + Continuity Notes (2026-05-08)
+
+- **Repository continuity refreshed before push.** Updated `.planning/intel/SESSION-MEMORY.md` with the current Phase 1 gate status and remaining manual blockers so the next session can pick up from the right operational context.
+- **Changelog updated for the sync commit.** Captures that the repo was clean before this documentation-only update and that the push is intended to keep `main` / `origin/main` aligned after the Phase 1 gate implementation pass.
+
 ### pops-website / Image Visibility — Facilities Page Fix (2026-05-06)
 
 - **Fixed portrait containers on Facilities & Equipment photo grid.** All four `aspect-[3/4]` containers were portrait; three of the four photos are landscape (1360×1020, 4:3). Landscape images in portrait containers were heavily cropped on the left and right edges. Changed all containers to `aspect-[4/3]` so facility photos display without clipping.
