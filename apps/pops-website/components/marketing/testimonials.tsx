@@ -10,7 +10,7 @@ export function Testimonials() {
       className="pops-section-gold-wash border-t border-pops-yellow-500/25 py-16 sm:py-20 md:py-28"
     >
       <Container className="relative z-10">
-        <BlurFade>
+        <BlurFade inView={false}>
           <EyebrowLabel tone="dark" shimmer className="mb-3 sm:mb-4">
             WHAT CUSTOMERS SAY
           </EyebrowLabel>
@@ -38,7 +38,7 @@ export function Testimonials() {
                 aria-hidden="true"
                 className="absolute left-0 top-0 h-0.5 w-10 bg-gradient-to-r from-pops-yellow-500 to-transparent sm:w-14"
               />
-              <BlurFade delay={0.08 * i} yOffset={4}>
+              <BlurFade inView={false} delay={0.08 * i} yOffset={4}>
                 <blockquote className="relative pt-1 font-display text-[18px] leading-snug tracking-tight text-white sm:text-[20px]">
                   <span aria-hidden="true" className="mr-1 text-pops-yellow-500">
                     &ldquo;

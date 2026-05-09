@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "motion/react";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+
+import { cn } from "../../lib/utils";
 
 type BlurFadeProps = {
   children: ReactNode;
@@ -21,70 +22,88 @@ type BlurFadeProps = {
 };
 
 /**
- * Fade + blur reveal triggered when the element scrolls into view.
+ * Fade + blur reveal when the block scrolls into view (or on mount when `inView={false}`).
  *
- * We use a native IntersectionObserver instead of motion's `useInView`
- * or `whileInView` because both have a regression in motion v12 +
- * Next.js 16 (Turbopack) + React 19 where the in-view callback never
- * resolves and elements stay stuck at opacity 0.
- *
- * Mitigations: `useLayoutEffect` precheck (already in viewport → show now),
- * plus a ~2.8s fail-safe so content never stays hidden if IO misbehaves.
+ * Uses CSS transitions + a native IntersectionObserver instead of Motion variants.
+ * Motion + variants was leaving blocks stuck at opacity 0 (React 19 / Next 16).
+ * Blur is not applied: `filter: blur()` + opacity transitions have caused stuck repaints
+ * in WebKit. Use `inView={false}` to skip scroll gating entirely.
  */
 export function BlurFade({
   children,
   className,
-  variant,
   duration = 0.4,
   delay = 0,
   yOffset = 6,
   inView = true,
-  inViewMargin = "-50px",
-  blur = "6px",
+  inViewMargin = "0px 0px 200px 0px",
+  blur: _blur = "6px",
 }: BlurFadeProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isInView, setIsInView] = useState(!inView);
-  const prefersReducedMotion = useReducedMotion();
-
-  /** If any part of the node overlaps the viewport (generous margin), treat as visible immediately. */
-  const precheckIntersectsViewport = (node: HTMLElement) => {
-    const r = node.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const vw = window.innerWidth;
-    return r.bottom > -80 && r.top < vh + 80 && r.right > -80 && r.left < vw + 80;
-  };
+  const [revealed, setRevealed] = useState(() => !inView);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useLayoutEffect(() => {
-    if (!inView) return;
-    const node = ref.current;
-    if (!node) return;
-    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    let revealNow: number | undefined;
-    const revealOnNextTick = () => {
-      revealNow = window.setTimeout(() => {
-        setIsInView(true);
-      }, 0);
+    const syncReduced = () => {
+      const reduced = mq.matches;
+      setPrefersReducedMotion(reduced);
+      if (reduced) setRevealed(true);
+    };
+
+    syncReduced();
+    mq.addEventListener("change", syncReduced);
+
+    if (!inView) {
+      setRevealed(true);
+      return () => mq.removeEventListener("change", syncReduced);
+    }
+
+    if (mq.matches) {
+      setRevealed(true);
+      return () => mq.removeEventListener("change", syncReduced);
+    }
+
+    const node = ref.current;
+    if (!node) {
+      setRevealed(true);
+      return () => mq.removeEventListener("change", syncReduced);
+    }
+
+    const precheckIntersectsViewport = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      return r.bottom > -80 && r.top < vh + 80 && r.right > -80 && r.left < vw + 80;
+    };
+
+    let revealTimeout: number | undefined;
+
+    const reveal = () => {
+      setRevealed(true);
     };
 
     if (typeof IntersectionObserver === "undefined") {
-      revealOnNextTick();
+      revealTimeout = window.setTimeout(reveal, 0);
       return () => {
-        if (revealNow !== undefined) window.clearTimeout(revealNow);
+        mq.removeEventListener("change", syncReduced);
+        if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
       };
     }
 
     if (precheckIntersectsViewport(node)) {
-      revealOnNextTick();
+      revealTimeout = window.setTimeout(reveal, 0);
       return () => {
-        if (revealNow !== undefined) window.clearTimeout(revealNow);
+        mq.removeEventListener("change", syncReduced);
+        if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
       };
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
-          setIsInView(true);
+          reveal();
           observer.disconnect();
         }
       },
@@ -93,43 +112,38 @@ export function BlurFade({
     observer.observe(node);
 
     const failSafe = window.setTimeout(() => {
-      setIsInView(true);
+      reveal();
       observer.disconnect();
-    }, 2800);
+    }, 2000);
 
     return () => {
+      mq.removeEventListener("change", syncReduced);
       window.clearTimeout(failSafe);
       observer.disconnect();
+      if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
     };
   }, [inView, inViewMargin]);
 
-  const defaultVariants: Variants = {
-    hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
-    visible: { y: -yOffset, opacity: 1, filter: "blur(0px)" },
-  };
-
-  const staticVariants: Variants = {
-    hidden: { y: 0, opacity: 1, filter: "blur(0px)" },
-    visible: { y: 0, opacity: 1, filter: "blur(0px)" },
-  };
-
-  const combinedVariants = prefersReducedMotion
-    ? staticVariants
-    : (variant ?? defaultVariants);
-
-  /** Mount animations (`inView={false}`): avoid SSR + first paint at opacity 0 before hydration. */
-  const mountAnimateOnly = !inView;
+  const skipStyles = prefersReducedMotion || !inView;
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial={mountAnimateOnly ? false : "hidden"}
-      animate={isInView ? "visible" : "hidden"}
-      variants={combinedVariants}
-      transition={{ delay: mountAnimateOnly ? delay : 0.04 + delay, duration, ease: "easeOut" }}
-      className={className}
+      className={cn(className)}
+      style={
+        skipStyles
+          ? undefined
+          : {
+              opacity: revealed ? 1 : 0,
+              transform: revealed ? "translateY(0)" : `translateY(${yOffset}px)`,
+              transitionProperty: "opacity, transform",
+              transitionDuration: `${duration}s`,
+              transitionTimingFunction: "ease-out",
+              transitionDelay: `${delay}s`,
+            }
+      }
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

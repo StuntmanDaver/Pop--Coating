@@ -1,15 +1,12 @@
 "use client";
 
-import {
-  useInView,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from "motion/react";
+import { useMotionValue, useSpring } from "motion/react";
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
+  useState,
   type ComponentPropsWithoutRef,
 } from "react";
 
@@ -30,8 +27,8 @@ type NumberTickerProps = ComponentPropsWithoutRef<"span"> & {
  * Important properties for SSR / SEO / accessibility:
  *  - The static HTML always renders the FINAL value (good for crawlers and JS-disabled users).
  *  - `prefers-reduced-motion: reduce` is honored — the animation is skipped entirely.
- *  - The spring listener is only attached after the element enters the viewport, so users
- *    above the fold see the SSR value until the very moment the count begins.
+ *  - Viewport detection uses a native IntersectionObserver (not Motion `useInView`),
+ *    which can fail to resolve in Motion v12 + React 19.
  */
 export function NumberTicker({
   value,
@@ -45,8 +42,57 @@ export function NumberTicker({
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(startValue);
   const springValue = useSpring(motionValue, { damping: 60, stiffness: 100 });
-  const isInView = useInView(ref, { once: true, margin: "0px" });
-  const prefersReducedMotion = useReducedMotion();
+  const [isInView, setIsInView] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const syncReduced = () => {
+      const reduced = mq.matches;
+      setPrefersReducedMotion(reduced);
+      if (reduced) setIsInView(true);
+    };
+
+    syncReduced();
+    mq.addEventListener("change", syncReduced);
+
+    const node = ref.current;
+    if (!node) {
+      return () => mq.removeEventListener("change", syncReduced);
+    }
+
+    if (mq.matches) {
+      return () => mq.removeEventListener("change", syncReduced);
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      setIsInView(true);
+      return () => mq.removeEventListener("change", syncReduced);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px", threshold: 0.05 },
+    );
+    observer.observe(node);
+
+    const failSafe = window.setTimeout(() => {
+      setIsInView(true);
+      observer.disconnect();
+    }, 800);
+
+    return () => {
+      mq.removeEventListener("change", syncReduced);
+      window.clearTimeout(failSafe);
+      observer.disconnect();
+    };
+  }, []);
 
   const formatter = useMemo(
     () =>
