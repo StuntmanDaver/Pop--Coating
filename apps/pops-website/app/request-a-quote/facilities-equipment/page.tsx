@@ -50,7 +50,7 @@ export default function FacilitiesEquipmentPage() {
                   alt: "Pop's Industrial Coatings Lakeland FL facility — production floor view 2",
                 },
                 {
-                  src: "/images/large-capacity-powder-coating-270x138-1.png",
+                  src: "/images/large-capacity-coatings-main.png",
                   alt: "Large capacity coatings oven at Pop's Industrial Coatings",
                 },
               ]}

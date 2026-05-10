@@ -25,7 +25,9 @@ export function Header({ className }: HeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-pops-yellow-500/25 bg-[#0a0a0a]/90 shadow-[0_1px_0_0_rgb(0_0_0/0.4)] backdrop-blur-md",
+        "sticky top-0 z-50 w-full border-b border-pops-yellow-500/25 backdrop-blur-md",
+        "bg-[linear-gradient(90deg,rgba(254,205,8,0.05)_0%,transparent_22%,transparent_78%,rgba(254,205,8,0.05)_100%),linear-gradient(180deg,var(--color-metal-1)_0%,var(--color-surface-2)_52%,var(--color-canvas)_100%)]",
+        "shadow-[0_1px_0_0_rgb(0_0_0/0.4)]",
         className,
       )}
     >
