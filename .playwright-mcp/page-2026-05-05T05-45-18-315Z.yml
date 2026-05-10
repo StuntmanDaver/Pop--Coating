@@ -1,0 +1,138 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+        - link "About Us" [ref=e9] [cursor=pointer]:
+          - /url: /about-us
+        - link "Contact" [ref=e10] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e11]:
+        - link "Call Pop's Industrial Coatings at 863.644.7473" [ref=e12] [cursor=pointer]:
+          - /url: tel:+18636447473
+          - img [ref=e13]
+          - generic [ref=e15]: 863.644.7473
+        - link "Request a Quote" [ref=e16] [cursor=pointer]:
+          - /url: /request-a-quote
+  - main [ref=e17]:
+    - region "Abrasive Media Blasting" [ref=e18]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: SAND BLASTING
+        - heading "Abrasive Media Blasting" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Meticulous surface preparation to SSPC and NACE standards, ensuring optimal coating adhesion and long-term performance.
+        - link "Request a Quote" [ref=e25] [cursor=pointer]:
+          - /url: /request-a-quote?service=abrasive-media-blasting
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: TO SSPC/NACE STANDARDS
+        - heading "Sand Blasting to Industry Standards" [level=2] [ref=e31]
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: Our Abrasive Media Blasting services adhere strictly to the rigorous standards set by SSPC (Society for Protective Coatings) and NACE (National Association of Corrosion Engineers).
+          - paragraph [ref=e34]: Utilizing the necessary equipment and skilled professionals, we ensure that surfaces are meticulously prepared to achieve optimal coating adhesion.
+          - paragraph [ref=e35]: The process involves removing contaminants and creating a profile suitable for the application of protective coatings, ensuring longevity and performance in diverse environments.
+        - generic [ref=e36]:
+          - img "Abrasive media blasting at Pop's Industrial Coatings, Lakeland FL — surface preparation for industrial coating" [ref=e38]
+          - img "Industrial sandblasting work in progress at Pop's Lakeland facility" [ref=e40]
+          - img "Abrasive blasting to SSPC standards at Pop's Industrial Coatings" [ref=e42]
+          - img "Surface preparation through media blasting at Pop's Industrial Coatings, Lakeland FL" [ref=e44]
+          - img "Industrial abrasive blasting equipment at Pop's facility in Lakeland, FL" [ref=e46]
+          - img "Blasting to NACE standards for optimal coating adhesion at Pop's Industrial Coatings" [ref=e48]
+        - link "Get a Quote" [ref=e50] [cursor=pointer]:
+          - /url: /request-a-quote?service=abrasive-media-blasting
+      - complementary "Our services" [ref=e51]:
+        - paragraph [ref=e52]: OUR SERVICES
+        - navigation [ref=e53]:
+          - list [ref=e54]:
+            - listitem [ref=e55]:
+              - generic [ref=e56]: Abrasive Media Blasting
+            - listitem [ref=e57]:
+              - link "Wet Paint Coatings" [ref=e58] [cursor=pointer]:
+                - /url: /industrial-coatings-services/wet-paint-coatings
+            - listitem [ref=e59]:
+              - link "Complex Coating" [ref=e60] [cursor=pointer]:
+                - /url: /industrial-coatings-services/complex-coating
+            - listitem [ref=e61]:
+              - link "Powder Coating" [ref=e62] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating
+            - listitem [ref=e63]:
+              - link "Large Capacity Powder Coating" [ref=e64] [cursor=pointer]:
+                - /url: /industrial-coatings-services/large-capacity-powder-coating
+  - contentinfo [ref=e65]:
+    - generic [ref=e66]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e69]
+          - generic [ref=e70]:
+            - img "Pop's Industrial Coatings" [ref=e71]
+            - generic [ref=e72]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e73]:
+            - list [ref=e74]:
+              - listitem [ref=e75]:
+                - link "Our Capabilities" [ref=e76] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e77]:
+                - link "Our Certifications" [ref=e78] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e79]:
+                - link "Request a Quote" [ref=e80] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e81]:
+                - link "Terms & Conditions" [ref=e82] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e84] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e85]:
+          - heading "Services" [level=2] [ref=e86]
+          - navigation "Services" [ref=e87]:
+            - list [ref=e88]:
+              - listitem [ref=e89]:
+                - link "Wet Paint Coatings" [ref=e90] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e91]:
+                - link "Complex Coating" [ref=e92] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e93]:
+                - link "Abrasive Media Blasting" [ref=e94] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e95]:
+                - link "Powder Coating" [ref=e96] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e97]:
+                - link "Large Capacity Powder Coating" [ref=e98] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e99]:
+          - heading "Visiting Us" [level=2] [ref=e100]
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - paragraph [ref=e103]: Main Office
+              - generic [ref=e104]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e105]:
+              - paragraph [ref=e106]: Shipping & Receiving
+              - generic [ref=e107]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e108]:
+              - listitem [ref=e109]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e110] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e111]: "Fax: 863.644.5926"
+              - listitem [ref=e112]:
+                - link "info@popsindustrial.com" [ref=e113] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e114]:
+                - link "invoices@popsindustrial.com" [ref=e115] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e116]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e118]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e119]

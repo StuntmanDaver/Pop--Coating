@@ -1,0 +1,33 @@
+---
+description: Phase 1 Plan 06 continuity — automated vs manual work (session 2026-05-03)
+alwaysApply: true
+---
+
+# Phase 1 foundation — continuity for new Cursor sessions
+
+**Full detail:** [.planning/intel/SESSION-MEMORY.md](.planning/intel/SESSION-MEMORY.md) (includes git/Vercel notes).
+
+## Already done (automated / verified in session)
+
+| Area | Status |
+|------|--------|
+| Build | Turbopack route conflict fixed: unified `src/app/page.tsx` with host detection; unified `src/app/sign-in/page.tsx` for office vs portal |
+| `next.config.ts` | `typedRoutes` moved out of `experimental`; `disableLogger` removed per Next 16 |
+| TypeScript DB types | Regenerated against live schema when migrations applied (confirm current commit matches Supabase) |
+| GitHub Actions secrets | `RESEND_API_KEY` and `SUPABASE_PROJECT_REF` (or equivalent) — verify under repo Settings → Secrets |
+| Database | All migrations applied on live Supabase (reconfirm before claiming sign-off) |
+
+## Still manual before Phase 1 Task 5 / sign-off
+
+| Item | Where |
+|------|--------|
+| JWT expiry → **3600s** | Supabase Dashboard → Authentication → Settings → JWT Expiry |
+| Auth Hook **`app.custom_access_token_hook`** | Supabase Dashboard → Authentication → Hooks → Custom Access Token |
+| Upstash Redis | Vercel Marketplace integration; `UPSTASH_REDIS_REST_URL` + token in env |
+| Sentry | Project DSN → `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` on Vercel and locally |
+| Vercel domains | **`app.popsindustrial.com`** + **`track.popsindustrial.com`** (replace any stale `popscoating.com`) |
+| Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (e.g. registrar DNS) |
+
+**Gate:** After the **two Supabase Dashboard** steps (JWT + Hook) and branch push/sync, Phase 1 **Task 5** (success criteria walkthrough) can run.
+
+**Git:** If work lived on `ralph/foundation-completion`, push with explicit `git push origin <branch-name>` after `git branch --show-current` — avoid ambiguous upstream to `main`.

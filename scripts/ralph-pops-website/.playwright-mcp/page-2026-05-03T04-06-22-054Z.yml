@@ -1,0 +1,37 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - heading "Button — variants & states" [level=1] [ref=e4]
+    - paragraph [ref=e5]: Internal preview for US-008. Tab through to see focus ring.
+  - generic [ref=e6]:
+    - heading "Variants — default size (44px)" [level=2] [ref=e7]
+    - generic [ref=e8]:
+      - button "Request a Quote" [ref=e9]
+      - button "Learn more" [ref=e10]
+      - button "View details" [ref=e11]
+      - button "Cancel job" [ref=e12]
+  - generic [ref=e13]:
+    - heading "Compact size (36px)" [level=2] [ref=e14]
+    - generic [ref=e15]:
+      - button "Save" [ref=e16]
+      - button "Reset" [ref=e17]
+      - button "Skip" [ref=e18]
+      - button "Delete" [ref=e19]
+  - generic [ref=e20]:
+    - heading "Disabled" [level=2] [ref=e21]
+    - generic [ref=e22]:
+      - button "Disabled primary" [disabled] [ref=e23]
+      - button "Disabled secondary" [disabled] [ref=e24]
+  - generic [ref=e25]:
+    - heading "Loading" [level=2] [ref=e26]
+    - generic [ref=e27]:
+      - button [disabled] [ref=e28]:
+        - img [ref=e31]
+      - button [disabled] [ref=e34]:
+        - img [ref=e37]
+  - generic [ref=e40]:
+    - heading "asChild — wrapping a Link" [level=2] [ref=e41]
+    - generic [ref=e42]:
+      - link "Go home" [ref=e43] [cursor=pointer]:
+        - /url: /
+      - link "External" [ref=e44] [cursor=pointer]:
+        - /url: https://popsindustrial.com

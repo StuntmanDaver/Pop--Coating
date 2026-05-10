@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+        - link "About Us" [ref=e9] [cursor=pointer]:
+          - /url: /about-us
+        - link "Contact" [ref=e10] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e11]:
+        - link "Call Pop's Industrial Coatings at 863.644.7473" [ref=e12] [cursor=pointer]:
+          - /url: tel:+18636447473
+          - img [ref=e13]
+          - generic [ref=e15]: 863.644.7473
+        - link "Request a Quote" [ref=e16] [cursor=pointer]:
+          - /url: /request-a-quote
+  - main [ref=e17]:
+    - region "Facilities & Equipment" [ref=e18]:
+      - img "Aerial view of Pop's Industrial Coatings facility in Lakeland, FL" [ref=e19]
+      - generic [ref=e21]:
+        - paragraph [ref=e22]: INFRASTRUCTURE
+        - heading "Facilities & Equipment" [level=1] [ref=e23]
+        - paragraph [ref=e24]: We have the equipment and facilities to handle any project, large or small.
+        - link "Request a Quote" [ref=e26] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e29]:
+      - img "Industrial powder coating service at Pop's Industrial Coatings, Lakeland FL" [ref=e31]
+      - img "Pop's Industrial Coatings Lakeland FL facility — production floor view 1" [ref=e33]
+      - img "Pop's Industrial Coatings Lakeland FL facility — production floor view 2" [ref=e35]
+      - img "Large capacity powder coating oven at Pop's Industrial Coatings" [ref=e37]
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - paragraph [ref=e42]: CAPABILITIES
+        - heading "Our Services" [level=2] [ref=e43]
+        - paragraph [ref=e44]: We pride ourselves in our extensive services and quality products, offering customers one-stop shopping from small to large projects.
+        - link "Learn More" [ref=e45] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+      - generic [ref=e46]:
+        - paragraph [ref=e47]: STANDARDS
+        - heading "Our Certifications" [level=2] [ref=e48]
+        - paragraph [ref=e49]: We adhere to strict industry specifications and best practices to achieve the utmost in quality workmanship. See our certifications.
+        - link "Learn More" [ref=e50] [cursor=pointer]:
+          - /url: /request-a-quote/standards-specifications-certifications
+      - generic [ref=e51]:
+        - paragraph [ref=e52]: ABOUT US
+        - heading "What Makes Us Different" [level=2] [ref=e53]
+        - paragraph [ref=e54]: Pop's offers experience and expertise. Read about what makes us different, solidifying our position as a leader in industrial coatings.
+        - link "Learn More" [ref=e55] [cursor=pointer]:
+          - /url: /about-us
+  - contentinfo [ref=e56]:
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e60]
+          - generic [ref=e61]:
+            - img "Pop's Industrial Coatings" [ref=e62]
+            - generic [ref=e63]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e64]:
+            - list [ref=e65]:
+              - listitem [ref=e66]:
+                - link "Our Capabilities" [ref=e67] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e68]:
+                - link "Our Certifications" [ref=e69] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e70]:
+                - link "Request a Quote" [ref=e71] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e72]:
+                - link "Terms & Conditions" [ref=e73] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e75] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e76]:
+          - heading "Services" [level=2] [ref=e77]
+          - navigation "Services" [ref=e78]:
+            - list [ref=e79]:
+              - listitem [ref=e80]:
+                - link "Wet Paint Coatings" [ref=e81] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e82]:
+                - link "Complex Coating" [ref=e83] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e84]:
+                - link "Abrasive Media Blasting" [ref=e85] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e86]:
+                - link "Powder Coating" [ref=e87] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e88]:
+                - link "Large Capacity Powder Coating" [ref=e89] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e90]:
+          - heading "Visiting Us" [level=2] [ref=e91]
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - paragraph [ref=e94]: Main Office
+              - generic [ref=e95]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e96]:
+              - paragraph [ref=e97]: Shipping & Receiving
+              - generic [ref=e98]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e99]:
+              - listitem [ref=e100]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e101] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e102]: "Fax: 863.644.5926"
+              - listitem [ref=e103]:
+                - link "info@popsindustrial.com" [ref=e104] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e105]:
+                - link "invoices@popsindustrial.com" [ref=e106] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e107]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e109]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e110]

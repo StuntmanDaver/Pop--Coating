@@ -1,0 +1,163 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+        - link "About Us" [ref=e9] [cursor=pointer]:
+          - /url: /about-us
+        - link "Contact" [ref=e10] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e11]:
+        - link "Call Pop's Industrial Coatings at 863.644.7473" [ref=e12] [cursor=pointer]:
+          - /url: tel:+18636447473
+          - img [ref=e13]
+          - generic [ref=e15]: 863.644.7473
+        - link "Request a Quote" [ref=e16] [cursor=pointer]:
+          - /url: /request-a-quote
+  - main [ref=e17]:
+    - region "Guest Safety Rules" [ref=e18]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: VISITING US
+        - heading "Guest Safety Rules" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Please read these rules carefully before entering our facility.
+        - link "Check In" [ref=e25] [cursor=pointer]:
+          - /url: /check-in
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - heading "Guest Safety Acknowledgment & Check-In Agreement" [level=2] [ref=e30]
+        - paragraph [ref=e31]: Important Safety Notice
+        - paragraph [ref=e32]: "You are entering an active industrial coating facility, including all parking and storage areas (the “Facility”). This “Facility” includes, but is not limited to:"
+        - list [ref=e33]:
+          - listitem [ref=e34]: Forklifts and heavy equipment
+          - listitem [ref=e35]: Moving vehicles and overhead loads
+          - listitem [ref=e36]: Steel, piping, structural components and material
+          - listitem [ref=e37]: Industrial coatings, solvents, blasting media and airborne particulates
+          - listitem [ref=e38]: Uneven surfaces and noise hazards
+        - paragraph [ref=e39]: For your safety, strict adherence to the “Facility” rules is required at all times.
+      - generic [ref=e40]:
+        - paragraph [ref=e41]: Required Guest Safety Rules
+        - paragraph [ref=e42]: "All guests, visitors, vendors and non-employees must comply with the following:"
+        - list [ref=e43]:
+          - listitem [ref=e44]:
+            - text: Check In Required
+            - list [ref=e45]:
+              - listitem [ref=e46]: All guests must check in at shipping & receiving or the front office before entering the facility.
+              - listitem [ref=e47]: You must remain with your designated Pop's Industrial Coatings escort at all times unless expressly authorized otherwise.
+          - listitem [ref=e48]:
+            - text: Personal Protective Equipment (PPE)
+            - list [ref=e49]:
+              - listitem [ref=e50]: Closed toe shoes are required at all times.
+              - listitem [ref=e51]: Additional PPE (hard hat, safety glasses, hearing protection, high-visibility vest, respirator, etc.) must be worn if instructed.
+              - listitem [ref=e52]: Failure to wear required PPE may result in removal from the facility.
+          - listitem [ref=e53]:
+            - text: Restricted Areas
+            - list [ref=e54]:
+              - listitem [ref=e55]: Do not enter production, blasting, coating or yard areas unless explicitly permitted.
+              - listitem [ref=e56]: Never cross barriers, safety tape or warning signage.
+          - listitem [ref=e57]:
+            - text: Equipment & Vehicle Awareness
+            - list [ref=e58]:
+              - listitem [ref=e59]: Always remain alert for forklifts, cranes, trucks and moving equipment.
+              - listitem [ref=e60]: Do not walk under suspended loads or approach operating machinery.
+          - listitem [ref=e61]:
+            - text: Conduct & Compliance
+            - list [ref=e62]:
+              - listitem [ref=e63]: Horseplay, distractions or unsafe behavior are not permitted.
+              - listitem [ref=e64]: Follow all verbal and posted safety instructions immediately.
+          - listitem [ref=e65]:
+            - text: Injuries & Incidents
+            - list [ref=e66]:
+              - listitem [ref=e67]: Report all injuries, near misses or unsafe conditions immediately to a Pop's Industrial Coatings representative.
+              - listitem [ref=e68]: Do not attempt to render aid beyond your training.
+      - generic [ref=e69]:
+        - paragraph [ref=e70]: Assumption of Risk
+        - paragraph [ref=e71]: "By checking in or electronically acknowledging this notice, you confirm that:"
+        - list [ref=e72]:
+          - listitem [ref=e73]: You understand you are entering an industrial work environment with inherent risks.
+          - listitem [ref=e74]: You agree to comply with all safety rules, instructions and PPE requirements.
+          - listitem [ref=e75]: You voluntarily assume all risk of injury, death, illness or damage to your person or property arising out of or relating to your presence at the “Facility” whether such risk are known or unknown, foreseeable or unforeseeable and whether occurring during normal operations or otherwise, except to the extent caused by the gross negligence or willful misconduct of the owner. This assumption of risk is intended to be as broad and inclusive as permitted under Florida law.
+          - listitem [ref=e76]: You agree that failure to follow safety requirements may result in immediate removal from the facility.
+      - generic [ref=e77]:
+        - paragraph [ref=e78]: Authorization to Enter
+        - paragraph [ref=e79]: By checking in, I acknowledge that I have read, understand and agree to comply with all safety requirements while at the “Facility”.
+      - link "Proceed to Check In" [ref=e81] [cursor=pointer]:
+        - /url: /check-in
+  - contentinfo [ref=e82]:
+    - generic [ref=e83]:
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e86]
+          - generic [ref=e87]:
+            - img "Pop's Industrial Coatings" [ref=e88]
+            - generic [ref=e89]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e90]:
+            - list [ref=e91]:
+              - listitem [ref=e92]:
+                - link "Our Capabilities" [ref=e93] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e94]:
+                - link "Our Certifications" [ref=e95] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e96]:
+                - link "Request a Quote" [ref=e97] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e98]:
+                - link "Terms & Conditions" [ref=e99] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e101] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e102]:
+          - heading "Services" [level=2] [ref=e103]
+          - navigation "Services" [ref=e104]:
+            - list [ref=e105]:
+              - listitem [ref=e106]:
+                - link "Wet Paint Coatings" [ref=e107] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e108]:
+                - link "Complex Coating" [ref=e109] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e110]:
+                - link "Abrasive Media Blasting" [ref=e111] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e112]:
+                - link "Powder Coating" [ref=e113] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e114]:
+                - link "Large Capacity Powder Coating" [ref=e115] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e116]:
+          - heading "Visiting Us" [level=2] [ref=e117]
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - paragraph [ref=e120]: Main Office
+              - generic [ref=e121]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e122]:
+              - paragraph [ref=e123]: Shipping & Receiving
+              - generic [ref=e124]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e125]:
+              - listitem [ref=e126]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e127] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e128]: "Fax: 863.644.5926"
+              - listitem [ref=e129]:
+                - link "info@popsindustrial.com" [ref=e130] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e131]:
+                - link "invoices@popsindustrial.com" [ref=e132] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e133]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e135]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e136]

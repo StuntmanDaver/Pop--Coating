@@ -1,0 +1,133 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+        - link "About Us" [ref=e9] [cursor=pointer]:
+          - /url: /about-us
+        - link "Contact" [ref=e10] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e11]:
+        - link "Call Pop's Industrial Coatings at 863.644.7473" [ref=e12] [cursor=pointer]:
+          - /url: tel:+18636447473
+          - img [ref=e13]
+          - generic [ref=e15]: 863.644.7473
+        - link "Request a Quote" [ref=e16] [cursor=pointer]:
+          - /url: /request-a-quote
+  - main [ref=e17]:
+    - region "Complex Coating" [ref=e18]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: COMPLEX INDUSTRIAL
+        - heading "Complex Coating" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Specialty tank lining, baked coatings, and plural component coatings for the most demanding industrial applications.
+        - link "Request a Quote" [ref=e25] [cursor=pointer]:
+          - /url: /request-a-quote?service=complex-coating
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: COMPLEX PROJECTS
+        - heading "Complex Industrial Projects" [level=2] [ref=e31]
+        - img "Complex industrial coating project at Pop's Industrial Coatings, Lakeland FL" [ref=e33]
+        - generic [ref=e34]:
+          - paragraph [ref=e35]: Drawing upon our team's extensive technical knowledge and adept handling of complex coating systems, we stand ready to meet the demands of specialized applications and unique challenges.
+          - paragraph [ref=e36]: Our skill set allows us to consistently deliver top-notch results. In our diverse range of services, we specialize in complex coatings that surpass conventional applications. This expertise extends to specialty tank lining, where we meticulously apply high-performance liners tailored to meet the unique demands of your storage systems. These specialty tank liners offer superior corrosion resistance, including options for severe exposure, all aimed at preserving the integrity of your tanks.
+          - paragraph [ref=e37]: Furthermore, our proficiency encompasses baked coatings, ensuring a durable and uniform finish achieved through a meticulous curing process. Additionally, we excel in applying coatings that necessitate specialty equipment, such as plural component coatings, addressing the specific needs of diverse industries.
+          - paragraph [ref=e38]: Place your trust in us for comprehensive solutions that navigate the intricacies of complex coating requirements, providing both protection and longevity to your valuable assets.
+        - link "Get a Quote" [ref=e40] [cursor=pointer]:
+          - /url: /request-a-quote?service=complex-coating
+      - complementary "Our services" [ref=e41]:
+        - paragraph [ref=e42]: OUR SERVICES
+        - navigation [ref=e43]:
+          - list [ref=e44]:
+            - listitem [ref=e45]:
+              - generic [ref=e46]: Complex Coating
+            - listitem [ref=e47]:
+              - link "Wet Paint Coatings" [ref=e48] [cursor=pointer]:
+                - /url: /industrial-coatings-services/wet-paint-coatings
+            - listitem [ref=e49]:
+              - link "Abrasive Media Blasting" [ref=e50] [cursor=pointer]:
+                - /url: /industrial-coatings-services/abrasive-media-blasting
+            - listitem [ref=e51]:
+              - link "Powder Coating" [ref=e52] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating
+            - listitem [ref=e53]:
+              - link "Large Capacity Powder Coating" [ref=e54] [cursor=pointer]:
+                - /url: /industrial-coatings-services/large-capacity-powder-coating
+  - contentinfo [ref=e55]:
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e59]
+          - generic [ref=e60]:
+            - img "Pop's Industrial Coatings" [ref=e61]
+            - generic [ref=e62]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e63]:
+            - list [ref=e64]:
+              - listitem [ref=e65]:
+                - link "Our Capabilities" [ref=e66] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e67]:
+                - link "Our Certifications" [ref=e68] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e69]:
+                - link "Request a Quote" [ref=e70] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e71]:
+                - link "Terms & Conditions" [ref=e72] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e74] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e75]:
+          - heading "Services" [level=2] [ref=e76]
+          - navigation "Services" [ref=e77]:
+            - list [ref=e78]:
+              - listitem [ref=e79]:
+                - link "Wet Paint Coatings" [ref=e80] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e81]:
+                - link "Complex Coating" [ref=e82] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e83]:
+                - link "Abrasive Media Blasting" [ref=e84] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e85]:
+                - link "Powder Coating" [ref=e86] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e87]:
+                - link "Large Capacity Powder Coating" [ref=e88] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e89]:
+          - heading "Visiting Us" [level=2] [ref=e90]
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - paragraph [ref=e93]: Main Office
+              - generic [ref=e94]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e95]:
+              - paragraph [ref=e96]: Shipping & Receiving
+              - generic [ref=e97]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e98]:
+              - listitem [ref=e99]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e100] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e101]: "Fax: 863.644.5926"
+              - listitem [ref=e102]:
+                - link "info@popsindustrial.com" [ref=e103] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e104]:
+                - link "invoices@popsindustrial.com" [ref=e105] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e106]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e108]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e109]

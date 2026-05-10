@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+        - link "About Us" [ref=e9] [cursor=pointer]:
+          - /url: /about-us
+        - link "Contact" [ref=e10] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e11]:
+        - link "Call Pop's Industrial Coatings at 863.644.7473" [ref=e12] [cursor=pointer]:
+          - /url: tel:+18636447473
+          - img [ref=e13]
+          - generic [ref=e15]: 863.644.7473
+        - link "Request a Quote" [ref=e16] [cursor=pointer]:
+          - /url: /request-a-quote
+  - main [ref=e17]:
+    - region "Large Capacity Powder Coating" [ref=e18]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: LARGE CAPACITY
+        - heading "Large Capacity Powder Coating" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Uniquely tailored for large scale projects — we efficiently handle significant size and volume without compromising quality.
+        - link "Request a Quote" [ref=e25] [cursor=pointer]:
+          - /url: /request-a-quote?service=large-capacity-powder-coating
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: LARGE CAPACITY
+        - heading "Large Capacity Industrial Powder Coating" [level=2] [ref=e31]
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: Our large capacity powder coating services are tailored for projects of significant scale. We efficiently handle large volumes while maintaining the same high standards of quality.
+          - paragraph [ref=e34]: From structural members to oversized components, our large capacity powder coating process ensures uniform coverage, vibrant finishes, and robust protection.
+          - paragraph [ref=e35]: Trust us to deliver efficiency without compromising on the superior quality that defines our powder coating services.
+        - generic [ref=e36]:
+          - img "Large capacity powder coating oven at Pop's Industrial Coatings, Lakeland FL — accommodating oversized industrial components" [ref=e38]
+          - img "Large scale powder coating work at Pop's Industrial Coatings facility in Lakeland, FL" [ref=e40]
+          - img "Oversized structural components receiving powder coating at Pop's Industrial Coatings" [ref=e42]
+        - link "Get a Quote" [ref=e44] [cursor=pointer]:
+          - /url: /request-a-quote?service=large-capacity-powder-coating
+      - complementary "Our services" [ref=e45]:
+        - paragraph [ref=e46]: OUR SERVICES
+        - navigation [ref=e47]:
+          - list [ref=e48]:
+            - listitem [ref=e49]:
+              - generic [ref=e50]: Large Capacity Powder Coating
+            - listitem [ref=e51]:
+              - link "Wet Paint Coatings" [ref=e52] [cursor=pointer]:
+                - /url: /industrial-coatings-services/wet-paint-coatings
+            - listitem [ref=e53]:
+              - link "Complex Coating" [ref=e54] [cursor=pointer]:
+                - /url: /industrial-coatings-services/complex-coating
+            - listitem [ref=e55]:
+              - link "Abrasive Media Blasting" [ref=e56] [cursor=pointer]:
+                - /url: /industrial-coatings-services/abrasive-media-blasting
+            - listitem [ref=e57]:
+              - link "Powder Coating" [ref=e58] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating
+  - contentinfo [ref=e59]:
+    - generic [ref=e60]:
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e63]
+          - generic [ref=e64]:
+            - img "Pop's Industrial Coatings" [ref=e65]
+            - generic [ref=e66]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e67]:
+            - list [ref=e68]:
+              - listitem [ref=e69]:
+                - link "Our Capabilities" [ref=e70] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e71]:
+                - link "Our Certifications" [ref=e72] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e73]:
+                - link "Request a Quote" [ref=e74] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e75]:
+                - link "Terms & Conditions" [ref=e76] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e78] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e79]:
+          - heading "Services" [level=2] [ref=e80]
+          - navigation "Services" [ref=e81]:
+            - list [ref=e82]:
+              - listitem [ref=e83]:
+                - link "Wet Paint Coatings" [ref=e84] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e85]:
+                - link "Complex Coating" [ref=e86] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e87]:
+                - link "Abrasive Media Blasting" [ref=e88] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e89]:
+                - link "Powder Coating" [ref=e90] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e91]:
+                - link "Large Capacity Powder Coating" [ref=e92] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e93]:
+          - heading "Visiting Us" [level=2] [ref=e94]
+          - generic [ref=e95]:
+            - generic [ref=e96]:
+              - paragraph [ref=e97]: Main Office
+              - generic [ref=e98]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e99]:
+              - paragraph [ref=e100]: Shipping & Receiving
+              - generic [ref=e101]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e102]:
+              - listitem [ref=e103]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e104] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e105]: "Fax: 863.644.5926"
+              - listitem [ref=e106]:
+                - link "info@popsindustrial.com" [ref=e107] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e108]:
+                - link "invoices@popsindustrial.com" [ref=e109] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e110]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e112]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e113]

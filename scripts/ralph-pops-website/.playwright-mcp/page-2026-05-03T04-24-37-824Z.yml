@@ -1,0 +1,67 @@
+- generic [ref=e3]:
+  - paragraph [ref=e4]: Dev Preview
+  - heading "Form primitives" [level=1] [ref=e5]
+  - generic [ref=e6]:
+    - region "Default" [ref=e7]:
+      - heading "Default" [level=2] [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: Full name
+          - textbox "Full name" [ref=e12]:
+            - /placeholder: Jane Doe
+        - generic [ref=e13]:
+          - generic [ref=e14]: Email
+          - textbox "Email" [ref=e15]:
+            - /placeholder: you@example.com
+        - generic [ref=e16]:
+          - generic [ref=e17]: Message
+          - textbox "Message" [ref=e18]:
+            - /placeholder: Tell us about your project
+    - region "Error state (aria-invalid)" [ref=e19]:
+      - heading "Error state (aria-invalid)" [level=2] [ref=e20]
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: Email *
+          - textbox "Email *" [ref=e24]: not-an-email
+          - paragraph [ref=e25]: Enter a valid email address.
+        - generic [ref=e26]:
+          - generic [ref=e27]: Project details *
+          - textbox "Project details *" [ref=e28]
+          - paragraph [ref=e29]: Project details are required.
+    - region "Checkbox" [ref=e30]:
+      - heading "Checkbox" [level=2] [ref=e31]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - checkbox "Default (unchecked)" [ref=e34]:
+            - generic [ref=e35]:
+              - generic:
+                - img
+          - checkbox
+          - generic [ref=e36] [cursor=pointer]: Default (unchecked)
+        - generic [ref=e37]:
+          - checkbox "Default checked" [checked] [ref=e38]:
+            - generic [ref=e39]:
+              - generic:
+                - img
+          - checkbox [checked]
+          - generic [ref=e40] [cursor=pointer]: Default checked
+        - generic [ref=e41]:
+          - checkbox "I acknowledge the safety requirements *" [ref=e42]:
+            - generic [ref=e43]:
+              - generic:
+                - img
+          - checkbox
+          - generic [ref=e44] [cursor=pointer]: I acknowledge the safety requirements *
+        - paragraph [ref=e45]: Required for guest sign-in on /check-in.
+        - generic [ref=e46]:
+          - checkbox "Disabled" [disabled] [ref=e47]:
+            - generic [ref=e48]:
+              - generic:
+                - img
+          - checkbox [disabled]
+          - generic [ref=e49]: Disabled
+    - region "Disabled" [ref=e50]:
+      - heading "Disabled" [level=2] [ref=e51]
+      - generic [ref=e53]:
+        - generic [ref=e54]: Read-only field
+        - textbox "Read-only field" [disabled] [ref=e55]: Locked

@@ -1,0 +1,316 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Services" [ref=e8] [cursor=pointer]:
+          - /url: /industrial-coatings-services
+        - link "About Us" [ref=e9] [cursor=pointer]:
+          - /url: /about-us
+        - link "Contact" [ref=e10] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e11]:
+        - link "Call Pop's Industrial Coatings at 863.644.7473" [ref=e12] [cursor=pointer]:
+          - /url: tel:+18636447473
+          - img [ref=e13]
+          - generic [ref=e15]: 863.644.7473
+        - link "Request a Quote" [ref=e16] [cursor=pointer]:
+          - /url: /request-a-quote
+  - main [ref=e17]:
+    - region "Four generations of industrial finishing — done right the first time." [ref=e18]:
+      - generic [ref=e20]:
+        - paragraph [ref=e21]:
+          - generic [ref=e22]: FAMILY OWNED · LAKELAND, FL · SINCE 1972
+        - heading "Four generations of industrial finishing — done right the first time." [level=1] [ref=e23]
+        - paragraph [ref=e24]: Powder coating, abrasive blasting, and wet paint for aerospace, defense, and heavy equipment. Quote in 24 hours.
+        - generic [ref=e25]:
+          - link "Request a Quote" [ref=e26] [cursor=pointer]:
+            - /url: /request-a-quote
+          - link "Call 863.644.7473" [ref=e27] [cursor=pointer]:
+            - /url: tel:+18636447473
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - term [ref=e32]: Founded
+        - definition [ref=e33]:
+          - generic [ref=e34]: "1901"
+        - paragraph [ref=e35]: 50+ years serving Florida
+      - generic [ref=e36]:
+        - term [ref=e37]: Generations
+        - definition [ref=e38]:
+          - generic [ref=e39]: "4"
+          - text: th Gen
+        - paragraph [ref=e40]: Family-owned & operated
+      - generic [ref=e41]:
+        - term [ref=e42]: Quote Turnaround
+        - definition [ref=e43]: 24 hours
+        - paragraph [ref=e44]: Most projects, same business day
+      - generic [ref=e45]:
+        - term [ref=e46]: Location
+        - definition [ref=e47]: Lakeland, FL
+        - paragraph [ref=e48]: Serving all of Polk County
+    - region "Certifications & Approvals" [ref=e49]:
+      - paragraph [ref=e51]:
+        - generic [ref=e52]: Certifications & Approvals
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - img "SSPC Accredited Contractor — AAMP QP-3" [ref=e57]
+          - img "Florida Department of Transportation Approved" [ref=e59]
+          - img "Lakeland, FL Certified Industrial Coatings" [ref=e61]
+        - generic [ref=e62]:
+          - img [ref=e64]
+          - img [ref=e66]
+          - img [ref=e68]
+        - generic [ref=e69]:
+          - img [ref=e71]
+          - img [ref=e73]
+          - img [ref=e75]
+        - generic [ref=e76]:
+          - img [ref=e78]
+          - img [ref=e80]
+          - img [ref=e82]
+    - region "Four generations of expertise in industrial coatings" [ref=e83]:
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - paragraph [ref=e86]:
+            - generic [ref=e87]: OUR SERVICES
+          - heading "Four generations of expertise in industrial coatings" [level=2] [ref=e88]:
+            - text: Four generations of expertise
+            - text: in industrial coatings
+        - generic [ref=e89]:
+          - link "Wet Paint Coatings Precision & expertise for industrial wet paint applications. Learn more Industrial wet paint coating work at Pop's Industrial Coatings, Lakeland FL" [ref=e92] [cursor=pointer]:
+            - /url: /industrial-coatings-services/wet-paint-coatings
+            - generic [ref=e93]:
+              - generic [ref=e94]: "01"
+              - generic [ref=e95]:
+                - heading "Wet Paint Coatings" [level=3] [ref=e96]
+                - paragraph [ref=e97]: Precision & expertise for industrial wet paint applications.
+                - generic [ref=e98]:
+                  - generic [ref=e99]: Learn more
+                  - generic [ref=e100]: →
+              - img "Industrial wet paint coating work at Pop's Industrial Coatings, Lakeland FL" [ref=e102]
+          - link "Complex Coating Meticulous baking for superior longevity. Learn more Complex industrial coating and baking services at Pop's Industrial Coatings" [ref=e105] [cursor=pointer]:
+            - /url: /industrial-coatings-services/complex-coating
+            - generic [ref=e106]:
+              - generic [ref=e107]: "02"
+              - generic [ref=e108]:
+                - heading "Complex Coating" [level=3] [ref=e109]
+                - paragraph [ref=e110]: Meticulous baking for superior longevity.
+                - generic [ref=e111]:
+                  - generic [ref=e112]: Learn more
+                  - generic [ref=e113]: →
+              - img "Complex industrial coating and baking services at Pop's Industrial Coatings" [ref=e115]
+          - link "Abrasive Media Blasting To rigorous industry standards. Learn more Abrasive media blasting at Pop's Industrial Coatings in Lakeland, FL" [ref=e118] [cursor=pointer]:
+            - /url: /industrial-coatings-services/abrasive-media-blasting
+            - generic [ref=e119]:
+              - generic [ref=e120]: "03"
+              - generic [ref=e121]:
+                - heading "Abrasive Media Blasting" [level=3] [ref=e122]
+                - paragraph [ref=e123]: To rigorous industry standards.
+                - generic [ref=e124]:
+                  - generic [ref=e125]: Learn more
+                  - generic [ref=e126]: →
+              - img "Abrasive media blasting at Pop's Industrial Coatings in Lakeland, FL" [ref=e128]
+          - link "Powder Coating Elevate durability and appearance. Learn more Powder coating services at Pop's Industrial Coatings, Lakeland FL" [ref=e131] [cursor=pointer]:
+            - /url: /industrial-coatings-services/powder-coating
+            - generic [ref=e132]:
+              - generic [ref=e133]: "04"
+              - generic [ref=e134]:
+                - heading "Powder Coating" [level=3] [ref=e135]
+                - paragraph [ref=e136]: Elevate durability and appearance.
+                - generic [ref=e137]:
+                  - generic [ref=e138]: Learn more
+                  - generic [ref=e139]: →
+              - img "Powder coating services at Pop's Industrial Coatings, Lakeland FL" [ref=e141]
+          - link "Large Capacity Powder Coating Tailored for significant scale. Learn more Large capacity powder coating at Pop's Industrial Coatings" [ref=e144] [cursor=pointer]:
+            - /url: /industrial-coatings-services/large-capacity-powder-coating
+            - generic [ref=e145]:
+              - generic [ref=e146]: "05"
+              - generic [ref=e147]:
+                - heading "Large Capacity Powder Coating" [level=3] [ref=e148]
+                - paragraph [ref=e149]: Tailored for significant scale.
+                - generic [ref=e150]:
+                  - generic [ref=e151]: Learn more
+                  - generic [ref=e152]: →
+              - img "Large capacity powder coating at Pop's Industrial Coatings" [ref=e154]
+    - region "Built for the work Florida industry depends on" [ref=e156]:
+      - generic [ref=e157]:
+        - generic [ref=e158]:
+          - paragraph [ref=e159]:
+            - generic [ref=e160]: INDUSTRIES WE SERVE
+          - heading "Built for the work Florida industry depends on" [level=2] [ref=e161]:
+            - text: Built for the work
+            - text: Florida industry depends on
+        - list [ref=e163]:
+          - listitem [ref=e164]:
+            - heading "Aerospace & Defense" [level=3] [ref=e165]
+            - paragraph [ref=e166]: Mission-critical specs
+          - listitem [ref=e167]:
+            - heading "Heavy Equipment" [level=3] [ref=e168]
+            - paragraph [ref=e169]: Frames, attachments, beds
+          - listitem [ref=e170]:
+            - heading "Transportation & Trailers" [level=3] [ref=e171]
+            - paragraph [ref=e172]: Trucks, trailers, fleets
+          - listitem [ref=e173]:
+            - heading "Infrastructure & DOT" [level=3] [ref=e174]
+            - paragraph [ref=e175]: FDOT-approved coatings
+          - listitem [ref=e176]:
+            - heading "Marine & Outdoor" [level=3] [ref=e177]
+            - paragraph [ref=e178]: Florida-grade durability
+          - listitem [ref=e179]:
+            - heading "Manufacturing & Fabrication" [level=3] [ref=e180]
+            - paragraph [ref=e181]: OEM and job-shop work
+    - region "Built for big work" [ref=e182]:
+      - generic [ref=e183]:
+        - generic [ref=e184]:
+          - paragraph [ref=e185]:
+            - generic [ref=e186]: CAPACITY AT A GLANCE
+          - heading "Built for big work" [level=2] [ref=e187]
+          - paragraph [ref=e188]: Aerospace components to oversized fab work. Send us dimensions, weight, and material, and we'll confirm fit and quote within 24 hours.
+        - generic [ref=e190]:
+          - paragraph [ref=e191]: Cure oven, max part weight, blast booth, throughput — sized to your job, every time. Tell us what you have and we'll confirm a fit.
+          - link "Send your part details" [ref=e192] [cursor=pointer]:
+            - /url: /request-a-quote
+    - region "It's a family thing" [ref=e193]:
+      - generic [ref=e195]:
+        - generic [ref=e196]:
+          - paragraph [ref=e197]: COMMITMENT
+          - heading "It's a family thing" [level=2] [ref=e198]
+          - paragraph [ref=e199]: With a rich history rooted in a deep understanding of the industry, Pop's Industrial Coatings blends tradition with a contemporary approach, solidifying our position as a principal company in industrial finishing.
+          - paragraph [ref=e200]: We don't just meet expectations — we exceed them. Let us show you what commitment to precision and technical expertise looks like.
+        - generic [ref=e201]:
+          - paragraph [ref=e202]: INFRASTRUCTURE
+          - heading "Our Facilities & Equipment" [level=2] [ref=e203]
+          - paragraph [ref=e204]: In constant expansion to meet the demands of our customers, Pop's facilities give us ample room for the largest projects.
+          - paragraph [ref=e205]: State-of-the-art equipment and highly skilled personnel make all the difference in your project's success.
+          - link "View Facilities" [ref=e207] [cursor=pointer]:
+            - /url: /request-a-quote/facilities-equipment
+        - generic [ref=e208]:
+          - paragraph [ref=e209]: STANDARDS
+          - heading "Industry Standards & Certifications" [level=2] [ref=e210]
+          - paragraph [ref=e211]: We adhere to strict industry specifications and best practices. Read about our certifications and the standards that guide us.
+          - paragraph [ref=e212]: We love questions about coatings — don't know the best product for your project? Ask us.
+          - generic [ref=e213]:
+            - link "Our Certifications" [ref=e214] [cursor=pointer]:
+              - /url: /request-a-quote/standards-specifications-certifications
+            - link "Ask us" [ref=e215] [cursor=pointer]:
+              - /url: /request-a-quote
+    - region "Four generations of the Pop's Industrial Coatings family" [ref=e216]:
+      - img "Four generations of the Pop's Industrial Coatings family — founder Marcus Woods and the leadership team in Lakeland, FL" [ref=e217]
+      - link "About Us" [ref=e221] [cursor=pointer]:
+        - /url: /about-us
+    - region "4.7 stars across 68 reviews" [ref=e222]:
+      - generic [ref=e223]:
+        - generic [ref=e224]:
+          - paragraph [ref=e225]:
+            - generic [ref=e226]: WHAT CUSTOMERS SAY
+          - heading "4.7 stars across 68 reviews" [level=2] [ref=e227]
+          - paragraph [ref=e228]: Real words from people who've trusted us with their parts — from one-off panels to large commercial fleets.
+        - list [ref=e229]:
+          - listitem [ref=e230]:
+            - generic [ref=e231]:
+              - blockquote [ref=e232]: “The best large scale paint and powder coater around. Exceptional customer service and communication.”
+              - generic [ref=e233]:
+                - paragraph [ref=e234]: David Wallace
+                - paragraph [ref=e235]: Verified Google Review · Local Guide · 2026
+          - listitem [ref=e236]:
+            - generic [ref=e237]:
+              - blockquote [ref=e238]: “I have done business with most of the paint shops in this area. Attention to detail best describes this company. You really get what you pay for.”
+              - generic [ref=e239]:
+                - paragraph [ref=e240]: Captain Ralph
+                - paragraph [ref=e241]: Verified Google Review · Local Guide · 2017
+          - listitem [ref=e242]:
+            - generic [ref=e243]:
+              - blockquote [ref=e244]: “The people here are first class friendly. They told me that since the panel was aluminum, glass bead blasting would be best. The panel came out great.”
+              - generic [ref=e245]:
+                - paragraph [ref=e246]: Tunis Cooper
+                - paragraph [ref=e247]: Verified Google Review · Local Guide · 2025
+          - listitem [ref=e248]:
+            - generic [ref=e249]:
+              - blockquote [ref=e250]: “Great people to work with. Quality job. I would recommend for any large commercial work.”
+              - generic [ref=e251]:
+                - paragraph [ref=e252]: Lucas Pemberton
+                - paragraph [ref=e253]: Verified Google Review · Local Guide · 2025
+    - region "Ready to start your project?" [ref=e254]:
+      - generic [ref=e257]:
+        - generic [ref=e258]:
+          - heading "Ready to start your project?" [level=2] [ref=e259]
+          - paragraph [ref=e260]: From powder coating to abrasive blasting — get a quote within 24 hours.
+        - link "Request a Quote →" [ref=e262] [cursor=pointer]:
+          - /url: /request-a-quote
+  - contentinfo [ref=e263]:
+    - generic [ref=e264]:
+      - generic [ref=e265]:
+        - generic [ref=e266]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e267]
+          - generic [ref=e268]:
+            - img "Pop's Industrial Coatings" [ref=e269]
+            - generic [ref=e270]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e271]:
+            - list [ref=e272]:
+              - listitem [ref=e273]:
+                - link "Our Capabilities" [ref=e274] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e275]:
+                - link "Our Certifications" [ref=e276] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e277]:
+                - link "Request a Quote" [ref=e278] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e279]:
+                - link "Terms & Conditions" [ref=e280] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e282] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e283]:
+          - heading "Services" [level=2] [ref=e284]
+          - navigation "Services" [ref=e285]:
+            - list [ref=e286]:
+              - listitem [ref=e287]:
+                - link "Wet Paint Coatings" [ref=e288] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e289]:
+                - link "Complex Coating" [ref=e290] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e291]:
+                - link "Abrasive Media Blasting" [ref=e292] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e293]:
+                - link "Powder Coating" [ref=e294] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e295]:
+                - link "Large Capacity Powder Coating" [ref=e296] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e297]:
+          - heading "Visiting Us" [level=2] [ref=e298]
+          - generic [ref=e299]:
+            - generic [ref=e300]:
+              - paragraph [ref=e301]: Main Office
+              - generic [ref=e302]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e303]:
+              - paragraph [ref=e304]: Shipping & Receiving
+              - generic [ref=e305]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e306]:
+              - listitem [ref=e307]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e308] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e309]: "Fax: 863.644.5926"
+              - listitem [ref=e310]:
+                - link "info@popsindustrial.com" [ref=e311] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e312]:
+                - link "invoices@popsindustrial.com" [ref=e313] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e314]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e316]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e317]

@@ -1,0 +1,49 @@
+# Ralph Progress Log — Pops Website Rebuild
+Started: (not yet — set by ralph.sh on first run)
+Branch: ralph/pops-website
+PRD: scripts/ralph-pops-website/prd.json
+Comprehensive PRD: docs/prd/POPS-WEBSITE-REBUILD.md
+
+## Codebase Patterns
+
+- **Turbopack monorepo middleware shadowing**: Next.js 16 + Turbopack uses the pnpm workspace root as the project base for middleware discovery. It finds `src/proxy.ts` at the monorepo root (the SaaS app's middleware) when building pops-website. Fix: create `apps/pops-website/src/proxy.ts` as a no-op stub to shadow the root's middleware for this workspace package.
+- All page content sources from .firecrawl/popsindustrial/pages/<slug>.md
+- content/company.ts is the single source of truth for business facts
+- Footer is rendered from content/site-globals.json#footer.navigation_columns
+- Shipping ZIP locked at 33811 (open question §12.1 unresolved)
+- Logo canonical: /images/Pops-no-border.png
+- pops-website uses `apps/pops-website/app/` for routes (NOT `src/`) — no src-dir convention here
+- pops-website .gitignore must exclude node_modules, .next, *.tsbuildinfo to avoid committing build artifacts
+
+---
+
+## Story Status (49 stories total)
+
+Phase A — Workspace + foundation (US-001 to US-005): 1/5 complete
+Phase B — Design primitives (US-006 to US-016): 0/11 complete
+Phase C — Page implementations (US-017 to US-034): 0/18 complete
+Phase D — Forms + integrations (US-035 to US-039): 0/5 complete
+Phase E — SEO + accessibility (US-040 to US-044): 0/5 complete
+Phase F — Quality + ship (US-045 to US-049): 0/5 complete
+
+OVERALL: 1/49 stories passing
+
+---
+
+## 2026-05-02 — US-001 Add apps/pops-website pnpm workspace + Next.js 16 scaffold
+- Created workspace scaffold with package.json (name: pops-website, scripts: dev/build/start/type-check/lint)
+- next.config.ts with images.formats: ["image/avif", "image/webp"]
+- tsconfig.json with strict: true, noUncheckedIndexedAccess, noImplicitOverride
+- app/layout.tsx with Metadata (title/description) and basic RootLayout
+- app/page.tsx with placeholder home content
+- app/globals.css with comment deferring Tailwind to US-002
+- .gitignore excluding node_modules, .next, *.tsbuildinfo
+- src/proxy.ts no-op middleware stub (see Codebase Patterns above)
+- pnpm-workspace.yaml already had "apps/*" — verified unchanged
+- Files changed: apps/pops-website/.gitignore, app/globals.css, app/layout.tsx, app/page.tsx, next.config.ts, package.json, src/proxy.ts, tsconfig.json
+- Quality checks: typecheck ✓ | build ✓ | browser N/A (no UI yet)
+- **Learnings for future iterations:**
+  - Turbopack (Next.js 16) discovers middleware relative to the pnpm workspace root, not the package directory. The fix is a `src/proxy.ts` stub in pops-website that passes through all requests. This MUST exist for every Next.js app in this monorepo unless proper workspace isolation is configured.
+  - pops-website has no `src/` convention — routes live in `apps/pops-website/app/` directly. The `src/proxy.ts` stub file is solely for the Turbopack workaround.
+  - The `@/*` path alias in pops-website tsconfig maps to `./src/*` (i.e., `apps/pops-website/src/*`) — this is correct and consistent with the SaaS app convention, but note that pops-website's src only contains the proxy stub, not actual app code.
+---

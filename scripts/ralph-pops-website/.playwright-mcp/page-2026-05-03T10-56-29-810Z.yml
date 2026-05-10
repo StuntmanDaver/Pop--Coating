@@ -1,0 +1,129 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Leadership" [ref=e10]:
+      - img "Four generations of the Pop's Industrial Coatings family" [ref=e11]
+      - generic [ref=e13]:
+        - paragraph [ref=e14]: MEET THE FAMILY
+        - heading "Leadership" [level=1] [ref=e15]
+        - paragraph [ref=e16]: Four generations of the Woods family — committed to Pop's legacy of solid coating services and technical knowledge. For us, excellence is a family tradition.
+        - link "Request a Quote" [ref=e18] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e20]:
+      - paragraph [ref=e21]: THE WOODS FAMILY
+      - heading "Four generations of leadership" [level=2] [ref=e22]
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - img "Mark Woods, former President of Pops Painting" [ref=e26]
+          - generic [ref=e27]:
+            - heading "Mark Woods" [level=3] [ref=e28]
+            - paragraph [ref=e29]: President 1972 – 2025
+            - paragraph [ref=e30]: Mark Woods, Former President of Pops Painting, proudly carried on the legacy of his father, Marcus Woods, as the second-generation leader of the company. With a career spanning over 53 years, Mark helped grow Pops Industrial Coatings from a small family business into a trusted name in the industrial painting and coatings industry. Respected for his strong work ethic and commitment to quality, Mark played a key role in the company's growth and reputation. Now retired, he remains a mentor and guiding influence for the next generation at Pops Industrial Coatings.
+        - generic [ref=e31]:
+          - img "Jamie Woods, President of Pop's Industrial Coatings" [ref=e33]
+          - generic [ref=e34]:
+            - heading "Jamie Woods" [level=3] [ref=e35]
+            - paragraph [ref=e36]: President
+            - paragraph [ref=e37]: Jamie Woods, President of Pops Industrial Coatings leads with over 30 years of expertise in the industrial painting and coatings industry. Known for his hands on leadership and deep technical knowledge, Jamie oversees all aspects of company operations, from project execution to long term strategic planning. Under his leadership, Pops has continued to grow its reputation for safety, quality, and reliability across a wide range of industrial sectors. He is committed to delivering high performance coating solutions that protect critical infrastructure and exceed client expectations.
+            - link "LinkedIn" [ref=e38] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/jamie-woods-95b0782a7/
+              - generic [ref=e39]: →
+              - generic [ref=e40]: LinkedIn
+        - generic [ref=e41]:
+          - img "Kaitlyn Woods, Associate Director of Operations and Compliance at Pop's Industrial Coatings" [ref=e43]
+          - generic [ref=e44]:
+            - heading "Kaitlyn Woods" [level=3] [ref=e45]
+            - paragraph [ref=e46]: Associate Director of Operations and Compliance
+            - paragraph [ref=e47]: Kaitlyn Woods, Associate Director of Operations and Compliance at Pops Industrial Coatings, represents the fourth generation. Having grown up around the business, she brings a deep understanding of its legacy and operations, playing a key role in managing executive support, client relations, and internal coordination to help drive the company's continued growth and reputation for excellence. Kaitlyn is passionate about preserving family tradition while embracing innovation, she is proud to contribute to the future of Pops Industrial Coatings.
+            - link "LinkedIn" [ref=e48] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/kaitlyn-woods-9214391a1/
+              - generic [ref=e49]: →
+              - generic [ref=e50]: LinkedIn
+        - generic [ref=e51]:
+          - img "Chris Woods Jr, fourth generation of Pop's Industrial Coatings" [ref=e53]
+          - generic [ref=e54]:
+            - heading "Chris Woods Jr" [level=3] [ref=e55]
+            - paragraph [ref=e56]: Fourth Generation
+            - paragraph [ref=e57]: Chris Woods Jr. represents the fourth generation of the Woods family at Pops Industrial Coatings, carrying forward a proud legacy of craftsmanship and dedication. With a strong respect for the company's roots and a fresh perspective, Chris is committed to learning the business from the ground up and helping shape its future. He brings energy, drive, and a deep commitment to maintaining Pops' reputation for quality, safety, and service.
+  - contentinfo [ref=e58]:
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e62]
+          - generic [ref=e63]:
+            - img "Pop's Industrial Coatings" [ref=e64]
+            - generic [ref=e65]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e66]:
+            - list [ref=e67]:
+              - listitem [ref=e68]:
+                - link "Our Capabilities" [ref=e69] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e70]:
+                - link "Our Certifications" [ref=e71] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e72]:
+                - link "Request a Quote" [ref=e73] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e74]:
+                - link "Terms & Conditions" [ref=e75] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e77] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e78]:
+          - heading "Services" [level=2] [ref=e79]
+          - navigation "Services" [ref=e80]:
+            - list [ref=e81]:
+              - listitem [ref=e82]:
+                - link "Wet Paint Coatings" [ref=e83] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e84]:
+                - link "Complex Coating" [ref=e85] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e86]:
+                - link "Abrasive Media Blasting" [ref=e87] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e88]:
+                - link "Powder Coating" [ref=e89] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e90]:
+                - link "Large Capacity Powder Coating" [ref=e91] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e92]:
+          - heading "Visiting Us" [level=2] [ref=e93]
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - paragraph [ref=e96]: Main Office
+              - generic [ref=e97]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: Shipping & Receiving
+              - generic [ref=e100]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e101]:
+              - listitem [ref=e102]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e103] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e104]: "Fax: 863.644.5926"
+              - listitem [ref=e105]:
+                - link "info@popsindustrial.com" [ref=e106] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e107]:
+                - link "invoices@popsindustrial.com" [ref=e108] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e109]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e111]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e112]

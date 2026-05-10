@@ -1,12 +1,6 @@
 packages:
   - 'apps/*'
 
-allowBuilds:
-  '@parcel/watcher': true
-  '@sentry/cli': true
-  '@swc/core': true
-  esbuild: true
-
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver

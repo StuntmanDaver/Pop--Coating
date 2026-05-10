@@ -1,0 +1,168 @@
+{
+  "_description": "Site-wide content stripped from per-page markdown by --only-main-content. Captured via Playwright DOM evaluation to preserve nav, footer, JSON-LD, and slider state for the rebuild.",
+
+  "header": {
+    "found": false,
+    "note": "No <header> or <nav> element with menu links exists in the rendered DOM. Only a single 'HOME' link is visible at the top of every page. Primary navigation happens through the footer, inline CTAs ('Get a Quote', 'Facilities', 'Equipment'), and the 5 service cards on the homepage."
+  },
+
+  "footer": {
+    "main_office_address": "3805 Drane Field Road, Lakeland, FL 33811",
+    "shipping_receiving_address": "3515 Airport Road, Lakeland, FL 33813",
+    "shipping_receiving_address_discrepancy": {
+      "_note": "ZIP code conflict between footer (33813) and contact page main content (33811). Both are scraped. Real-world Lakeland FL distinction: 33811 is southwest Lakeland, 33813 is south Lakeland. Confirm with client before launch.",
+      "footer_says": "33813",
+      "contact_page_says": "33811"
+    },
+    "phone": "863.644.7473",
+    "phone_tel_link": "tel:+18636447473",
+    "fax": "863.644.5926",
+    "emails": [
+      "info@popsindustrial.com",
+      "invoices@popsindustrial.com"
+    ],
+    "hours": "Monday – Friday 8am to 4pm, Saturday & Sunday Closed",
+    "navigation_columns": {
+      "Doing business with Pop's Industrial": [
+        { "label": "Our Capabilities", "href": "https://popsindustrial.com/request-a-quote/facilities-equipment/" },
+        { "label": "Our Certifications", "href": "https://popsindustrial.com/request-a-quote/standards-specifications-certifications/" },
+        { "label": "Request a Quote", "href": "https://popsindustrial.com/request-a-quote" },
+        { "label": "Terms & Conditions", "href": "https://popsindustrial.com/request-a-quote/terms-conditions/" }
+      ],
+      "Services": [
+        { "label": "Wet Paint Coatings", "href": "https://popsindustrial.com/industrial-coatings-services/wet-paint-coatings/" },
+        { "label": "Complex Coating", "href": "https://popsindustrial.com/industrial-coatings-services/complex-coating/" },
+        { "label": "Abrasive Media Blasting", "href": "https://popsindustrial.com/industrial-coatings-services/abrasive-media-blasting/" },
+        { "label": "Powder Coating", "href": "https://popsindustrial.com/industrial-coatings-services/powder-coating/" },
+        { "label": "Large Capacity Powder Coating", "href": "https://popsindustrial.com/industrial-coatings-services/large-capacity-powder-coating/" }
+      ],
+      "Visiting Us": [
+        { "label": "Hours", "value": "Monday – Friday 8am to 4pm" },
+        { "label": "Hours", "value": "Saturday & Sunday Closed" }
+      ]
+    },
+    "primary_cta": { "label": "GET A QUOTE", "href": "https://popsindustrial.com/request-a-quote" },
+    "logo_assets": [
+      "assets/images/logo.png",
+      "assets/images/logo-footer.png",
+      "assets/images/Pops-no-border.png",
+      "assets/images/Pops-no-border-no-background.png",
+      "assets/images/Pops-Secondary-Logo-Ylw-Blk-Trans.png",
+      "assets/images/pops-circle-logo-000-241x241-1.png"
+    ],
+    "favicon_assets": [
+      "assets/images/favicon.png",
+      "assets/images/cropped-favicon.png",
+      "assets/images/cropped-favicon-300x300.png"
+    ]
+  },
+
+  "home_hero_slider": {
+    "_note": "Three unique slides displayed in a continuous-loop swiper (24 DOM nodes due to swiper duplication). Each slide pairs a heading with a background photo.",
+    "slides": [
+      {
+        "heading_line_1": "Your Partners",
+        "heading_line_2": "For Success",
+        "background_image": "assets/images/slide-01.jpg"
+      },
+      {
+        "heading_line_1": "Exceeding Expectations",
+        "heading_line_2": "Technical Excellence",
+        "background_image": "assets/images/slide-02.jpg"
+      },
+      {
+        "heading_line_1": "Family Business",
+        "heading_line_2": "Since 1972",
+        "background_image": "assets/images/slide-03.jpg"
+      }
+    ],
+    "thumbnails": [
+      "assets/images/slide-01-150x150.jpg",
+      "assets/images/slide-02-150x150.jpg"
+    ]
+  },
+
+  "page_backgrounds": {
+    "site_main_background": "assets/images/bg-main.jpg",
+    "secondary_background": "assets/images/bg.png"
+  },
+
+  "json_ld": {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["Person", "Organization"],
+        "@id": "https://popsindustrial.com/#person",
+        "name": "Pop's Industrial Coatings"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://popsindustrial.com/#website",
+        "url": "https://popsindustrial.com",
+        "name": "Pop's Industrial Coatings",
+        "inLanguage": "en-US",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://popsindustrial.com/?s={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "ImageObject",
+        "@id": "https://popsindustrial.com/wp-content/uploads/2026/04/Pops-no-border.png",
+        "width": "1469",
+        "height": "1071",
+        "_local_path": "assets/images/Pops-no-border.png"
+      },
+      {
+        "@type": "Article",
+        "datePublished": "2025-08-15T22:45:13-04:00",
+        "dateModified": "2026-04-30T17:05:56-04:00",
+        "_note": "Site uses Article schema even though it's a static-page site (Rank Math default)."
+      }
+    ]
+  },
+
+  "meta_tags_homepage": {
+    "viewport": "width=device-width, initial-scale=1",
+    "description": "Serving the greater Lakeland & Polk County FL area for Industrial Painting, Sandblasting, & Powder Coating for over 50 years - We know Industrial Painting!",
+    "robots": "index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+    "og:locale": "en_US",
+    "og:type": "website",
+    "og:image": "https://popsindustrial.com/wp-content/uploads/2026/04/Pops-no-border.png",
+    "og:image:width": "1469",
+    "og:image:height": "1071",
+    "twitter:card": "summary_large_image",
+    "msapplication-TileImage": "https://popsindustrial.com/wp-content/uploads/2025/08/cropped-favicon-300x300.png",
+    "generator": "Elementor 4.0.3"
+  },
+
+  "alt_text_audit": {
+    "_note": "Live-site accessibility gap: 17 of 18 pages have ZERO images with alt attributes. Only /industrial-coatings-services/wet-paint-coatings/ has alt text on most images (12 of 14). The rebuild MUST add proper alt text everywhere.",
+    "by_page": {
+      "/": { "total": 22, "with_alt": 0 },
+      "/about-us/": { "total": 4, "with_alt": 0 },
+      "/about-us/history/": { "total": 3, "with_alt": 0 },
+      "/about-us/leadership/": { "total": 6, "with_alt": 0 },
+      "/request-a-quote/": { "total": 2, "with_alt": 0 },
+      "/request-a-quote/facilities-equipment/": { "total": 7, "with_alt": 0 },
+      "/request-a-quote/standards-specifications-certifications/": { "total": 4, "with_alt": 0 },
+      "/request-a-quote/terms-conditions/": { "total": 2, "with_alt": 0 },
+      "/industrial-coatings-services/": { "total": 2, "with_alt": 0 },
+      "/industrial-coatings-services/wet-paint-coatings/": { "total": 14, "with_alt": 12 },
+      "/industrial-coatings-services/complex-coating/": { "total": 3, "with_alt": 0 },
+      "/industrial-coatings-services/abrasive-media-blasting/": { "total": 2, "with_alt": 0 },
+      "/industrial-coatings-services/powder-coating/": { "total": 2, "with_alt": 0 },
+      "/industrial-coatings-services/large-capacity-powder-coating/": { "total": 2, "with_alt": 0 },
+      "/contact/": { "total": 2, "with_alt": 0 },
+      "/check-in/": { "total": 2, "with_alt": 0 },
+      "/check-out/": { "total": 2, "with_alt": 0 },
+      "/guest-safety-rules/": { "total": 2, "with_alt": 0 }
+    }
+  },
+
+  "filename_typos_in_uploads": {
+    "_note": "Pre-existing typo in original WP media filenames — preserved verbatim for parity. The rebuild can rename.",
+    "Sandbalsting": "industrial-sandblasting-lakeland-fl-Sandbalsting-2-300x200.jpg (note: 'Sandbalsting' instead of 'Sandblasting')"
+  }
+}

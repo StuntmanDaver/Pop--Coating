@@ -1,0 +1,35 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Four generations of industrial finishing — done right the first time." [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: Family Owned · Lakeland, FL · Since 1972
+        - heading "Four generations of industrial finishing — done right the first time." [level=1] [ref=e14]
+        - paragraph [ref=e15]: Powder coating, abrasive blasting, and wet paint for aerospace, defense, and heavy equipment.
+        - generic [ref=e16]:
+          - link "Request a Quote" [ref=e17] [cursor=pointer]:
+            - /url: /request-a-quote
+          - link "See our work" [ref=e18] [cursor=pointer]:
+            - /url: /industrial-coatings-services
+    - generic [ref=e20]:
+      - heading "Hero — US-015 preview" [level=2] [ref=e21]
+      - paragraph [ref=e22]: "Tab order should be: skip-link → HOME → primary CTA → secondary CTA. Heading scales from 36px (mobile) to 56px (≥ md). Background uses next/image fill + ink-900/60 overlay."
+    - heading "Variant — heading-only (no lede, no secondary CTA)" [level=2] [ref=e25]
+    - region "Large-capacity powder coating built for production runs." [ref=e26]:
+      - generic [ref=e28]:
+        - paragraph [ref=e29]: Service · Powder Coating
+        - heading "Large-capacity powder coating built for production runs." [level=1] [ref=e30]
+        - link "Request a Quote" [ref=e32] [cursor=pointer]:
+          - /url: /request-a-quote
+  - button "Open Next.js Dev Tools" [ref=e38] [cursor=pointer]:
+    - img [ref=e39]
+  - alert [ref=e42]

@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Check In" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: GUEST
+        - heading "Check In" [level=1] [ref=e14]
+        - paragraph [ref=e15]: Welcome! Please fill out the below to check in.
+        - link "Guest Safety Rules" [ref=e17] [cursor=pointer]:
+          - /url: /guest-safety-rules
+    - generic [ref=e20]:
+      - paragraph [ref=e21]: "I'M CHECKING IN:"
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]: First Name *
+            - textbox "First Name *" [ref=e27]
+          - generic [ref=e28]:
+            - generic [ref=e29]: Last Name *
+            - textbox "Last Name *" [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: Company Name
+            - textbox "Company Name" [ref=e35]
+          - generic [ref=e36]:
+            - generic [ref=e37]: Email *
+            - textbox "Email *" [ref=e39]
+          - generic [ref=e40]:
+            - generic [ref=e41]: Phone *
+            - textbox "Phone *" [ref=e43]
+        - generic [ref=e44]:
+          - generic [ref=e45]: Reason for Visit
+          - textbox "Reason for Visit" [ref=e47]
+        - generic [ref=e49]:
+          - checkbox "By checking this box, I acknowledge Pop's Industrial Guest Safety Rules *" [ref=e50]:
+            - generic [ref=e51]:
+              - generic:
+                - img
+          - checkbox
+          - generic [ref=e52] [cursor=pointer]:
+            - text: By checking this box, I acknowledge
+            - link "Pop's Industrial Guest Safety Rules" [ref=e53]:
+              - /url: /guest-safety-rules
+            - text: "*"
+        - button "Submit" [ref=e54]
+  - contentinfo [ref=e55]:
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e59]
+          - generic [ref=e60]:
+            - img "Pop's Industrial Coatings" [ref=e61]
+            - generic [ref=e62]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e63]:
+            - list [ref=e64]:
+              - listitem [ref=e65]:
+                - link "Our Capabilities" [ref=e66] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e67]:
+                - link "Our Certifications" [ref=e68] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e69]:
+                - link "Request a Quote" [ref=e70] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e71]:
+                - link "Terms & Conditions" [ref=e72] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e74] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e75]:
+          - heading "Services" [level=2] [ref=e76]
+          - navigation "Services" [ref=e77]:
+            - list [ref=e78]:
+              - listitem [ref=e79]:
+                - link "Wet Paint Coatings" [ref=e80] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e81]:
+                - link "Complex Coating" [ref=e82] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e83]:
+                - link "Abrasive Media Blasting" [ref=e84] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e85]:
+                - link "Powder Coating" [ref=e86] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e87]:
+                - link "Large Capacity Powder Coating" [ref=e88] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e89]:
+          - heading "Visiting Us" [level=2] [ref=e90]
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - paragraph [ref=e93]: Main Office
+              - generic [ref=e94]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e95]:
+              - paragraph [ref=e96]: Shipping & Receiving
+              - generic [ref=e97]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e98]:
+              - listitem [ref=e99]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e100] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e101]: "Fax: 863.644.5926"
+              - listitem [ref=e102]:
+                - link "info@popsindustrial.com" [ref=e103] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e104]:
+                - link "invoices@popsindustrial.com" [ref=e105] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e106]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e108]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e114] [cursor=pointer]:
+    - img [ref=e115]
+  - alert [ref=e118]

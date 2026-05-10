@@ -1,0 +1,143 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Contact" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: GET IN TOUCH
+        - heading "Contact" [level=1] [ref=e14]
+        - paragraph [ref=e15]: Reach us by phone, email, or the form below. We respond within one business day.
+        - 'link "Call us: 863.644.7473" [ref=e17] [cursor=pointer]':
+          - /url: tel:8636447473
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - paragraph [ref=e22]: CONTACT INFORMATION
+        - heading "Pop's Industrial Coatings" [level=2] [ref=e23]
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - paragraph [ref=e26]: Main Office
+            - generic [ref=e27]:
+              - text: 3805 Drane Field Road
+              - text: Lakeland, FL 33811
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: Shipping & Receiving
+            - generic [ref=e30]:
+              - text: 3515 Airport Road
+              - text: Lakeland, FL 33811
+          - generic [ref=e31]:
+            - paragraph [ref=e32]: Phone
+            - link "863.644.7473" [ref=e33] [cursor=pointer]:
+              - /url: tel:8636447473
+          - generic [ref=e34]:
+            - paragraph [ref=e35]: Fax
+            - text: 863.644.5926
+          - generic [ref=e36]:
+            - paragraph [ref=e37]: Email
+            - generic [ref=e38]:
+              - link "info@popsindustrial.com" [ref=e39] [cursor=pointer]:
+                - /url: mailto:info@popsindustrial.com
+              - link "invoices@popsindustrial.com" [ref=e40] [cursor=pointer]:
+                - /url: mailto:invoices@popsindustrial.com
+          - generic [ref=e41]:
+            - paragraph [ref=e42]: Hours
+            - text: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+        - iframe [ref=e45]:
+          
+      - generic [ref=e46]:
+        - paragraph [ref=e47]: SEND A MESSAGE
+        - heading "How can we help?" [level=2] [ref=e48]
+        - paragraph [ref=e49]: Fields marked with * are required.
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]: Name *
+            - textbox "Name *" [ref=e54]
+          - generic [ref=e55]:
+            - generic [ref=e56]: Email *
+            - textbox "Email *" [ref=e58]
+          - generic [ref=e59]:
+            - generic [ref=e60]: Message *
+            - textbox "Message *" [ref=e62]
+          - button "Submit" [ref=e63]
+  - contentinfo [ref=e64]:
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e68]
+          - generic [ref=e69]:
+            - img "Pop's Industrial Coatings" [ref=e70]
+            - generic [ref=e71]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e72]:
+            - list [ref=e73]:
+              - listitem [ref=e74]:
+                - link "Our Capabilities" [ref=e75] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e76]:
+                - link "Our Certifications" [ref=e77] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e78]:
+                - link "Request a Quote" [ref=e79] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e80]:
+                - link "Terms & Conditions" [ref=e81] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e83] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e84]:
+          - heading "Services" [level=2] [ref=e85]
+          - navigation "Services" [ref=e86]:
+            - list [ref=e87]:
+              - listitem [ref=e88]:
+                - link "Wet Paint Coatings" [ref=e89] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e90]:
+                - link "Complex Coating" [ref=e91] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e92]:
+                - link "Abrasive Media Blasting" [ref=e93] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e94]:
+                - link "Powder Coating" [ref=e95] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e96]:
+                - link "Large Capacity Powder Coating" [ref=e97] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e98]:
+          - heading "Visiting Us" [level=2] [ref=e99]
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - paragraph [ref=e102]: Main Office
+              - generic [ref=e103]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e104]:
+              - paragraph [ref=e105]: Shipping & Receiving
+              - generic [ref=e106]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e107]:
+              - listitem [ref=e108]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e109] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e110]: "Fax: 863.644.5926"
+              - listitem [ref=e111]:
+                - link "info@popsindustrial.com" [ref=e112] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e113]:
+                - link "invoices@popsindustrial.com" [ref=e114] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e115]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e117]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e123] [cursor=pointer]:
+    - img [ref=e124]
+  - alert [ref=e127]

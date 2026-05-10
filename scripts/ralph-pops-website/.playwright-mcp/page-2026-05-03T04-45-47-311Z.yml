@@ -1,0 +1,82 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - heading "ServiceTile — variants & states" [level=1] [ref=e4]
+      - paragraph [ref=e5]: Internal preview for US-016. Hover any tile to see the shadow-3 lift and the 1.03 image scale (200ms ease-out). Tab through to confirm the focus ring on the inner Link.
+    - generic [ref=e6]:
+      - heading "5-up service grid" [level=2] [ref=e7]
+      - generic [ref=e8]:
+        - link "Industrial painter applying wet paint coating to steel fabrication at Pop's Lakeland facility Service 01 / Wet Paint Coatings Wet Paint Coatings Industrial liquid coatings for steel, aluminum, and complex assemblies. Specialty primers and topcoats applied in temperature-controlled booths. Learn more" [ref=e10] [cursor=pointer]:
+          - /url: /industrial-coatings-services/wet-paint-coatings
+          - img "Industrial painter applying wet paint coating to steel fabrication at Pop's Lakeland facility" [ref=e12]
+          - generic [ref=e13]:
+            - paragraph [ref=e14]: Service 01 / Wet Paint Coatings
+            - heading "Wet Paint Coatings" [level=3] [ref=e15]
+            - paragraph [ref=e16]: Industrial liquid coatings for steel, aluminum, and complex assemblies. Specialty primers and topcoats applied in temperature-controlled booths.
+            - paragraph [ref=e17]:
+              - generic [ref=e18]: →
+              - generic [ref=e19]: Learn more
+        - link "Complex multi-stage coating workflow at Pop's Industrial Coatings Service 02 / Complex Coating Complex Coating Multi-stage finishes — blast, prime, intermediate, topcoat — coordinated through a single shop and a single owner. No outside subcontractors. Learn more" [ref=e21] [cursor=pointer]:
+          - /url: /industrial-coatings-services/complex-coating
+          - img "Complex multi-stage coating workflow at Pop's Industrial Coatings" [ref=e23]
+          - generic [ref=e24]:
+            - paragraph [ref=e25]: Service 02 / Complex Coating
+            - heading "Complex Coating" [level=3] [ref=e26]
+            - paragraph [ref=e27]: Multi-stage finishes — blast, prime, intermediate, topcoat — coordinated through a single shop and a single owner. No outside subcontractors.
+            - paragraph [ref=e28]:
+              - generic [ref=e29]: →
+              - generic [ref=e30]: Learn more
+        - link "Abrasive media blasting cabinet preparing steel for industrial coating Service 03 / Abrasive Media Blasting Abrasive Media Blasting SSPC-SP surface preparation in-house. Garnet, aluminum oxide, and steel grit available for SP-5 white-metal through SP-7 brush blast. Learn more" [ref=e32] [cursor=pointer]:
+          - /url: /industrial-coatings-services/abrasive-media-blasting
+          - img "Abrasive media blasting cabinet preparing steel for industrial coating" [ref=e34]
+          - generic [ref=e35]:
+            - paragraph [ref=e36]: Service 03 / Abrasive Media Blasting
+            - heading "Abrasive Media Blasting" [level=3] [ref=e37]
+            - paragraph [ref=e38]: SSPC-SP surface preparation in-house. Garnet, aluminum oxide, and steel grit available for SP-5 white-metal through SP-7 brush blast.
+            - paragraph [ref=e39]:
+              - generic [ref=e40]: →
+              - generic [ref=e41]: Learn more
+        - link "Powder-coated industrial parts cooling on rack after oven cure at Pop's Lakeland facility Service 04 / Powder Coating Powder Coating Electrostatic powder application with full-cure ovens. Durable, chip-resistant finishes for parts up to 25 ft long and 8 ft tall. Learn more" [ref=e43] [cursor=pointer]:
+          - /url: /industrial-coatings-services/powder-coating
+          - img "Powder-coated industrial parts cooling on rack after oven cure at Pop's Lakeland facility" [ref=e45]
+          - generic [ref=e46]:
+            - paragraph [ref=e47]: Service 04 / Powder Coating
+            - heading "Powder Coating" [level=3] [ref=e48]
+            - paragraph [ref=e49]: Electrostatic powder application with full-cure ovens. Durable, chip-resistant finishes for parts up to 25 ft long and 8 ft tall.
+            - paragraph [ref=e50]:
+              - generic [ref=e51]: →
+              - generic [ref=e52]: Learn more
+        - link "Large-capacity powder coating oven loaded with utility-pole steel components Service 05 / Large Capacity Powder Coating Large Capacity Powder Coating Central Florida's largest powder oven — line capacity for utility poles, bridge components, and aerospace fixtures. Learn more" [ref=e54] [cursor=pointer]:
+          - /url: /industrial-coatings-services/large-capacity-powder-coating
+          - img "Large-capacity powder coating oven loaded with utility-pole steel components" [ref=e56]
+          - generic [ref=e57]:
+            - paragraph [ref=e58]: Service 05 / Large Capacity Powder Coating
+            - heading "Large Capacity Powder Coating" [level=3] [ref=e59]
+            - paragraph [ref=e60]: Central Florida's largest powder oven — line capacity for utility poles, bridge components, and aerospace fixtures.
+            - paragraph [ref=e61]:
+              - generic [ref=e62]: →
+              - generic [ref=e63]: Learn more
+    - generic [ref=e64]:
+      - heading "2-up — tablet density" [level=2] [ref=e65]
+      - generic [ref=e66]:
+        - link "Industrial painter applying wet paint coating to steel fabrication at Pop's Lakeland facility Service 01 / Wet Paint Coatings Wet Paint Coatings Industrial liquid coatings for steel, aluminum, and complex assemblies. Specialty primers and topcoats applied in temperature-controlled booths. Learn more" [ref=e68] [cursor=pointer]:
+          - /url: /industrial-coatings-services/wet-paint-coatings
+          - img "Industrial painter applying wet paint coating to steel fabrication at Pop's Lakeland facility" [ref=e70]
+          - generic [ref=e71]:
+            - paragraph [ref=e72]: Service 01 / Wet Paint Coatings
+            - heading "Wet Paint Coatings" [level=3] [ref=e73]
+            - paragraph [ref=e74]: Industrial liquid coatings for steel, aluminum, and complex assemblies. Specialty primers and topcoats applied in temperature-controlled booths.
+            - paragraph [ref=e75]:
+              - generic [ref=e76]: →
+              - generic [ref=e77]: Learn more
+        - link "Complex multi-stage coating workflow at Pop's Industrial Coatings Service 02 / Complex Coating Complex Coating Multi-stage finishes — blast, prime, intermediate, topcoat — coordinated through a single shop and a single owner. No outside subcontractors. Learn more" [ref=e79] [cursor=pointer]:
+          - /url: /industrial-coatings-services/complex-coating
+          - img "Complex multi-stage coating workflow at Pop's Industrial Coatings" [ref=e81]
+          - generic [ref=e82]:
+            - paragraph [ref=e83]: Service 02 / Complex Coating
+            - heading "Complex Coating" [level=3] [ref=e84]
+            - paragraph [ref=e85]: Multi-stage finishes — blast, prime, intermediate, topcoat — coordinated through a single shop and a single owner. No outside subcontractors.
+            - paragraph [ref=e86]:
+              - generic [ref=e87]: →
+              - generic [ref=e88]: Learn more
+  - alert [ref=e89]

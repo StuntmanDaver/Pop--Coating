@@ -1,0 +1,121 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Request a Quote" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: GET STARTED
+        - heading "Request a Quote" [level=1] [ref=e14]
+        - paragraph [ref=e15]: Tell us about your project and we'll get back to you within one business day.
+        - 'link "Call us: 863.644.7473" [ref=e17] [cursor=pointer]':
+          - /url: tel:8636447473
+    - generic [ref=e20]:
+      - paragraph [ref=e21]: YOUR PROJECT
+      - heading "Tell us about your needs" [level=2] [ref=e22]
+      - paragraph [ref=e23]: Fields marked with * are required.
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]: Full Name *
+            - textbox "Full Name *" [ref=e29]:
+              - /placeholder: Your full name
+          - generic [ref=e30]:
+            - generic [ref=e31]: Email Address *
+            - textbox "Email Address *" [ref=e33]:
+              - /placeholder: you@company.com
+          - generic [ref=e34]:
+            - generic [ref=e35]: Phone Number
+            - textbox "Phone Number" [ref=e37]:
+              - /placeholder: (863) 000-0000
+          - generic [ref=e38]:
+            - generic [ref=e39]: Company
+            - textbox "Company" [ref=e41]:
+              - /placeholder: Your company name
+        - generic [ref=e42]:
+          - generic [ref=e43]: Project Details *
+          - textbox "Project Details *" [ref=e45]:
+            - /placeholder: Tell us about your project…
+          - paragraph [ref=e46]: Describe the scope, materials, quantities, and any specifications.
+        - button "Submit Request" [ref=e47]
+  - contentinfo [ref=e48]:
+    - generic [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e52]
+          - generic [ref=e53]:
+            - img "Pop's Industrial Coatings" [ref=e54]
+            - generic [ref=e55]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e56]:
+            - list [ref=e57]:
+              - listitem [ref=e58]:
+                - link "Our Capabilities" [ref=e59] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e60]:
+                - link "Our Certifications" [ref=e61] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e62]:
+                - link "Request a Quote" [ref=e63] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e64]:
+                - link "Terms & Conditions" [ref=e65] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e67] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e68]:
+          - heading "Services" [level=2] [ref=e69]
+          - navigation "Services" [ref=e70]:
+            - list [ref=e71]:
+              - listitem [ref=e72]:
+                - link "Wet Paint Coatings" [ref=e73] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e74]:
+                - link "Complex Coating" [ref=e75] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e76]:
+                - link "Abrasive Media Blasting" [ref=e77] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e78]:
+                - link "Powder Coating" [ref=e79] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e80]:
+                - link "Large Capacity Powder Coating" [ref=e81] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e82]:
+          - heading "Visiting Us" [level=2] [ref=e83]
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - paragraph [ref=e86]: Main Office
+              - generic [ref=e87]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e88]:
+              - paragraph [ref=e89]: Shipping & Receiving
+              - generic [ref=e90]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e91]:
+              - listitem [ref=e92]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e93] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e94]: "Fax: 863.644.5926"
+              - listitem [ref=e95]:
+                - link "info@popsindustrial.com" [ref=e96] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e97]:
+                - link "invoices@popsindustrial.com" [ref=e98] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e99]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e101]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - button "Open Next.js Dev Tools" [ref=e107] [cursor=pointer]:
+    - img [ref=e108]

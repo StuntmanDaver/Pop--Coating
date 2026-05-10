@@ -1,0 +1,125 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Wet Paint Coatings" [ref=e10]:
+      - generic [ref=e12]:
+        - paragraph [ref=e13]: INDUSTRIAL
+        - heading "Wet Paint Coatings" [level=1] [ref=e14]
+        - paragraph [ref=e15]: Precision and expertise for a seamless, durable finish on industrial equipment, machinery, and structural components.
+        - link "Request a Quote" [ref=e17] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - paragraph [ref=e22]: WET PAINT
+        - heading "Industrial Wet Paint Coatings" [level=2] [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Our wet paint coatings are applied with precision and expertise, providing a seamless and durable finish to a variety of surfaces.
+          - paragraph [ref=e26]: Whether for industrial equipment, machinery, or structural components, our skilled team employs top-quality paints and application techniques to enhance both aesthetics and protection.
+          - paragraph [ref=e27]: Our team will work in tandem with you to supply your wet paint solutions which meet the specific requirements of each project, ensuring a professional and resilient coating that withstands the test of time.
+        - generic [ref=e28]:
+          - img "Industrial wet paint coating being applied at Pop's Industrial Coatings, Lakeland FL" [ref=e30]
+          - img "Wet painting coatings on industrial components at Pop's Industrial Coatings" [ref=e32]
+          - img "Industrial paint coating work in progress at Pop's facility in Lakeland, FL" [ref=e34]
+          - img "Teflon coating application at Pop's Industrial Coatings, Lakeland FL" [ref=e36]
+        - link "Get a Quote" [ref=e38] [cursor=pointer]:
+          - /url: /request-a-quote
+      - complementary "Our services" [ref=e39]:
+        - paragraph [ref=e40]: OUR SERVICES
+        - navigation [ref=e41]:
+          - list [ref=e42]:
+            - listitem [ref=e43]:
+              - generic [ref=e44]: Wet Paint Coatings
+            - listitem [ref=e45]:
+              - link "Complex Coating" [ref=e46] [cursor=pointer]:
+                - /url: /industrial-coatings-services/complex-coating
+            - listitem [ref=e47]:
+              - link "Abrasive Media Blasting" [ref=e48] [cursor=pointer]:
+                - /url: /industrial-coatings-services/abrasive-media-blasting
+            - listitem [ref=e49]:
+              - link "Powder Coating" [ref=e50] [cursor=pointer]:
+                - /url: /industrial-coatings-services/powder-coating
+            - listitem [ref=e51]:
+              - link "Large Capacity Powder Coating" [ref=e52] [cursor=pointer]:
+                - /url: /industrial-coatings-services/large-capacity-powder-coating
+  - contentinfo [ref=e53]:
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e57]
+          - generic [ref=e58]:
+            - img "Pop's Industrial Coatings" [ref=e59]
+            - generic [ref=e60]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e61]:
+            - list [ref=e62]:
+              - listitem [ref=e63]:
+                - link "Our Capabilities" [ref=e64] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e65]:
+                - link "Our Certifications" [ref=e66] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e67]:
+                - link "Request a Quote" [ref=e68] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e69]:
+                - link "Terms & Conditions" [ref=e70] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e72] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e73]:
+          - heading "Services" [level=2] [ref=e74]
+          - navigation "Services" [ref=e75]:
+            - list [ref=e76]:
+              - listitem [ref=e77]:
+                - link "Wet Paint Coatings" [ref=e78] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e79]:
+                - link "Complex Coating" [ref=e80] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e81]:
+                - link "Abrasive Media Blasting" [ref=e82] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e83]:
+                - link "Powder Coating" [ref=e84] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e85]:
+                - link "Large Capacity Powder Coating" [ref=e86] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e87]:
+          - heading "Visiting Us" [level=2] [ref=e88]
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - paragraph [ref=e91]: Main Office
+              - generic [ref=e92]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e93]:
+              - paragraph [ref=e94]: Shipping & Receiving
+              - generic [ref=e95]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e98] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e99]: "Fax: 863.644.5926"
+              - listitem [ref=e100]:
+                - link "info@popsindustrial.com" [ref=e101] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e102]:
+                - link "invoices@popsindustrial.com" [ref=e103] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e104]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e106]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e107]

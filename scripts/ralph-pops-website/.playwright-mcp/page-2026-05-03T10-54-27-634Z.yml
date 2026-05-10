@@ -1,0 +1,109 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "Skip to content" [ref=e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=e4]:
+      - link "Pop's Industrial Coatings — Home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: POP'S INDUSTRIAL COATINGS
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+  - main [ref=e9]:
+    - region "Our History" [ref=e10]:
+      - img "Four generations of the Pop's Industrial Coatings family" [ref=e11]
+      - generic [ref=e13]:
+        - paragraph [ref=e14]: OUR LEGACY
+        - heading "Our History" [level=1] [ref=e15]
+        - paragraph [ref=e16]: Founded in 1972, Pop's Industrial Coatings has over 50 years of experience in industrial coating services.
+        - link "Request a Quote" [ref=e18] [cursor=pointer]:
+          - /url: /request-a-quote
+    - generic [ref=e21]:
+      - generic [ref=e22]:
+        - paragraph [ref=e23]: OUR STORY
+        - heading "A legacy built over four generations" [level=2] [ref=e24]
+        - paragraph [ref=e25]: Beginning with our founding generation in 1972, we embarked on a journey to master the art and science of industrial coatings. Over the years, this commitment has been passed down through four generations, each contributing to our legacy of excellence. Our history is not just a chronicle of time; it's a testament to our enduring passion for quality and innovation.
+        - paragraph [ref=e26]: What sets us apart is our unwavering commitment to comprehending and fulfilling the unique needs of our clients. We view each project as an opportunity to exceed expectations, delivering workmanship and services of the highest quality. Our underlying objective is to establish widespread recognition as a provider of unparalleled services within the industry while ensuring timely delivery.
+        - paragraph [ref=e27]: Dedicated to excellence, we actively promote open and participatory engagement across all aspects of our organization. Our team works collaboratively to achieve objectives and maintain the highest standards. We don't just view our clients as customers; we consider them partners in success. By fostering a culture of collaboration, we ensure that every project benefits from collective expertise and dedication.
+        - paragraph [ref=e28]: At Pop's Industrial Coatings, our history is not just a story; it's a foundation upon which we continue to build a future. Join us in our journey, and let's create lasting success together.
+        - generic [ref=e29]:
+          - link "Request a Quote" [ref=e30] [cursor=pointer]:
+            - /url: /request-a-quote
+          - link "Meet the Family" [ref=e31] [cursor=pointer]:
+            - /url: /about-us/leadership
+      - generic [ref=e32]:
+        - img "Marcus Woods, founder of Pop's Industrial Coatings" [ref=e34]
+        - paragraph [ref=e35]: Founder Marcus Woods
+  - contentinfo [ref=e36]:
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - heading "Doing business with Pop's Industrial" [level=2] [ref=e40]
+          - generic [ref=e41]:
+            - img "Pop's Industrial Coatings" [ref=e42]
+            - generic [ref=e43]:
+              - text: POP'S INDUSTRIAL
+              - text: COATINGS
+          - navigation "Doing business with Pop's Industrial" [ref=e44]:
+            - list [ref=e45]:
+              - listitem [ref=e46]:
+                - link "Our Capabilities" [ref=e47] [cursor=pointer]:
+                  - /url: /request-a-quote/facilities-equipment
+              - listitem [ref=e48]:
+                - link "Our Certifications" [ref=e49] [cursor=pointer]:
+                  - /url: /request-a-quote/standards-specifications-certifications
+              - listitem [ref=e50]:
+                - link "Request a Quote" [ref=e51] [cursor=pointer]:
+                  - /url: /request-a-quote
+              - listitem [ref=e52]:
+                - link "Terms & Conditions" [ref=e53] [cursor=pointer]:
+                  - /url: /request-a-quote/terms-conditions
+          - link "GET A QUOTE" [ref=e55] [cursor=pointer]:
+            - /url: /request-a-quote
+        - generic [ref=e56]:
+          - heading "Services" [level=2] [ref=e57]
+          - navigation "Services" [ref=e58]:
+            - list [ref=e59]:
+              - listitem [ref=e60]:
+                - link "Wet Paint Coatings" [ref=e61] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/wet-paint-coatings
+              - listitem [ref=e62]:
+                - link "Complex Coating" [ref=e63] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/complex-coating
+              - listitem [ref=e64]:
+                - link "Abrasive Media Blasting" [ref=e65] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/abrasive-media-blasting
+              - listitem [ref=e66]:
+                - link "Powder Coating" [ref=e67] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/powder-coating
+              - listitem [ref=e68]:
+                - link "Large Capacity Powder Coating" [ref=e69] [cursor=pointer]:
+                  - /url: /industrial-coatings-services/large-capacity-powder-coating
+        - generic [ref=e70]:
+          - heading "Visiting Us" [level=2] [ref=e71]
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - paragraph [ref=e74]: Main Office
+              - generic [ref=e75]:
+                - text: 3805 Drane Field Road
+                - text: Lakeland, FL 33811
+            - generic [ref=e76]:
+              - paragraph [ref=e77]: Shipping & Receiving
+              - generic [ref=e78]:
+                - text: 3515 Airport Road
+                - text: Lakeland, FL 33811
+            - list [ref=e79]:
+              - listitem [ref=e80]:
+                - text: "Phone:"
+                - link "863.644.7473" [ref=e81] [cursor=pointer]:
+                  - /url: tel:+18636447473
+              - listitem [ref=e82]: "Fax: 863.644.5926"
+              - listitem [ref=e83]:
+                - link "info@popsindustrial.com" [ref=e84] [cursor=pointer]:
+                  - /url: mailto:info@popsindustrial.com
+              - listitem [ref=e85]:
+                - link "invoices@popsindustrial.com" [ref=e86] [cursor=pointer]:
+                  - /url: mailto:invoices@popsindustrial.com
+            - paragraph [ref=e87]: Monday–Friday 8am–4pm. Saturday & Sunday closed.
+      - paragraph [ref=e89]: © 2026 Pop's Industrial Coatings. All rights reserved.
+  - alert [ref=e90]
