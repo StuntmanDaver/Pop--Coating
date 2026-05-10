@@ -59,6 +59,14 @@ After branch push/sync and all human-only blockers in this table are complete or
 
 ## 2026-05-08
 
+### 2026-05-10 Pops marketing deployment continuity
+
+- `origin/main` contained the latest Pops marketing commits, but `https://popsindustrial.com` was still serving the legacy WordPress/LiteSpeed site (`server: LiteSpeed`, `wp-json` headers) rather than a Vercel deployment. Do not diagnose "GitHub did not push" from that domain until DNS/Vercel domain cutover is confirmed.
+- For Pops marketing website work, verify the actual production host before claiming changes are live: check response headers for Vercel (`server: Vercel` / `x-vercel-*`) and confirm the Vercel production deployment is assigned to `popsindustrial.com`.
+- Vercel's pnpm 10 install warned that native build scripts were ignored for `@parcel/watcher`, `@sentry/cli`, `@swc/core`, and `esbuild`. The repo now pins `packageManager: pnpm@10.33.4` and allows those build scripts through `pnpm-workspace.yaml` `onlyBuiltDependencies` so future Vercel builds use deterministic pnpm behavior.
+
+---
+
 ### Repo sync note
 
 - Worktree was clean on `main` before the requested memory/changelog update; no implementation files were pending.

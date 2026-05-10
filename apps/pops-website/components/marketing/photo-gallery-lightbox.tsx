@@ -11,7 +11,7 @@ type Photo = {
 };
 
 type PhotoGalleryLightboxProps = {
-  photos: Photo[];
+  photos: readonly Photo[];
   className?: string;
   itemClassName?: string;
   imageClassName?: string;
@@ -29,6 +29,7 @@ export function PhotoGalleryLightbox({
 }: PhotoGalleryLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const totalPhotos = photos.length;
+  const activePhoto = activeIndex === null ? null : photos[activeIndex] ?? null;
 
   const goNext = () => {
     if (activeIndex === null || totalPhotos <= 1) return;
@@ -81,7 +82,7 @@ export function PhotoGalleryLightbox({
         ))}
       </div>
 
-      {activeIndex !== null ? (
+      {activePhoto ? (
         <div
           className="fixed inset-0 z-[100] bg-black/85 p-4 sm:p-6"
           role="dialog"
@@ -129,8 +130,8 @@ export function PhotoGalleryLightbox({
               onClick={(e) => e.stopPropagation()}
             >
               <Image
-                src={photos[activeIndex].src}
-                alt={photos[activeIndex].alt}
+                src={activePhoto.src}
+                alt={activePhoto.alt}
                 fill
                 sizes="100vw"
                 className="object-contain"

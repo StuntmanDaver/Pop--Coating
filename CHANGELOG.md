@@ -4,6 +4,11 @@ All notable changes to this repository are documented here. The format is inspir
 
 ## [Unreleased]
 
+### Pops Website / Deployment Continuity (2026-05-10)
+
+- Documented why pushed Pops website changes were not visible at `popsindustrial.com`: the live domain was still responding from the legacy WordPress/LiteSpeed host, not Vercel. Future release checks must verify Vercel headers/domain assignment before treating GitHub or Vercel deploys as live on the public domain.
+- Hardened Vercel pnpm installs by pinning `pnpm@10.33.4` via `packageManager` and approving required native build scripts (`@parcel/watcher`, `@sentry/cli`, `@swc/core`, `esbuild`) in `pnpm-workspace.yaml`.
+
 ### Repo / GitHub Sync + Continuity Notes (2026-05-08)
 
 - **Repository continuity refreshed before push.** Updated `.planning/intel/SESSION-MEMORY.md` with the current Phase 1 gate status and remaining manual blockers so the next session can pick up from the right operational context.
