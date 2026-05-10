@@ -89,7 +89,7 @@ export function CertificationMarquee() {
                     alt=""
                     width={cert.width}
                     height={cert.height}
-                    className="h-full w-auto rounded-sm border border-pops-yellow-500/20 bg-black/80 p-2 object-contain opacity-90 grayscale transition-[opacity,filter,border-color,box-shadow] duration-300 hover:border-pops-yellow-500 hover:opacity-100 hover:grayscale-0 hover:shadow-[0_0_28px_-6px_rgba(254,205,8,0.35)]"
+                    className="h-full w-auto object-contain opacity-90 grayscale transition-[opacity,filter] duration-300 hover:opacity-100 hover:grayscale-0"
                   />
                 </Link>
               </div>
