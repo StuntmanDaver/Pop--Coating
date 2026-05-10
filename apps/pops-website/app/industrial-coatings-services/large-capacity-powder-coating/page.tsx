@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Pop's Industrial Coatings offers large scale coating processes that ensure uniform coverage and robust protection without compromising quality.",
   openGraph: {
-    images: [{ url: "/images/large-capacity-powder-coating.jpg" }],
+    images: [{ url: "/images/large-capacity-powder-coating.png" }],
   },
 };
 
@@ -84,7 +84,7 @@ export default function LargeCapacityPowderCoatingPage() {
           heading="Large Capacity Coatings"
           lede="Uniquely tailored for large scale projects — we efficiently handle significant size and volume without compromising quality."
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          backgroundImage="/images/large-capacity-powder-coating.jpg"
+          backgroundImage="/images/large-capacity-powder-coating.png"
         />
 
         <Section tone="dark">

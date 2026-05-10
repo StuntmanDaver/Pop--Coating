@@ -36,7 +36,7 @@ const SERVICES = [
   {
     name: "Large Capacity Coatings",
     lede: "Central Florida's largest powder oven — line capacity for utility poles, bridge components, and aerospace fixtures.",
-    image: "/images/large-capacity-powder-coating.jpg",
+    image: "/images/large-capacity-powder-coating.png",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
     alt: "Large-capacity coatings oven loaded with utility-pole steel components",
   },

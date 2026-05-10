@@ -48,7 +48,7 @@ const SERVICES = [
   {
     name: "Large Capacity Coatings",
     lede: "Uniquely tailored for large scale projects, we are skilled and equipped to take on both significant size and volume jobs.",
-    image: "/images/large-capacity-powder-coating.jpg",
+    image: "/images/large-capacity-powder-coating.png",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
     alt: "Large capacity coatings at Pop's Industrial Coatings — accommodating the biggest industrial projects",
   },

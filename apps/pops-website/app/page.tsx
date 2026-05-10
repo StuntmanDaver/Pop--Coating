@@ -55,7 +55,7 @@ const SERVICES = [
   {
     name: "Large Capacity Coatings",
     lede: "Tailored for significant scale.",
-    image: "/images/large-capacity-powder-coating.jpg",
+    image: "/images/large-capacity-powder-coating.png",
     href: "/industrial-coatings-services/large-capacity-powder-coating",
     alt: "Large capacity coatings at Pop's Industrial Coatings",
   },
