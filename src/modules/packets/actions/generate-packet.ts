@@ -30,6 +30,7 @@ interface JobJoinRow {
   job_number: string
   job_name: string
   description: string | null
+  notes: string | null
   customer_po_number: string | null
   color: string | null
   coating_type: string | null
@@ -57,6 +58,7 @@ export async function generatePacketPdf(input: unknown): Promise<GeneratePacketP
     .from('jobs')
     .select(
       'id, job_number, job_name, description, customer_po_number, color, coating_type, part_count, weight_lbs, dimensions_text, due_date, priority, packet_token,' +
+        'notes,' +
         'companies(name),' +
         'contacts(first_name, last_name),' +
         'tenants(name)'
@@ -89,6 +91,7 @@ export async function generatePacketPdf(input: unknown): Promise<GeneratePacketP
         job_number: data.job_number,
         job_name: data.job_name,
         description: data.description,
+        special_instructions: data.notes,
         customer_po_number: data.customer_po_number,
         company_name: data.companies.name,
         contact_name: contactName,

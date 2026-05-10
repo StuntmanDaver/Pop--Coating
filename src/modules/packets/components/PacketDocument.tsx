@@ -155,6 +155,7 @@ export interface PacketJobData {
   job_number: string
   job_name: string
   description: string | null
+  special_instructions: string | null
   customer_po_number: string | null
   company_name: string
   contact_name: string | null
@@ -229,6 +230,7 @@ export function PacketDocument({ job, tenant, qrPngDataUrl, generatedAt }: Packe
             {field('Weight', job.weight_lbs != null ? `${job.weight_lbs} lbs` : null)}
             {field('Dimensions', job.dimensions_text)}
             {field('Due', job.due_date)}
+            {field('Instructions', job.special_instructions)}
             {job.description ? (
               <Text style={styles.description}>{job.description}</Text>
             ) : null}

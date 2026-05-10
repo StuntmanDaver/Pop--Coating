@@ -17,6 +17,7 @@ const SAMPLE_JOB = {
   job_number: 'POPS-2026-00042',
   job_name: 'Bumper, gloss black',
   description: 'OEM Mustang front bumper',
+  notes: 'Mask threads and inspect the bracket before curing.',
   customer_po_number: 'PO-9912',
   color: 'Gloss Black',
   coating_type: 'Powder',
