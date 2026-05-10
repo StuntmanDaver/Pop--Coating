@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Pop's Industrial offers electrostatic powder coating process for tough, uniform finish with superior resistance to corrosion, impact and chemicals.",
   openGraph: {
-    images: [{ url: "/images/powder-coat-gallery-toll-gantry.png", width: 1024, height: 768 }],
+    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
   },
 };
 

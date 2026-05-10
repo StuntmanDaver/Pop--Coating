@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Our Abrasive Media Blasting services adhere strictly to the rigorous standards set by SSPC (Society for Protective Coatings) and NACE (National Association of Corrosion Engineers).",
   openGraph: {
-    images: [{ url: "/images/abrasive-media-blasting.jpg" }],
+    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
   },
 };
 

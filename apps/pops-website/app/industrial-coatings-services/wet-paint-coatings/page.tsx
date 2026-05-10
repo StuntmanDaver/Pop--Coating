@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Our skilled team employs top-quality paints and application techniques to enhance both aesthetics & protection for your industrial wet paint project.",
   openGraph: {
-    images: [{ url: "/images/industrial-painting-lakeland-fl-1024x683-1.jpg", width: 1024, height: 683 }],
+    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
   },
 };
 

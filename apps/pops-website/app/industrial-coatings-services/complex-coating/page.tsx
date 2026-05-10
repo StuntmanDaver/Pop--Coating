@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Serving Lakeland Polk County FL, Pop's provided complex coating services; corrosion resistant tank liners, baked coatings, multiple component coatings & more",
   openGraph: {
-    images: [{ url: "/images/complex-gallery-1.png" }],
+    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
   },
 };
 
