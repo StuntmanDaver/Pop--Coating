@@ -51,13 +51,13 @@ export function ServiceRow({
           </div>
 
           {/* Thumbnail — desktop only */}
-          <div className="relative hidden h-[120px] w-[180px] shrink-0 overflow-hidden rounded-sm bg-ink-900 shadow-[0_0_24px_-8px_rgba(254,205,8,0.2)] md:block">
+          <div className="relative hidden h-[120px] w-[180px] shrink-0 overflow-hidden rounded-sm shadow-[0_0_24px_-8px_rgba(254,205,8,0.2)] md:block">
             <Image
               src={image}
               alt={alt}
               fill
               sizes="180px"
-              className="object-contain object-center transition-transform duration-200 ease-out group-hover:scale-[1.03]"
+              className="object-cover object-center transition-transform duration-200 ease-out group-hover:scale-[1.03]"
             />
           </div>
         </div>

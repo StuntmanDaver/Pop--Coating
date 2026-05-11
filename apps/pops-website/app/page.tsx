@@ -242,15 +242,15 @@ export default function HomePage() {
         {/* ── About strip — worker photo (blacked out) + CTA ── */}
         <section
           aria-label="About Pop's Industrial Coatings"
-          className="relative min-h-[380px] overflow-hidden border-t border-pops-yellow-500/25 md:min-h-[460px]"
+          className="relative min-h-[380px] overflow-hidden md:min-h-[460px]"
         >
-          <div className="absolute inset-0 z-0 bg-black">
+          <div className="absolute inset-0 z-0">
             <Image
               src="/images/pops-about-worker.png"
               alt="Industrial coating technician spray finishing a large part at Pop's Industrial Coatings, Lakeland FL"
               fill
               sizes="100vw"
-              className="object-contain object-center"
+              className="object-cover object-center"
             />
           </div>
           <div

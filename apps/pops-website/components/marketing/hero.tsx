@@ -123,7 +123,7 @@ export function Hero({
     <section
       aria-labelledby={headingId}
       className={cn(
-        "relative isolate w-full overflow-hidden bg-black",
+        "relative isolate w-full overflow-hidden",
         "min-h-[85vh] md:min-h-[min(92vh,960px)]",
         className,
       )}
@@ -137,7 +137,7 @@ export function Hero({
             fill
             priority
             sizes="100vw"
-            className="object-contain object-center"
+            className="object-cover object-center"
           />
         </div>
       </div>
@@ -159,11 +159,6 @@ export function Hero({
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_100%,rgba(254,205,8,0.08),transparent_50%)]"
       />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 ring-1 ring-inset ring-pops-yellow-500/10"
-      />
-
       <div className="relative z-10 mx-auto flex min-h-[85vh] w-full max-w-[1280px] flex-col justify-start px-6 pb-16 pt-20 md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:px-8 lg:pt-28">
         {animateCopyOnLoad ? <HeroIntro>{copy}</HeroIntro> : <div className="max-w-4xl">{copy}</div>}
       </div>
