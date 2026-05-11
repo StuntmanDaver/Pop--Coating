@@ -1,0 +1,17 @@
+---
+description: Main branch convention for Pops marketing website work
+alwaysApply: true
+---
+
+# Pops Marketing Website Main Branch Convention
+
+For work scoped to the Pops marketing website in `apps/pops-website/**`, use `main` as the source-of-truth branch and push completed changes only to `origin/main` unless the user explicitly says otherwise.
+
+Do not create, publish, or push feature branches for Pops marketing website work unless the user explicitly asks for a branch or PR.
+
+Before pushing, pull with rebase from `origin/main` and resolve any conflicts:
+
+```shell
+git pull --rebase origin main
+git push origin main
+```

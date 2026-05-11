@@ -1,0 +1,16 @@
+---
+description: Branch convention for Pops marketing website work
+globs: apps/pops-website/**
+alwaysApply: false
+---
+
+# Pops Marketing Website Branch Convention
+
+For work scoped to the Pops marketing website in `apps/pops-website/**`, post and push completed changes to the `main` branch unless the user explicitly says otherwise.
+
+Before pushing, pull with rebase from `origin/main` and resolve any conflicts:
+
+```shell
+git pull --rebase origin main
+git push origin main
+```
