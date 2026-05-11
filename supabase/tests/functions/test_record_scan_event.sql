@@ -1,7 +1,7 @@
 -- supabase/tests/functions/test_record_scan_event.sql
 -- Coverage for 0016_record_scan_event.sql
 --
--- Tests (14):
+-- Tests (16):
 --   Authorization (3):
 --     1. Anon JWT → tenant_id_missing
 --     2. Customer JWT → access_denied: scan requires staff session
@@ -12,20 +12,24 @@
 --     6. Cross-tenant job → access_denied: cross-tenant scan blocked
 --     7. Employee not found → employee_not_found
 --     8. Workstation not found → workstation_not_found
---   Happy path side effects (6):
+--   Happy path side effects (8):
 --     9.  Returns non-null UUID event_id
 --     10. job_status_history row has correct to_status
 --     11. jobs.production_status updated
 --     12. intake_status 'scheduled' promoted to 'in_production' on first scan
 --     13. picked_up_at stamped when to_status='picked_up'
 --     14. picked_up_at NOT overwritten on subsequent 'picked_up' scan (idempotent)
+--     15. client_event_id replay stores exactly one history row
+--     16. client_event_id replay returns original event and does not advance status again
 
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path = public, extensions;
 SET ROLE postgres;
 
 BEGIN;
-SELECT extensions.plan(14);
+SELECT extensions.plan(16);
+CREATE TEMP TABLE scan_replay_results (event_id UUID) ON COMMIT DROP;
+GRANT INSERT, SELECT ON scan_replay_results TO authenticated;
 
 -- ============================================================
 -- Fixture setup (superuser context)
@@ -126,6 +130,16 @@ INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
    'Scan Job D', 'rrscan004tok', 'RR-2026-00004',
    'in_production', 'completed',
    '2026-01-01 12:00:00+00'::timestamptz)
+ON CONFLICT (id) DO NOTHING;
+
+-- Job F: client_event_id replay idempotency
+INSERT INTO jobs (id, tenant_id, company_id, job_name, packet_token, job_number,
+                  intake_status, production_status) VALUES
+  ('bb006000-0000-0000-0000-000000000006'::uuid,
+   'bb000000-0000-0000-0000-000000000001'::uuid,
+   'bb004000-0000-0000-0000-000000000001'::uuid,
+   'Scan Job F', 'rrscan006tok', 'RR-2026-00006',
+   'in_production', 'received')
 ON CONFLICT (id) DO NOTHING;
 
 -- Tenant B company (required FK for the cross-tenant job)
@@ -353,6 +367,30 @@ SELECT app.record_scan_event(
   'bb003000-0000-0000-0000-000000000001'::uuid
 );
 
+-- Job F scan replay: second call uses a different status, but the same
+-- client_event_id must return the original event and avoid a second transition.
+INSERT INTO scan_replay_results
+SELECT app.record_scan_event(
+  'bb006000-0000-0000-0000-000000000006'::uuid,
+  'prep',
+  'bb002000-0000-0000-0000-000000000001'::uuid,
+  'bb003000-0000-0000-0000-000000000001'::uuid,
+  NULL,
+  NULL,
+  'bb007000-0000-0000-0000-000000000001'::uuid
+);
+
+INSERT INTO scan_replay_results
+SELECT app.record_scan_event(
+  'bb006000-0000-0000-0000-000000000006'::uuid,
+  'coating',
+  'bb002000-0000-0000-0000-000000000001'::uuid,
+  'bb003000-0000-0000-0000-000000000001'::uuid,
+  NULL,
+  NULL,
+  'bb007000-0000-0000-0000-000000000001'::uuid
+);
+
 -- Switch back to superuser to read side effects (bypasses RLS)
 SET ROLE postgres;
 
@@ -407,6 +445,29 @@ SELECT extensions.is(
    WHERE id = 'bb006000-0000-0000-0000-000000000004'::uuid),
   '2026-01-01 12:00:00+00'::timestamptz,
   'record_scan_event: picked_up_at not overwritten on subsequent picked_up scan'
+);
+
+-- ============================================================
+-- Test 15: client_event_id replay stores exactly one history row
+-- ============================================================
+SELECT extensions.is(
+  (SELECT count(*)::integer FROM job_status_history
+   WHERE job_id = 'bb006000-0000-0000-0000-000000000006'::uuid
+     AND client_event_id = 'bb007000-0000-0000-0000-000000000001'::uuid),
+  1,
+  'record_scan_event: client_event_id replay stores exactly one history row'
+);
+
+-- ============================================================
+-- Test 16: client_event_id replay returns original event and does not advance again
+-- ============================================================
+SELECT extensions.ok(
+  (SELECT count(*) = 2
+     AND count(DISTINCT event_id) = 1
+     AND (SELECT production_status FROM jobs
+          WHERE id = 'bb006000-0000-0000-0000-000000000006'::uuid) = 'prep'
+   FROM scan_replay_results),
+  'record_scan_event: client_event_id replay does not advance status again'
 );
 
 SELECT * FROM extensions.finish();

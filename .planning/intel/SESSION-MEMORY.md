@@ -18,7 +18,8 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 | `next.config.ts` | `typedRoutes` out of `experimental`; `disableLogger` removed. |
 | TypeScript types | Aligned with live schema once migrations applied (confirm on current `main`). |
 | GitHub Actions config | Required CI secret/variable names were confirmed on 2026-05-08 without storing values in-repo. Added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for E2E. |
-| DB migrations | Live Supabase now has local migrations through `0020_security_definer_fail_closed.sql`; re-verify before sign-off. |
+| DB migrations | Live Supabase and local migrations align through `0022` as of 2026-05-11; re-verify before sign-off. |
+| Vercel env names | Production env names from the Phase 1 inventory were observed on 2026-05-11 without recording values, including `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`. |
 
 ### Still requires manual action
 
@@ -27,8 +28,6 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 | JWT expiry → 3600s | Supabase Dashboard → Authentication → Settings → JWT Expiry |
 | Auth Hook registration | Supabase Dashboard → Authentication → Hooks → Custom Access Token → `app.custom_access_token_hook` |
 | Custom SMTP | Supabase Dashboard → Auth SMTP settings; use Resend SMTP with `noreply@popsindustrial.com` |
-| Sentry DSN | Sentry project; `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` were not visible in Vercel CLI env inventory. |
-| Resend webhook secret | `RESEND_WEBHOOK_SECRET` was not visible in Vercel CLI env inventory. |
 | Vercel domains | `app.popsindustrial.com` + `track.popsindustrial.com`; CLI attach is blocked because both aliases are already assigned to another Vercel project. Move/remove them in the dashboard before attaching to `pops--coating`. |
 | Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (registrar). |
 
@@ -47,9 +46,9 @@ After branch push/sync and all human-only blockers in this table are complete or
 
 - **Build:** Resolved App Router conflict between `(office)` and `(portal)` by consolidating root + sign-in flows; host-based redirect for office vs portal; `pnpm build` reported passing after changes.
 - **Config:** `typedRoutes` moved out of `experimental` in `next.config.ts` for Next 16 compatibility.
-- **Infra checks:** Supabase project active; migrations count matched expectations in session; Vercel production env vars partially populated (later CLI check observed Supabase, Resend API, and Upstash names; Sentry DSNs and `RESEND_WEBHOOK_SECRET` were not visible).
+- **Infra checks:** Supabase project active; migrations count matched expectations in session; Vercel production env vars partially populated in the original recap. The 2026-05-11 re-check later observed the previously missing Sentry DSNs and `RESEND_WEBHOOK_SECRET` names.
 - **GitHub:** GitHub Actions secret/variable names were confirmed on 2026-05-08 without pasting values into docs. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` were added for E2E.
-- **Still manual (Plan 06):** Supabase Dashboard — JWT expiry **3600s**; register **Custom Access Token Hook** → `app.custom_access_token_hook`; configure Custom SMTP through Resend. Vercel — move/remove existing **app.*/track.*** aliases for `popsindustrial.com`, attach them to `pops--coating`, and set remaining env gaps. Resend — complete DNS (DKIM/SPF/MX) for sending domain. Sentry — set server and public DSNs in Vercel/local env.
+- **Still manual (Plan 06):** Supabase Dashboard — JWT expiry **3600s**; register **Custom Access Token Hook** → `app.custom_access_token_hook`; configure Custom SMTP through Resend. Vercel — move/remove existing **app.*/track.*** aliases for `popsindustrial.com` and attach them to `pops--coating`. Resend — complete DNS (DKIM/SPF/MX) for sending domain.
 
 ### Phase gating (ralph / Phase 02)
 
@@ -94,3 +93,17 @@ After branch push/sync and all human-only blockers in this table are complete or
 - Vercel CLI env inventory showed Supabase, Resend API, and Upstash Redis/QStash names; `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible and remain gaps.
 - `.env.local` contains most local service variables but does not include `SUPABASE_PROJECT_REF`, `RESEND_WEBHOOK_SECRET`, `E2E_STAFF_EMAIL`, or `E2E_STAFF_PASSWORD`; do not paste values into docs.
 - `scripts/seed-tenant.ts` now generates but does not print the recovery action link; owner setup needs an approved secure handoff path. The script also verifies/repairs seed Auth metadata for owner, customer, and workstation smoke users; domain ownership fails closed; packet QR remains `https://app.popsindustrial.com/scan?packet=<packet_token>`. The live Tenant 1 seed run still needs the owner's real email/name.
+
+## 2026-05-11
+
+### Phase 1 gate re-check
+
+- `pnpm type-check` passed.
+- `pnpm lint` passed.
+- `pnpm test` passed: 34 files / 242 tests.
+- `pnpm build` passed.
+- No-secret Playwright smoke passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"` (2 tests).
+- `supabase test db --linked` passed: 9 files / 89 tests.
+- Fetched missing remote migration `0021_scan_event_idempotency.sql` into the local migrations directory, removed the identical duplicate local `supabase/migrations/0022_auth_hook_security_definer 2.sql`, and verified `supabase migration list --linked` aligns local/remote through `0022`.
+- Vercel Production env names from the Phase 1 inventory are present as of 2026-05-11, including the previously missing Sentry DSNs and Resend webhook secret. Values were not recorded.
+- Vercel canonical domain work remains blocked/incomplete: `popsindustrial.com` exists under the team, but `app.popsindustrial.com` and `track.popsindustrial.com` are not accessible/attached for the current project, `vercel alias ls` returns no aliases, and `pops--coating` still reports latest production URL `app.popscoating.com`.

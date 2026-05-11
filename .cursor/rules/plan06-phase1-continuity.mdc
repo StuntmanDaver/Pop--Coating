@@ -1,5 +1,5 @@
 ---
-description: Phase 1 Plan 06 continuity — automated vs manual work (session 2026-05-03)
+description: Phase 1 Plan 06 continuity — automated vs manual work (updated 2026-05-11)
 alwaysApply: true
 ---
 
@@ -14,8 +14,9 @@ alwaysApply: true
 | Build | Turbopack route conflict fixed: unified `src/app/page.tsx` with host detection; unified `src/app/sign-in/page.tsx` for office vs portal |
 | `next.config.ts` | `typedRoutes` moved out of `experimental`; `disableLogger` removed per Next 16 |
 | TypeScript DB types | Regenerated against live schema when migrations applied (confirm current commit matches Supabase) |
-| GitHub Actions secrets | `RESEND_API_KEY` and `SUPABASE_PROJECT_REF` (or equivalent) — verify under repo Settings → Secrets |
-| Database | All migrations applied on live Supabase (reconfirm before claiming sign-off) |
+| GitHub Actions secrets | Required CI secret/variable names confirmed without recording values; `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` added for E2E |
+| Database | Local and linked Supabase migrations align through `0022`; linked pgTAP passed 9 files / 89 tests on 2026-05-11 |
+| Vercel env names | Production env names from the Phase 1 inventory were observed without recording values, including Sentry DSNs and `RESEND_WEBHOOK_SECRET` |
 
 ## Still manual before Phase 1 Task 5 / sign-off
 
@@ -23,11 +24,10 @@ alwaysApply: true
 |------|--------|
 | JWT expiry → **3600s** | Supabase Dashboard → Authentication → Settings → JWT Expiry |
 | Auth Hook **`app.custom_access_token_hook`** | Supabase Dashboard → Authentication → Hooks → Custom Access Token |
-| Upstash Redis | Vercel Marketplace integration; `UPSTASH_REDIS_REST_URL` + token in env |
-| Sentry | Project DSN → `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` on Vercel and locally |
+| Custom SMTP | Supabase Dashboard → Auth SMTP settings; use verified Resend sender `noreply@popsindustrial.com` |
 | Vercel domains | **`app.popsindustrial.com`** + **`track.popsindustrial.com`** (replace any stale `popscoating.com`) |
 | Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (e.g. registrar DNS) |
 
-**Gate:** After the **two Supabase Dashboard** steps (JWT + Hook) and branch push/sync, Phase 1 **Task 5** (success criteria walkthrough) can run.
+**Gate:** After the Supabase Dashboard JWT/Auth Hook/SMTP checks, canonical Vercel domain attachment, Resend DNS verification, live Tenant 1 seed, and branch push/sync, Phase 1 **Task 5** (success criteria walkthrough) can run.
 
 **Git:** If work lived on `ralph/foundation-completion`, push with explicit `git push origin <branch-name>` after `git branch --show-current` — avoid ambiguous upstream to `main`.

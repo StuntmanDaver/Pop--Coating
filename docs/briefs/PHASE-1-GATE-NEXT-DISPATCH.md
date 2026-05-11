@@ -9,14 +9,14 @@ Canonical production hosts:
 
 ## Current Automated Baseline
 
-- `pnpm type-check` passes.
-- `pnpm lint` passes, including `madge --circular src/modules`.
-- `pnpm test` passes: 34 files / 242 tests.
-- `pnpm build` passes.
-- Linked pgTAP is verified: `supabase test db --linked` passes 9 files / 87 tests after migration `0020_security_definer_fail_closed.sql`.
-- `supabase migration list --linked` verified local/remote alignment through `0020_security_definer_fail_closed.sql` on 2026-05-08.
+- `pnpm type-check` passes as of 2026-05-11.
+- `pnpm lint` passes as of 2026-05-11, including `madge --circular src/modules`.
+- `pnpm test` passes as of 2026-05-11: 34 files / 242 tests.
+- `pnpm build` passes as of 2026-05-11.
+- Linked pgTAP is verified as of 2026-05-11: `supabase test db --linked` passes 9 files / 89 tests.
+- `supabase migration list --linked` is clean as of 2026-05-11: local and remote align through `0022` after fetching `0021_scan_event_idempotency.sql` and removing the identical duplicate local `0022_auth_hook_security_definer 2.sql` file.
 - Playwright E2E is not verified locally because staff E2E credentials are not configured.
-- No-secret Playwright host-form smoke passes: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"`.
+- No-secret Playwright host-form smoke passes as of 2026-05-11: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"` (2 tests).
 
 ## Human-Only Blockers
 
@@ -25,7 +25,7 @@ Canonical production hosts:
 - [ ] Supabase Dashboard: configure Custom SMTP through Resend.
 - [ ] Resend/DNS registrar: verify DKIM, SPF, and MX for `popsindustrial.com`.
 - [ ] Vercel Dashboard: move or remove the existing aliases for `app.popsindustrial.com` and `track.popsindustrial.com`, then attach them to the `pops--coating` project. CLI attach is blocked because both aliases are already assigned elsewhere.
-- [ ] Vercel Dashboard: set or confirm remaining production env gaps from `docs/runbooks/phase-1-production-readiness.md`. Supabase, Resend API, and Upstash env names were observed; `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible in the CLI inventory.
+- [x] Vercel Dashboard/CLI: production env names from `docs/runbooks/phase-1-production-readiness.md` were observed on 2026-05-11 without recording values, including `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
 - [x] GitHub Actions: required CI secret/variable names from `docs/runbooks/phase-1-production-readiness.md` were confirmed without storing values in-repo; `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` were added for E2E.
 - [x] Local/CI: Docker Desktop available; linked pgTAP passes locally.
 
@@ -41,7 +41,7 @@ Tasks:
 
 - Source local env without printing secrets.
 - Confirm linked Supabase project ref.
-- Run `supabase migration list --linked` and verify migrations through `0020_security_definer_fail_closed.sql` are applied.
+- Run `supabase migration list --linked`; expected result is local/remote alignment through `0022`.
 - Run `supabase test db --linked`.
 - Verify JWT expiry reports `3600` if the CLI can inspect it.
 - Note: local Supabase CLI `v2.90.0` does not expose `supabase inspect db config`; JWT expiry remains a Dashboard verification unless a newer CLI/API path is available.
@@ -74,7 +74,7 @@ Tasks:
 - Ensure required env names are mirrored in `.env.local.example` when local or CI execution needs the name.
 - Ensure `popsindustrial.com` is canonical and stale `popscoating.com` is only mentioned as a domain to remove.
 - Do not print or store secret values.
-- Return changed files and any manual dashboard gaps.
+- Return changed files and any remaining manual dashboard gaps. Current known gap: canonical subdomains are not attached to `pops--coating`; latest production URL still reports stale `app.popscoating.com`.
 
 ### P1-GATE-04 — Phase 1 Success Walkthrough Harness
 

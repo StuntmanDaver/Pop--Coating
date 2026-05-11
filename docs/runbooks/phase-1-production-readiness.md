@@ -60,6 +60,20 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 ### Latest Local Baseline
 
+2026-05-11:
+
+- Passed: `pnpm type-check`
+- Passed: `pnpm lint`
+- Passed: `pnpm test` (34 files / 242 tests)
+- Passed: `pnpm build`
+- Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"` (2 no-secret host-form tests)
+- Passed: `supabase test db --linked` (9 files / 89 tests)
+- Confirmed: Vercel Production env names from the inventory are present without recording values, including the previously missing `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
+- Confirmed: `popsindustrial.com` exists under the Vercel team, but `app.popsindustrial.com` and `track.popsindustrial.com` are not accessible/attached under the current project; `vercel alias ls` shows no aliases for this project and `vercel project ls` still reports the latest production URL under stale `app.popscoating.com`.
+- Confirmed: `supabase migration list --linked` is clean through `0022` after fetching `0021_scan_event_idempotency.sql` and removing the identical duplicate local `0022_auth_hook_security_definer 2.sql` file.
+
+### Previous Local Baseline
+
 2026-05-08:
 
 - Passed: `pnpm type-check`
@@ -74,7 +88,7 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Pushed `main` to `origin` through commit `a34bb04`.
 - Confirmed GitHub Actions secret/variable names without printing values. Added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`; existing names include `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, and `RESEND_API_KEY`.
 - Confirmed Vercel project `stuntmandavers-projects/pops--coating`; latest production deployment is ready, but the project still reports a stale production URL under `app.popscoating.com`.
-- Confirmed Vercel production env names for Supabase, `RESEND_API_KEY`, Upstash Redis/QStash, and canonical app/portal hosts. `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible in the CLI inventory and remain dashboard/env gaps.
+- Confirmed Vercel production env names for Supabase, `RESEND_API_KEY`, Upstash Redis/QStash, and canonical app/portal hosts. `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` were not visible in the CLI inventory at that time; these were later observed on 2026-05-11.
 - Attempted to attach `app.popsindustrial.com` and `track.popsindustrial.com`; both are blocked by alias conflicts because they are already assigned to another Vercel project. Do not force-move without confirming the current owning project in the dashboard.
 - Not run: Playwright E2E, because staff E2E credentials were not configured locally.
 - Passed: `supabase test db --linked` (9 files / 87 tests).
@@ -94,7 +108,7 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Supabase Dashboard: JWT expiry must be `3600` seconds.
 - Supabase Dashboard: Custom Access Token Hook must point to `app.custom_access_token_hook`.
 - Supabase Dashboard: Custom SMTP must use the verified Resend sender for `popsindustrial.com`.
-- Vercel Dashboard/CLI: production project env vars from the inventory must be present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists. Framework/system names such as `NEXT_PUBLIC_VERCEL_ENV` may be satisfied by Vercel automatic framework env exposure; confirm that behavior before relying on client Sentry environment labels. Remaining observed gaps: `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
+- Vercel Dashboard/CLI: production project env vars from the inventory must remain present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists. Framework/system names such as `NEXT_PUBLIC_VERCEL_ENV` may be satisfied by Vercel automatic framework env exposure; confirm that behavior before relying on client Sentry environment labels. The previously missing `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` names were observed in Production on 2026-05-11.
 - Vercel Dashboard/CLI: `app.popsindustrial.com` and `track.popsindustrial.com` must be attached and certificate issuance must be complete. Current blocker: both aliases are already assigned elsewhere and require dashboard reassignment/removal before attachment to `pops--coating`.
 - Resend/DNS registrar: DKIM, SPF, and MX must verify for `popsindustrial.com`.
 - GitHub Actions settings: required CI secret/variable names from the inventory were confirmed on 2026-05-08 without values stored in-repo. Staff/workstation E2E credential secrets remain optional and credential-gated.

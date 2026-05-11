@@ -43,7 +43,7 @@ metrics:
 
 ## Status: BLOCKED ON HUMAN-ONLY PRODUCTION CHECKPOINTS
 
-Automated code and database verification is current as of 2026-05-08. Migrations are applied to the linked Supabase project through `0020_security_definer_fail_closed.sql`; generated database types are in place; linked pgTAP passes 9 files / 87 tests; root CI on `main` is green.
+Automated code and database verification below records the 2026-05-08 baseline. It has been superseded by the 2026-05-11 gate re-check in `.planning/intel/SESSION-MEMORY.md` and `docs/runbooks/phase-1-production-readiness.md`: linked pgTAP now passes 9 files / 89 tests after adding scan replay idempotency coverage, and remote migration `0021_scan_event_idempotency.sql` has been fetched locally.
 
 Phase 1 sign-off remains blocked by human/dashboard work: Supabase JWT expiry, Custom Access Token Hook registration, custom SMTP/Resend DNS, Vercel alias reassignment/env gaps, and the live Tenant 1 seed run with the real owner email/name. JWT expiry is not inspectable with the locally installed Supabase CLI v2.90.0, so it remains a Dashboard verification unless a newer CLI/API path is available.
 
@@ -73,7 +73,7 @@ Files modified:
 - `package.json` — added `seed:tenant` script, `tsx` devDependency
 - `pnpm-lock.yaml` — lockfile updated for tsx
 
-**Verification:** current gates pass: `pnpm type-check`, `pnpm lint`, `pnpm test` (34 files / 242 tests), `pnpm build`, no-secret Playwright host-form smoke, `supabase migration list --linked` through `0020`, and `supabase test db --linked` (9 files / 87 tests).
+**Verification:** 2026-05-08 gates passed: `pnpm type-check`, `pnpm lint`, `pnpm test` (34 files / 242 tests), `pnpm build`, no-secret Playwright host-form smoke, `supabase migration list --linked` through `0020`, and `supabase test db --linked` (9 files / 87 tests). See the 2026-05-11 gate re-check for the current baseline.
 
 ## Deviations from Plan
 
@@ -127,7 +127,7 @@ Tasks 1a and 1b verified:
 - VERIFIED: pnpm test passes (34 files / 242 tests)
 - VERIFIED: pnpm build exits 0
 - VERIFIED: no-secret Playwright host-form smoke passes
-- VERIFIED: pgTAP tests against linked DB pass (9 files / 87 tests)
+- VERIFIED on 2026-05-08: pgTAP tests against linked DB pass (9 files / 87 tests). Superseded by 2026-05-11 baseline: 9 files / 89 tests.
 - VERIFIED: src/shared/db/types.ts generated from linked schema through migration 0020
 - NOT VERIFIED: JWT expiry = 3600s Dashboard setting
 - NOT VERIFIED: production Custom Access Token Hook and SMTP/DNS Dashboard setup
