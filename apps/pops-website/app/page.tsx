@@ -243,7 +243,7 @@ export default function HomePage() {
         {/* ── About strip — worker photo (blacked out) + CTA ── */}
         <section
           aria-label="About Pop's Industrial Coatings"
-          className="relative min-h-[380px] overflow-hidden md:min-h-[460px]"
+          className="relative min-h-[560px] overflow-hidden md:min-h-[720px]"
         >
           <div className="absolute inset-0 z-0">
             <Image
