@@ -128,7 +128,7 @@ export function Footer() {
           </FooterColumn>
         </div>
 
-        <div className="border-t border-pops-yellow-500/15 py-6 font-text text-xs text-ink-400">
+        <div className="border-t border-pops-yellow-500/15 pops-pb-safe py-6 font-text text-xs text-ink-400">
           <p>
             &copy; {new Date().getFullYear()} {company.name}. All rights reserved.
           </p>

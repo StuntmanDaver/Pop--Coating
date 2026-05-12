@@ -231,6 +231,33 @@ html {
   color: #F4F6FA;
 }
 
+/**
+ * Horizontal page gutters that respect safe areas (notched phones, landscape).
+ * Pair with `viewportFit: "cover"` on the document viewport.
+ */
+.pops-px-page {
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+@media (width >= 40rem) {
+  .pops-px-page {
+    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (width >= 64rem) {
+  .pops-px-page {
+    padding-left: max(2rem, env(safe-area-inset-left, 0px));
+    padding-right: max(2rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+.pops-pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+
 body {
   background:
     linear-gradient(180deg, rgba(254, 205, 8, 0.07) 0%, rgba(254, 205, 8, 0.02) 12%, transparent 32%),
@@ -261,9 +288,9 @@ body {
   background: linear-gradient(155deg, rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.01));
   border: 1px solid rgb(255 255 255 / 0.06);
   transition:
-    border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    border-color 0.7s ease-in-out,
+    box-shadow 0.7s ease-in-out,
+    transform 0.7s ease-in-out;
 }
 
 .pops-card-surface:hover {

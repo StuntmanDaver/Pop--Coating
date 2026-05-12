@@ -10,7 +10,7 @@ const buttonVariants = cva(
     "rounded-sm",
     "font-text font-semibold text-sm",
     "px-6 py-3",
-    "transition-[transform,box-shadow,opacity,background-color,border-color,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+    "transition-[transform,box-shadow,opacity,background-color,border-color,color] duration-500 ease-in-out",
     "outline-none",
     "focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -32,8 +32,8 @@ const buttonVariants = cva(
           "bg-transparent border border-white/25 text-white hover:border-pops-yellow-500 hover:text-pops-yellow-300 hover:shadow-[0_0_24px_-8px_rgba(254,205,8,0.35)]",
       },
       size: {
-        default: "h-11",
-        compact: "h-9 px-5 py-2",
+        default: "h-12 px-6 py-3",
+        compact: "h-10 px-5 py-2 sm:h-9",
       },
     },
     defaultVariants: {

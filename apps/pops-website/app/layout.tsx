@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -14,6 +14,12 @@ const text = Inter({
   variable: "--font-text",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://popsindustrial.com"),
@@ -41,7 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`scroll-smooth ${display.variable} ${text.variable}`}>
-      <body className="font-text" suppressHydrationWarning>{children}</body>
+      <body className="font-text antialiased [-webkit-tap-highlight-color:transparent]" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

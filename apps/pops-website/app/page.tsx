@@ -88,9 +88,9 @@ export default function HomePage() {
         <Hero
           eyebrow={`FAMILY OWNED · LAKELAND,\u00A0FL`}
           heading="Serving the Industry Since 1972"
-          headingClassName="text-balance text-[clamp(3rem,8vw,7.75rem)] max-w-5xl"
+          headingClassName="text-balance text-[clamp(2.25rem,6.5vw+0.6rem,7.75rem)] max-w-[min(100%,34rem)] sm:max-w-5xl"
           lede="Premium industrial powder coating, wet paint, abrasive blasting, complex coating systems, and large-capacity finishing for mission-critical parts and structures."
-          ledeClassName="max-w-3xl text-base leading-relaxed text-ink-100 sm:text-lg md:mt-8 md:text-xl"
+          ledeClassName="max-w-3xl text-[1.0625rem] leading-relaxed text-ink-100 sm:text-lg md:mt-8 md:text-xl"
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
           secondaryCta={{ label: "Explore Services", href: "/industrial-coatings-services" }}
           animateCopyOnLoad
@@ -112,7 +112,7 @@ export default function HomePage() {
                 {STATS.map(({ label, value, detail }, i) => (
                   <div
                     key={label}
-                    className={`px-6 py-7 text-center transition-colors duration-300 hover:bg-pops-yellow-500/[0.04] md:py-9 ${STAT_CELL_CLASSES[i]}`}
+                    className={`px-6 py-7 text-center transition-colors duration-700 ease-in-out hover:bg-pops-yellow-500/[0.04] md:py-9 ${STAT_CELL_CLASSES[i]}`}
                   >
                     <p className="font-text text-[10px] font-semibold uppercase tracking-[0.1em] text-pops-yellow-500/90">
                       {label}

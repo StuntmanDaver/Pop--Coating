@@ -67,7 +67,7 @@ export function Hero({
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "6%"]);
 
   const ctaClassName = cn(
-    "min-h-12 px-8 text-base transition-all duration-300",
+    "w-full justify-center text-base transition-all duration-500 ease-in-out sm:w-auto sm:justify-center",
     cinematic && "shadow-[0_18px_46px_-26px_rgba(254,205,8,0.8)] hover:-translate-y-0.5",
   );
 
@@ -105,7 +105,7 @@ export function Hero({
       ) : null}
       <div
         className={cn(
-          "mt-10 flex flex-col gap-4 sm:mt-12",
+          "mt-10 flex flex-col gap-3 sm:mt-12 sm:gap-4",
           cinematic && "sm:flex-row sm:items-center",
           stackPrimaryActions && (secondaryCta ?? tertiaryCta)
             ? "items-stretch sm:max-w-md sm:items-stretch"
@@ -200,10 +200,10 @@ export function Hero({
       />
       <div
         className={cn(
-          "relative z-10 mx-auto flex w-full max-w-[1280px] flex-col px-6 lg:px-8",
+          "relative z-10 mx-auto flex w-full max-w-[1280px] pops-px-page flex-col",
           cinematic
-            ? "min-h-[100svh] justify-center pb-12 pt-28 sm:pb-16 sm:pt-32 md:pb-20"
-            : "min-h-[85vh] justify-start pb-16 pt-20 md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:pt-28",
+            ? "min-h-[100svh] justify-center pb-[max(3rem,env(safe-area-inset-bottom,0px))] pt-[max(6.75rem,calc(4.75rem+env(safe-area-inset-top,0px)))] sm:pb-16 sm:pt-32 md:pb-20 md:pt-32"
+            : "min-h-[85vh] justify-start pb-16 pt-[max(5rem,calc(3.75rem+env(safe-area-inset-top,0px)))] md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:pt-28",
         )}
       >
         {cinematic ? (
@@ -211,7 +211,7 @@ export function Hero({
             className="max-w-5xl"
             initial={reduceMotion ? false : { opacity: 0, y: 22, filter: "blur(8px)" }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={reduceMotion ? undefined : { duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+            transition={reduceMotion ? undefined : { duration: 0.9, ease: "easeInOut" }}
           >
             {copy}
           </motion.div>
