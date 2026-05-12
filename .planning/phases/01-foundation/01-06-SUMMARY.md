@@ -41,11 +41,11 @@ metrics:
 
 **One-liner:** pgTAP RLS/function coverage with JWT helpers, supabase/seed.sql with fixed-UUID test tenant, an idempotent scripts/seed-tenant.ts for live Tenant 1 bootstrap, and GitHub Actions CI gates for type-check, lint/madge, Vitest, E2E smoke, and pgTAP branch DBs where available.
 
-## Status: BLOCKED ON HUMAN-ONLY PRODUCTION CHECKPOINTS
+## Status: BLOCKED ON DNS/SMTP/SEED PRODUCTION CHECKPOINTS
 
-Automated code and database verification below records the 2026-05-08 baseline. It has been superseded by the 2026-05-11 gate re-check in `.planning/intel/SESSION-MEMORY.md` and `docs/runbooks/phase-1-production-readiness.md`: linked pgTAP now passes 9 files / 89 tests after adding scan replay idempotency coverage, and remote migration `0021_scan_event_idempotency.sql` has been fetched locally.
+Automated code and database verification below records the 2026-05-08 baseline. It has been superseded by the 2026-05-11 gate re-check and the 2026-05-12 DNS-deferred pass in `.planning/intel/SESSION-MEMORY.md` and `docs/runbooks/phase-1-production-readiness.md`: linked migrations now align through `0026`, DB types were regenerated from the linked schema, and pgTAP passes 9 files / 93 tests including the public Dashboard auth-hook wrapper.
 
-Phase 1 sign-off remains blocked by human/dashboard work: Supabase JWT expiry, Custom Access Token Hook registration, custom SMTP/Resend DNS, Vercel alias reassignment/env gaps, and the live Tenant 1 seed run with the real owner email/name. JWT expiry is not inspectable with the locally installed Supabase CLI v2.90.0, so it remains a Dashboard verification unless a newer CLI/API path is available.
+Phase 1 sign-off remains blocked by human/dashboard work: registrar DNS for `app.popsindustrial.com` and `track.popsindustrial.com`, Resend DNS verification, Supabase custom SMTP, and the live Tenant 1 seed run with the real owner email/name. JWT expiry is already `3600`, and the production Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`, which delegates to canonical `app.custom_access_token_hook`.
 
 ## Completed Tasks
 
@@ -94,18 +94,18 @@ Files modified:
 
 ## Pending Tasks (Awaiting Human-Action Checkpoint)
 
-- **Task 2 [BLOCKING]:** Manual Supabase Dashboard + Vercel + Resend + Sentry + GitHub Actions configuration (see checkpoint details below)
-- **Task 3:** live schema push and type generation are complete through migration `0020`; `scripts/seed-tenant.ts` execution still needs the real owner email/name and completed dashboard/DNS prerequisites.
-- **Task 4:** JWT expiry verification remains manual/dashboard-only with Supabase CLI v2.90.0 because `supabase inspect db config` is not available locally.
+- **Task 2 [BLOCKING]:** Manual DNS + Resend + Supabase SMTP configuration (see checkpoint details below). JWT expiry and Auth Hook registration are complete.
+- **Task 3:** live schema push and type generation are complete through migration `0026`; `scripts/seed-tenant.ts` execution still needs the real owner email/name and completed DNS/SMTP prerequisites.
+- **Task 4:** JWT expiry is Dashboard-verified as `3600`; final sign-off should re-check it without recording secret/session material.
 - **Task 5:** Phase 1 success criteria walkthrough (5 criteria PASS/FAIL)
 
 ## AUTH-02 / [A1] RESOLVED
 
-JWT expiry verification is pending Task 2 (manual Dashboard configuration) and Task 4 (manual or future CLI/API verification). Per RESEARCH.md A1 RESOLVED, Supabase JWT expiry is project-global; setting it to 3600s satisfies AUTH-02's stolen-tablet mitigation for workstations while office/customer 30-day sessions work via refresh-token rotation. Task 2 step A.7 sets the value; Task 4 records the verified value once available.
+JWT expiry verification is complete as of 2026-05-12: Dashboard shows `3600`. Per RESEARCH.md A1 RESOLVED, Supabase JWT expiry is project-global; setting it to 3600s satisfies AUTH-02's stolen-tablet mitigation for workstations while office/customer 30-day sessions work via refresh-token rotation. Task 5 should re-check the value during sign-off.
 
 ## Known Stubs
 
-- No placeholder DB type remains for the current linked schema. `src/shared/db/types.ts` was regenerated after applying migrations through `0020`.
+- No placeholder DB type remains for the current linked schema. `src/shared/db/types.ts` was regenerated after applying migrations through `0026`.
 
 ## Threat Flags
 
@@ -124,11 +124,12 @@ Tasks 1a and 1b verified:
 - FOUND: .github/workflows/ci.yml (contains all 4 gates)
 - VERIFIED: pnpm type-check exits 0
 - VERIFIED: pnpm lint exits 0
-- VERIFIED: pnpm test passes (34 files / 242 tests)
+- VERIFIED: pnpm test passes (41 files / 300 tests after rebasing onto `origin/main`)
 - VERIFIED: pnpm build exits 0
 - VERIFIED: no-secret Playwright host-form smoke passes
-- VERIFIED on 2026-05-08: pgTAP tests against linked DB pass (9 files / 87 tests). Superseded by 2026-05-11 baseline: 9 files / 89 tests.
-- VERIFIED: src/shared/db/types.ts generated from linked schema through migration 0020
-- NOT VERIFIED: JWT expiry = 3600s Dashboard setting
-- NOT VERIFIED: production Custom Access Token Hook and SMTP/DNS Dashboard setup
+- VERIFIED on 2026-05-08: pgTAP tests against linked DB pass (9 files / 87 tests). Superseded by 2026-05-11 baseline: 9 files / 89 tests, and 2026-05-12 wrapper coverage: 9 files / 93 tests.
+- VERIFIED: src/shared/db/types.ts generated from linked schema through migration 0026
+- VERIFIED: JWT expiry = 3600s Dashboard setting
+- VERIFIED: production Custom Access Token Hook enabled via `public.dashboard_custom_access_token_hook`, a no-write wrapper delegating to `app.custom_access_token_hook`
+- NOT VERIFIED: SMTP/DNS Dashboard setup
 - NOT VERIFIED: live Tenant 1 seed run with real owner email/name

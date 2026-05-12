@@ -29,7 +29,7 @@ Run `pnpm test:e2e` only when the required staff E2E credentials and public Supa
 
 These checks need dashboard access, production DNS/email delivery, or one-time session material. They are not fully automated by the harness. Record only PASS/FAIL, hostnames, timestamps, and approved non-secret IDs.
 
-- Supabase Authentication JWT expiry, Custom Access Token Hook registration, and Custom SMTP status.
+- Supabase Authentication JWT expiry, Custom Access Token Hook registration, and Custom SMTP status. Current expected hook registration is `public.dashboard_custom_access_token_hook`, which delegates to canonical `app.custom_access_token_hook`.
 - Resend/DNS DKIM, SPF, and MX verification for `popsindustrial.com`.
 - Vercel domain attachment and TLS status for `app.popsindustrial.com` and `track.popsindustrial.com`.
 - Real customer magic-link delivery and link-open flow, because the email link is sensitive session material.
@@ -40,8 +40,8 @@ These checks need dashboard access, production DNS/email delivery, or one-time s
 
 ## Manual Checklist
 
-- [ ] Supabase Dashboard: Authentication JWT expiry is `3600` seconds.
-- [ ] Supabase Dashboard: Custom Access Token Hook is registered to `app.custom_access_token_hook`.
+- [ ] Supabase Dashboard: Authentication JWT expiry is still `3600` seconds.
+- [ ] Supabase Dashboard: Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`.
 - [ ] Supabase Dashboard: Custom SMTP through Resend is active.
 - [ ] Resend/DNS: DKIM, SPF, and MX pass for `popsindustrial.com`.
 - [ ] Vercel: `app.popsindustrial.com` and `track.popsindustrial.com` are attached to the production project and TLS is healthy.

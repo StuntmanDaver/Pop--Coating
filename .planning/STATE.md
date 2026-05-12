@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-11T00:00:00.000Z"
+last_updated: "2026-05-12T00:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 0
@@ -94,12 +94,12 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ### Blockers
 
-- **Plan 06 human-only gate:** Supabase JWT expiry, Custom Access Token Hook, Custom SMTP/Resend DNS, Vercel domain reassignment for `app.popsindustrial.com` and `track.popsindustrial.com`, and live Tenant 1 seed remain before Phase 1 sign-off — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
+- **Plan 06 human-only gate:** DNS is deferred until registrar access is available. Supabase JWT expiry and Custom Access Token Hook are configured; remaining blockers are Supabase custom SMTP, Resend DNS, registrar DNS for `app.popsindustrial.com` and `track.popsindustrial.com`, live Tenant 1 seed, and Phase 1 success walkthrough — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
 
 ### Todos Carried Forward
 
-- Move or remove existing Vercel aliases for `app.popsindustrial.com` and `track.popsindustrial.com`, then attach them to `stuntmandavers-projects/pops--coating`; remove stale `popscoating.com` hosts if present.
-- Verify Supabase JWT expiry/Auth Hook/SMTP, Resend DNS, and Vercel canonical domain attachment without storing secret values in-repo.
+- Add registrar CNAME records for `app.popsindustrial.com` and `track.popsindustrial.com`, then refresh Vercel until both canonical domains are valid; remove stale `popscoating.com` hosts after canonical domains pass.
+- Configure Supabase custom SMTP after Resend DNS verifies; do not store SMTP/API secrets in-repo.
 
 ### Quick Tasks Completed
 
@@ -111,9 +111,9 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ## Session Continuity
 
-**Last updated:** 2026-05-11
-**Last action:** Re-ran the repo-side Phase 1 gate on 2026-05-11: `pnpm type-check`, `pnpm lint`, `pnpm test`, `pnpm build`, no-secret Playwright host smoke, and `supabase test db --linked` pass. Added pgTAP coverage for scan replay idempotency, bringing linked pgTAP to 9 files / 89 tests. Fetched missing remote migration `0021_scan_event_idempotency.sql`, removed the identical duplicate local `0022 ... 2.sql` file, and verified `supabase migration list --linked` aligns local/remote through `0022`.
-**Next action:** Complete the human-only blockers in `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md` (Supabase JWT/Auth Hook/SMTP, Vercel canonical domain attachment, Resend DNS), collect owner email/name for `pnpm seed:tenant`, then run Phase 1 Task 5 sign-off.
+**Last updated:** 2026-05-12
+**Last action:** Deferred DNS until registrar access is available. Supabase JWT expiry is `3600`; production Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`, which delegates to canonical `app.custom_access_token_hook`. Added migrations through `0026`, regenerated `src/shared/db/types.ts`, and expanded pgTAP coverage for the Dashboard auth-hook wrapper.
+**Next action:** With registrar access, add Vercel CNAMEs and Resend DNS records, verify domains/DKIM/SPF/MX, configure Supabase custom SMTP, collect owner email/name for `pnpm seed:tenant`, then run Phase 1 Task 5 sign-off.
 
 **Context for next session:**
 
@@ -121,8 +121,8 @@ Phase 4 [----------] 0%  Portal & Ops
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Plans 01-05 complete: Next.js scaffold, 10 SQL migrations, auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry, auth Server Actions + sign-in UI + module stubs
-- Plan 06: checkpoint — Supabase Cloud schema through migration 0020 is applied, DB types are generated, and linked pgTAP passes; remaining gates are seed-tenant.ts run, hook Dashboard registration, JWT expiry, SMTP, Vercel alias reassignment/env gaps, and Phase 1 success walkthrough
+- Plan 06: checkpoint — Supabase Cloud schema through migration 0026 is applied, DB types are generated, and linked pgTAP covers auth hook invariants; remaining gates are DNS, SMTP, seed-tenant.ts run, and Phase 1 success walkthrough
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
-- vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 34 files / 242 tests
+- vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 41 files / 300 tests after rebasing onto `origin/main`
 - **Vercel URL:** not in repo; use dashboard or `vercel link` after selecting the correct team — see `SESSION-MEMORY.md`

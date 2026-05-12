@@ -10,9 +10,9 @@ Production domain default is `popsindustrial.com`:
 ## Manual Infrastructure Gate
 
 - Supabase Authentication JWT expiry is set to `3600` seconds.
-- Supabase Custom Access Token Hook is registered to `app.custom_access_token_hook`.
+- Supabase Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`, a no-write Dashboard wrapper that delegates to canonical `app.custom_access_token_hook`.
 - Vercel project is linked under the intended team and production deploy is known. Current project: `stuntmandavers-projects/pops--coating`.
-- Vercel domains include `app.popsindustrial.com` and `track.popsindustrial.com`; stale `popscoating.com` domains are removed. Current blocker: CLI attach for both canonical aliases is blocked because they are already assigned to another Vercel project and need dashboard reassignment/removal before attachment.
+- Vercel domains include `app.popsindustrial.com` and `track.popsindustrial.com`; both are attached to `pops--coating` but invalid until registrar DNS records are added. Stale `popscoating.com` domains are removal-only after canonical domains are healthy.
 - Production env vars match the inventory below. Set values only in Vercel, GitHub Actions, Supabase Dashboard, or local `.env.local`; never paste values into docs or terminal output.
 - Resend DNS for `popsindustrial.com` passes DKIM, SPF, and MX verification.
 
@@ -60,6 +60,22 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 ### Latest Local Baseline
 
+2026-05-12 DNS-deferred update:
+
+- Applied linked Supabase migration `0026_dashboard_auth_hook_wrapper.sql`.
+- Regenerated `src/shared/db/types.ts` from the linked schema through migration `0026`.
+- Added pgTAP coverage for `public.dashboard_custom_access_token_hook`: `STABLE`, `SECURITY DEFINER`, `supabase_auth_admin` execute grant, and delegation-only/no-write body.
+- Passed: `pnpm type-check`
+- Passed: `pnpm lint`
+- Passed: `pnpm test` (41 files / 300 tests after rebasing onto `origin/main`)
+- Passed: `pnpm build`
+- Passed: `supabase migration list --linked` (local and remote aligned through `0026`)
+- Passed: `supabase test db --linked` (9 files / 93 tests)
+- Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"` (2 no-secret host-form tests)
+- Confirmed operational truth from Dashboard screenshots: JWT expiry is `3600`, and the production Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`.
+- Confirmed operational blocker: `app.popsindustrial.com` and `track.popsindustrial.com` are attached to the Vercel project but invalid until registrar DNS records are added.
+- Deferred by decision: DNS, Resend verification, Supabase SMTP, and live Tenant 1 seed.
+
 2026-05-11:
 
 - Passed: `pnpm type-check`
@@ -69,7 +85,7 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - Passed: `pnpm exec playwright test tests/e2e/phase1-auth-smoke.spec.ts --grep "office host|customer portal renders"` (2 no-secret host-form tests)
 - Passed: `supabase test db --linked` (9 files / 89 tests)
 - Confirmed: Vercel Production env names from the inventory are present without recording values, including the previously missing `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`.
-- Confirmed: `popsindustrial.com` exists under the Vercel team, but `app.popsindustrial.com` and `track.popsindustrial.com` are not accessible/attached under the current project; `vercel alias ls` shows no aliases for this project and `vercel project ls` still reports the latest production URL under stale `app.popscoating.com`.
+- Superseded on 2026-05-12: `popsindustrial.com` exists under the Vercel team, and `app.popsindustrial.com` / `track.popsindustrial.com` are attached to `pops--coating`, but DNS is invalid until registrar records are added. Stale `app.popscoating.com` and `track.popscoating.com` remain removal-only.
 - Confirmed: `supabase migration list --linked` is clean through `0022` after fetching `0021_scan_event_idempotency.sql` and removing the identical duplicate local `0022_auth_hook_security_definer 2.sql` file.
 
 ### Previous Local Baseline
@@ -105,14 +121,14 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 
 ## Manual Dashboard Gaps
 
-- Supabase Dashboard: JWT expiry must be `3600` seconds.
-- Supabase Dashboard: Custom Access Token Hook must point to `app.custom_access_token_hook`.
-- Supabase Dashboard: Custom SMTP must use the verified Resend sender for `popsindustrial.com`.
+- Supabase Dashboard: JWT expiry is `3600` seconds; re-check during final sign-off but it is no longer a blocker.
+- Supabase Dashboard: Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`; the wrapper delegates to canonical `app.custom_access_token_hook` and must remain no-write.
+- Supabase Dashboard: Custom SMTP must use the verified Resend sender for `popsindustrial.com`; configure only after Resend DNS verifies.
 - Vercel Dashboard/CLI: production project env vars from the inventory must remain present with production scope; sensitive values must not be placed in Preview or Development unless a separate non-production credential exists. Framework/system names such as `NEXT_PUBLIC_VERCEL_ENV` may be satisfied by Vercel automatic framework env exposure; confirm that behavior before relying on client Sentry environment labels. The previously missing `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET` names were observed in Production on 2026-05-11.
-- Vercel Dashboard/CLI: `app.popsindustrial.com` and `track.popsindustrial.com` must be attached and certificate issuance must be complete. Current blocker: both aliases are already assigned elsewhere and require dashboard reassignment/removal before attachment to `pops--coating`.
+- Vercel/DNS registrar: `app.popsindustrial.com` and `track.popsindustrial.com` are attached to `pops--coating`; add registrar DNS records and refresh Vercel until both domains and certificates are valid.
 - Resend/DNS registrar: DKIM, SPF, and MX must verify for `popsindustrial.com`.
 - GitHub Actions settings: required CI secret/variable names from the inventory were confirmed on 2026-05-08 without values stored in-repo. Staff/workstation E2E credential secrets remain optional and credential-gated.
 
 ## Sign-Off
 
-Use `docs/runbooks/phase-1-success-walkthrough.md` for the no-secret success walkthrough. Phase 1 Task 5 can run only after the Supabase Dashboard JWT/Auth Hook/SMTP checks, branch push/sync, and the automated gate pass. Phase 2 planning stays blocked until Task 5 criteria pass.
+Use `docs/runbooks/phase-1-success-walkthrough.md` for the no-secret success walkthrough. Phase 1 Task 5 can run only after DNS, Resend verification, Supabase SMTP, live Tenant 1 seed, branch push/sync, and the automated gate pass. Phase 2 planning stays blocked until Task 5 criteria pass.

@@ -5,20 +5,24 @@
 -- These tests guard the CLAUDE.md hidden invariants that, if broken, cause silent
 -- production failures (deadlocks, privilege escalation, security bypasses).
 --
--- Tests (6 total):
+-- Tests (10 total):
 --   1. app.custom_access_token_hook has provolatile = 's' (STABLE — no writes)
 --   2. supabase_auth_admin role has rolbypassrls = true (BYPASSRLS preserved)
 --   3. authenticated role CANNOT UPDATE jobs.production_status (REVOKE in 0008)
 --   4. authenticated role CAN UPDATE jobs.intake_status (only production_status is revoked)
 --   5. supabase_auth_admin has EXECUTE grant on app.custom_access_token_hook
 --   6. app.custom_access_token_hook body contains no write statements (defense-in-depth)
+--   7. public.dashboard_custom_access_token_hook is STABLE
+--   8. public.dashboard_custom_access_token_hook is SECURITY DEFINER
+--   9. supabase_auth_admin has EXECUTE grant on public dashboard wrapper
+--   10. public dashboard wrapper only delegates and contains no write statements
 
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path = public, extensions;
 SET ROLE postgres;
 
 BEGIN;
-SELECT extensions.plan(6);
+SELECT extensions.plan(10);
 
 -- ============================================================
 -- Test 1: app.custom_access_token_hook is STABLE (provolatile = 's')
@@ -98,6 +102,66 @@ SELECT extensions.is(
      AND pronamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'app')),
   true,
   'app.custom_access_token_hook body contains no INSERT/UPDATE/DELETE statements'
+);
+
+-- ============================================================
+-- Test 7: Dashboard wrapper is STABLE
+-- The Supabase Dashboard hook picker does not expose the app schema for this
+-- project, so production registers public.dashboard_custom_access_token_hook.
+-- It must preserve the no-write/STABLE invariant by delegating only.
+-- ============================================================
+SELECT extensions.is(
+  (SELECT provolatile::text
+   FROM pg_proc
+   WHERE proname = 'dashboard_custom_access_token_hook'
+     AND pronamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')),
+  's',
+  'public.dashboard_custom_access_token_hook is STABLE (provolatile = s)'
+);
+
+-- ============================================================
+-- Test 8: Dashboard wrapper is SECURITY DEFINER
+-- Supabase Auth invokes the wrapper as supabase_auth_admin; SECURITY DEFINER
+-- keeps wrapper behavior consistent with the canonical app hook.
+-- ============================================================
+SELECT extensions.is(
+  (SELECT prosecdef
+   FROM pg_proc
+   WHERE proname = 'dashboard_custom_access_token_hook'
+     AND pronamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')),
+  true,
+  'public.dashboard_custom_access_token_hook is SECURITY DEFINER'
+);
+
+-- ============================================================
+-- Test 9: supabase_auth_admin has EXECUTE grant on Dashboard wrapper
+-- Without this grant, Supabase Auth cannot invoke the Dashboard-registered hook.
+-- ============================================================
+SELECT extensions.is(
+  has_function_privilege(
+    'supabase_auth_admin',
+    'public.dashboard_custom_access_token_hook(jsonb)',
+    'EXECUTE'
+  ),
+  true,
+  'supabase_auth_admin has EXECUTE privilege on public.dashboard_custom_access_token_hook'
+);
+
+-- ============================================================
+-- Test 10: Dashboard wrapper only delegates and contains no write statements
+-- The wrapper is an operational shim, not a second implementation.
+-- ============================================================
+SELECT extensions.is(
+  (SELECT
+    prosrc LIKE '%RETURN app.custom_access_token_hook(event);%' AND
+    prosrc NOT LIKE '%INSERT INTO%' AND
+    prosrc NOT LIKE '%UPDATE %' AND
+    prosrc NOT LIKE '%DELETE FROM%'
+   FROM pg_proc
+   WHERE proname = 'dashboard_custom_access_token_hook'
+     AND pronamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')),
+  true,
+  'public.dashboard_custom_access_token_hook only delegates and contains no INSERT/UPDATE/DELETE statements'
 );
 
 SELECT * FROM extensions.finish();

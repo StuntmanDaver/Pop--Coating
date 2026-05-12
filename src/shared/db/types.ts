@@ -39,6 +39,7 @@ export type Database = {
       record_scan_event: {
         Args: {
           p_attachment_id?: string
+          p_client_event_id?: string
           p_employee_id: string
           p_job_id: string
           p_notes?: string
@@ -469,6 +470,7 @@ export type Database = {
       job_status_history: {
         Row: {
           attachment_id: string | null
+          client_event_id: string | null
           company_id: string
           customer_visible: boolean
           duration_seconds: number | null
@@ -487,6 +489,7 @@ export type Database = {
         }
         Insert: {
           attachment_id?: string | null
+          client_event_id?: string | null
           company_id: string
           customer_visible?: boolean
           duration_seconds?: number | null
@@ -505,6 +508,7 @@ export type Database = {
         }
         Update: {
           attachment_id?: string | null
+          client_event_id?: string | null
           company_id?: string
           customer_visible?: boolean
           duration_seconds?: number | null
@@ -1080,7 +1084,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      custom_access_token_hook: { Args: { event: Json }; Returns: Json }
+      dashboard_custom_access_token_hook: {
+        Args: { event: Json }
+        Returns: Json
+      }
+      set_jwt_anon: { Args: never; Returns: undefined }
+      set_jwt_for_customer: {
+        Args: { p_customer_user_id: string }
+        Returns: undefined
+      }
+      set_jwt_for_staff: { Args: { p_staff_id: string }; Returns: undefined }
+      set_jwt_for_workstation: {
+        Args: { p_workstation_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

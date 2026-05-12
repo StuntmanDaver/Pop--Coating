@@ -8,7 +8,7 @@
 ### Infrastructure & Scaffold
 
 - [x] **INFRA-01**: Next.js 16 App Router repo initialized with TypeScript strict, Tailwind v4, shadcn/ui, and pnpm as package manager
-- [ ] **INFRA-02**: Supabase project created and connected; Vercel project configured with `app.popsindustrial.com` (office) and `track.popsindustrial.com` (portal) domains — Vercel project is linked, but both canonical aliases are currently blocked by an alias conflict and must be reassigned before Phase 1 sign-off
+- [ ] **INFRA-02**: Supabase project created and connected; Vercel project configured with `app.popsindustrial.com` (office) and `track.popsindustrial.com` (portal) domains — Vercel project is linked and canonical aliases are attached to `pops--coating`, but registrar DNS is still required before Phase 1 sign-off
 - [x] **INFRA-03**: `tenants` table exists; every business table has `tenant_id uuid not null references public.tenants(id)`; `app.tenant_id()` SECURITY DEFINER helper reads JWT `app_metadata.tenant_id`; RLS policies use `tenant_id = app.tenant_id()`
 - [ ] **INFRA-04**: Resend configured with SPF/DKIM/DMARC for `popsindustrial.com`; Upstash Redis wired for rate limiting (`@upstash/ratelimit` sliding-window); Sentry initialized and tagging every event with `tenant_id` — Upstash Redis, Sentry DSN, and Resend webhook env names were observed in Vercel without recording values, while Resend DNS/SMTP and telemetry smoke verification remain pending before Phase 1 sign-off
 - [x] **INFRA-05**: `src/proxy.ts` (renamed from middleware.ts in Next.js 16) handles multi-domain routing: `app.*` routes to `(office)`, `track.*` routes to `(portal)`
@@ -20,7 +20,7 @@
 - [x] **AUTH-01**: Office staff can sign in with email and password; session uses `@supabase/ssr` httpOnly cookie scoped to `app.popsindustrial.com`; session TTL is 30 days; auth decisions always use `supabase.auth.getUser()` (never `getSession()`)
 - [x] **AUTH-02**: Workstation tablet is enrolled as a synthetic Supabase user via admin-generated QR code ceremony; workstation session TTL is 1 hour (stolen-tablet mitigation); tablet re-authenticates silently
 - [x] **AUTH-03**: Customer portal uses magic-link auth scoped to `track.popsindustrial.com`; customer session is read-only and scoped to their company's jobs; session TTL is 30 days
-- [ ] **AUTH-04**: JWT `app_metadata` carries `tenant_id`, `audience` (`staff_office`/`staff_shop`/`customer`), and `role`; `custom_access_token_hook` populates claims; hook must not write to any tables (Supabase deadlock constraint)
+- [x] **AUTH-04**: JWT `app_metadata` carries `tenant_id`, `audience` (`staff_office`/`staff_shop`/`customer`), and `role`; `custom_access_token_hook` populates claims; hook must not write to any tables (Supabase deadlock constraint) — production Dashboard uses `public.dashboard_custom_access_token_hook`, a no-write wrapper that delegates to canonical `app.custom_access_token_hook`
 - [x] **AUTH-05**: `requireOfficeStaff()`, `requireShopStaff()`, `requireCustomer()` helpers in `src/shared/auth-helpers/require.ts` enforce audience at the Server Action / route level; `getCurrentClaims()` in `claims.ts` reads JWT claims
 
 ### CRM
@@ -97,7 +97,7 @@
 
 ## Traceability
 
-*Updated: 2026-05-08 (Phase 1 production-readiness gate status reconciliation)*
+*Updated: 2026-05-12 (Phase 1 DNS-deferred gate status reconciliation)*
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
@@ -111,7 +111,7 @@
 | AUTH-01 | Phase 1 | Complete |
 | AUTH-02 | Phase 1 | Complete |
 | AUTH-03 | Phase 1 | Complete |
-| AUTH-04 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Complete |
 | AUTH-05 | Phase 1 | Complete |
 | CRM-01 | Phase 2 | Pending |
 | CRM-02 | Phase 2 | Pending |

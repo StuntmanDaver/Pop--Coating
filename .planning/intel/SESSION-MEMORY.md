@@ -16,20 +16,21 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 |------|--------|
 | Build error | Route conflict — `(office)` + `(portal)` root pages merged into `src/app/page.tsx` with host detection; both sign-in flows unified into `src/app/sign-in/page.tsx`. |
 | `next.config.ts` | `typedRoutes` out of `experimental`; `disableLogger` removed. |
-| TypeScript types | Aligned with live schema once migrations applied (confirm on current `main`). |
+| TypeScript types | Regenerated against the linked schema through migration `0026` on 2026-05-12. |
 | GitHub Actions config | Required CI secret/variable names were confirmed on 2026-05-08 without storing values in-repo. Added `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for E2E. |
-| DB migrations | Live Supabase and local migrations align through `0022` as of 2026-05-11; re-verify before sign-off. |
+| DB migrations | Live Supabase and local migrations align through `0026` as of 2026-05-12; re-verify before sign-off. |
 | Vercel env names | Production env names from the Phase 1 inventory were observed on 2026-05-11 without recording values, including `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, and `RESEND_WEBHOOK_SECRET`. |
+| Supabase Auth | JWT expiry is `3600`; the production Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`, a no-write wrapper delegating to canonical `app.custom_access_token_hook`. |
+| Vercel domains | `app.popsindustrial.com` and `track.popsindustrial.com` are attached to `stuntmandavers-projects/pops--coating`; both remain invalid until registrar DNS records are added. |
 
 ### Still requires manual action
 
 | Item | Where |
 |------|--------|
-| JWT expiry → 3600s | Supabase Dashboard → Authentication → Settings → JWT Expiry |
-| Auth Hook registration | Supabase Dashboard → Authentication → Hooks → Custom Access Token → `app.custom_access_token_hook` |
-| Custom SMTP | Supabase Dashboard → Auth SMTP settings; use Resend SMTP with `noreply@popsindustrial.com` |
-| Vercel domains | `app.popsindustrial.com` + `track.popsindustrial.com`; CLI attach is blocked because both aliases are already assigned to another Vercel project. Move/remove them in the dashboard before attaching to `pops--coating`. |
-| Resend DNS | DKIM / SPF / MX for `popsindustrial.com` (registrar). |
+| Vercel DNS | Registrar DNS for `app.popsindustrial.com` and `track.popsindustrial.com`; refresh Vercel after propagation until both are valid. |
+| Resend DNS | DKIM / SPF / MX for `popsindustrial.com`; copy the exact records from Resend. |
+| Custom SMTP | Supabase Dashboard → Auth SMTP settings; use Resend SMTP with `noreply@popsindustrial.com` only after Resend DNS verifies. |
+| Tenant seed | Run `pnpm seed:tenant` only after DNS/SMTP prerequisites and real owner email/name are ready. |
 
 After branch push/sync and all human-only blockers in this table are complete or re-verified, Phase 1 **Task 5** (success criteria walkthrough) can run for Phase 1 sign-off.
 
@@ -107,3 +108,17 @@ After branch push/sync and all human-only blockers in this table are complete or
 - Fetched missing remote migration `0021_scan_event_idempotency.sql` into the local migrations directory, removed the identical duplicate local `supabase/migrations/0022_auth_hook_security_definer 2.sql`, and verified `supabase migration list --linked` aligns local/remote through `0022`.
 - Vercel Production env names from the Phase 1 inventory are present as of 2026-05-11, including the previously missing Sentry DSNs and Resend webhook secret. Values were not recorded.
 - Vercel canonical domain work remains blocked/incomplete: `popsindustrial.com` exists under the team, but `app.popsindustrial.com` and `track.popsindustrial.com` are not accessible/attached for the current project, `vercel alias ls` returns no aliases, and `pops--coating` still reports latest production URL `app.popscoating.com`.
+
+## 2026-05-12
+
+### DNS-deferred production readiness pass
+
+- DNS/registrar work is intentionally deferred until client registrar access is available. Do not run the live tenant seed or Phase 1 Task 5 sign-off before DNS and SMTP are verified.
+- Supabase JWT expiry was confirmed in Dashboard as `3600`.
+- Supabase production Custom Access Token Hook is enabled through `public.dashboard_custom_access_token_hook`. This wrapper is an operational Supabase Dashboard workaround: it is `STABLE`, `SECURITY DEFINER`, delegates to canonical `app.custom_access_token_hook(event)`, and must not write to tables.
+- Added `supabase/migrations/0026_dashboard_auth_hook_wrapper.sql` so the Dashboard-created wrapper is represented in migrations and grants only `supabase_auth_admin` execution.
+- Regenerated `src/shared/db/types.ts` from the linked schema after applying migrations through `0026`.
+- Expanded `supabase/tests/rls/test_auth_hook_invariants.sql` to cover the public Dashboard wrapper's volatility, security mode, execute grant, and delegation-only/no-write body.
+- Re-ran the gate after the DNS-deferred updates and after rebasing onto `origin/main`: `pnpm type-check`, `pnpm lint`, `pnpm test` (41 files / 300 tests), `pnpm build`, `supabase migration list --linked` (through `0026`), `supabase test db --linked` (9 files / 93 tests), and no-secret Playwright host-form smoke (2 tests) all pass.
+- Vercel canonical domains are attached to `stuntmandavers-projects/pops--coating` but invalid until registrar DNS records are added. The stale `app.popscoating.com` and `track.popscoating.com` domains are removal-only after canonical domains are healthy.
+- Tomorrow-ready DNS checklist lives in `docs/runbooks/dns-email-verification.md`.
