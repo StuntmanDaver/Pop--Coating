@@ -180,23 +180,14 @@ export function Hero({
       <div
         aria-hidden="true"
         className={cn(
-          "absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(254,205,8,0.14),transparent_55%)] pops-hero-gold-halo",
-          cinematic && "bg-[radial-gradient(ellipse_90%_52%_at_50%_12%,rgba(254,205,8,0.2),transparent_58%)]",
+          "absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(254,205,8,0.14),transparent_55%)]",
+          cinematic && "bg-[radial-gradient(ellipse_90%_52%_at_50%_12%,rgba(254,205,8,0.16),transparent_58%)]",
         )}
       />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_100%,rgba(254,205,8,0.08),transparent_50%)]"
       />
-      {cinematic ? (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 -left-1/3 z-[4] w-1/3 rotate-12 bg-gradient-to-r from-transparent via-pops-yellow-400/18 to-transparent blur-2xl"
-          initial={reduceMotion ? false : { x: "-40%", opacity: 0 }}
-          animate={reduceMotion ? undefined : { x: "420%", opacity: [0, 1, 0] }}
-          transition={reduceMotion ? undefined : { duration: 5.5, repeat: Infinity, repeatDelay: 2.5, ease: "easeInOut" }}
-        />
-      ) : null}
       <div
         className={cn(
           "relative z-10 mx-auto flex w-full max-w-[1280px] flex-col px-6 lg:px-8",

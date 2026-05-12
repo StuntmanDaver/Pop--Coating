@@ -100,11 +100,6 @@
   50%      { transform: scale(1.12) translate(-0.8%, -0.4%); }
 }
 
-@keyframes pops-gold-pulse {
-  0%, 100% { opacity: 0.45; }
-  50%      { opacity: 0.9; }
-}
-
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .shiny-text-mask {
     color: transparent;
@@ -217,10 +212,6 @@
 .pops-hero-ken-burns {
   transform-origin: center center;
   animation: pops-hero-drift 28s ease-in-out infinite;
-}
-
-.pops-hero-gold-halo {
-  animation: pops-gold-pulse 4.5s ease-in-out infinite;
 }
 
 @supports (background-clip: text) or (-webkit-background-clip: text) {
