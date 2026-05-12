@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useId, useRef, useSyncExternalStore } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
 import { cn } from "../../lib/utils";
@@ -15,18 +15,17 @@ type HeroCta = {
   href: string;
 };
 
-/** Parallax scale only at md+ — avoids edge bleed and extra compositing work on phones. */
+/** Parallax scale only at md+ — applied after mount so SSR and hydration stay in sync (no blank page). */
 function useMdUpParallaxScale(): number {
-  return useSyncExternalStore(
-    (onStoreChange) => {
-      if (typeof window === "undefined") return () => {};
-      const mq = window.matchMedia("(min-width: 768px)");
-      mq.addEventListener("change", onStoreChange);
-      return () => mq.removeEventListener("change", onStoreChange);
-    },
-    () => (typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches ? 1.04 : 1),
-    () => 1,
-  );
+  const [scale, setScale] = useState(1);
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setScale(mq.matches ? 1.04 : 1);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return scale;
 }
 
 type HeroProps = {
