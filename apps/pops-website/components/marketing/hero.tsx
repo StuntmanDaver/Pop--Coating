@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useId, useRef } from "react";
+import { useId, useRef, useSyncExternalStore } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
 import { cn } from "../../lib/utils";
@@ -14,6 +14,20 @@ type HeroCta = {
   label: string;
   href: string;
 };
+
+/** Parallax scale only at md+ — avoids edge bleed and extra compositing work on phones. */
+function useMdUpParallaxScale(): number {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      if (typeof window === "undefined") return () => {};
+      const mq = window.matchMedia("(min-width: 768px)");
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => (typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches ? 1.04 : 1),
+    () => 1,
+  );
+}
 
 type HeroProps = {
   eyebrow: string;
@@ -60,6 +74,7 @@ export function Hero({
   const headingId = useId();
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const parallaxScale = useMdUpParallaxScale();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -159,7 +174,7 @@ export function Hero({
       <div className="absolute inset-0">
         <motion.div
           className="absolute inset-0"
-          style={cinematic && !reduceMotion ? { y: backgroundY, scale: 1.04 } : undefined}
+          style={cinematic && !reduceMotion ? { y: backgroundY, scale: parallaxScale } : undefined}
         >
           <Image
             src={backgroundImage}
@@ -167,7 +182,7 @@ export function Hero({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center"
+            className="h-full w-full object-cover object-center"
           />
         </motion.div>
       </div>

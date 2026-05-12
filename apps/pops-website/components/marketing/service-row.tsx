@@ -31,7 +31,7 @@ export function ServiceRow({
         href={href}
         className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
-        <div className="flex flex-col-reverse gap-5 py-8 md:grid md:grid-cols-[1fr_180px] md:items-center md:gap-8 md:py-10">
+        <div className="flex min-w-0 flex-col-reverse gap-4 py-6 md:grid md:grid-cols-[1fr_180px] md:items-center md:gap-8 md:py-10">
           <div className="min-w-0 flex-1">
             <h3 className="font-display text-[1.375rem] leading-tight tracking-tight text-pops-yellow-500 sm:text-xl md:text-2xl">
               {name}
@@ -50,13 +50,13 @@ export function ServiceRow({
             </span>
           </div>
 
-          <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-sm shadow-[0_0_24px_-8px_rgba(254,205,8,0.2)] md:aspect-auto md:h-[120px] md:w-[180px] md:justify-self-end">
+          <div className="relative aspect-[5/4] w-full min-w-0 shrink-0 overflow-hidden rounded-sm shadow-[0_0_24px_-8px_rgba(254,205,8,0.2)] md:aspect-auto md:h-[120px] md:w-[180px] md:justify-self-end md:max-h-none">
             <Image
               src={image}
               alt={alt}
               fill
               sizes="(min-width: 768px) 180px, 100vw"
-              className="object-cover object-center transition-transform duration-[900ms] ease-in-out group-hover:scale-[1.06]"
+              className="object-cover object-[center_38%] motion-safe:transition-transform motion-safe:duration-[900ms] motion-safe:ease-in-out md:object-center motion-safe:group-hover:scale-[1.06]"
             />
           </div>
         </div>

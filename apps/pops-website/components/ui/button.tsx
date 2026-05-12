@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
   [
-    "inline-flex items-center justify-center gap-2",
+    "inline-flex touch-manipulation items-center justify-center gap-2",
     "rounded-sm",
     "font-text font-semibold text-sm",
     "px-6 py-3",
@@ -33,7 +33,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-12 px-6 py-3",
-        compact: "h-10 px-5 py-2 sm:h-9",
+        compact: "min-h-11 h-11 px-5 py-2 sm:h-9 sm:min-h-9",
       },
     },
     defaultVariants: {
