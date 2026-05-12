@@ -116,7 +116,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="mt-10 rounded-sm border border-pops-yellow-500/25 bg-gradient-to-br from-ink-900/90 via-black/50 to-ink-900/80 p-6 ring-1 ring-inset ring-pops-yellow-500/10">
+                <div className="pops-card-surface mt-10 rounded-sm p-6">
                   <EyebrowLabel className="mb-3">CAREERS</EyebrowLabel>
                   <p className="font-display text-lg leading-snug text-ink-100">
                     Join our team in Lakeland

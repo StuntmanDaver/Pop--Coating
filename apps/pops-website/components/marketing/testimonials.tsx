@@ -32,7 +32,7 @@ export function Testimonials() {
           {TESTIMONIALS.map((t, i) => (
             <li
               key={t.name}
-              className="pops-card-surface relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-sm border border-pops-yellow-500/15 p-6 shadow-[0_0_32px_-16px_rgba(254,205,8,0.18)] sm:p-8"
+              className="pops-card-surface relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-sm p-6 sm:p-8"
             >
               <div
                 aria-hidden="true"

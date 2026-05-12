@@ -45,7 +45,7 @@ export function IndustriesGrid() {
             {INDUSTRIES.map((industry) => (
               <li
                 key={industry.name}
-                className="pops-card-surface relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-sm border border-pops-yellow-500/15 p-5 shadow-[0_0_32px_-16px_rgba(254,205,8,0.2)] sm:p-6"
+                className="pops-card-surface relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-sm p-5 sm:p-6"
               >
                 <div
                   aria-hidden="true"

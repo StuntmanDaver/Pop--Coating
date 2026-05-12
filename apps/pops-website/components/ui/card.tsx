@@ -11,8 +11,8 @@ const cardVariants = cva(
   {
     variants: {
       tone: {
-        dark: "bg-black text-ink-100 border-pops-yellow-500/15",
-        light: "bg-[#0A0A0A] text-ink-100 border-pops-yellow-500/12",
+        dark: "bg-white/[0.035] text-ink-100 border-white/10",
+        light: "bg-white/[0.045] text-ink-100 border-white/10",
       },
       interactive: {
         true: "hover:shadow-3",
