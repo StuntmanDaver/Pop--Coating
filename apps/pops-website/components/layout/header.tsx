@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -22,6 +25,10 @@ const NAV_LINKS: ReadonlyArray<NavLink> = [
 
 /** Sticky site header — stays pinned to the top of the viewport while scrolling. */
 export function Header({ className }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <header
       className={cn(
@@ -78,10 +85,12 @@ export function Header({ className }: HeaderProps) {
             <Link href="/request-a-quote">Request a Quote</Link>
           </Button>
 
-          {/* Mobile hamburger — visual only; full mobile nav is a Wave 2 enhancement */}
           <button
             type="button"
-            aria-label="Open navigation menu"
+            aria-controls="mobile-primary-navigation"
+            aria-expanded={isMenuOpen}
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            onClick={() => setIsMenuOpen((open) => !open)}
             className="inline-flex min-h-11 w-11 items-center justify-center rounded-sm text-ink-200 transition-colors hover:text-pops-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 md:hidden"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -95,6 +104,33 @@ export function Header({ className }: HeaderProps) {
           </button>
         </div>
       </Container>
+
+      <nav
+        id="mobile-primary-navigation"
+        aria-label="Mobile primary"
+        className={cn(
+          "border-t border-pops-yellow-500/20 px-6 pb-5 pt-2 md:hidden",
+          isMenuOpen ? "block" : "hidden",
+        )}
+      >
+        <div className="mx-auto flex max-w-[1280px] flex-col gap-1">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={closeMenu}
+              className="rounded-sm px-2 py-3 font-text text-base font-medium text-ink-100 transition-colors hover:text-pops-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Button asChild variant="primary" size="default" className="mt-3 w-full justify-center">
+            <Link href="/request-a-quote" onClick={closeMenu}>
+              Request a Quote
+            </Link>
+          </Button>
+        </div>
+      </nav>
     </header>
   );
 }
