@@ -16,9 +16,6 @@ export const metadata: Metadata = {
   title: "Industrial Powder Coating - Lakeland FL Polk County FL",
   description:
     "Pop's Industrial offers electrostatic powder coating process for tough, uniform finish with superior resistance to corrosion, impact and chemicals.",
-  openGraph: {
-    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
-  },
 };
 
 const OTHER_SERVICES = [

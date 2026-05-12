@@ -258,6 +258,32 @@ html {
   padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
 }
 
+@keyframes pops-share-glow-sweep {
+  0% {
+    transform: translateX(-35%) skewX(-12deg);
+    opacity: 0.22;
+  }
+  45% {
+    opacity: 0.42;
+  }
+  100% {
+    transform: translateX(320%) skewX(-12deg);
+    opacity: 0.22;
+  }
+}
+
+.pops-share-glow-sweep {
+  animation: pops-share-glow-sweep 7.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pops-share-glow-sweep {
+    animation: none;
+    opacity: 0.28;
+    transform: skewX(-12deg);
+  }
+}
+
 body {
   background:
     linear-gradient(180deg, rgba(254, 205, 8, 0.07) 0%, rgba(254, 205, 8, 0.02) 12%, transparent 32%),

@@ -16,9 +16,6 @@ export const metadata: Metadata = {
   title: "Large Capacity Coatings - Lakeland FL Polk County",
   description:
     "Pop's Industrial Coatings offers large scale coating processes that ensure uniform coverage and robust protection without compromising quality.",
-  openGraph: {
-    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
-  },
 };
 
 const OTHER_SERVICES = [

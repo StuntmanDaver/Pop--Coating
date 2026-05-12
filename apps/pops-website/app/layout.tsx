@@ -32,11 +32,23 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Pop's Industrial Coatings",
-    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Pop's Industrial Coatings — Premium industrial finishing, Lakeland FL",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    images: [{ url: "/images/pops-social-thumbnail.png", alt: "Pop's Industrial Coatings" }],
+    images: [
+      {
+        url: "/twitter-image",
+        alt: "Pop's Industrial Coatings — Premium industrial finishing, Lakeland FL",
+      },
+    ],
   },
 };
 
