@@ -85,14 +85,15 @@ export default function HomePage() {
 
         {/* ── Hero ── */}
         <Hero
-          eyebrow={`FAMILY OWNED · LAKELAND,\u00A0FL · SINCE 1972`}
-          heading="Serving the industry since 1972."
-          headingClassName="text-balance text-[clamp(1.625rem,3.2vw+1rem,4.5rem)] md:whitespace-nowrap"
-          lede="Powder Coating, Abrasive Blasting, Wet Paint, Complex Coatings, and Large Capacity Coatings."
-          ledeClassName="max-w-none text-sm leading-snug text-ink-100 sm:text-base sm:leading-normal md:mt-8 md:whitespace-nowrap"
+          eyebrow={`FAMILY OWNED · LAKELAND,\u00A0FL`}
+          heading="Serving the Industry Since 1972"
+          headingClassName="text-balance text-[clamp(3rem,8vw,7.75rem)] max-w-5xl"
+          lede="Premium industrial powder coating, wet paint, abrasive blasting, complex coating systems, and large-capacity finishing for mission-critical parts and structures."
+          ledeClassName="max-w-3xl text-base leading-relaxed text-ink-100 sm:text-lg md:mt-8 md:text-xl"
           primaryCta={{ label: "Request a Quote", href: "/request-a-quote" }}
-          secondaryCta={{ label: "See our work", href: "/industrial-coatings-services" }}
+          secondaryCta={{ label: "Explore Services", href: "/industrial-coatings-services" }}
           animateCopyOnLoad
+          cinematic
           backgroundImage="/images/slide-01.jpg"
         />
 

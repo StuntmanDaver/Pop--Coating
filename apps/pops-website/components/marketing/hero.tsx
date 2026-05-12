@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useId } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -27,6 +30,8 @@ type HeroProps = {
   stackPrimaryActions?: boolean;
   /** When true, headline and CTAs ease in on first paint (home page). */
   animateCopyOnLoad?: boolean;
+  /** Premium fullscreen homepage treatment with motion and cinematic lighting. */
+  cinematic?: boolean;
   backgroundImage: string;
   backgroundAlt?: string;
   className?: string;
@@ -45,6 +50,7 @@ export function Hero({
   tertiaryCta,
   stackPrimaryActions = false,
   animateCopyOnLoad = false,
+  cinematic = false,
   backgroundImage,
   backgroundAlt = "",
   className,
@@ -52,11 +58,24 @@ export function Hero({
   ledeClassName,
 }: HeroProps) {
   const headingId = useId();
+  const reduceMotion = useReducedMotion();
+
+  const ctaClassName = cn(
+    "min-h-12 px-8 text-base transition-all duration-300",
+    cinematic && "shadow-[0_18px_46px_-26px_rgba(254,205,8,0.8)] hover:-translate-y-0.5",
+  );
 
   const copy = (
     <>
-      <div className="mb-6 h-px w-16 bg-gradient-to-r from-pops-yellow-500 to-transparent md:mb-8 md:w-24" />
-      <EyebrowLabel className="mb-4 tracking-[0.14em] md:mb-5">{eyebrow}</EyebrowLabel>
+      <div
+        className={cn(
+          "mb-6 h-px w-16 bg-gradient-to-r from-pops-yellow-500 to-transparent md:mb-8 md:w-24",
+          cinematic && "mb-5 w-20 md:mb-7 md:w-32",
+        )}
+      />
+      <EyebrowLabel className={cn("mb-4 tracking-[0.14em] md:mb-5", cinematic && "text-pops-yellow-400")}>
+        {eyebrow}
+      </EyebrowLabel>
       <h1
         id={headingId}
         className={cn(
@@ -81,12 +100,13 @@ export function Hero({
       <div
         className={cn(
           "mt-10 flex flex-col gap-4 sm:mt-12",
+          cinematic && "sm:flex-row sm:items-center",
           stackPrimaryActions && (secondaryCta ?? tertiaryCta)
             ? "items-stretch sm:max-w-md sm:items-stretch"
             : "sm:flex-row sm:flex-wrap sm:items-center",
         )}
       >
-        <Button asChild variant="primary" size="default" className="min-h-12 px-8 text-base">
+        <Button asChild variant="primary" size="default" className={ctaClassName}>
           <Link href={primaryCta.href}>{primaryCta.label}</Link>
         </Button>
         {secondaryCta ? (
@@ -95,7 +115,7 @@ export function Hero({
             variant={stackPrimaryActions ? "primary" : "secondary"}
             size="default"
             className={cn(
-              "min-h-12 px-8 text-base",
+              ctaClassName,
               !stackPrimaryActions && "border-pops-yellow-500/50",
             )}
           >
@@ -108,7 +128,7 @@ export function Hero({
             variant={stackPrimaryActions ? "primary" : "secondary"}
             size="default"
             className={cn(
-              "min-h-12 px-8 text-base",
+              ctaClassName,
               !stackPrimaryActions && "border-pops-yellow-500/50",
             )}
           >
@@ -124,11 +144,11 @@ export function Hero({
       aria-labelledby={headingId}
       className={cn(
         "relative isolate w-full overflow-hidden",
-        "min-h-[85vh] md:min-h-[min(92vh,960px)]",
+        cinematic ? "min-h-[100svh]" : "min-h-[85vh] md:min-h-[min(92vh,960px)]",
         className,
       )}
     >
-      {/* Photography — full frame visible (object-contain); letterboxing shows as black hero bg */}
+      {/* Photography fills the full hero frame so mobile never shows letterboxing. */}
       <div className="absolute inset-0">
         <div className="absolute inset-0">
           <Image
@@ -145,22 +165,60 @@ export function Hero({
       {/* Dramatic stack: crush midtones, gold rim light, vignette */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-b from-black via-black/75 to-black"
+        className={cn(
+          "absolute inset-0 bg-gradient-to-b from-black via-black/75 to-black",
+          cinematic && "from-black/95 via-black/72 to-black/92",
+        )}
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black/40"
+        className={cn(
+          "absolute inset-0 bg-gradient-to-tr from-black via-transparent to-black/40",
+          cinematic && "from-black/92 via-black/30 to-black/65",
+        )}
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(254,205,8,0.14),transparent_55%)] pops-hero-gold-halo"
+        className={cn(
+          "absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(254,205,8,0.14),transparent_55%)] pops-hero-gold-halo",
+          cinematic && "bg-[radial-gradient(ellipse_90%_52%_at_50%_12%,rgba(254,205,8,0.2),transparent_58%)]",
+        )}
       />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_100%,rgba(254,205,8,0.08),transparent_50%)]"
       />
-      <div className="relative z-10 mx-auto flex min-h-[85vh] w-full max-w-[1280px] flex-col justify-start px-6 pb-16 pt-20 md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:px-8 lg:pt-28">
-        {animateCopyOnLoad ? <HeroIntro>{copy}</HeroIntro> : <div className="max-w-4xl">{copy}</div>}
+      {cinematic ? (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 -left-1/3 z-[4] w-1/3 rotate-12 bg-gradient-to-r from-transparent via-pops-yellow-400/18 to-transparent blur-2xl"
+          initial={reduceMotion ? false : { x: "-40%", opacity: 0 }}
+          animate={reduceMotion ? undefined : { x: "420%", opacity: [0, 1, 0] }}
+          transition={reduceMotion ? undefined : { duration: 5.5, repeat: Infinity, repeatDelay: 2.5, ease: "easeInOut" }}
+        />
+      ) : null}
+      <div
+        className={cn(
+          "relative z-10 mx-auto flex w-full max-w-[1280px] flex-col px-6 lg:px-8",
+          cinematic
+            ? "min-h-[100svh] justify-center pb-12 pt-28 sm:pb-16 sm:pt-32 md:pb-20"
+            : "min-h-[85vh] justify-start pb-16 pt-20 md:min-h-[min(92vh,960px)] md:pb-20 md:pt-24 lg:pt-28",
+        )}
+      >
+        {cinematic ? (
+          <motion.div
+            className="max-w-5xl"
+            initial={reduceMotion ? false : { opacity: 0, y: 22, filter: "blur(8px)" }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={reduceMotion ? undefined : { duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {copy}
+          </motion.div>
+        ) : animateCopyOnLoad ? (
+          <HeroIntro>{copy}</HeroIntro>
+        ) : (
+          <div className="max-w-4xl">{copy}</div>
+        )}
       </div>
 
       {/* Bottom transition into next section */}
