@@ -23,7 +23,7 @@ const INDUSTRIES: Industry[] = [
   { name: "Support Beams", detail: "Traffic lights, bridges, stadiums" },
 ];
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const SPRING = { type: "spring", stiffness: 180, damping: 24, mass: 0.85 } as const;
 
 export function IndustriesGrid() {
   const reduceMotion = useReducedMotion();
@@ -57,8 +57,8 @@ export function IndustriesGrid() {
             hidden: {},
             visible: {
               transition: {
-                staggerChildren: 0.055,
-                delayChildren: 0.08,
+                staggerChildren: 0.09,
+                delayChildren: 0.12,
               },
             },
           }}
@@ -71,8 +71,8 @@ export function IndustriesGrid() {
                   hidden: { opacity: 0, y: 18 },
                   visible: { opacity: 1, y: 0 },
                 }}
-                transition={{ duration: 0.58, ease: EASE }}
-                whileHover={reduceMotion ? undefined : { y: -3 }}
+                transition={{ duration: 0.72, ease: "easeInOut" }}
+                whileHover={reduceMotion ? undefined : { y: -3, transition: SPRING }}
               >
                 <div
                   aria-hidden="true"

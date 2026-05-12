@@ -51,7 +51,7 @@ export default function ServiceTilePreviewPage() {
         </h1>
         <p className="text-ink-300 text-sm">
           Internal preview for US-016. Hover any tile to see the shadow-3 lift
-          and the 1.03 image scale (200ms ease-out). Tab through to confirm the
+          and the premium image scale timing. Tab through to confirm the
           focus ring on the inner Link.
         </p>
       </header>

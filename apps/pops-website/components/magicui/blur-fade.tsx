@@ -22,13 +22,13 @@ type BlurFadeProps = {
   blur?: string;
 };
 
-const PREMIUM_EASE = [0.22, 1, 0.36, 1] as const;
+const PREMIUM_EASE = "easeInOut" as const;
 
 /** Premium fade-up reveal using Motion with reduced-motion safeguards. */
 export function BlurFade({
   children,
   className,
-  duration = 0.62,
+  duration = 0.72,
   delay = 0,
   yOffset = 14,
   inView = true,

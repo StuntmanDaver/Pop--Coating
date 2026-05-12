@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 const cardVariants = cva(
   [
     "rounded-sm border p-6",
-    "transition-[transform,box-shadow,border-color,background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+    "transition-[transform,box-shadow,border-color,background-color] duration-700 ease-in-out",
   ].join(" "),
   {
     variants: {

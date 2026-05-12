@@ -122,8 +122,8 @@ export default function LargeCapacityPowderCoatingPage() {
                   <PhotoGalleryLightbox
                     photos={GALLERY}
                     className="grid-cols-3 gap-5"
-                    itemClassName="rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-28px_rgba(250,179,0,0.6)]"
-                    imageClassName="object-contain"
+                    itemClassName="rounded-xl transition-all duration-700 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-28px_rgba(250,179,0,0.6)]"
+                    imageClassName="object-cover"
                     sizes="33vw"
                   />
                 </div>

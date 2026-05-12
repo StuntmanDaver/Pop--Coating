@@ -7,7 +7,7 @@ import { Container } from "../layout/container";
 import { BlurFade } from "../magicui/blur-fade";
 import { EyebrowLabel } from "./eyebrow";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+const SPRING = { type: "spring", stiffness: 180, damping: 24, mass: 0.85 } as const;
 
 export function Testimonials() {
   const reduceMotion = useReducedMotion();
@@ -45,8 +45,8 @@ export function Testimonials() {
             hidden: {},
             visible: {
               transition: {
-                staggerChildren: 0.07,
-                delayChildren: 0.08,
+                staggerChildren: 0.1,
+                delayChildren: 0.12,
               },
             },
           }}
@@ -59,8 +59,8 @@ export function Testimonials() {
                 hidden: { opacity: 0, y: 18 },
                 visible: { opacity: 1, y: 0 },
               }}
-              transition={{ duration: 0.58, ease: EASE }}
-              whileHover={reduceMotion ? undefined : { y: -3 }}
+              transition={{ duration: 0.72, ease: "easeInOut" }}
+              whileHover={reduceMotion ? undefined : { y: -3, transition: SPRING }}
             >
               <div
                 aria-hidden="true"
