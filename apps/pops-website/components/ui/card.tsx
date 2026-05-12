@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 const cardVariants = cva(
   [
     "rounded-sm border p-6",
-    "transition-shadow duration-200 ease-out",
+    "transition-[transform,box-shadow,border-color,background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
   ].join(" "),
   {
     variants: {
@@ -15,7 +15,7 @@ const cardVariants = cva(
         light: "bg-white/[0.045] text-ink-100 border-white/10",
       },
       interactive: {
-        true: "hover:shadow-3",
+        true: "hover:-translate-y-1 hover:shadow-[0_18px_42px_-28px_rgba(254,205,8,0.45)]",
         false: "",
       },
     },

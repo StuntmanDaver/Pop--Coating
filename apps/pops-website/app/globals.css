@@ -260,7 +260,10 @@ body {
 .pops-card-surface {
   background: linear-gradient(155deg, rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.01));
   border: 1px solid rgb(255 255 255 / 0.06);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .pops-card-surface:hover {

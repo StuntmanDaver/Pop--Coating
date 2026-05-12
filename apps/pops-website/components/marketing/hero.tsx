@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useId } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { useId, useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -58,7 +58,13 @@ export function Hero({
   ledeClassName,
 }: HeroProps) {
   const headingId = useId();
+  const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "6%"]);
 
   const ctaClassName = cn(
     "min-h-12 px-8 text-base transition-all duration-300",
@@ -141,6 +147,7 @@ export function Hero({
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby={headingId}
       className={cn(
         "relative isolate w-full overflow-hidden",
@@ -150,7 +157,10 @@ export function Hero({
     >
       {/* Photography fills the full hero frame so mobile never shows letterboxing. */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0"
+          style={cinematic && !reduceMotion ? { y: backgroundY, scale: 1.04 } : undefined}
+        >
           <Image
             src={backgroundImage}
             alt={backgroundAlt}
@@ -159,7 +169,7 @@ export function Hero({
             sizes="100vw"
             className="object-cover object-center"
           />
-        </div>
+        </motion.div>
       </div>
 
       {/* Dramatic stack: crush midtones, gold rim light, vignette */}

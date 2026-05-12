@@ -1,9 +1,17 @@
+"use client";
+
+import { motion, useReducedMotion } from "motion/react";
+
 import { GOOGLE_RATING, TESTIMONIALS } from "../../content/testimonials";
 import { Container } from "../layout/container";
 import { BlurFade } from "../magicui/blur-fade";
 import { EyebrowLabel } from "./eyebrow";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export function Testimonials() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section
       aria-labelledby="testimonials-heading"
@@ -28,11 +36,31 @@ export function Testimonials() {
           </p>
         </BlurFade>
 
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+        <motion.ul
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4"
+          initial={reduceMotion ? false : "hidden"}
+          whileInView={reduceMotion ? undefined : "visible"}
+          viewport={{ once: true, margin: "0px 0px -12% 0px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.07,
+                delayChildren: 0.08,
+              },
+            },
+          }}
+        >
           {TESTIMONIALS.map((t, i) => (
-            <li
+            <motion.li
               key={t.name}
               className="pops-card-surface relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-sm p-6 sm:p-8"
+              variants={{
+                hidden: { opacity: 0, y: 18 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.58, ease: EASE }}
+              whileHover={reduceMotion ? undefined : { y: -3 }}
             >
               <div
                 aria-hidden="true"
@@ -57,9 +85,9 @@ export function Testimonials() {
                   </p>
                 </footer>
               </BlurFade>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       </Container>
     </section>
   );

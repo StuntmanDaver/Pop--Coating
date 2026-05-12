@@ -6,6 +6,7 @@ import { Container } from "../components/layout/container";
 import { Footer } from "../components/layout/footer";
 import { Header } from "../components/layout/header";
 import { CertificationMarquee } from "../components/marketing/certification-marquee";
+import { BlurFade } from "../components/magicui/blur-fade";
 import { EyebrowLabel } from "../components/marketing/eyebrow";
 import { Hero } from "../components/marketing/hero";
 import { IndustriesGrid } from "../components/marketing/industries-grid";
@@ -151,8 +152,10 @@ export default function HomePage() {
               </h2>
             </div>
             <div className="flex flex-col gap-3 md:gap-4">
-              {SERVICES.map((service) => (
-                <ServiceRow key={service.href} {...service} />
+              {SERVICES.map((service, index) => (
+                <BlurFade key={service.href} delay={index * 0.055}>
+                  <ServiceRow {...service} />
+                </BlurFade>
               ))}
             </div>
           </Container>
@@ -169,6 +172,7 @@ export default function HomePage() {
           <Container className="relative z-10">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
 
+              <BlurFade delay={0.04}>
               <div className="pops-card-surface rounded-sm p-8">
                 <EyebrowLabel tone="dark" className="mb-4">COMMITMENT</EyebrowLabel>
                 <h2
@@ -187,7 +191,9 @@ export default function HomePage() {
                   what commitment to precision and technical expertise looks like.
                 </p>
               </div>
+              </BlurFade>
 
+              <BlurFade delay={0.1}>
               <div className="pops-card-surface rounded-sm p-8">
                 <EyebrowLabel tone="dark" className="mb-4">INFRASTRUCTURE</EyebrowLabel>
                 <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-white">
@@ -207,7 +213,9 @@ export default function HomePage() {
                   </Button>
                 </div>
               </div>
+              </BlurFade>
 
+              <BlurFade delay={0.16}>
               <div className="pops-card-surface rounded-sm p-8">
                 <EyebrowLabel tone="dark" className="mb-4">STANDARDS</EyebrowLabel>
                 <h2 className="mb-4 font-display text-[26px] leading-tight tracking-tight text-white">
@@ -232,6 +240,7 @@ export default function HomePage() {
                   </Button>
                 </div>
               </div>
+              </BlurFade>
 
             </div>
           </Container>

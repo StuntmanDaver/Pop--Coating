@@ -23,7 +23,7 @@ export function ServiceRow({
   return (
     <div
       className={cn(
-        "group rounded-sm transition-colors duration-300 hover:bg-pops-yellow-500/[0.03]",
+        "group rounded-sm transition-[background-color,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:bg-pops-yellow-500/[0.03]",
         className,
       )}
     >
@@ -57,7 +57,7 @@ export function ServiceRow({
               alt={alt}
               fill
               sizes="180px"
-              className="object-cover object-center transition-transform duration-200 ease-out group-hover:scale-[1.03]"
+              className="object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
             />
           </div>
         </div>
