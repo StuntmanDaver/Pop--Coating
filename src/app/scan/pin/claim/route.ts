@@ -33,7 +33,13 @@ type PinResult =
 type ClaimResult = {
   ok: boolean
   new_version?: number
+  version?: number
   reason?: string
+}
+
+type WorkstationClaimRow = {
+  current_employee_id: string | null
+  version: number
 }
 
 export async function POST(request: NextRequest) {
@@ -75,6 +81,23 @@ export async function POST(request: NextRequest) {
 
   if (claimError || !claimResult) {
     return NextResponse.json({ ok: false, step: 'claim', reason: 'rpc_error' }, { status: 500 })
+  }
+
+  if (!claimResult.ok && claimResult.reason === 'workstation_in_use_or_stale_version') {
+    const { data: workstation } = await supabase
+      .from('workstations')
+      .select('current_employee_id, version')
+      .eq('id', parsed.data.workstation_id)
+      .maybeSingle<WorkstationClaimRow>()
+
+    if (workstation?.current_employee_id === parsed.data.employee_id) {
+      return NextResponse.json({
+        ok: true,
+        step: 'claim',
+        version: workstation.version,
+        idempotent: true,
+      })
+    }
   }
 
   return NextResponse.json({ step: 'claim', ...claimResult })
