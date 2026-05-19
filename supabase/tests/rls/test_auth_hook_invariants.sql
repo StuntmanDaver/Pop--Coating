@@ -5,7 +5,7 @@
 -- These tests guard the CLAUDE.md hidden invariants that, if broken, cause silent
 -- production failures (deadlocks, privilege escalation, security bypasses).
 --
--- Tests (10 total):
+-- Tests (11 total):
 --   1. app.custom_access_token_hook has provolatile = 's' (STABLE — no writes)
 --   2. supabase_auth_admin role has rolbypassrls = true (BYPASSRLS preserved)
 --   3. authenticated role CANNOT UPDATE jobs.production_status (REVOKE in 0008)
@@ -16,13 +16,14 @@
 --   8. public.dashboard_custom_access_token_hook is SECURITY DEFINER
 --   9. supabase_auth_admin has EXECUTE grant on public dashboard wrapper
 --   10. public dashboard wrapper only delegates and contains no write statements
+--   11. auth.users has exactly one project auth-user linking trigger
 
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path = public, extensions;
 SET ROLE postgres;
 
 BEGIN;
-SELECT extensions.plan(10);
+SELECT extensions.plan(11);
 
 -- ============================================================
 -- Test 1: app.custom_access_token_hook is STABLE (provolatile = 's')
@@ -162,6 +163,21 @@ SELECT extensions.is(
      AND pronamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')),
   true,
   'public.dashboard_custom_access_token_hook only delegates and contains no INSERT/UPDATE/DELETE statements'
+);
+
+-- ============================================================
+-- Test 11: auth.users has exactly one project linking trigger
+-- Migration 0013 replaced the original trigger with an UPDATE-aware version.
+-- The old trigger name must not remain installed alongside the new one.
+-- ============================================================
+SELECT extensions.is(
+  (SELECT count(*)::int
+   FROM pg_trigger
+   WHERE tgrelid = 'auth.users'::regclass
+     AND NOT tgisinternal
+     AND tgname IN ('on_auth_user_created', 'link_auth_user_to_actor_trigger')),
+  1,
+  'auth.users has exactly one project auth-user linking trigger'
 );
 
 SELECT * FROM extensions.finish();

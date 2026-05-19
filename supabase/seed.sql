@@ -9,16 +9,19 @@
 --   1. Test tenant (fixed UUID) + shop_settings + tenant_domains (app.localhost:3000, track.localhost:3000)
 --   2. 1 office staff user in auth.users + staff row (admin, staff_office audience)
 --   3. 1 synthetic workstation in auth.users + workstations row (staff_shop audience)
---   4. Sample companies + contacts (for Phase 2+ visual testing without re-seeding)
---   5. (Intentionally no jobs — Phase 2 seeds jobs when the CRM UI exists)
+--   4. Sample companies + contacts (for visual testing without re-seeding)
+--   5. 1 customer user scoped to Acme Manufacturing
+--   6. 1 shop employee with demo PIN 1234
+--   7. 1 demo job with packet token + visible status history
 --
 -- Note on auth.users inserts:
 --   Supabase db reset runs as the postgres superuser, so direct inserts into auth.users
 --   are permitted here. The service-role client is NOT needed for seed.sql.
 --   In production, auth users are created via auth.admin.createUser (seed-tenant.ts).
 --
--- The custom_access_token_hook reads tenant_id + audience from auth.users.raw_app_meta_data.
--- We insert those directly so local dev JWT claims are populated correctly after sign-in.
+-- raw_app_meta_data drives the auth.users linking trigger and mirrors expected local claims.
+-- app.custom_access_token_hook stamps JWT app_metadata by reading staff, workstations,
+-- customer_users, and auth.users.email; it must remain read-only.
 
 -- ============================================================
 -- 1. Test tenant (FIXED UUID)
@@ -211,3 +214,92 @@ INSERT INTO public.customer_users (id, tenant_id, company_id, auth_user_id, emai
     'Bob Acme'
   )
   ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================
+-- 6. Test shop employee
+--    PIN: 1234
+-- ============================================================
+INSERT INTO public.shop_employees (
+  id,
+  tenant_id,
+  display_name,
+  pin_hash,
+  is_active
+) VALUES (
+  '00000000-0000-0000-0000-000000000060'::uuid,
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  'Pat Powder',
+  '$2a$10$7EqJtq98hPqEX7fNZaFWoOhiVEjrYt8CGRcBvO1lZPZK4u6tH3g4m',
+  true
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================
+-- 7. Demo job + visible status history
+--    Packet token: demoPacketTok001
+--    Manual entry suffix: etTok001
+-- ============================================================
+INSERT INTO public.jobs (
+  id,
+  tenant_id,
+  job_number,
+  packet_token,
+  customer_po_number,
+  company_id,
+  contact_id,
+  job_name,
+  description,
+  part_count,
+  color,
+  coating_type,
+  due_date,
+  priority,
+  intake_status,
+  production_status,
+  notes,
+  created_by_staff_id
+) VALUES (
+  '00000000-0000-0000-0000-000000000070'::uuid,
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  'POPS-2026-00001',
+  'demoPacketTok001',
+  'ACME-PO-1001',
+  '00000000-0000-0000-0000-000000000030'::uuid,
+  '00000000-0000-0000-0000-000000000040'::uuid,
+  'Acme Bracket Batch',
+  'Demo job for local office, packet, scan, and portal walkthroughs.',
+  48,
+  'Safety Yellow',
+  'Powder Coat',
+  '2026-06-01',
+  'normal',
+  'in_production',
+  'received',
+  'Local demo seed job. Scan the packet to advance it.',
+  '00000000-0000-0000-0000-000000000011'::uuid
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.job_status_history (
+  id,
+  tenant_id,
+  job_id,
+  event_type,
+  from_status,
+  to_status,
+  shop_employee_id,
+  workstation_id,
+  customer_visible,
+  notes,
+  scanned_at
+) VALUES (
+  '00000000-0000-0000-0000-000000000080'::uuid,
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  '00000000-0000-0000-0000-000000000070'::uuid,
+  'stage_change',
+  NULL,
+  'received',
+  '00000000-0000-0000-0000-000000000060'::uuid,
+  '00000000-0000-0000-0000-000000000021'::uuid,
+  true,
+  'Seeded demo event: job received at the shop.',
+  now() - interval '2 hours'
+) ON CONFLICT (id) DO NOTHING;
