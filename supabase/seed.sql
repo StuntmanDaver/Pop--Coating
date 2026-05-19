@@ -253,7 +253,7 @@ INSERT INTO public.shop_employees (
   '00000000-0000-0000-0000-000000000060'::uuid,
   '00000000-0000-0000-0000-000000000001'::uuid,
   'Pat Powder',
-  '$2a$10$7EqJtq98hPqEX7fNZaFWoOhiVEjrYt8CGRcBvO1lZPZK4u6tH3g4m',
+  '$2a$06$WDtx6sKyj5M41JG6OTG.T.eKekGR84mItalO5Gb/deAz3M.ORNUc.',
   true
 ) ON CONFLICT (id) DO NOTHING;
 

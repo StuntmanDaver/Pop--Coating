@@ -1,7 +1,7 @@
 'use server'
+import * as Sentry from '@sentry/nextjs'
 import { z } from 'zod'
 import { createClient } from '@/shared/db/server'
-import { requireShopStaff } from '@/shared/auth-helpers/require'
 
 // Source: docs/DESIGN.md §4.3 Module 5 (Scanning) + migration 0015.
 // Wraps app.validate_employee_pin SECURITY DEFINER function. The function
@@ -49,8 +49,17 @@ export async function validateEmployeePin(input: unknown): Promise<ValidatePinRe
   const parsed = ValidatePinSchema.safeParse(input)
   if (!parsed.success) throw new Error('Invalid input')
 
-  await requireShopStaff()
   const supabase = await createClient()
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user || user.app_metadata?.audience !== 'staff_shop') {
+    Sentry.captureException(userError ?? new Error('PIN validation called without shop-staff session'), {
+      tags: {
+        subsystem: 'scan-pin',
+        tenant_id: String(user?.app_metadata?.tenant_id ?? 'unknown'),
+      },
+    })
+    return { ok: false, reason: 'tenant_mismatch' }
+  }
 
   const { data, error } = await appSchema(supabase).rpc<
     RawPinResult,
@@ -60,8 +69,18 @@ export async function validateEmployeePin(input: unknown): Promise<ValidatePinRe
     p_pin: parsed.data.pin,
   })
 
-  if (error) throw new Error(`PIN validation failed: ${error.message}`)
-  if (!data) throw new Error('PIN validation returned no result')
+  if (error) {
+    Sentry.captureException(new Error(`PIN validation failed: ${error.message}`), {
+      tags: { subsystem: 'scan-pin', tenant_id: String(user.app_metadata?.tenant_id ?? 'unknown') },
+    })
+    return { ok: false, reason: 'tenant_mismatch' }
+  }
+  if (!data) {
+    Sentry.captureException(new Error('PIN validation returned no result'), {
+      tags: { subsystem: 'scan-pin', tenant_id: String(user.app_metadata?.tenant_id ?? 'unknown') },
+    })
+    return { ok: false, reason: 'tenant_mismatch' }
+  }
 
   if (data.ok && data.employee_id) {
     return { ok: true, employee_id: data.employee_id }
