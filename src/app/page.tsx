@@ -12,5 +12,7 @@ export default async function RootPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/sign-in')
+  if (user.app_metadata?.audience === 'customer') redirect('/my')
+  if (user.app_metadata?.audience === 'staff_shop') redirect('/scan')
   redirect((isPortal ? '/my' : '/dashboard') as Route)
 }

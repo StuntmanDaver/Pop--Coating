@@ -6,9 +6,33 @@
 import { Ratelimit } from '@upstash/ratelimit'
 import { redis } from './adapter'
 
+type RateLimiter = Pick<Ratelimit, 'limit'>
+
+const passThroughLimiter: RateLimiter = {
+  async limit() {
+    return {
+      success: true,
+      limit: 0,
+      remaining: 0,
+      reset: 0,
+      pending: Promise.resolve(),
+    }
+  },
+}
+
+const authRateLimitsDisabled =
+  process.env.AUTH_RATE_LIMIT_DISABLED === 'true' ||
+  process.env.VERCEL_ENV === 'preview' ||
+  process.env.NODE_ENV === 'development'
+
+function createRateLimiter(options: ConstructorParameters<typeof Ratelimit>[0]): RateLimiter {
+  if (authRateLimitsDisabled) return passThroughLimiter
+  return new Ratelimit(options)
+}
+
 // Sign-in: 5 attempts per hour per (IP, email) compound key (Server Action use)
 // Plus per-IP edge-layer use in src/proxy.ts.
-export const signInLimiter = new Ratelimit({
+export const signInLimiter = createRateLimiter({
   redis,
   limiter: Ratelimit.slidingWindow(5, '1 h'),
   prefix: 'rl:signin',
@@ -16,7 +40,7 @@ export const signInLimiter = new Ratelimit({
 })
 
 // Magic link: 5 per hour per email
-export const magicLinkPerEmailLimiter = new Ratelimit({
+export const magicLinkPerEmailLimiter = createRateLimiter({
   redis,
   limiter: Ratelimit.slidingWindow(5, '1 h'),
   prefix: 'rl:maglink:email',
@@ -24,7 +48,7 @@ export const magicLinkPerEmailLimiter = new Ratelimit({
 })
 
 // Magic link: 10 per hour per IP (defense vs distributed enumeration; also used by proxy.ts)
-export const magicLinkPerIpLimiter = new Ratelimit({
+export const magicLinkPerIpLimiter = createRateLimiter({
   redis,
   limiter: Ratelimit.slidingWindow(10, '1 h'),
   prefix: 'rl:maglink:ip',
