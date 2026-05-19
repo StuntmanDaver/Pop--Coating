@@ -26,9 +26,13 @@ function appSchema(supabase: unknown): AppSchemaRpc {
   return (supabase as { schema: (name: string) => AppSchemaRpc }).schema('app')
 }
 
+const UuidLikeSchema = z.string().regex(
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+)
+
 const ClaimWorkstationSchema = z.object({
-  workstation_id: z.string().uuid(),
-  employee_id: z.string().uuid(),
+  workstation_id: UuidLikeSchema,
+  employee_id: UuidLikeSchema,
   expected_version: z.number().int().nonnegative(),
 })
 

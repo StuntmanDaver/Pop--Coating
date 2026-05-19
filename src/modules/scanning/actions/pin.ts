@@ -23,8 +23,12 @@ function appSchema(supabase: unknown): AppSchemaRpc {
   return (supabase as { schema: (name: string) => AppSchemaRpc }).schema('app')
 }
 
+const UuidLikeSchema = z.string().regex(
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+)
+
 const ValidatePinSchema = z.object({
-  employee_id: z.string().uuid(),
+  employee_id: UuidLikeSchema,
   pin: z.string().min(4).max(16),
 })
 
