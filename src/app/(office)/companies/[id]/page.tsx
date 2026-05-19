@@ -1,8 +1,10 @@
 import type { Route } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getCompanyById, listContacts } from '@/modules/crm'
+import { getCompanyById, listActivities, listContacts } from '@/modules/crm'
+import { listTags, listTagsForEntity } from '@/modules/tags'
 import { Badge } from '@/shared/ui/badge'
+import { CompanyWorkflows } from './company-workflows'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -11,9 +13,12 @@ interface PageProps {
 export default async function CompanyDetailPage({ params }: PageProps) {
   const { id } = await params
 
-  const [company, contacts] = await Promise.all([
+  const [company, contacts, activities, allTags, companyTags] = await Promise.all([
     getCompanyById({ id }),
     listContacts({ company_id: id, limit: 100, offset: 0 }),
+    listActivities({ entity_type: 'company', entity_id: id, limit: 50, offset: 0 }),
+    listTags({ limit: 200 }),
+    listTagsForEntity({ entity_type: 'company', entity_id: id }),
   ])
 
   if (!company) notFound()
@@ -46,7 +51,7 @@ export default async function CompanyDetailPage({ params }: PageProps) {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <section className="lg:col-span-2 space-y-6">
+        <section className="space-y-6 lg:col-span-2">
           <div className="rounded-lg border border-border bg-card p-6">
             <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Contact info
@@ -88,34 +93,48 @@ export default async function CompanyDetailPage({ params }: PageProps) {
 
         <aside className="rounded-lg border border-border bg-card p-6">
           <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Contacts
+            Primary contact
           </h2>
-          {contacts.length === 0 ? (
-            <p className="mt-4 text-sm text-muted-foreground">
-              No contacts on file yet.
-            </p>
-          ) : (
-            <ul className="mt-3 divide-y divide-border">
-              {contacts.map((c) => (
-                <li key={c.id} className="py-3 first:pt-0 last:pb-0">
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-sm font-medium text-foreground">
-                      {[c.first_name, c.last_name].filter(Boolean).join(' ')}
-                    </p>
-                    {c.is_primary ? <Badge variant="default">Primary</Badge> : null}
-                  </div>
-                  {c.email ? (
-                    <p className="mt-1 text-xs text-muted-foreground">{c.email}</p>
-                  ) : null}
-                  {c.phone ? (
-                    <p className="text-xs text-muted-foreground">{c.phone}</p>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
+          <PrimaryContactSummary contacts={contacts} />
         </aside>
       </div>
+
+      <CompanyWorkflows
+        companyId={company.id}
+        contacts={contacts}
+        activities={activities}
+        allTags={allTags}
+        companyTags={companyTags}
+      />
+    </div>
+  )
+}
+
+function PrimaryContactSummary({
+  contacts,
+}: {
+  contacts: Array<{
+    first_name: string
+    last_name: string | null
+    email: string | null
+    phone: string | null
+    role: string | null
+    is_primary: boolean
+  }>
+}) {
+  const contact = contacts.find((c) => c.is_primary) ?? contacts[0]
+  if (!contact) {
+    return <p className="mt-4 text-sm text-muted-foreground">No contacts on file yet.</p>
+  }
+
+  return (
+    <div className="mt-4 text-sm">
+      <p className="font-medium">
+        {[contact.first_name, contact.last_name].filter(Boolean).join(' ')}
+      </p>
+      {contact.role ? <p className="mt-1 text-muted-foreground">{contact.role}</p> : null}
+      {contact.email ? <p className="mt-3 text-muted-foreground">{contact.email}</p> : null}
+      {contact.phone ? <p className="text-muted-foreground">{contact.phone}</p> : null}
     </div>
   )
 }

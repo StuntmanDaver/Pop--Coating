@@ -1,8 +1,11 @@
 import type { Route } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { listActivities } from '@/modules/crm'
 import { getJobById, PRODUCTION_LABEL, PRIORITY_VARIANT } from '@/modules/jobs'
+import { listTags, listTagsForEntity } from '@/modules/tags'
 import { Badge } from '@/shared/ui/badge'
+import { JobDetailActions } from './job-detail-actions'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -12,6 +15,11 @@ export default async function JobDetailPage({ params }: PageProps) {
   const { id } = await params
   const job = await getJobById({ id })
   if (!job) notFound()
+  const [activities, allTags, jobTags] = await Promise.all([
+    listActivities({ entity_type: 'job', entity_id: id }),
+    listTags({ limit: 200 }),
+    listTagsForEntity({ entity_type: 'job', entity_id: id }),
+  ])
 
   return (
     <div className="space-y-8">
@@ -97,6 +105,16 @@ export default async function JobDetailPage({ params }: PageProps) {
           </p>
         </aside>
       </div>
+
+      <JobDetailActions
+        jobId={job.id}
+        intakeStatus={job.intake_status}
+        onHold={job.on_hold}
+        parentJobId={job.parent_job_id}
+        activities={activities}
+        allTags={allTags}
+        jobTags={jobTags}
+      />
     </div>
   )
 }

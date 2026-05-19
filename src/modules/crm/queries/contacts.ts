@@ -21,7 +21,9 @@ export interface ContactListItem {
   last_name: string | null
   email: string | null
   phone: string | null
+  role: string | null
   is_primary: boolean
+  notes: string | null
   archived_at: string | null
 }
 
@@ -32,7 +34,7 @@ export async function listContacts(params: unknown = {}): Promise<ContactListIte
 
   let query = supabase
     .from('contacts')
-    .select('id, company_id, first_name, last_name, email, phone, is_primary, archived_at')
+    .select('id, company_id, first_name, last_name, email, phone, role, is_primary, notes, archived_at')
     .order('is_primary', { ascending: false })
     .order('last_name', { ascending: true })
     .range(parsed.offset, parsed.offset + parsed.limit - 1)
