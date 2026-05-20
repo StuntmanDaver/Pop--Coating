@@ -94,21 +94,30 @@ jobs:
           intervalSeconds: 15
 
       - name: Run pgTAP RLS suite against branch DB
-        # supabase branches get returns JSON with db_url for the PR's branch DB.
+        # supabase branches get returns JSON with connection details for the PR branch DB.
+        # GitHub-hosted runners do not have IPv6 egress; prefer the session pooler.
         # supabase test db --db-url runs all SQL files in supabase/tests/ via pgTAP.
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+          SUPABASE_BRANCH_NAME: ${{ github.head_ref }}
         run: |
           # `supabase branches get` dropped --format and now uses -o (json|env|toml|...).
-          SUPABASE_DB_URL=$(supabase branches get \
-            --project-ref "${{ vars.SUPABASE_PROJECT_REF }}" \
-            -o json | jq -r '.db_url')
+          supabase branches get "$SUPABASE_BRANCH_NAME" \
+            --project-ref "$SUPABASE_PROJECT_REF" \
+            -o json > /tmp/supabase-branch.json
+
+          # The transaction pooler on 6543 can leak pgTAP plan state across files,
+          # so use the session pooler on 5432 when Supabase exposes POSTGRES_URL.
+          SESSION_POOLER_URL="$(jq -r '.POSTGRES_URL // empty' /tmp/supabase-branch.json | sed -E 's/:6543\//:5432\//')"
+          SUPABASE_DB_URL="${SESSION_POOLER_URL:-$(jq -r '.db_url // .POSTGRES_URL_NON_POOLING // empty' /tmp/supabase-branch.json)}"
 
           if [ -z "$SUPABASE_DB_URL" ] || [ "$SUPABASE_DB_URL" = "null" ]; then
             echo "Error: Could not retrieve branch DB URL from supabase branches get"
             exit 1
           fi
 
+          supabase db push --db-url "$SUPABASE_DB_URL" --include-all --yes
           supabase test db --db-url "$SUPABASE_DB_URL"
 
   # ────────────────────────────────────────────────────────────────────────────
