@@ -2,10 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { validateEmployeePin } from './pin'
 
 vi.mock('@/shared/db/server', () => ({ createClient: vi.fn() }))
-vi.mock('@/shared/auth-helpers/require', () => ({ requireShopStaff: vi.fn() }))
 
 import { createClient } from '@/shared/db/server'
-import { requireShopStaff } from '@/shared/auth-helpers/require'
 
 const EMP_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
 
@@ -17,8 +15,22 @@ const mockSchema = vi.fn((_name: string) => ({ rpc: mockRpc }))
 
 beforeEach(() => {
   vi.clearAllMocks()
-  ;(requireShopStaff as ReturnType<typeof vi.fn>).mockResolvedValue({ id: 'shop-1' })
-  ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({ schema: mockSchema })
+  ;(createClient as ReturnType<typeof vi.fn>).mockResolvedValue({
+    auth: {
+      getUser: vi.fn().mockResolvedValue({
+        data: {
+          user: {
+            app_metadata: {
+              audience: 'staff_shop',
+              tenant_id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            },
+          },
+        },
+        error: null,
+      }),
+    },
+    schema: mockSchema,
+  })
 })
 
 describe('validateEmployeePin', () => {
@@ -89,10 +101,11 @@ describe('validateEmployeePin', () => {
     )
   })
 
-  it('throws on RPC error', async () => {
+  it('returns tenant_mismatch on RPC error', async () => {
     mockRpc.mockResolvedValueOnce({ data: null, error: { message: 'permission denied' } })
-    await expect(validateEmployeePin({ employee_id: EMP_ID, pin: '1234' })).rejects.toThrow(
-      'PIN validation failed: permission denied'
-    )
+    await expect(validateEmployeePin({ employee_id: EMP_ID, pin: '1234' })).resolves.toEqual({
+      ok: false,
+      reason: 'tenant_mismatch',
+    })
   })
 })

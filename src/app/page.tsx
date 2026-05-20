@@ -11,6 +11,11 @@ export default async function RootPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) redirect('/sign-in')
+  const isPreviewDemoHost =
+    host.endsWith('.vercel.app') && process.env.VERCEL_ENV !== 'production'
+
+  if (!user) redirect((isPreviewDemoHost ? '/demo' : '/sign-in') as Route)
+  if (user.app_metadata?.audience === 'customer') redirect('/my')
+  if (user.app_metadata?.audience === 'staff_shop') redirect('/scan')
   redirect((isPortal ? '/my' : '/dashboard') as Route)
 }

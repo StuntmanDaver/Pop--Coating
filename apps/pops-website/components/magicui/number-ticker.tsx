@@ -66,9 +66,18 @@ export function NumberTicker({
       return () => mq.removeEventListener("change", syncReduced);
     }
 
+    let revealTimeout: number | undefined;
+
+    const revealSoon = () => {
+      revealTimeout = window.setTimeout(() => setIsInView(true), 0);
+    };
+
     if (typeof IntersectionObserver === "undefined") {
-      setIsInView(true);
-      return () => mq.removeEventListener("change", syncReduced);
+      revealSoon();
+      return () => {
+        mq.removeEventListener("change", syncReduced);
+        if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
+      };
     }
 
     const observer = new IntersectionObserver(
@@ -91,6 +100,7 @@ export function NumberTicker({
       mq.removeEventListener("change", syncReduced);
       window.clearTimeout(failSafe);
       observer.disconnect();
+      if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
     };
   }, []);
 

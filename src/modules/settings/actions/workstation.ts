@@ -74,3 +74,42 @@ export async function createWorkstation(input: unknown) {
     enrollment_url: `${APP_HOST}/scan/enroll?token=${device_token}`,
   }
 }
+
+const EnrollWorkstationSchema = z.object({
+  token: z.string().min(16).max(128),
+})
+
+export async function enrollWorkstation(input: unknown): Promise<{ ok: true }> {
+  const parsed = EnrollWorkstationSchema.safeParse(input)
+  if (!parsed.success) throw new Error('Invalid enrollment token')
+
+  const supabase = await createClient()
+  const supabaseAdmin = createServiceClient()
+
+  const { data: workstation, error: lookupError } = await supabaseAdmin
+    .from('workstations')
+    .select('id, auth_user_id, device_token, is_active')
+    .eq('device_token', parsed.data.token)
+    .maybeSingle()
+
+  if (lookupError) throw new Error(`Workstation lookup failed: ${lookupError.message}`)
+  if (!workstation || !workstation.is_active || !workstation.auth_user_id) {
+    throw new Error('Invalid or expired enrollment token')
+  }
+
+  const { data: authData, error: authLookupError } =
+    await supabaseAdmin.auth.admin.getUserById(workstation.auth_user_id)
+
+  if (authLookupError || !authData.user?.email) {
+    throw new Error(`Workstation auth lookup failed: ${authLookupError?.message ?? 'missing email'}`)
+  }
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: authData.user.email,
+    password: workstation.device_token,
+  })
+
+  if (signInError) throw new Error(`Workstation sign-in failed: ${signInError.message}`)
+
+  return { ok: true }
+}

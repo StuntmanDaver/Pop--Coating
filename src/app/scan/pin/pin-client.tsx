@@ -3,7 +3,6 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Route } from 'next'
-import { validateEmployeePin, claimWorkstation } from '@/modules/scanning'
 import { PinPad } from '../_components/pin-pad'
 
 interface PinClientProps {
@@ -32,24 +31,39 @@ export function PinClient({
   async function handlePin(pin: string) {
     setError(null)
 
-    // Step 1: validate PIN
-    let pinResult: Awaited<ReturnType<typeof validateEmployeePin>>
+    let result: {
+      ok: boolean
+      step?: 'pin' | 'claim'
+      reason?: string
+      attempts_remaining?: number
+      until?: string
+    }
     try {
-      pinResult = await validateEmployeePin({ employee_id: employeeId, pin })
+      const response = await fetch('/scan/pin/claim', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          employee_id: employeeId,
+          workstation_id: workstationId,
+          expected_version: workstationVersion,
+          pin,
+        }),
+      })
+      result = await response.json()
     } catch {
       setError('Unable to verify PIN. Please try again.')
       return
     }
 
-    if (!pinResult.ok) {
-      switch (pinResult.reason) {
+    if (!result.ok && result.step === 'pin') {
+      switch (result.reason) {
         case 'invalid_pin':
           setError(
-            `Wrong PIN. ${pinResult.attempts_remaining} attempt${pinResult.attempts_remaining === 1 ? '' : 's'} remaining.`,
+            `Wrong PIN. ${result.attempts_remaining ?? 0} attempt${result.attempts_remaining === 1 ? '' : 's'} remaining.`,
           )
           break
         case 'locked': {
-          const lockedUntil = new Date(pinResult.until).toLocaleTimeString([], {
+          const lockedUntil = new Date(result.until ?? Date.now()).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
           })
@@ -67,28 +81,14 @@ export function PinClient({
       return
     }
 
-    // Step 2: claim workstation — workstation_id always comes from JWT claims,
-    // never from URL params. The SQL SECURITY DEFINER function enforces this invariant.
-    let claimResult: Awaited<ReturnType<typeof claimWorkstation>>
-    try {
-      claimResult = await claimWorkstation({
-        workstation_id: workstationId,
-        employee_id: employeeId,
-        expected_version: workstationVersion,
-      })
-    } catch {
-      setError('Failed to claim workstation. Please try again.')
-      return
-    }
-
-    if (!claimResult.ok && claimResult.reason === 'workstation_in_use_or_stale_version') {
+    if (!result.ok && result.reason === 'workstation_in_use_or_stale_version') {
       // Bounce to /scan so the boot screen re-reads the fresh workstation row
       // and picks up the latest version number.
       setError('Workstation in use — try again.')
       return
     }
 
-    if (!claimResult.ok) {
+    if (!result.ok) {
       setError('Unable to claim workstation. Please try again.')
       return
     }

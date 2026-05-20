@@ -5,6 +5,7 @@ import {
   staffLogin,
   test,
 } from './fixtures/auth'
+import type { BrowserContext } from '@playwright/test'
 
 function appBaseUrl(): string {
   return process.env.NEXT_PUBLIC_APP_HOST ?? process.env.E2E_BASE_URL ?? 'http://app.localhost:3000'
@@ -20,6 +21,11 @@ function portalSmokeEmail(): string {
 
 function shouldRunMagicLinkPostSmoke(): boolean {
   return process.env.E2E_RUN_MAGIC_LINK_POST === 'true'
+}
+
+async function hasSupabaseAuthCookie(context: BrowserContext, url: string): Promise<boolean> {
+  const cookies = await context.cookies(url)
+  return cookies.some((cookie) => cookie.name.includes('auth-token'))
 }
 
 test.describe('Phase 1 auth smoke', () => {
@@ -105,12 +111,11 @@ test.describe('Phase 1 auth smoke', () => {
       await staffLogin(page, staffCredentials)
 
       const portalRoot = new URL('/', portalBaseUrl()).toString()
-      const copiedCookies = (await page.context().cookies()).map(
-        ({ expires, httpOnly, name, path, sameSite, secure, value }) => ({
+      const copiedCookies = (await page.context().cookies(appBaseUrl())).map(
+        ({ expires, httpOnly, name, sameSite, secure, value }) => ({
           expires,
           httpOnly,
           name,
-          path,
           sameSite,
           secure,
           value,
@@ -143,6 +148,7 @@ test.describe('Phase 1 auth smoke', () => {
       await page.getByLabel('Password').fill(workstationCredentials.password)
       await page.getByRole('button', { name: 'Sign In' }).click()
 
+      await expect.poll(() => hasSupabaseAuthCookie(page.context(), appBaseUrl())).toBe(true)
       await page.waitForURL('**/sign-in')
       expect(
         new URL(page.url()).searchParams.get('error'),

@@ -34,6 +34,20 @@ Namespace convention (optional): align with CLAUDE.md → `wave1/week-<n>/<topic
 
 After branch push/sync and all human-only blockers in this table are complete or re-verified, Phase 1 **Task 5** (success criteria walkthrough) can run for Phase 1 sign-off.
 
+## 2026-05-20
+
+### New-location git/GitHub and production-gate pass
+
+- Verified local Git and GitHub connectivity from `/Users/davidk/Documents/Borg Interface/PhaseOne/Pops--Coating`: `origin` points to `https://github.com/StuntmanDaver/Pop--Coating.git`, GitHub CLI auth works for `StuntmanDaver`, and branch `codex/demo-readiness` tracks `origin/codex/demo-readiness`.
+- Opened draft PR #6: `https://github.com/StuntmanDaver/Pop--Coating/pull/6`.
+- Applied linked Supabase migration `0027_drop_legacy_auth_user_created_trigger.sql`; linked migrations align through `0027`.
+- Installed Node `20.20.2` via `mise` and added `.mise.toml`; use `mise exec -- pnpm ...` in this repo when the host Node is outside the package `engines` range.
+- Fixed Vercel/GitHub blockers on the PR: removed tracked stale duplicate `* 2.*` files, aligned pnpm setup with `packageManager: pnpm@10.33.4`, fixed website lint issues, merged `origin/main`, and made the CI pgTAP branch-DB job create a missing Supabase preview branch instead of waiting on a missing `Supabase Preview` check.
+- Created Supabase preview branch `codex/demo-readiness`, pushed migrations into it, and verified `supabase test db --db-url ...` passes 9 files / 94 tests.
+- GitHub PR checks are green as of commit `4c0c9d5`: type-check/lint/Vitest, pgTAP RLS Suite (Branch DB), Playwright E2E Smoke, WCAG A + AA axe sweep, Vercel Preview Comments, and Vercel previews for `pops--coating`, `pops-website`, and `unit-portal`.
+- Public DNS still blocks production sign-off: `app.popsindustrial.com` and `track.popsindustrial.com` return no records; visible TXT/MX for `popsindustrial.com` are not Resend-ready from this shell.
+- Do not run the live Tenant 1 seed or Phase 1 Task 5 walkthrough until registrar DNS, Resend DNS, Supabase Custom SMTP, and real owner email/name are ready.
+
 ---
 
 ## 2026-05-03

@@ -34,12 +34,16 @@ export async function proxy(request: NextRequest) {
   if (isSignInPost) {
     const ip = clientIp(request)
     const limiter = isPortal ? magicLinkPerIpLimiter : signInLimiter
-    const { success: rlOk } = await limiter.limit(`proxy:${ip}`)
-    if (!rlOk) {
-      return NextResponse.json(
-        { error: 'Too many attempts. Try again later.' },
-        { status: 429 },
-      )
+    try {
+      const { success: rlOk } = await limiter.limit(`proxy:${ip}`)
+      if (!rlOk) {
+        return NextResponse.json(
+          { error: 'Too many attempts. Try again later.' },
+          { status: 429 },
+        )
+      }
+    } catch (err) {
+      Sentry.captureException(err, { tags: { subsystem: 'rate-limit-proxy' } })
     }
   }
 

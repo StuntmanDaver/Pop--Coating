@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createJob, updateJob, setJobHold, archiveJob } from './jobs'
+import {
+  archiveJob,
+  createJob,
+  scheduleJob,
+  setJobHold,
+  splitJobForMultiColor,
+  updateJob,
+} from './jobs'
 
 vi.mock('@/shared/db/server', () => ({ createClient: vi.fn() }))
 vi.mock('@/shared/auth-helpers/require', () => ({ requireOfficeStaff: vi.fn() }))
@@ -20,10 +27,10 @@ const mockSelect = vi.fn(() => ({ single: mockSingle }))
 const mockInsert = vi.fn((_data: unknown) => ({ select: mockSelect }))
 type ErrResult = { error: { message: string } | null }
 const mockUpdateEq = vi.fn<() => Promise<ErrResult>>(() => Promise.resolve({ error: null }))
-const mockUpdate = vi.fn((_data: unknown) => ({ eq: mockUpdateEq }))
+const mockUpdate = vi.fn<(_data: unknown) => unknown>(() => ({ eq: mockUpdateEq }))
 const mockRpc = vi.fn((_fn: string) => Promise.resolve({ data: null as string | null, error: null as { message: string } | null }))
 const mockSchema = vi.fn((_name: string) => ({ rpc: mockRpc }))
-const mockFrom = vi.fn((_table: string) => ({ insert: mockInsert, update: mockUpdate }))
+const mockFrom = vi.fn<(_table: string) => unknown>(() => ({ insert: mockInsert, update: mockUpdate }))
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -146,5 +153,121 @@ describe('archiveJob', () => {
     const arg = mockUpdate.mock.calls[0]?.[0] as { archived_at: string; intake_status: string } | undefined
     expect(arg?.intake_status).toBe('archived')
     expect(arg?.archived_at).toEqual(expect.any(String))
+  })
+})
+
+describe('scheduleJob', () => {
+  it('only moves draft jobs to scheduled', async () => {
+    const statusEq = vi.fn(() => Promise.resolve({ error: null }))
+    const idEq = vi.fn(() => ({ eq: statusEq }))
+    mockUpdate.mockReturnValueOnce({ eq: idEq })
+
+    await scheduleJob({ id: JOB_ID })
+
+    expect(mockUpdate).toHaveBeenCalledWith({ intake_status: 'scheduled' })
+    expect(idEq).toHaveBeenCalledWith('id', JOB_ID)
+    expect(statusEq).toHaveBeenCalledWith('intake_status', 'draft')
+  })
+
+  it('rejects invalid ids', async () => {
+    await expect(scheduleJob({ id: 'not-a-uuid' })).rejects.toThrow('Invalid input')
+  })
+})
+
+describe('splitJobForMultiColor', () => {
+  const parentJob = {
+    id: JOB_ID,
+    tenant_id: TENANT_ID,
+    parent_job_id: null,
+    job_number: 'POPS-2026-00001',
+    packet_token: 'parent-token',
+    company_id: COMPANY_ID,
+    contact_id: null,
+    job_name: 'Two-tone gate',
+    description: 'Main gate assembly',
+    customer_po_number: 'PO-123',
+    part_count: 6,
+    weight_lbs: 82.5,
+    dimensions_text: '72x42x4 in',
+    color: 'Black',
+    coating_type: 'Powder',
+    due_date: '2026-06-01',
+    priority: 'normal',
+    intake_status: 'scheduled',
+    quoted_price: 1200,
+    notes: 'Mask hinge pins.',
+  }
+
+  it('creates a child job from a draft or scheduled parent', async () => {
+    const parentMaybeSingle = vi.fn(() => Promise.resolve({ data: parentJob, error: null }))
+    const parentEq = vi.fn(() => ({ maybeSingle: parentMaybeSingle }))
+    const parentSelect = vi.fn(() => ({ eq: parentEq }))
+    const childSingle = vi.fn(() =>
+      Promise.resolve({
+        data: {
+          id: '99999999-9999-4999-8999-999999999999',
+          tenant_id: TENANT_ID,
+          job_number: 'POPS-2026-00002',
+          packet_token: 'child-token',
+        },
+        error: null,
+      })
+    )
+    const childSelect = vi.fn(() => ({ single: childSingle }))
+    const childInsert = vi.fn((_data: unknown) => ({ select: childSelect }))
+    mockFrom
+      .mockReturnValueOnce({ select: parentSelect })
+      .mockReturnValueOnce({ insert: childInsert })
+
+    const result = await splitJobForMultiColor({
+      parent_job_id: JOB_ID,
+      color: 'Signal White',
+      part_count: 2,
+    })
+
+    expect(result.job_number).toBe('POPS-2026-00002')
+    expect(childInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tenant_id: TENANT_ID,
+        parent_job_id: JOB_ID,
+        company_id: COMPANY_ID,
+        job_name: 'Two-tone gate - Signal White',
+        color: 'Signal White',
+        part_count: 2,
+        intake_status: 'scheduled',
+      })
+    )
+  })
+
+  it('rejects parents that are already in production', async () => {
+    const parentMaybeSingle = vi.fn(() =>
+      Promise.resolve({
+        data: { ...parentJob, intake_status: 'in_production' },
+        error: null,
+      })
+    )
+    const parentEq = vi.fn(() => ({ maybeSingle: parentMaybeSingle }))
+    const parentSelect = vi.fn(() => ({ eq: parentEq }))
+    mockFrom.mockReturnValueOnce({ select: parentSelect })
+
+    await expect(
+      splitJobForMultiColor({ parent_job_id: JOB_ID, color: 'Signal White' })
+    ).rejects.toThrow('draft or scheduled')
+  })
+
+  it('rejects child jobs as split parents', async () => {
+    const parentMaybeSingle = vi.fn(() =>
+      Promise.resolve({
+        data: { ...parentJob, parent_job_id: '77777777-7777-4777-8777-777777777777' },
+        error: null,
+      })
+    )
+    const parentEq = vi.fn(() => ({ maybeSingle: parentMaybeSingle }))
+    const parentSelect = vi.fn(() => ({ eq: parentEq }))
+    mockFrom.mockReturnValueOnce({ select: parentSelect })
+
+    await expect(
+      splitJobForMultiColor({ parent_job_id: JOB_ID, color: 'Signal White' })
+    ).rejects.toThrow('Only parent jobs')
   })
 })

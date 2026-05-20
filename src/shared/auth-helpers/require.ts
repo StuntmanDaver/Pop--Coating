@@ -16,8 +16,8 @@ export async function requireOfficeStaff() {
 export async function requireShopStaff() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) redirect('/scan')
-  if (user.app_metadata?.audience !== 'staff_shop') redirect('/scan')
+  if (error || !user) redirect('/sign-in')
+  if (user.app_metadata?.audience !== 'staff_shop') redirect('/sign-in')
   Sentry.setTag('tenant_id', String(user.app_metadata?.tenant_id ?? 'unknown'))
   return user
 }

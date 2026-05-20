@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 
 import { cn } from "../../lib/utils";
@@ -31,15 +31,15 @@ export function PhotoGalleryLightbox({
   const totalPhotos = photos.length;
   const activePhoto = activeIndex === null ? null : photos[activeIndex] ?? null;
 
-  const goNext = () => {
+  const goNext = useCallback(() => {
     if (activeIndex === null || totalPhotos <= 1) return;
     setActiveIndex((activeIndex + 1) % totalPhotos);
-  };
+  }, [activeIndex, totalPhotos]);
 
-  const goPrev = () => {
+  const goPrev = useCallback(() => {
     if (activeIndex === null || totalPhotos <= 1) return;
     setActiveIndex((activeIndex - 1 + totalPhotos) % totalPhotos);
-  };
+  }, [activeIndex, totalPhotos]);
 
   useEffect(() => {
     if (activeIndex === null) return;
@@ -50,7 +50,7 @@ export function PhotoGalleryLightbox({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeIndex, totalPhotos]);
+  }, [activeIndex, goNext, goPrev]);
 
   return (
     <>

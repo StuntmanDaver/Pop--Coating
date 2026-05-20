@@ -1,10 +1,12 @@
 'use client'
+import type { Route } from 'next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const TABS = [
   { href: '/settings/staff', label: 'Staff' },
   { href: '/settings/workstations', label: 'Workstations' },
+  { href: '/settings/tags', label: 'Tags' },
   { href: '/settings/shop', label: 'Shop' },
 ] as const
 
@@ -24,7 +26,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           return (
             <Link
               key={tab.href}
-              href={tab.href}
+              href={tab.href as Route}
               className={[
                 'px-4 py-2 text-sm font-medium transition-colors -mb-px border-b-2',
                 isActive

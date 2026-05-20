@@ -63,6 +63,18 @@ const HoldJobSchema = z.object({
 })
 
 const ArchiveJobSchema = z.object({ id: z.string().uuid() })
+const ScheduleJobSchema = z.object({ id: z.string().uuid() })
+
+const SplitJobForMultiColorSchema = z.object({
+  parent_job_id: z.string().uuid(),
+  job_name: z.string().min(1).max(200).optional(),
+  color: z.string().min(1).max(100),
+  coating_type: z.string().max(100).nullish(),
+  part_count: z.number().int().min(0).nullish(),
+  notes: z.string().max(20000).nullish(),
+})
+
+export type SplitJobForMultiColorInput = z.infer<typeof SplitJobForMultiColorSchema>
 
 interface JobRow {
   id: string
@@ -71,15 +83,9 @@ interface JobRow {
   packet_token: string
 }
 
-export async function createJob(input: unknown): Promise<JobRow> {
-  const parsed = CreateJobSchema.safeParse(input)
-  if (!parsed.success) throw new Error('Invalid input')
+type ServerDbClient = Awaited<ReturnType<typeof createClient>>
 
-  await requireOfficeStaff()
-  const claims = await getCurrentClaims()
-  const supabase = await createClient()
-
-  // Step 1: get atomic tenant-scoped job_number from server-side RPC.
+async function nextJobNumber(supabase: ServerDbClient): Promise<string> {
   // app.next_job_number lives in the `app` schema. supabase.rpc() defaults to public,
   // so we route via .schema('app') (sends Accept-Profile: app to PostgREST). The `app`
   // schema is exposed in supabase/config.toml and granted USAGE in migration 0012.
@@ -95,6 +101,19 @@ export async function createJob(input: unknown): Promise<JobRow> {
   if (numberError || !jobNumber) {
     throw new Error(`Job number generation failed: ${numberError?.message ?? 'unknown'}`)
   }
+  return jobNumber
+}
+
+export async function createJob(input: unknown): Promise<JobRow> {
+  const parsed = CreateJobSchema.safeParse(input)
+  if (!parsed.success) throw new Error('Invalid input')
+
+  await requireOfficeStaff()
+  const claims = await getCurrentClaims()
+  const supabase = await createClient()
+
+  // Step 1: get atomic tenant-scoped job_number from server-side RPC.
+  const jobNumber = await nextJobNumber(supabase)
 
   // Step 2: insert.
   const packet_token = generatePacketToken()
@@ -102,7 +121,7 @@ export async function createJob(input: unknown): Promise<JobRow> {
     .from('jobs')
     .insert({
       tenant_id: claims.tenant_id,
-      job_number: jobNumber as string,
+      job_number: jobNumber,
       packet_token,
       company_id: parsed.data.company_id,
       contact_id: parsed.data.contact_id ?? null,
@@ -204,4 +223,91 @@ export async function archiveJob(input: unknown): Promise<{ id: string }> {
 
   await logAuditEvent({ action: 'archive', entity_type: 'job', entity_id: parsed.data.id })
   return { id: parsed.data.id }
+}
+
+export async function scheduleJob(input: unknown): Promise<{ id: string }> {
+  const parsed = ScheduleJobSchema.safeParse(input)
+  if (!parsed.success) throw new Error('Invalid input')
+
+  await requireOfficeStaff()
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('jobs')
+    .update({ intake_status: 'scheduled' })
+    .eq('id', parsed.data.id)
+    .eq('intake_status', 'draft')
+
+  if (error) throw new Error(`Job schedule failed: ${error.message}`)
+
+  await logAuditEvent({
+    action: 'update',
+    entity_type: 'job',
+    entity_id: parsed.data.id,
+    changed_fields: { intake_status: 'scheduled' },
+  })
+  return { id: parsed.data.id }
+}
+
+export async function splitJobForMultiColor(input: unknown): Promise<JobRow> {
+  const parsed = SplitJobForMultiColorSchema.safeParse(input)
+  if (!parsed.success) throw new Error('Invalid input')
+
+  await requireOfficeStaff()
+  const claims = await getCurrentClaims()
+  const supabase = await createClient()
+
+  const { data: parent, error: parentError } = await supabase
+    .from('jobs')
+    .select('*')
+    .eq('id', parsed.data.parent_job_id)
+    .maybeSingle()
+
+  if (parentError) throw new Error(`Parent job lookup failed: ${parentError.message}`)
+  if (!parent) throw new Error('Parent job not found')
+  if (parent.parent_job_id) throw new Error('Only parent jobs can be split')
+  if (!['draft', 'scheduled'].includes(parent.intake_status)) {
+    throw new Error('Job can only be split while draft or scheduled')
+  }
+
+  const jobNumber = await nextJobNumber(supabase)
+  const packet_token = generatePacketToken()
+  const childName = parsed.data.job_name ?? `${parent.job_name} - ${parsed.data.color}`
+
+  const { data, error } = await supabase
+    .from('jobs')
+    .insert({
+      tenant_id: claims.tenant_id,
+      parent_job_id: parent.id,
+      job_number: jobNumber,
+      packet_token,
+      company_id: parent.company_id,
+      contact_id: parent.contact_id,
+      job_name: childName,
+      description: parent.description,
+      customer_po_number: parent.customer_po_number,
+      part_count: parsed.data.part_count ?? parent.part_count,
+      weight_lbs: parent.weight_lbs,
+      dimensions_text: parent.dimensions_text,
+      color: parsed.data.color,
+      coating_type: parsed.data.coating_type ?? parent.coating_type,
+      due_date: parent.due_date,
+      priority: parent.priority,
+      intake_status: parent.intake_status,
+      quoted_price: parent.quoted_price,
+      notes: parsed.data.notes ?? parent.notes,
+      created_by_staff_id: claims.staff_id ?? null,
+    })
+    .select('id, tenant_id, job_number, packet_token')
+    .single()
+
+  if (error || !data) throw new Error(`Job split failed: ${error?.message ?? 'unknown'}`)
+
+  await logAuditEvent({
+    action: 'create',
+    entity_type: 'job',
+    entity_id: data.id,
+    changed_fields: { parent_job_id: parent.id, split_reason: 'multi_color' },
+  })
+  return data
 }
