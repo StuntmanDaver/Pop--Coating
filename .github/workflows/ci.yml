@@ -9,7 +9,7 @@
 #   4. supabase test db — pgTAP RLS suite against the PR's Supabase branch DB (per D-07)
 #   5. pnpm test:e2e — Playwright smoke tests when E2E credentials are configured
 #
-# D-07: pgTAP job waits for Supabase Preview branch DB before running.
+# D-07: pgTAP job uses an isolated Supabase preview branch DB before running.
 #
 # GitHub Actions env requirements are documented once in
 # docs/runbooks/phase-1-production-readiness.md. Store values only in
@@ -62,7 +62,7 @@ jobs:
   # ────────────────────────────────────────────────────────────────────────────
   # Job 2: pgTAP RLS suite against the PR's Supabase branch DB
   # Runs only on pull_requests (D-07: branch DBs require a PR context).
-  # Waits for Supabase Preview check (branch DB provisioning) before running.
+  # Ensures the preview branch DB exists before running.
   # ────────────────────────────────────────────────────────────────────────────
   pgtap:
     name: pgTAP RLS Suite (Branch DB)
@@ -79,20 +79,9 @@ jobs:
         with:
           version: latest
 
-      - name: Wait for Supabase Preview branch DB
-        # D-07: Each PR gets an isolated Supabase branch DB.
-        # The Supabase GitHub App (installed on the repo) provisions the branch DB
-        # and reports a "Supabase Preview" check. We wait up to 10 minutes for it.
-        uses: fountainhead/action-wait-for-check@v1.2.0
-        id: wait-for-supabase
-        with:
-          checkName: Supabase Preview
-          token: ${{ secrets.GITHUB_TOKEN }}
-          timeoutSeconds: 600
-          intervalSeconds: 15
-
       - name: Run pgTAP RLS suite against branch DB
         # supabase branches get returns JSON with connection details for the PR branch DB.
+        # If the GitHub App did not provision the branch, create it directly.
         # GitHub-hosted runners do not have IPv6 egress; prefer the session pooler.
         # supabase test db --db-url runs all SQL files in supabase/tests/ via pgTAP.
         env:
@@ -100,15 +89,60 @@ jobs:
           SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
           SUPABASE_BRANCH_NAME: ${{ github.head_ref }}
         run: |
+          BRANCH_JSON="/tmp/supabase-branch.json"
+          BRANCH_LIST_JSON="/tmp/supabase-branches.json"
+          BRANCH_ERROR="/tmp/supabase-branch.err"
+          CREATED_BRANCH="false"
+
           # `supabase branches get` dropped --format and now uses -o (json|env|toml|...).
-          supabase branches get "$SUPABASE_BRANCH_NAME" \
+          if ! supabase branches get "$SUPABASE_BRANCH_NAME" \
             --project-ref "$SUPABASE_PROJECT_REF" \
-            -o json > /tmp/supabase-branch.json
+            -o json > "$BRANCH_JSON" 2> "$BRANCH_ERROR"; then
+            if grep -qi "Preview branch not found" "$BRANCH_ERROR"; then
+              echo "Supabase preview branch '$SUPABASE_BRANCH_NAME' not found; creating it now."
+              supabase branches create "$SUPABASE_BRANCH_NAME" \
+                --project-ref "$SUPABASE_PROJECT_REF" \
+                -o json \
+                --yes > "$BRANCH_JSON"
+              CREATED_BRANCH="true"
+            else
+              cat "$BRANCH_ERROR" >&2
+              exit 1
+            fi
+          fi
+
+          if [ "$CREATED_BRANCH" = "true" ]; then
+            for attempt in {1..60}; do
+              supabase branches list \
+                --project-ref "$SUPABASE_PROJECT_REF" \
+                -o json > "$BRANCH_LIST_JSON"
+
+              PREVIEW_STATUS="$(jq -r --arg name "$SUPABASE_BRANCH_NAME" '.[] | select(.name == $name) | .preview_project_status // empty' "$BRANCH_LIST_JSON")"
+              BRANCH_STATUS="$(jq -r --arg name "$SUPABASE_BRANCH_NAME" '.[] | select(.name == $name) | .status // empty' "$BRANCH_LIST_JSON")"
+
+              if [ "$PREVIEW_STATUS" = "ACTIVE_HEALTHY" ]; then
+                echo "Supabase preview branch is healthy: $BRANCH_STATUS"
+                break
+              fi
+
+              echo "Waiting for Supabase preview branch to become healthy (attempt $attempt/60): ${PREVIEW_STATUS:-$BRANCH_STATUS}"
+              sleep 10
+            done
+
+            if [ "$PREVIEW_STATUS" != "ACTIVE_HEALTHY" ]; then
+              echo "Error: Supabase preview branch did not become healthy within 10 minutes."
+              exit 1
+            fi
+
+            supabase branches get "$SUPABASE_BRANCH_NAME" \
+              --project-ref "$SUPABASE_PROJECT_REF" \
+              -o json > "$BRANCH_JSON"
+          fi
 
           # The transaction pooler on 6543 can leak pgTAP plan state across files,
           # so use the session pooler on 5432 when Supabase exposes POSTGRES_URL.
-          SESSION_POOLER_URL="$(jq -r '.POSTGRES_URL // empty' /tmp/supabase-branch.json | sed -E 's/:6543\//:5432\//')"
-          SUPABASE_DB_URL="${SESSION_POOLER_URL:-$(jq -r '.db_url // .POSTGRES_URL_NON_POOLING // empty' /tmp/supabase-branch.json)}"
+          SESSION_POOLER_URL="$(jq -r '.POSTGRES_URL // empty' "$BRANCH_JSON" | sed -E 's/:6543\//:5432\//')"
+          SUPABASE_DB_URL="${SESSION_POOLER_URL:-$(jq -r '.db_url // .POSTGRES_URL_NON_POOLING // empty' "$BRANCH_JSON")}"
 
           if [ -z "$SUPABASE_DB_URL" ] || [ "$SUPABASE_DB_URL" = "null" ]; then
             echo "Error: Could not retrieve branch DB URL from supabase branches get"
