@@ -30,7 +30,7 @@ Phase: 01 (foundation) — EXECUTING
 Plan: 6 of 6
 **Active Phase:** 1 — Foundation
 **Active Plan:** 06 — production checkpoint/sign-off
-**Status:** Blocked on manual infrastructure checkpoint before Phase 1 sign-off
+**Status:** Automated gates are green on PR #6; blocked on manual infrastructure checkpoint before Phase 1 sign-off
 
 **Progress:**
 
@@ -94,7 +94,7 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ### Blockers
 
-- **Plan 06 human-only gate:** DNS is deferred until registrar access is available. Supabase JWT expiry and Custom Access Token Hook are configured; remaining blockers are Supabase custom SMTP, Resend DNS, registrar DNS for `app.popsindustrial.com` and `track.popsindustrial.com`, live Tenant 1 seed, and Phase 1 success walkthrough — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
+- **Plan 06 human-only gate:** DNS is deferred until registrar access is available. Supabase JWT expiry and Custom Access Token Hook are configured; PR #6 has green automated gates as of 2026-05-20. Remaining blockers are Supabase custom SMTP, Resend DNS, registrar DNS for `app.popsindustrial.com` and `track.popsindustrial.com`, live Tenant 1 seed, and Phase 1 success walkthrough — see `SESSION-MEMORY.md`, `01-06-PLAN.md`, and `docs/briefs/PHASE-1-GATE-NEXT-DISPATCH.md`.
 
 ### Todos Carried Forward
 
@@ -111,8 +111,8 @@ Phase 4 [----------] 0%  Portal & Ops
 
 ## Session Continuity
 
-**Last updated:** 2026-05-12
-**Last action:** Deferred DNS until registrar access is available. Supabase JWT expiry is `3600`; production Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`, which delegates to canonical `app.custom_access_token_hook`. Added migrations through `0026`, regenerated `src/shared/db/types.ts`, and expanded pgTAP coverage for the Dashboard auth-hook wrapper.
+**Last updated:** 2026-05-20
+**Last action:** Pushed draft PR #6 on `codex/demo-readiness`, created the missing Supabase preview branch, fixed CI/Vercel blockers, applied linked migration `0027`, and verified green GitHub checks plus local linked/branch pgTAP. DNS remains deferred until registrar access is available. Supabase JWT expiry is `3600`; production Custom Access Token Hook is enabled via `public.dashboard_custom_access_token_hook`, which delegates to canonical `app.custom_access_token_hook`.
 **Next action:** With registrar access, add Vercel CNAMEs and Resend DNS records, verify domains/DKIM/SPF/MX, configure Supabase custom SMTP, collect owner email/name for `pnpm seed:tenant`, then run Phase 1 Task 5 sign-off.
 
 **Context for next session:**
@@ -121,7 +121,7 @@ Phase 4 [----------] 0%  Portal & Ops
 
 - Phase 1 covers INFRA-01 through INFRA-07 + AUTH-01 through AUTH-05
 - Plans 01-05 complete: Next.js scaffold, 10 SQL migrations, auth hook + SECURITY DEFINER functions, Supabase clients + auth helpers + proxy.ts + rate limiting + Sentry, auth Server Actions + sign-in UI + module stubs
-- Plan 06: checkpoint — Supabase Cloud schema through migration 0026 is applied, DB types are generated, and linked pgTAP covers auth hook invariants; remaining gates are DNS, SMTP, seed-tenant.ts run, and Phase 1 success walkthrough
+- Plan 06: checkpoint — Supabase Cloud schema through migration 0027 is applied, DB types are generated, linked and branch-DB pgTAP pass, and PR #6 automated gates are green; remaining gates are DNS, SMTP, seed-tenant.ts run, and Phase 1 success walkthrough
 - Hook registration for production goes in Plan 06 (manual checkpoint); local dev already registered via config.toml [auth.hook.custom_access_token]
 - The workstation ceremony UI is Phase 3; Phase 1 delivers the createWorkstation server action (complete in Plan 05)
 - vitest.config.ts is in place; latest local gate reported `pnpm test` passing across 41 files / 300 tests after rebasing onto `origin/main`

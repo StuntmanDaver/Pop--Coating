@@ -6,8 +6,8 @@ Status as of 2026-05-20: registrar access is still the blocking production actio
 
 Canonical production domain: `popsindustrial.com`.
 
-- `app.popsindustrial.com` points at Vercel and has a valid certificate.
-- `track.popsindustrial.com` points at Vercel and has a valid certificate.
+- `app.popsindustrial.com` must point at Vercel and show a valid certificate before sign-off.
+- `track.popsindustrial.com` must point at Vercel and show a valid certificate before sign-off.
 - Stale or mistaken `popscoating.com` aliases and DNS records are removal-only; do not add them as active app, portal, or sender domains.
 
 Current public DNS observation from 2026-05-20:

@@ -63,6 +63,10 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 2026-05-20 production-gate update:
 
 - Pushed branch `codex/demo-readiness` to `origin` and set its upstream.
+- Opened draft PR #6: `https://github.com/StuntmanDaver/Pop--Coating/pull/6`.
+- Fixed CI/Vercel blockers in the demo-readiness branch: stale tracked duplicate `* 2.*` files, pnpm setup version drift, website lint issues, and missing Supabase preview branch handling.
+- Created the missing Supabase preview branch `codex/demo-readiness` and verified branch-DB pgTAP locally.
+- GitHub PR checks are green as of commit `4c0c9d5`: type-check/lint/Vitest, pgTAP RLS Suite (Branch DB), Playwright E2E Smoke, WCAG A + AA axe sweep, and all Vercel preview deployments.
 - Installed and verified Node `20.20.2` through `mise`; repo tooling should run through the pinned runtime instead of the host Node `25.x`.
 - Applied linked Supabase migration `0027_drop_legacy_auth_user_created_trigger.sql`; local and remote migrations now align through `0027`.
 - Passed: `mise exec -- pnpm type-check`
