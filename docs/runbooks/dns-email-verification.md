@@ -1,6 +1,6 @@
 # DNS And Email Verification Runbook
 
-Status as of 2026-05-12: registrar access is deferred. Vercel domains are attached but invalid until DNS records exist. Resend verification and Supabase custom SMTP remain deferred.
+Status as of 2026-05-20: registrar access is still the blocking production action. Vercel domains are attached but public DNS for `app.popsindustrial.com` and `track.popsindustrial.com` returns no records from this shell. Resend verification and Supabase custom SMTP remain deferred until the exact DNS records from the Resend dashboard are added and verified.
 
 ## Domains
 
@@ -9,6 +9,13 @@ Canonical production domain: `popsindustrial.com`.
 - `app.popsindustrial.com` points at Vercel and has a valid certificate.
 - `track.popsindustrial.com` points at Vercel and has a valid certificate.
 - Stale or mistaken `popscoating.com` aliases and DNS records are removal-only; do not add them as active app, portal, or sender domains.
+
+Current public DNS observation from 2026-05-20:
+
+- `dig +short app.popsindustrial.com` returned no records.
+- `dig +short track.popsindustrial.com` returned no records.
+- `dig +short TXT popsindustrial.com` returned existing Microsoft/SparkPost-style records, not Resend DKIM verification records.
+- `dig +short MX popsindustrial.com` returned Microsoft mail routing, not a Resend return-path MX.
 
 ### Tomorrow Registrar Checklist
 

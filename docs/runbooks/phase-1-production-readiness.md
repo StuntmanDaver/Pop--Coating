@@ -14,7 +14,7 @@ Production domain default is `popsindustrial.com`:
 - Vercel project is linked under the intended team and production deploy is known. Current project: `stuntmandavers-projects/pops--coating`.
 - Vercel domains include `app.popsindustrial.com` and `track.popsindustrial.com`; both are attached to `pops--coating` but invalid until registrar DNS records are added. Stale `popscoating.com` domains are removal-only after canonical domains are healthy.
 - Production env vars match the inventory below. Set values only in Vercel, GitHub Actions, Supabase Dashboard, or local `.env.local`; never paste values into docs or terminal output.
-- Resend DNS for `popsindustrial.com` passes DKIM, SPF, and MX verification.
+- Resend DNS for `popsindustrial.com` must pass DKIM, SPF, and MX verification before Supabase Custom SMTP and the live Tenant 1 seed run.
 
 ## Environment Variable Inventory
 
@@ -59,6 +59,21 @@ Rows marked sensitive, plus test passwords, must stay in encrypted secret stores
 - `supabase test db` against the PR branch database.
 
 ### Latest Local Baseline
+
+2026-05-20 production-gate update:
+
+- Pushed branch `codex/demo-readiness` to `origin` and set its upstream.
+- Installed and verified Node `20.20.2` through `mise`; repo tooling should run through the pinned runtime instead of the host Node `25.x`.
+- Applied linked Supabase migration `0027_drop_legacy_auth_user_created_trigger.sql`; local and remote migrations now align through `0027`.
+- Passed: `mise exec -- pnpm type-check`
+- Passed: `mise exec -- pnpm lint`
+- Passed: `pnpm test` (35 files / 254 tests)
+- Passed: `pnpm build`
+- Passed: `supabase migration list --linked` (local and remote aligned through `0027`)
+- Passed: `supabase test db --linked` (9 files / 94 tests)
+- Confirmed public DNS still blocks production sign-off: `app.popsindustrial.com` and `track.popsindustrial.com` return no public DNS records from this shell.
+- Confirmed visible `popsindustrial.com` mail DNS is not Resend-ready from this shell: TXT/MX responses show existing Microsoft/SparkPost-style records, not verified Resend DKIM/SPF/MX records.
+- Still blocked before Phase 1 Task 5: registrar DNS, Resend DNS verification, Supabase Custom SMTP, real owner email/name, live Tenant 1 seed, and manual success walkthrough.
 
 2026-05-12 DNS-deferred update:
 
