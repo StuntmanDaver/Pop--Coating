@@ -55,20 +55,39 @@ export function BlurFade({
     syncReduced();
     mq.addEventListener("change", syncReduced);
 
-    if (!inView) {
+    let revealTimeout: number | undefined;
+
+    const reveal = () => {
       setRevealed(true);
-      return () => mq.removeEventListener("change", syncReduced);
+    };
+
+    const revealSoon = () => {
+      revealTimeout = window.setTimeout(reveal, 0);
+    };
+
+    if (!inView) {
+      revealSoon();
+      return () => {
+        mq.removeEventListener("change", syncReduced);
+        if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
+      };
     }
 
     if (mq.matches) {
-      setRevealed(true);
-      return () => mq.removeEventListener("change", syncReduced);
+      revealSoon();
+      return () => {
+        mq.removeEventListener("change", syncReduced);
+        if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
+      };
     }
 
     const node = ref.current;
     if (!node) {
-      setRevealed(true);
-      return () => mq.removeEventListener("change", syncReduced);
+      revealSoon();
+      return () => {
+        mq.removeEventListener("change", syncReduced);
+        if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
+      };
     }
 
     const precheckIntersectsViewport = (el: HTMLElement) => {
@@ -78,14 +97,8 @@ export function BlurFade({
       return r.bottom > -80 && r.top < vh + 80 && r.right > -80 && r.left < vw + 80;
     };
 
-    let revealTimeout: number | undefined;
-
-    const reveal = () => {
-      setRevealed(true);
-    };
-
     if (typeof IntersectionObserver === "undefined") {
-      revealTimeout = window.setTimeout(reveal, 0);
+      revealSoon();
       return () => {
         mq.removeEventListener("change", syncReduced);
         if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);
@@ -93,7 +106,7 @@ export function BlurFade({
     }
 
     if (precheckIntersectsViewport(node)) {
-      revealTimeout = window.setTimeout(reveal, 0);
+      revealSoon();
       return () => {
         mq.removeEventListener("change", syncReduced);
         if (revealTimeout !== undefined) window.clearTimeout(revealTimeout);

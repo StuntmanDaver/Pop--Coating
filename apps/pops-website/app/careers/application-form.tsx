@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import Script from "next/script";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -90,6 +90,10 @@ export function JobApplicationForm() {
     }
   };
 
+  const onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    void handleSubmit(onSubmit)(event);
+  };
+
   if (submitted) {
     return (
       <div
@@ -126,7 +130,7 @@ export function JobApplicationForm() {
         Fields marked with <span className="text-pops-yellow-500">*</span> are required.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+      <form onSubmit={onFormSubmit} noValidate className="space-y-6">
         {serverError && (
           <div
             role="alert"
@@ -181,7 +185,6 @@ export function JobApplicationForm() {
                 className="space-y-3 rounded-sm border border-white/10 bg-[#0A0A0A]/50 p-4"
                 role="group"
                 aria-label="Positions"
-                aria-invalid={!!errors.positionInterests}
               >
                 {JOB_APPLICATION_POSITIONS.map((position) => (
                   <label
