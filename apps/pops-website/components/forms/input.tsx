@@ -18,7 +18,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         "rounded-sm border bg-[#0A0A0A] text-ink-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]",
         "border-white/15",
         "font-text text-base placeholder:text-ink-400",
-        "transition-[border-color,box-shadow] duration-150 ease-out",
+        "transition-[border-color,box-shadow] duration-500 ease-in-out",
         "outline-none",
         "focus-visible:border-pops-yellow-500 focus-visible:ring-2 focus-visible:ring-pops-yellow-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
         "data-[error=true]:border-danger-500 aria-[invalid=true]:border-danger-500",

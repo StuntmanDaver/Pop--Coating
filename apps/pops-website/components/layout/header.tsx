@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -22,10 +25,14 @@ const NAV_LINKS: ReadonlyArray<NavLink> = [
 
 /** Sticky site header — stays pinned to the top of the viewport while scrolling. */
 export function Header({ className }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-pops-yellow-500/25 bg-[#0a0a0a]/90 shadow-[0_1px_0_0_rgb(0_0_0/0.4)] backdrop-blur-md",
+        "sticky top-0 z-50 w-full border-b border-pops-yellow-500/25 bg-[#0a0a0a]/90 pt-[env(safe-area-inset-top,0px)] shadow-[0_1px_0_0_rgb(0_0_0/0.4)] backdrop-blur-md",
         className,
       )}
     >
@@ -41,10 +48,10 @@ export function Header({ className }: HeaderProps) {
         <Link
           href="/"
           aria-label="Pop's Industrial Coatings — Home"
-          className="group inline-flex shrink-0 items-center gap-5 overflow-visible rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black lg:gap-6"
+          className="group inline-flex min-w-0 shrink items-center gap-3 overflow-visible rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:gap-5 lg:gap-6"
         >
           {/* Logo hugging the left; scale is modest so paint does not overlap the wordmark */}
-          <span className="relative inline-block h-16 w-[calc(4rem*682/1024)] shrink-0 overflow-visible sm:h-[4.5rem] sm:w-[calc(4.5rem*682/1024)] md:h-[5rem] md:w-[calc(5rem*682/1024)] lg:h-[5.5rem] lg:w-[calc(5.5rem*682/1024)]">
+          <span className="relative inline-block h-14 w-[calc(3.5rem*682/1024)] shrink-0 overflow-visible min-[360px]:h-16 min-[360px]:w-[calc(4rem*682/1024)] sm:h-[4.5rem] sm:w-[calc(4.5rem*682/1024)] md:h-[5rem] md:w-[calc(5rem*682/1024)] lg:h-[5.5rem] lg:w-[calc(5.5rem*682/1024)]">
             <Image
               src="/images/pops-logo-header-footer.png"
               alt=""
@@ -54,7 +61,7 @@ export function Header({ className }: HeaderProps) {
               className="object-contain object-left scale-[1.2] [transform-origin:0%_50%]"
             />
           </span>
-          <span className="relative z-10 shrink-0 font-display text-sm leading-tight tracking-tight text-ink-100 sm:text-base">
+          <span className="relative z-10 min-w-0 max-w-[11rem] shrink font-display text-[11px] leading-tight tracking-tight text-ink-100 min-[360px]:max-w-none min-[360px]:text-xs sm:text-base">
             POP&apos;S INDUSTRIAL COATINGS
           </span>
         </Link>
@@ -78,10 +85,12 @@ export function Header({ className }: HeaderProps) {
             <Link href="/request-a-quote">Request a Quote</Link>
           </Button>
 
-          {/* Mobile hamburger — visual only; full mobile nav is a Wave 2 enhancement */}
           <button
             type="button"
-            aria-label="Open navigation menu"
+            aria-controls="mobile-primary-navigation"
+            aria-expanded={isMenuOpen}
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            onClick={() => setIsMenuOpen((open) => !open)}
             className="inline-flex min-h-11 w-11 items-center justify-center rounded-sm text-ink-200 transition-colors hover:text-pops-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400 md:hidden"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -95,6 +104,33 @@ export function Header({ className }: HeaderProps) {
           </button>
         </div>
       </Container>
+
+      <nav
+        id="mobile-primary-navigation"
+        aria-label="Mobile primary"
+        className={cn(
+          "border-t border-pops-yellow-500/20 pops-pb-safe pt-2 md:hidden",
+          isMenuOpen ? "block" : "hidden",
+        )}
+      >
+        <div className="pops-px-page mx-auto flex max-w-[1280px] flex-col gap-1 pt-1">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={closeMenu}
+              className="rounded-sm px-2 py-3.5 font-text text-base font-medium leading-snug text-ink-100 transition-colors active:bg-white/[0.04] hover:text-pops-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pops-yellow-400"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Button asChild variant="primary" size="default" className="mt-3 w-full justify-center">
+            <Link href="/request-a-quote" onClick={closeMenu}>
+              Request a Quote
+            </Link>
+          </Button>
+        </div>
+      </nav>
     </header>
   );
 }

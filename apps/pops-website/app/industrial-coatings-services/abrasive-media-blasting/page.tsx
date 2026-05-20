@@ -16,9 +16,6 @@ export const metadata: Metadata = {
   title: "Abrasive Media Blasting - Lakeland FL Polk County FL",
   description:
     "Our Abrasive Media Blasting services adhere strictly to the rigorous standards set by SSPC (Society for Protective Coatings) and NACE (National Association of Corrosion Engineers).",
-  openGraph: {
-    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
-  },
 };
 
 const OTHER_SERVICES = [

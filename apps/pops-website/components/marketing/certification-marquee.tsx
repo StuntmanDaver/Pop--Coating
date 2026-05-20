@@ -53,7 +53,7 @@ export function CertificationMarquee() {
       className="pops-section-gold-wash border-t border-pops-yellow-500/20 py-12 sm:py-14"
     >
       <div className="relative z-10">
-        <div className="mx-auto mb-6 max-w-[1280px] px-4 text-center sm:px-6 lg:px-8">
+        <div className="pops-px-page mx-auto mb-6 max-w-[1280px] text-center">
           <EyebrowLabel id="cert-rail-heading" tone="dark" shimmer>
             Certifications &amp; Approvals
           </EyebrowLabel>
@@ -72,7 +72,7 @@ export function CertificationMarquee() {
           <Marquee
             pauseOnHover
             repeat={8}
-            className="[--duration:32s] [--gap:4rem] py-2"
+            className="[--duration:32s] [--gap:clamp(1.75rem,6vw,4rem)] py-2"
           >
             {CERTS.map((cert) => (
               <div
@@ -89,7 +89,7 @@ export function CertificationMarquee() {
                     alt=""
                     width={cert.width}
                     height={cert.height}
-                    className="h-full w-auto object-contain opacity-90 grayscale transition-[opacity,filter] duration-300 hover:opacity-100 hover:grayscale-0"
+                    className="h-full w-auto object-contain opacity-90 grayscale transition-[opacity,filter] duration-700 ease-in-out hover:opacity-100 hover:grayscale-0"
                   />
                 </Link>
               </div>

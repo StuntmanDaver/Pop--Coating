@@ -1,3 +1,7 @@
+"use client";
+
+import { motion, useReducedMotion } from "motion/react";
+
 import { BlurFade } from "../magicui/blur-fade";
 import { Container } from "../layout/container";
 import { EyebrowLabel } from "./eyebrow";
@@ -19,7 +23,11 @@ const INDUSTRIES: Industry[] = [
   { name: "Support Beams", detail: "Traffic lights, bridges, stadiums" },
 ];
 
+const SPRING = { type: "spring", stiffness: 180, damping: 24, mass: 0.85 } as const;
+
 export function IndustriesGrid() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section
       aria-labelledby="industries-heading"
@@ -40,12 +48,31 @@ export function IndustriesGrid() {
           </h2>
         </BlurFade>
 
-        <BlurFade inView={false} delay={0.12}>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-            {INDUSTRIES.map((industry) => (
-              <li
+        <motion.ul
+          className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6"
+          initial={reduceMotion ? false : "hidden"}
+          whileInView={reduceMotion ? undefined : "visible"}
+          viewport={{ once: true, margin: "0px 0px -12% 0px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.09,
+                delayChildren: 0.12,
+              },
+            },
+          }}
+        >
+          {INDUSTRIES.map((industry) => (
+            <motion.li
                 key={industry.name}
-                className="pops-card-surface relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-sm border border-pops-yellow-500/15 p-5 shadow-[0_0_32px_-16px_rgba(254,205,8,0.2)] sm:p-6"
+                className="pops-card-surface relative flex h-full flex-col justify-between gap-3 overflow-hidden rounded-sm p-5 sm:p-6"
+                variants={{
+                  hidden: { opacity: 0, y: 18 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.72, ease: "easeInOut" }}
+                whileHover={reduceMotion ? undefined : { y: -3, transition: SPRING }}
               >
                 <div
                   aria-hidden="true"
@@ -57,10 +84,9 @@ export function IndustriesGrid() {
                 <p className="relative font-text text-xs leading-snug text-ink-200 sm:text-sm">
                   {industry.detail}
                 </p>
-              </li>
+              </motion.li>
             ))}
-          </ul>
-        </BlurFade>
+        </motion.ul>
       </Container>
     </section>
   );

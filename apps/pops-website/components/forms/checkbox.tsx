@@ -31,7 +31,7 @@ export const Checkbox = forwardRef<
           // Visible 18x18 box
           "flex h-[18px] w-[18px] items-center justify-center",
           "rounded-sm border-2 border-ink-400 bg-ink-700",
-          "transition-colors duration-150 ease-out",
+          "transition-colors duration-500 ease-in-out",
           "group-hover:border-ink-300",
           "group-data-[state=checked]:border-pops-yellow-500 group-data-[state=checked]:bg-pops-yellow-500",
           "group-data-[state=indeterminate]:border-pops-yellow-500 group-data-[state=indeterminate]:bg-pops-yellow-500",
@@ -45,7 +45,7 @@ export const Checkbox = forwardRef<
             stroke="currentColor"
             className={cn(
               "h-[14px] w-[14px] text-ink-900",
-              "opacity-0 transition-opacity duration-150 ease-out",
+              "opacity-0 transition-opacity duration-500 ease-in-out",
               "group-data-[state=checked]:opacity-100",
               "group-data-[state=indeterminate]:opacity-100",
             )}

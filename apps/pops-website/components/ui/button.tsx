@@ -6,11 +6,11 @@ import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
   [
-    "inline-flex items-center justify-center gap-2",
+    "inline-flex touch-manipulation items-center justify-center gap-2",
     "rounded-sm",
     "font-text font-semibold text-sm",
     "px-6 py-3",
-    "transition-[transform,box-shadow,opacity] duration-150 ease-out",
+    "transition-[transform,box-shadow,opacity,background-color,border-color,color] duration-500 ease-in-out",
     "outline-none",
     "focus-visible:ring-2 focus-visible:ring-pops-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     "disabled:opacity-50 disabled:cursor-not-allowed",
@@ -21,7 +21,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-pops-yellow-500 text-black shadow-[0_0_32px_-6px_rgba(254,205,8,0.65)] hover:-translate-y-0.5 hover:bg-pops-yellow-300 hover:shadow-[0_0_40px_-4px_rgba(254,205,8,0.75)]",
+          "bg-pops-yellow-500 text-black shadow-[0_0_32px_-6px_rgba(254,205,8,0.65)] hover:-translate-y-0.5 hover:bg-pops-yellow-300 hover:shadow-[0_0_40px_-4px_rgba(254,205,8,0.75)] active:translate-y-0",
         secondary:
           "bg-transparent border border-pops-yellow-500/45 text-white hover:border-pops-yellow-500 hover:bg-pops-yellow-500/10 hover:text-pops-yellow-300",
         ghost:       "bg-transparent text-ink-200 hover:text-pops-yellow-400",
@@ -32,8 +32,8 @@ const buttonVariants = cva(
           "bg-transparent border border-white/25 text-white hover:border-pops-yellow-500 hover:text-pops-yellow-300 hover:shadow-[0_0_24px_-8px_rgba(254,205,8,0.35)]",
       },
       size: {
-        default: "h-11",
-        compact: "h-9 px-5 py-2",
+        default: "h-12 px-6 py-3",
+        compact: "min-h-11 h-11 px-5 py-2 sm:h-9 sm:min-h-9",
       },
     },
     defaultVariants: {

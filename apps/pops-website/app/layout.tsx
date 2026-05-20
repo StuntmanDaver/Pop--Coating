@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo_Black, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +15,12 @@ const text = Inter({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://popsindustrial.com"),
   title: {
@@ -26,11 +32,23 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Pop's Industrial Coatings",
-    images: [{ url: "/images/pops-social-thumbnail.png", width: 1200, height: 630, alt: "Pop's Industrial Coatings" }],
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Pop's Industrial Coatings — Premium industrial finishing, Lakeland FL",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    images: [{ url: "/images/pops-social-thumbnail.png", alt: "Pop's Industrial Coatings" }],
+    images: [
+      {
+        url: "/twitter-image",
+        alt: "Pop's Industrial Coatings — Premium industrial finishing, Lakeland FL",
+      },
+    ],
   },
 };
 
@@ -41,7 +59,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`scroll-smooth ${display.variable} ${text.variable}`}>
-      <body className="font-text" suppressHydrationWarning>{children}</body>
+      <body className="font-text antialiased [-webkit-tap-highlight-color:transparent]" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

@@ -6,16 +6,16 @@ import { cn } from "../../lib/utils";
 const cardVariants = cva(
   [
     "rounded-sm border p-6",
-    "transition-shadow duration-200 ease-out",
+    "transition-[transform,box-shadow,border-color,background-color] duration-700 ease-in-out",
   ].join(" "),
   {
     variants: {
       tone: {
-        dark: "bg-black text-ink-100 border-pops-yellow-500/15",
-        light: "bg-[#0A0A0A] text-ink-100 border-pops-yellow-500/12",
+        dark: "bg-white/[0.035] text-ink-100 border-white/10",
+        light: "bg-white/[0.045] text-ink-100 border-white/10",
       },
       interactive: {
-        true: "hover:shadow-3",
+        true: "hover:-translate-y-1 hover:shadow-[0_18px_42px_-28px_rgba(254,205,8,0.45)]",
         false: "",
       },
     },

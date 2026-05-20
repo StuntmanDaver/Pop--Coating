@@ -98,7 +98,7 @@ export function CapacitySpecs() {
               ))}
             </dl>
           ) : (
-            <div className="flex flex-col items-start gap-4 rounded-sm border border-pops-yellow-500/25 bg-[#0A0A0A] p-6 shadow-[0_0_40px_-12px_rgba(254,205,8,0.12)] sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
+            <div className="pops-card-surface flex flex-col items-start gap-4 rounded-sm p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-8">
               <p className="font-text text-base leading-relaxed text-ink-200 sm:text-lg">
                 Cure oven, max part weight, blast booth, throughput — sized to
                 your job, every time. Tell us what you have and we&apos;ll

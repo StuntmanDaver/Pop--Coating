@@ -100,11 +100,6 @@
   50%      { transform: scale(1.12) translate(-0.8%, -0.4%); }
 }
 
-@keyframes pops-gold-pulse {
-  0%, 100% { opacity: 0.45; }
-  50%      { opacity: 0.9; }
-}
-
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .shiny-text-mask {
     color: transparent;
@@ -219,10 +214,6 @@
   animation: pops-hero-drift 28s ease-in-out infinite;
 }
 
-.pops-hero-gold-halo {
-  animation: pops-gold-pulse 4.5s ease-in-out infinite;
-}
-
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .pops-text-grad {
     background: linear-gradient(125deg,
@@ -240,6 +231,59 @@ html {
   color: #F4F6FA;
 }
 
+/**
+ * Horizontal page gutters that respect safe areas (notched phones, landscape).
+ * Pair with `viewportFit: "cover"` on the document viewport.
+ */
+.pops-px-page {
+  padding-left: max(1rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1rem, env(safe-area-inset-right, 0px));
+}
+
+@media (width >= 40rem) {
+  .pops-px-page {
+    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (width >= 64rem) {
+  .pops-px-page {
+    padding-left: max(2rem, env(safe-area-inset-left, 0px));
+    padding-right: max(2rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+.pops-pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+
+@keyframes pops-share-glow-sweep {
+  0% {
+    transform: translateX(-35%) skewX(-12deg);
+    opacity: 0.22;
+  }
+  45% {
+    opacity: 0.42;
+  }
+  100% {
+    transform: translateX(320%) skewX(-12deg);
+    opacity: 0.22;
+  }
+}
+
+.pops-share-glow-sweep {
+  animation: pops-share-glow-sweep 7.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pops-share-glow-sweep {
+    animation: none;
+    opacity: 0.28;
+    transform: skewX(-12deg);
+  }
+}
+
 body {
   background:
     linear-gradient(180deg, rgba(254, 205, 8, 0.07) 0%, rgba(254, 205, 8, 0.02) 12%, transparent 32%),
@@ -255,11 +299,9 @@ body {
 }
 
 .pops-panel {
-  background: linear-gradient(165deg, #0a0a0a, #000000);
+  background: linear-gradient(165deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0.01));
   border: 1px solid rgb(254 205 8 / 0.18);
   box-shadow:
-    0 0 0 1px rgb(0 0 0 / 0.5),
-    0 24px 48px rgb(0 0 0 / 0.45),
     0 0 60px -20px rgb(254 205 8 / 0.15);
 }
 
@@ -269,14 +311,17 @@ body {
 }
 
 .pops-card-surface {
-  background: #000000;
-  border: 1px solid rgb(255 255 255 / 0.08);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: linear-gradient(155deg, rgb(255 255 255 / 0.045), rgb(255 255 255 / 0.01));
+  border: 1px solid rgb(255 255 255 / 0.06);
+  transition:
+    border-color 0.7s ease-in-out,
+    box-shadow 0.7s ease-in-out,
+    transform 0.7s ease-in-out;
 }
 
 .pops-card-surface:hover {
-  border-color: rgb(254 205 8 / 0.45);
-  box-shadow: 0 0 40px -12px rgb(254 205 8 / 0.25);
+  border-color: rgb(254 205 8 / 0.28);
+  box-shadow: 0 0 34px -18px rgb(254 205 8 / 0.22);
 }
 
 @media (prefers-reduced-motion: reduce) {
